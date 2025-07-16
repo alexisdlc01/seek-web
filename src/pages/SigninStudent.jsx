@@ -17,20 +17,20 @@ export default function SignInLandlord() {
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Welcome Back, Student
 				</h1>
-                <FloatLabel className="p-float-label mt-5">
-                    <div className="p-inputgroup w-full">
-                        <InputText
-                            id="email"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            className="flex-1"
-                        />
-                        <span className="p-inputgroup-addon">
-                            @st-andrews.ac.uk
-                        </span>
-                    </div>
-                    <label htmlFor="email">St Andrews Email</label>
-                </FloatLabel>
+				<FloatLabel className="p-float-label mt-5">
+					<div className="p-inputgroup w-full">
+						<InputText
+							id="email"
+							value={email}
+							onChange={e => setEmail(e.target.value)}
+							className="flex-1"
+						/>
+						<span className="p-inputgroup-addon">
+							@st-andrews.ac.uk
+						</span>
+					</div>
+					<label htmlFor="email">St Andrews Email</label>
+				</FloatLabel>
 				<FloatLabel>
 					<Password
 						inputId="confirm"

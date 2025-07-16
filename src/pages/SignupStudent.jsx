@@ -3,7 +3,6 @@ import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
-import { Divider } from "primereact/divider";
 import { Link } from "react-router-dom";
 
 export default function SignUpLandlord() {

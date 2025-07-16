@@ -13,8 +13,10 @@ import ResetPassword from "./pages/ResetPassword";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import { Button } from "primereact/button";
+import { useNavigate } from "react-router-dom";
 
 const NotFound = () => {
+	const navigate = useNavigate();
 	return (
 		<div className="flex flex-col items-center justify-center h-screen text-center">
 			<h1 className="text-4xl font-bold mb-4">404 - Page Not Found</h1>

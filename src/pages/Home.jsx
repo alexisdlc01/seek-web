@@ -1,7 +1,9 @@
 import React from 'react';
 import { Button } from 'primereact/button';
+import { useNavigate } from 'react-router-dom';
 
 export default function LandingPage() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
@@ -13,8 +15,8 @@ export default function LandingPage() {
           Connect students with trusted landlords in St Andrews
         </p>
         <div className="flex justify-center gap-4">
-          <Button label="I'm a Student" className="bg-[var(--primary-color-text)] font-bold px-4 py-2" />
-          <Button label="I'm a Landlord" className="bg-[var(--primary-color-text)] font-bold px-4 py-2" />
+          <Button label="I'm a Student" className="bg-[var(--primary-color-text)] font-bold px-4 py-2" onClick={() => navigate("/signup/student")} />
+          <Button label="I'm a Landlord" className="bg-[var(--primary-color-text)] font-bold px-4 py-2" onClick={() => navigate("/signup/landlord")} />
         </div>
       </section>
 

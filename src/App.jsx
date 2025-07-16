@@ -7,6 +7,7 @@ import Security from "./pages/Security";
 import Terms from "./pages/Terms";
 import SignUpLandlord from "./pages/SignupLandlord";
 import SignInLandlord from "./pages/SigninLandlord";
+import SignUpStudent from "./pages/SignupStudent";
 import ResetPassword from "./pages/ResetPassword";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
@@ -39,6 +40,7 @@ function App() {
 				<Route path="/help" element={<Help />} />
 				<Route path="/about" element={<About />} />
 				<Route path="/signup/landlord" element={<SignUpLandlord />} />
+				<Route path="/signup/student" element={<SignUpStudent />} />
 				<Route path="/signin/landlord" element={<SignInLandlord />} />
 				<Route path="/resetpassword" element={<ResetPassword />} />
 				<Route path="/security" element={<Security />} />

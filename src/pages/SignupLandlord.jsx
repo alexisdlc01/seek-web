@@ -1,7 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
+import { InputText } from "primereact/inputtext";
+import { Password } from "primereact/password";
+import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
+import { Divider } from "primereact/divider";
 
 export default function SignUpLandlord() {
+	const [email, setEmail] = useState("");
+	const [pwd, setPwd] = useState("");
+	const [confirmPwd, setConfirmPwd] = useState("");
+	const [confirm, setConfirm] = useState("");
+
 	return (
 		<div className="min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
 			<div className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]">
@@ -9,43 +18,37 @@ export default function SignUpLandlord() {
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Create Account
 				</h1>
-
-				{/* Email Field */}
-				<div className="space-y-1">
-					<label className="block font-medium text-[var(--text-color)]">
-						Email Address
+				<FloatLabel className="mt-5">
+					<InputText id="email" className={`w-full p-3 text-lg}`} />
+					<label htmlFor="email" className="ml-2">
+						Email
 					</label>
-					<input
-						type="email"
-						placeholder="your@email.com"
-						className="w-full border border-[var(--surface-border)] rounded-md px-3 py-2 text-[var(--text-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
-					/>
-				</div>
+				</FloatLabel>
 
-				{/* Password Field */}
-				<div className="space-y-1">
-					<label className="block font-medium text-[var(--text-color)]">
-						Password
-					</label>
-					<input
-						type="password"
-						placeholder="Minimum 8 characters"
-						className="w-full border border-[var(--surface-border)] rounded-md px-3 py-2 text-[var(--text-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
+				<FloatLabel>
+					<Password
+						inputId="confirm"
+						value={confirm}
+						onChange={e => setConfirm(e.target.value)}
+						feedback={false}
+						className="w-full"
+						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
 					/>
-					<p className="text-xs text-[var(--text-color-secondary)]">
-						Must contain uppercase, lowercase, and a number
-					</p>
-				</div>
+					<label htmlFor="confirm"> Password</label>
+				</FloatLabel>
 
-				<div className="space-y-1">
-					<label className="block font-medium text-[var(--text-color)]">
-						Confirm Password
-					</label>
-					<input
-						type="password"
-						className="w-full border border-[var(--surface-border)] rounded-md px-3 py-2 text-[var(--text-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
+				{/* Confirm Password */}
+				<FloatLabel>
+					<Password
+						inputId="confirm"
+						value={confirmPwd}
+						onChange={e => setConfirmPwd(e.target.value)}
+						feedback={false}
+						className="w-full"
+						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
 					/>
-				</div>
+					<label htmlFor="confirm">Confirm Password</label>
+				</FloatLabel>
 
 				{/* Create Account Button */}
 				<Button
@@ -53,10 +56,11 @@ export default function SignUpLandlord() {
 					className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
 				/>
 
-				{/* Divider */}
-				<div className="text-center text-sm text-[var(--text-color-secondary)] border-t pt-4">
-					or sign up with
-				</div>
+				<Divider layout="horizontal">
+					<span className="text-sm text-[var(--text-color-secondary)]">
+						or sign up with
+					</span>
+				</Divider>
 
 				{/* Social Sign-in Buttons */}
 				<div className="flex flex-col gap-2">
@@ -73,7 +77,7 @@ export default function SignUpLandlord() {
 				</div>
 
 				{/* Footer */}
-				<p className="text-sm text-center text-[var(--text-color-secondary)] pt-4">
+				<p className="text-sm text-center text-[var(--text-color-secondary)]">
 					Already have an account?{" "}
 					<a
 						href="#"

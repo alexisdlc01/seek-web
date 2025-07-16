@@ -5,6 +5,7 @@ import Help from "./pages/Help";
 import Privacy from "./pages/Privacy";
 import Security from "./pages/Security";
 import Terms from "./pages/Terms";
+import SignUpLandlord from "./pages/SignupLandlord";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import { Button } from "primereact/button";
@@ -31,10 +32,11 @@ function App() {
 			<Navbar />
 			<Routes>
 				<Route path="/" element={<Home />} />
-        <Route path="/terms" element={<Terms />} />
+				<Route path="/terms" element={<Terms />} />
 				<Route path="/privacy" element={<Privacy />} />
 				<Route path="/help" element={<Help />} />
 				<Route path="/about" element={<About />} />
+				<Route path="/signup/landlord" element={<SignUpLandlord />} />
 				<Route path="/security" element={<Security />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>

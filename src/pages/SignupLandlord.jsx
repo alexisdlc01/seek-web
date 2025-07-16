@@ -4,6 +4,7 @@ import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
+import { Link } from "react-router-dom";
 
 export default function SignUpLandlord() {
 	const [email, setEmail] = useState("");
@@ -16,7 +17,7 @@ export default function SignUpLandlord() {
 			<div className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]">
 				{/* Heading */}
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
-					Create Account
+					Create Landlord Account
 				</h1>
 				<FloatLabel className="mt-5">
 					<InputText id="email" className={`w-full p-3 text-lg}`} />
@@ -24,7 +25,6 @@ export default function SignUpLandlord() {
 						Email
 					</label>
 				</FloatLabel>
-
 				<FloatLabel>
 					<Password
 						inputId="confirm"
@@ -36,7 +36,6 @@ export default function SignUpLandlord() {
 					/>
 					<label htmlFor="confirm"> Password</label>
 				</FloatLabel>
-
 				{/* Confirm Password */}
 				<FloatLabel>
 					<Password
@@ -49,19 +48,16 @@ export default function SignUpLandlord() {
 					/>
 					<label htmlFor="confirm">Confirm Password</label>
 				</FloatLabel>
-
 				{/* Create Account Button */}
 				<Button
 					label="Create Account"
 					className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
 				/>
-
 				<Divider layout="horizontal">
 					<span className="text-sm text-[var(--text-color-secondary)]">
 						or sign up with
 					</span>
 				</Divider>
-
 				{/* Social Sign-in Buttons */}
 				<div className="flex flex-col gap-2">
 					<Button
@@ -75,16 +71,15 @@ export default function SignUpLandlord() {
 						className="w-full border border-gray-300 text-gray-800 bg-white"
 					/>
 				</div>
-
 				{/* Footer */}
 				<p className="text-sm text-center text-[var(--text-color-secondary)]">
 					Already have an account?{" "}
-					<a
-						href="#"
+					<Link
+						to="/login"
 						className="text-[var(--primary-color)] font-medium"
 					>
 						Login
-					</a>
+					</Link>
 				</p>
 			</div>
 		</div>

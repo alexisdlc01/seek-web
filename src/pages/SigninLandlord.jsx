@@ -73,7 +73,7 @@ export default function SignInLandlord() {
 				<p className="text-sm text-center text-[var(--text-color-secondary)]">
 					Forgot your password?{" "}
 					<Link
-						to="/signup/landlord"
+						to="/resetpassword"
 						className="text-[var(--primary-color)] font-medium"
 					>
 						Reset Password

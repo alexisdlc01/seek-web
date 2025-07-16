@@ -1,8 +1,11 @@
 import React from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+	const navigate = useNavigate();
+
 	const itemRenderer = item =>
 		item.label === "Login" ? (
 			<Button className={"pl-3 relative"}>Login</Button>
@@ -11,11 +14,30 @@ export default function Navbar() {
 				<span className="mx-2">{item.label}</span>
 			</a>
 		);
+
 	const items = [
-		{ label: "Home", template: itemRenderer },
-		{ label: "About", template: itemRenderer },
+		{
+			label: "Home",
+			template: itemRenderer,
+			command: () => {
+				navigate("/");
+			}
+		},
+		{
+			label: "About",
+			template: itemRenderer,
+			command: () => {
+				navigate("/about");
+			}
+		},
 		{ label: "For Landlords", template: itemRenderer },
-		{ label: "Help", template: itemRenderer },
+		{
+			label: "Help",
+			template: itemRenderer,
+			command: () => {
+				navigate("/help");
+			}
+		},
 		{ label: "Login", template: itemRenderer }
 	];
 

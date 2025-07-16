@@ -1,9 +1,7 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 export default function Footer() {
-	const navigate = useNavigate();
 
 	return (
 		<footer className="bg-[var(--primary-color)] text-[var(--primary-color-text)] text-center text-sm py-6 px-4 mt-auto">

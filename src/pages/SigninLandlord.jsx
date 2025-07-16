@@ -67,7 +67,16 @@ export default function SignInLandlord() {
 						to="/signup/landlord"
 						className="text-[var(--primary-color)] font-medium"
 					>
-						Login
+						Signup
+					</Link>
+				</p>
+				<p className="text-sm text-center text-[var(--text-color-secondary)]">
+					Forgot your password?{" "}
+					<Link
+						to="/signup/landlord"
+						className="text-[var(--primary-color)] font-medium"
+					>
+						Reset Password
 					</Link>
 				</p>
 			</div>

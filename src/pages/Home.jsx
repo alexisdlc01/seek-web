@@ -1,65 +1,66 @@
+import React from 'react';
 import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import { Calendar } from 'primereact/calendar';
-import { Dropdown } from 'primereact/dropdown';
-import { Checkbox } from 'primereact/checkbox';
-import { RadioButton } from 'primereact/radiobutton';
-import { ProgressBar } from 'primereact/progressbar';
-import { Card } from 'primereact/card';
-import { TabView, TabPanel } from 'primereact/tabview';
-import { ToggleButton } from 'primereact/togglebutton';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function Home() {
-	const [date, setDate] = useState(null);
-	const [selectedOption, setSelectedOption] = useState(null);
-	const [checked, setChecked] = useState(false);
-	const [radioValue, setRadioValue] = useState(null);
-	const [toggle, setToggle] = useState(false);
+export default function LandingPage() {
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen flex flex-col">
+      {/* Hero Section */}
+      <section className="bg-[var(--primary-color)] text-[var(--primary-color-text)] py-16 text-center px-4">
+        <h1 className="text-3xl md:text-5xl font-bold mb-4">
+          Find Your Perfect Student Home
+        </h1>
+        <p className="text-lg md:text-xl mb-6">
+          Connect students with trusted landlords in St Andrews
+        </p>
+        <div className="flex justify-center gap-4">
+          <Button label="I'm a Student" className="bg-[var(--primary-color-text)] font-bold px-4 py-2" onClick={() => navigate("/signup/student")} />
+          <Button label="I'm a Landlord" className="bg-[var(--primary-color-text)] font-bold px-4 py-2" onClick={() => navigate("/signup/landlord")} />
+        </div>
+      </section>
 
-	const dropdownOptions = [
-		{ label: 'Option 1', value: '1' },
-		{ label: 'Option 2', value: '2' },
-	];
+      {/* Features Section */}
+      <section className="bg-[var(--surface-a)] py-16 px-4 text-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+          <div>
+            <div className="flex justify-center mb-3">
+              <span className="pi pi-search text-4xl bg-[var(--surface-c)] p-4 rounded-full text-[var(--text-color)]"></span>
+            </div>
+            <h3 className="text-lg font-semibold mb-2 text-[var(--text-color)]">Easy Search</h3>
+            <p className="text-[var(--text-color-secondary)] text-sm">
+              Find properties that match your needs with our advanced search filters
+            </p>
+          </div>
+          <div>
+            <div className="flex justify-center mb-3">
+              <span className="pi pi-check-circle text-4xl bg-[var(--surface-c)] p-4 rounded-full text-green-500"></span>
+            </div>
+            <h3 className="text-lg font-semibold mb-2 text-[var(--text-color)]">Verified Listings</h3>
+            <p className="text-[var(--text-color-secondary)] text-sm">
+              All properties are verified to ensure quality and safety standards
+            </p>
+          </div>
+          <div>
+            <div className="flex justify-center mb-3">
+              <span className="pi pi-comment text-4xl bg-[var(--surface-c)] p-4 rounded-full text-[var(--text-color)]"></span>
+            </div>
+            <h3 className="text-lg font-semibold mb-2 text-[var(--text-color)]">Direct Communication</h3>
+            <p className="text-[var(--text-color-secondary)] text-sm">
+              Message landlords directly through our secure platform
+            </p>
+          </div>
+        </div>
+      </section>
 
-	return (
-		<div className="p-6 space-y-6">
-			<h1 className="text-3xl font-bold">Welcome to the Home Page</h1>
-			<p>You can only see this by visiting <code>/</code>.</p>
-
-			<div className="flex flex-col gap-4 max-w-md">
-				<InputText placeholder="InputText" />
-				<Calendar value={date} onChange={(e) => setDate(e.value)} showIcon />
-				<Dropdown value={selectedOption} options={dropdownOptions} onChange={(e) => setSelectedOption(e.value)} placeholder="Select an Option" />
-				<div className="flex items-center gap-2">
-					<Checkbox inputId="cb1" checked={checked} onChange={(e) => setChecked(e.checked)} />
-					<label htmlFor="cb1">Checkbox</label>
-				</div>
-				<div className="flex items-center gap-4">
-					<RadioButton inputId="rb1" name="rb" value="A" onChange={(e) => setRadioValue(e.value)} checked={radioValue === 'A'} />
-					<label htmlFor="rb1">Option A</label>
-					<RadioButton inputId="rb2" name="rb" value="B" onChange={(e) => setRadioValue(e.value)} checked={radioValue === 'B'} />
-					<label htmlFor="rb2">Option B</label>
-				</div>
-				<ToggleButton checked={toggle} onChange={(e) => setToggle(e.value)} onLabel="On" offLabel="Off" />
-				<ProgressBar value={50} />
-				<Button label="Primary Button" />
-			</div>
-
-			<Card title="Sample Card" subTitle="Card Subtitle">
-				<p>This is a PrimeReact card component for theme testing.</p>
-			</Card>
-
-			<TabView>
-				<TabPanel header="Tab 1">
-					<p>Tab 1 Content</p>
-				</TabPanel>
-				<TabPanel header="Tab 2">
-					<p>Tab 2 Content</p>
-				</TabPanel>
-			</TabView>
-		</div>
-	);
+      {/* Call to Action */}
+      <section className="text-center py-12 px-4 bg-[var(--surface-a)]">
+        <h2 className="text-2xl font-bold mb-2 text-[var(--text-color)]">Ready to Get Started?</h2>
+        <p className="text-[var(--text-color-secondary)] mb-4">
+          Join thousands of students and landlords already using Seek
+        </p>
+        <Button label="Sign Up Today" className="bg-[var(--primary-color)] text-[var(--primary-color-text)] px-5 py-3 font-semibold" />
+      </section>
+    </div>
+  );
 }
-
-export default Home;

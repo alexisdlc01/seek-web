@@ -4,15 +4,22 @@ import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function SignInLandlord() {
 	const [email, setEmail] = useState("");
-	const [pwd, setPwd] = useState("");
-	const [confirm, setConfirm] = useState("");
+	const [password, setPassword] = useState("");
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		console.log("logging in with", email, password);
+		const res = await axios.get("/api");
+		console.log(res.data);
+	}
 
 	return (
 		<div className="min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
-			<div className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]">
+			<form className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]" onSubmit={e => handleSubmit(e)}>
 				{/* Heading */}
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Welcome Back, Student
@@ -34,13 +41,13 @@ export default function SignInLandlord() {
 				<FloatLabel>
 					<Password
 						inputId="confirm"
-						value={confirm}
-						onChange={e => setConfirm(e.target.value)}
+						value={password}
+						onChange={e => setPassword(e.target.value)}
 						feedback={false}
 						className="w-full"
 						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
 					/>
-					<label htmlFor="confirm"> Password</label>
+					<label htmlFor="confirm">Password</label>
 				</FloatLabel>
 				{/* Confirm Password */}
 
@@ -69,7 +76,7 @@ export default function SignInLandlord() {
 						Reset Password
 					</Link>
 				</p>
-			</div>
+			</form>
 		</div>
 	);
 }

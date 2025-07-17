@@ -17,6 +17,7 @@ export default function Landlord() {
 						key={prop.id}
 						className="flex items-center justify-between bg-white border border-[var(--surface-border)] rounded-xl px-6 py-5 shadow-sm"
 					>
+						{/* Image */}
 						<div className="w-20 h-20 flex-shrink-0 rounded-md overflow-hidden mr-4">
 							<img
 								src={houseImage}
@@ -25,25 +26,49 @@ export default function Landlord() {
 							/>
 						</div>
 
+						{/* Info + Tags */}
 						<div className="flex-1">
 							<h2 className="font-semibold text-[var(--text-color)] text-base">
 								{prop.address}
 							</h2>
 							<p className="text-sm text-gray-500">{prop.city}</p>
-							<Tag
-								value="2 Applicants"
-								className="mt-2"
-								style={{
-									backgroundColor: "var(--primary-color)",
-									color: "white"
-								}}
-							/>
+							<div className="flex flex-wrap gap-2 mt-2">
+								<Tag
+									value="2 New Applicants"
+									severity="info"
+									className="text-xs font-medium px-3 py-1 rounded-full"
+								/>
+								<Tag
+									value="3 New Messages"
+									severity="secondary"
+									className="text-xs font-medium px-3 py-1 rounded-full"
+								/>
+							</div>
 						</div>
 
+						{/* Buttons */}
 						<div className="flex gap-2 ml-6">
-							<Button label="Edit" />
-							<Button label="View" />
-							<Button icon="pi pi-ellipsis-h" />
+							<Button
+								label="View Applicants"
+								icon="pi pi-users"
+								size="small"
+								severity="primary"
+								outlined
+							/>
+							<Button
+								label="Edit Listing"
+								icon="pi pi-pencil"
+								size="small"
+								severity="primary"
+								outlined
+							/>
+							<Button
+								icon="pi pi-ellipsis-h"
+								size="small"
+								severity="primary"
+								outlined
+								aria-label="More options"
+							/>
 						</div>
 					</div>
 				))}

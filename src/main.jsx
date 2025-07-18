@@ -4,11 +4,14 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import { PrimeReactProvider } from "primereact/api";
+import { UserProvider } from "./context/UserContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<PrimeReactProvider>
 		<BrowserRouter>
-			<App />
+			<UserProvider>
+				<App />
+			</UserProvider>
 		</BrowserRouter>
 	</PrimeReactProvider>
 );

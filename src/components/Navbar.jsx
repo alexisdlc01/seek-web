@@ -2,7 +2,6 @@ import React from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { classNames } from "primereact/utils";
 
 export default function Navbar({ loggedIn }) {
 	loggedIn = true;

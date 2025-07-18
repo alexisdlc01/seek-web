@@ -15,6 +15,8 @@ import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "./context/UserContext.jsx";
+import { useEffect } from "react";
 
 const NotFound = () => {
 	const navigate = useNavigate();

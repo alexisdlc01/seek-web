@@ -40,14 +40,14 @@ export default function SignInLandlord() {
 				</FloatLabel>
 				<FloatLabel>
 					<Password
-						inputId="confirm"
+						inputId="password"
 						value={password}
 						onChange={e => setPassword(e.target.value)}
 						feedback={false}
 						className="w-full"
 						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
 					/>
-					<label htmlFor="confirm">Password</label>
+					<label htmlFor="password">Password</label>
 				</FloatLabel>
 				{/* Confirm Password */}
 

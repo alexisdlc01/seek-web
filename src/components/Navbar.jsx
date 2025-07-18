@@ -37,6 +37,8 @@ export default function Navbar({ loggedIn }) {
 				{ label: "About", path: "/about" },
 				{ label: "For Landlords" },
 				{ label: "Help", path: "/help" },
+				{ separator: true, className: "ml-4" },
+
 				{
 					label: "Login",
 					items: [
@@ -96,7 +98,7 @@ export default function Navbar({ loggedIn }) {
 							"flex justify-between items-center !border-none !shadow-none relative md:px-0 py-3 bg-white"
 					},
 					menu: {
-						className: "flex justify-center w-full"
+						className: "flex justify-center w-full gap-3"
 					},
 					button: {
 						className:

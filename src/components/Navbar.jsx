@@ -3,48 +3,73 @@ import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 
-export default function Navbar() {
+export default function Navbar({ loggedIn }) {
+	loggedIn = true;
 	const navigate = useNavigate();
-
-	const items = [
-		{ label: "Home", path: "/" },
-		{ label: "About", path: "/about" },
-		{ label: "For Landlords" },
-		{ label: "Help", path: "/help" },
-		{
-			label: "Login",
-			items: [
+	const items = loggedIn
+		? [
+				{ label: "Dashboard", path: "/dashboard" },
+				{ label: "Properties", path: "/properties" },
+				{ label: "Messages", path: "/messages" },
 				{
-					label: "As Student",
-					command: () => navigate("/login/student")
-				},
-				{
-					label: "As Landlord",
-					command: () => navigate("/login/landlord")
+					label: "Graham Heathcote",
+					items: [
+						{
+							label: "Settings"
+						},
+						{
+							label: "Logout"
+						}
+					],
+					template: (item, options) => (
+						<Button
+							onClick={options.onClick}
+							className="pl-3 pr-4 py-2 bg-blue-900 text-blue-400 hover:bg-blue-00 flex items-center gap-2"
+						>
+							<span>{item.label}</span>
+							<i className="pi pi-chevron-down text-xs" />
+						</Button>
+					)
 				}
-			],
-			template: (item, options) => (
-				<Button
-					label={item.label}
-					onClick={options.onClick}
-					className="pl-3 relative"
-				/>
-			)
-		}
-	].map(({ label, path, items, template }) => ({
+		  ]
+		: [
+				{ label: "Home", path: "/" },
+				{ label: "About", path: "/about" },
+				{ label: "For Landlords" },
+				{ label: "Help", path: "/help" },
+				{
+					label: "Login",
+					items: [
+						{
+							label: "As Student"
+						},
+						{
+							label: "As Landlord"
+						}
+					],
+					template: (item, options) => (
+						<Button
+							label={item.label}
+							onClick={options.onClick}
+							className="pl-3 relative"
+						/>
+					)
+				}
+		  ];
+
+	const menuItems = items.map(({ label, path, items, template }) => ({
 		label,
-		...(path && {
-			command: () => navigate(path)
-		}),
+		...(path && { command: () => navigate(path) }),
 		...(items && { items }),
 		...(template && { template }),
-		...(!items && !path && {
-			template: () => (
-				<a className="p-menuitem-link relative">
-					<span className="mx-2">{label}</span>
-				</a>
-			)
-		})
+		...(!items &&
+			!path && {
+				template: () => (
+					<a className="p-menuitem-link relative">
+						<span className="mx-2">{label}</span>
+					</a>
+				)
+			})
 	}));
 
 	const logo = (
@@ -60,7 +85,11 @@ export default function Navbar() {
 			<Menubar
 				model={items}
 				start={logo}
-				style={{ backgroundColor: "#ffffff", border: "none", boxShadow: "none" }}
+				style={{
+					backgroundColor: "#ffffff",
+					border: "none",
+					boxShadow: "none"
+				}}
 				pt={{
 					root: {
 						className:

@@ -2,6 +2,7 @@ import React from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+import { classNames } from "primereact/utils";
 
 export default function Navbar({ loggedIn }) {
 	loggedIn = true;
@@ -78,7 +79,7 @@ export default function Navbar({ loggedIn }) {
 		<img
 			src="/whitelogo-notext.svg"
 			alt="Logo"
-			className="h-9 w-auto object-contain ml-auto"
+			className="h-9 w-auto object-contain ml-2"
 		/>
 	);
 
@@ -87,6 +88,7 @@ export default function Navbar({ loggedIn }) {
 			<Menubar
 				model={items}
 				start={logo}
+				end={<div className="mr-2"></div>}
 				style={{
 					backgroundColor: "#ffffff",
 					border: "none",

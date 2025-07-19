@@ -1,25 +1,28 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import UserContext from "../context/UserContext.jsx";
 
 export default function SignInLandlord() {
+	const { login } = useContext(UserContext);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async e => {
 		e.preventDefault();
 		console.log("logging in with", email, password);
-		const res = await axios.get("/api");
-		console.log(res.data);
-	}
+		login(email, password);
+	};
 
 	return (
 		<div className="min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
-			<form className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]" onSubmit={e => handleSubmit(e)}>
+			<form
+				className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
+				onSubmit={e => handleSubmit(e)}
+			>
 				{/* Heading */}
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Welcome Back, Student

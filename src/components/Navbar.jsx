@@ -1,84 +1,79 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+import UserContext from "../context/UserContext.jsx";
 
-export default function Navbar({ loggedIn }) {
-	loggedIn = true;
+export default function Navbar() {
 	const navigate = useNavigate();
+	const { user, loading, logout } = useContext(UserContext);
+	const loggedIn = !!user;
+
+	useEffect(() => {
+		if (!loading) {
+			console.log("In the navbar", user);
+		}
+	}, [loading, user]);
+
 	const items = loggedIn
 		? [
-				{ label: "Dashboard", path: "/dashboard" },
-				{ label: "Properties", path: "/properties" },
-				{ label: "Messages", path: "/messages" },
 				{
-					label: "Graham Heathcote",
+					label: "Dashboard",
+					command: () => navigate("/dashboard")
+				},
+				{ label: "Properties", command: () => navigate("/properties") },
+				{ label: "Messages", command: () => navigate("/messages") },
+				{
+					label: user.name,
 					items: [
 						{
-							label: "Settings"
+							label: "Settings",
+							command: () => navigate("/settings")
 						},
 						{
-							label: "Logout"
+							label: "Logout",
+							command: async () => await logout()
 						}
 					],
-					template: (item, options) => (
-						<Button
-							onClick={options.onClick}
-							className="pl-3 pr-4 py-2 bg-blue-900 text-blue-400 hover:bg-blue-00 flex items-center gap-2"
-						>
+					template: item => (
+						<Button className="pl-3 pr-4 py-2 bg-blue-900 text-blue-400 hover:bg-blue-00 flex items-center gap-2">
 							<span>{item.label}</span>
 							<i className="pi pi-chevron-down text-xs" />
 						</Button>
 					)
 				}
-		  ]
+			]
 		: [
-				{ label: "Home", path: "/" },
-				{ label: "About", path: "/about" },
+				{ label: "Home", command: () => navigate("/") },
+				{ label: "About", command: () => navigate("/about") },
 				{ label: "For Landlords" },
-				{ label: "Help", path: "/help" },
+				{ label: "Help", command: () => navigate("/help") },
 				{ separator: true, className: "ml-4" },
 
 				{
 					label: "Login",
 					items: [
 						{
-							label: "As Student"
+							label: "As Student",
+							command: () => navigate("/signin/student")
 						},
 						{
-							label: "As Landlord"
+							label: "As Landlord",
+							command: () => navigate("/signin/landlord")
 						}
 					],
-					template: (item, options) => (
-						<Button
-							label={item.label}
-							onClick={options.onClick}
-							className="pl-3 relative"
-						/>
+					template: item => (
+						<Button label={item.label} className="pl-3 relative" />
 					)
 				}
-		  ];
-
-	const menuItems = items.map(({ label, path, items, template }) => ({
-		label,
-		...(path && { command: () => navigate(path) }),
-		...(items && { items }),
-		...(template && { template }),
-		...(!items &&
-			!path && {
-				template: () => (
-					<a className="p-menuitem-link relative">
-						<span className="mx-2">{label}</span>
-					</a>
-				)
-			})
-	}));
+			];
 
 	const logo = (
 		<img
 			src="/whitelogo-notext.svg"
 			alt="Logo"
-			className="h-9 w-auto object-contain ml-2"
+			className="h-9 w-auto object-contain ml-2 cursor-pointer"
+			onClick={() => navigate("/")}
 		/>
 	);
 

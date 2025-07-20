@@ -21,26 +21,48 @@ export default function SignInLandlord() {
 		<div className="min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
 			<form
 				className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
-				onSubmit={e => handleSubmit(e)}
+				onSubmit={handleSubmit}
 			>
-				{/* Heading */}
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Welcome Back, Student
 				</h1>
-				<FloatLabel className="p-float-label mt-5">
-					<div className="p-inputgroup w-full">
+
+				{/* Desktop version */}
+				<div className="hidden sm:block">
+					<FloatLabel className="w-full">
+						<div className="p-inputgroup w-full">
+							<InputText
+								id="email"
+								value={email}
+								onChange={e => setEmail(e.target.value)}
+								className="w-full"
+							/>
+							<span className="p-inputgroup-addon">
+								@st-andrews.ac.uk
+							</span>
+						</div>
+						<label htmlFor="email">St Andrews Email</label>
+					</FloatLabel>
+				</div>
+
+				{/* Mobile version */}
+				<div className="block sm:hidden">
+					<FloatLabel className="w-full">
 						<InputText
-							id="email"
+							id="emailMobile"
 							value={email}
 							onChange={e => setEmail(e.target.value)}
-							className="flex-1"
+							className="w-full"
 						/>
-						<span className="p-inputgroup-addon">
-							@st-andrews.ac.uk
-						</span>
+						<label htmlFor="emailMobile">
+							St Andrews Email Username
+						</label>
+					</FloatLabel>
+					<div className="p-inputgroup-addon w-full mt-2 text-center rounded bg-[var(--surface-c)] text-[var(--text-color)] py-2 text-sm">
+						@st-andrews.ac.uk
 					</div>
-					<label htmlFor="email">St Andrews Email</label>
-				</FloatLabel>
+				</div>
+
 				<FloatLabel>
 					<Password
 						inputId="password"
@@ -52,15 +74,12 @@ export default function SignInLandlord() {
 					/>
 					<label htmlFor="password">Password</label>
 				</FloatLabel>
-				{/* Confirm Password */}
 
-				{/* Create Account Button */}
 				<Button
 					label="Sign in"
 					className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
 				/>
 
-				{/* Footer */}
 				<p className="text-sm text-center text-[var(--text-color-secondary)] pt-6">
 					Don't have an account?{" "}
 					<Link

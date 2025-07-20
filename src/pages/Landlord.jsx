@@ -7,10 +7,20 @@ import houseImage from "../assets/house.jpg";
 export default function Landlord() {
 	return (
 		<div className="min-h-screen bg-white px-6 py-10">
-			<h1 className="text-3xl font-bold text-[var(--text-color)] mb-8">
-				My Listings
-			</h1>
+			{/* Header with Add New Property Button */}
+			<div className="flex justify-between items-center mb-8">
+				<h1 className="text-3xl font-bold text-[var(--text-color)]">
+					My Listings
+				</h1>
+				<Button
+					label="Add New Property"
+					icon="pi pi-plus"
+					severity="primary"
+					className="px-4 py-2 text-sm"
+				/>
+			</div>
 
+			{/* Listings */}
 			<div className="space-y-6">
 				{properties.map(prop => (
 					<div

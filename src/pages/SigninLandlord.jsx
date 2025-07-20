@@ -5,8 +5,10 @@ import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function SignInLandlord() {
+	const navigate = useNavigate();
 	const [email, setEmail] = useState("");
 	const [pwd, setPwd] = useState("");
 	const [confirm, setConfirm] = useState("");
@@ -41,6 +43,7 @@ export default function SignInLandlord() {
 				<Button
 					label="Sign in"
 					className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
+					onClick={() => navigate("/landlord")}
 				/>
 				<Divider layout="horizontal">
 					<span className="text-sm text-[var(--text-color-secondary)]">
@@ -53,11 +56,13 @@ export default function SignInLandlord() {
 						label="Sign up with Google"
 						icon="pi pi-google"
 						className="w-full border border-gray-300 text-gray-800 bg-white"
+						onClick={() => navigate("/landlord")}
 					/>
 					<Button
 						label="Sign up with Apple"
 						icon="pi pi-apple"
 						className="w-full border border-gray-300 text-gray-800 bg-white"
+						onClick={() => navigate("/landlord")}
 					/>
 				</div>
 				{/* Footer */}

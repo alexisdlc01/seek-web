@@ -3,8 +3,10 @@ import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
 import properties from "../dummyData/dummyLandlordProperties";
 import houseImage from "../assets/house.jpg";
+import { useNavigate } from "react-router-dom";
 
 export default function Landlord() {
+	const navigate = useNavigate();
 	return (
 		<div className="min-h-screen bg-white px-6 py-10">
 			{/* Header with Add New Property Button */}
@@ -17,6 +19,7 @@ export default function Landlord() {
 					icon="pi pi-plus"
 					severity="primary"
 					className="px-4 py-2 text-sm"
+					onClick={() => navigate("/addproperty")}
 				/>
 			</div>
 

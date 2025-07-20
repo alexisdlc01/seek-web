@@ -42,14 +42,13 @@ export default function Navbar() {
 						</Button>
 					)
 				}
-			]
+		  ]
 		: [
 				{ label: "Home", command: () => navigate("/") },
 				{ label: "About", command: () => navigate("/about") },
 				{ label: "For Landlords" },
 				{ label: "Help", command: () => navigate("/help") },
 				{ separator: true, className: "ml-4" },
-
 				{
 					label: "Login",
 					items: [
@@ -66,7 +65,7 @@ export default function Navbar() {
 						<Button label={item.label} className="pl-3 relative" />
 					)
 				}
-			];
+		  ];
 
 	const logo = (
 		<img
@@ -98,7 +97,7 @@ export default function Navbar() {
 					},
 					button: {
 						className:
-							"absolute left-4 top-1/2 -translate-y-1/2 md:static md:translate-y-0 md:ml-0 !border-none !shadow-none !bg-transparent !outline-none hover:!bg-transparent focus:!ring-0 focus:!shadow-none"
+							"absolute right-4 top-1/2 -translate-y-1/2 md:static md:left-auto md:translate-y-0 md:ml-0 !border-none !shadow-none !bg-transparent !outline-none hover:!bg-transparent focus:!ring-0 focus:!shadow-none"
 					}
 				}}
 			/>

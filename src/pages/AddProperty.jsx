@@ -103,9 +103,6 @@ const AddProperty = () => {
 	const [videoLink, setVideoLink] = useState("");
 	const [floorPlan, setFloorPlan] = useState(null);
 
-	// Errors
-	const [errors, setErrors] = useState({});
-
 	useEffect(() => {
 		if (propertyType === "Studio") {
 			setRegularBedrooms(0);
@@ -234,18 +231,6 @@ const AddProperty = () => {
 
 	const removePhoto = id => setPhotos(photos.filter(p => p.id !== id));
 
-	const publish = () => {
-		if (validateStep()) {
-			toast.current.show({
-				severity: "success",
-				summary: "Published!",
-				detail: "Your property listing is now live."
-			});
-			// Here you would typically submit all the collected data
-			console.log("Submitting all data...");
-		}
-	};
-
 	return (
 		<div className="min-h-screen bg-white p-6">
 			<Toast ref={toast} />
@@ -266,15 +251,7 @@ const AddProperty = () => {
 								id="title"
 								value={title}
 								onChange={e => setTitle(e.target.value)}
-								className={classNames({
-									"p-invalid": errors.title
-								})}
 							/>
-							{errors.title && (
-								<small className="p-error">
-									{errors.title}
-								</small>
-							)}
 						</div>
 						<div className="grid grid-cols-2 gap-4">
 							<div className="flex flex-col">
@@ -288,15 +265,7 @@ const AddProperty = () => {
 									id="sizeSqFt"
 									value={sizeSqFt}
 									onValueChange={e => setSizeSqFt(e.value)}
-									className={classNames({
-										"p-invalid": errors.sizeSqFt
-									})}
 								/>
-								{errors.sizeSqFt && (
-									<small className="p-error">
-										{errors.sizeSqFt}
-									</small>
-								)}
 							</div>
 							<div className="flex flex-col">
 								<label
@@ -309,15 +278,7 @@ const AddProperty = () => {
 									id="sizeSqM"
 									value={sizeSqM}
 									onValueChange={e => setSizeSqM(e.value)}
-									className={classNames({
-										"p-invalid": errors.sizeSqM
-									})}
 								/>
-								{errors.sizeSqM && (
-									<small className="p-error">
-										{errors.sizeSqM}
-									</small>
-								)}
 							</div>
 						</div>
 						<div className="flex flex-col">
@@ -333,15 +294,7 @@ const AddProperty = () => {
 								options={propertyTypes}
 								onChange={e => setPropertyType(e.value)}
 								placeholder="Select a Type"
-								className={classNames({
-									"p-invalid": errors.propertyType
-								})}
 							/>
-							{errors.propertyType && (
-								<small className="p-error">
-									{errors.propertyType}
-								</small>
-							)}
 						</div>
 						{propertyType === "Other (please specify)" && (
 							<div className="flex flex-col">
@@ -355,15 +308,7 @@ const AddProperty = () => {
 									id="otherType"
 									value={otherType}
 									onChange={e => setOtherType(e.target.value)}
-									className={classNames({
-										"p-invalid": errors.otherType
-									})}
 								/>
-								{errors.otherType && (
-									<small className="p-error">
-										{errors.otherType}
-									</small>
-								)}
 							</div>
 						)}
 						<div className="grid grid-cols-3 gap-4">
@@ -380,9 +325,6 @@ const AddProperty = () => {
 									options={bedroomOptions}
 									onChange={e => setRegularBedrooms(e.value)}
 									placeholder="Select"
-									className={classNames({
-										"p-invalid": errors.regularBedrooms
-									})}
 								/>
 							</div>
 							<div className="flex flex-col">
@@ -398,9 +340,6 @@ const AddProperty = () => {
 									options={bedroomOptions}
 									onChange={e => setEnsuiteBedrooms(e.value)}
 									placeholder="Select"
-									className={classNames({
-										"p-invalid": errors.ensuiteBedrooms
-									})}
 								/>
 							</div>
 							<div className="flex flex-col">
@@ -416,9 +355,6 @@ const AddProperty = () => {
 									options={bathroomOptions}
 									onChange={e => setBathrooms(e.value)}
 									placeholder="Select"
-									className={classNames({
-										"p-invalid": errors.bathrooms
-									})}
 								/>
 							</div>
 						</div>
@@ -435,15 +371,7 @@ const AddProperty = () => {
 								onChange={e => setDescription(e.target.value)}
 								rows={5}
 								autoResize
-								className={classNames({
-									"p-invalid": errors.description
-								})}
 							/>
-							{errors.description && (
-								<small className="p-error">
-									{errors.description}
-								</small>
-							)}
 						</div>
 						<div>
 							<label className="font-medium">Amenities</label>
@@ -478,7 +406,7 @@ const AddProperty = () => {
 				</StepperPanel>
 
 				{/* Step 2: Location & Availability */}
-				<StepperPanel header="Location & Availability">
+				<StepperPanel header="Location">
 					<div className="space-y-4">
 						<div className="flex flex-col">
 							<label
@@ -491,9 +419,6 @@ const AddProperty = () => {
 								id="street"
 								value={street}
 								onChange={e => setStreet(e.target.value)}
-								className={classNames({
-									"p-invalid": errors.street
-								})}
 							/>
 						</div>
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -508,9 +433,6 @@ const AddProperty = () => {
 									id="city"
 									value={city}
 									onChange={e => setCity(e.target.value)}
-									className={classNames({
-										"p-invalid": errors.city
-									})}
 								/>
 							</div>
 							<div className="flex flex-col">
@@ -540,9 +462,6 @@ const AddProperty = () => {
 									id="country"
 									value={country}
 									onChange={e => setCountry(e.target.value)}
-									className={classNames({
-										"p-invalid": errors.country
-									})}
 								/>
 							</div>
 						</div>
@@ -712,7 +631,7 @@ const AddProperty = () => {
 				</StepperPanel>
 
 				{/* Step 4: Photos & Media */}
-				<StepperPanel header="Photos & Media">
+				<StepperPanel header="Photos">
 					<div className="space-y-6">
 						<div>
 							<label className="font-medium">Photos *</label>
@@ -849,7 +768,7 @@ const AddProperty = () => {
 				</StepperPanel>
 
 				{/* Step 5: Review & Publish */}
-				<StepperPanel header="Review & Publish">
+				<StepperPanel header="Review">
 					<div className="flex flex-col h-24">
 						<div className="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-center items-center font-medium">
 							Please review all information before publishing.
@@ -862,11 +781,7 @@ const AddProperty = () => {
 							icon="pi pi-arrow-left"
 							onClick={back}
 						/>
-						<Button
-							label="Publish Listing"
-							icon="pi pi-check"
-							onClick={publish}
-						/>
+						<Button label="Publish Listing" icon="pi pi-check" />
 					</div>
 				</StepperPanel>
 			</Stepper>

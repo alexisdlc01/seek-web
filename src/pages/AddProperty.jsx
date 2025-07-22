@@ -10,7 +10,6 @@ import { Calendar } from "primereact/calendar";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import { classNames } from "primereact/utils";
 
 const AddProperty = () => {
 	const toast = useRef(null);
@@ -110,65 +109,8 @@ const AddProperty = () => {
 		}
 	}, [propertyType]);
 
-	const validateStep = () => {
-		return true;
-	};
-
-	// const validateStep = () => {
-	// 	let _errors = {};
-	// 	switch (step) {
-	// 		case 0:
-	// 			if (!title.trim()) _errors.title = "Title is required.";
-	// 			if (!sizeSqFt) _errors.sizeSqFt = "Required.";
-	// 			if (!sizeSqM) _errors.sizeSqM = "Required.";
-	// 			if (!propertyType) _errors.propertyType = "Select a type.";
-	// 			if (
-	// 				propertyType === "Other (please specify)" &&
-	// 				!otherType.trim()
-	// 			)
-	// 				_errors.otherType = "Please specify.";
-	// 			if (regularBedrooms === null)
-	// 				_errors.regularBedrooms = "Required.";
-	// 			if (ensuiteBedrooms === null)
-	// 				_errors.ensuiteBedrooms = "Required.";
-	// 			if (!bathrooms) _errors.bathrooms = "Required.";
-	// 			if (!description.trim())
-	// 				_errors.description = "Description is required.";
-	// 			break;
-	// 		case 1:
-	// 			if (!street.trim()) _errors.street = "Required.";
-	// 			if (!city.trim()) _errors.city = "Required.";
-	// 			if (!postcode.trim()) _errors.postcode = "Required.";
-	// 			if (!country.trim()) _errors.country = "Required.";
-	// 			if (rent === null) _errors.rent = "Required.";
-	// 			if (deposit === null) _errors.deposit = "Required.";
-	// 			if (!availabilityDate) _errors.availabilityDate = "Required.";
-	// 			if (!leaseDuration) _errors.leaseDuration = "Required.";
-	// 			break;
-	// 		case 2:
-	// 			if (!furnishingStatus) _errors.furnishingStatus = "Required.";
-	// 			break;
-	// 		case 3:
-	// 			if (photos.length < 3)
-	// 				_errors.photos = "Upload at least 3 photos.";
-	// 			break;
-	// 		default:
-	// 			break;
-	// 	}
-	// 	setErrors(_errors);
-	// 	return Object.keys(_errors).length === 0;
-	// };
-
 	const next = () => {
-		if (validateStep()) {
-			stepperRef.current.nextCallback();
-		} else {
-			toast.current.show({
-				severity: "error",
-				summary: "Validation Error",
-				detail: "Please fill in all required fields."
-			});
-		}
+		stepperRef.current.nextCallback();
 	};
 
 	const back = () => {
@@ -245,7 +187,7 @@ const AddProperty = () => {
 					<div className="space-y-4">
 						<div className="flex flex-col">
 							<label htmlFor="title" className="font-medium mb-2">
-								Property Title *
+								Property Title
 							</label>
 							<InputText
 								id="title"
@@ -259,7 +201,7 @@ const AddProperty = () => {
 									htmlFor="sizeSqFt"
 									className="font-medium mb-2"
 								>
-									Size (sq ft) *
+									Size (sq ft)
 								</label>
 								<InputNumber
 									id="sizeSqFt"
@@ -272,7 +214,7 @@ const AddProperty = () => {
 									htmlFor="sizeSqM"
 									className="font-medium mb-2"
 								>
-									Size (sq m) *
+									Size (sq m)
 								</label>
 								<InputNumber
 									id="sizeSqM"
@@ -286,7 +228,7 @@ const AddProperty = () => {
 								htmlFor="propertyType"
 								className="font-medium mb-2"
 							>
-								Property Type *
+								Property Type
 							</label>
 							<Dropdown
 								id="propertyType"
@@ -302,7 +244,7 @@ const AddProperty = () => {
 									htmlFor="otherType"
 									className="font-medium mb-2"
 								>
-									Please Specify Type *
+									Please Specify Type
 								</label>
 								<InputText
 									id="otherType"
@@ -317,7 +259,7 @@ const AddProperty = () => {
 									htmlFor="regularBedrooms"
 									className="font-medium mb-2"
 								>
-									Bedrooms *
+									Bedrooms
 								</label>
 								<Dropdown
 									id="regularBedrooms"
@@ -332,7 +274,7 @@ const AddProperty = () => {
 									htmlFor="ensuiteBedrooms"
 									className="font-medium mb-2"
 								>
-									En-suite Bedrooms *
+									En-suite Bedrooms
 								</label>
 								<Dropdown
 									id="ensuiteBedrooms"
@@ -347,7 +289,7 @@ const AddProperty = () => {
 									htmlFor="bathrooms"
 									className="font-medium mb-2"
 								>
-									Bathrooms *
+									Bathrooms
 								</label>
 								<Dropdown
 									id="bathrooms"
@@ -363,7 +305,7 @@ const AddProperty = () => {
 								htmlFor="description"
 								className="font-medium mb-2"
 							>
-								Description *
+								Description
 							</label>
 							<InputTextarea
 								id="description"
@@ -413,7 +355,7 @@ const AddProperty = () => {
 								htmlFor="street"
 								className="font-medium mb-2"
 							>
-								Street Address *
+								Street Address
 							</label>
 							<InputText
 								id="street"
@@ -427,7 +369,7 @@ const AddProperty = () => {
 									htmlFor="city"
 									className="font-medium mb-2"
 								>
-									City / Town *
+									City / Town
 								</label>
 								<InputText
 									id="city"
@@ -440,15 +382,12 @@ const AddProperty = () => {
 									htmlFor="postcode"
 									className="font-medium mb-2"
 								>
-									Postcode / ZIP *
+									Postcode / ZIP
 								</label>
 								<InputText
 									id="postcode"
 									value={postcode}
 									onChange={e => setPostcode(e.target.value)}
-									className={classNames({
-										"p-invalid": errors.postcode
-									})}
 								/>
 							</div>
 							<div className="flex flex-col">
@@ -456,7 +395,7 @@ const AddProperty = () => {
 									htmlFor="country"
 									className="font-medium mb-2"
 								>
-									Country *
+									Country
 								</label>
 								<InputText
 									id="country"
@@ -471,7 +410,7 @@ const AddProperty = () => {
 									htmlFor="rent"
 									className="font-medium mb-2"
 								>
-									Monthly Rent (£) *
+									Monthly Rent (£)
 								</label>
 								<InputNumber
 									id="rent"
@@ -480,9 +419,6 @@ const AddProperty = () => {
 									mode="currency"
 									currency="GBP"
 									locale="en-GB"
-									className={classNames({
-										"p-invalid": errors.rent
-									})}
 								/>
 							</div>
 							<div className="flex flex-col">
@@ -490,7 +426,7 @@ const AddProperty = () => {
 									htmlFor="deposit"
 									className="font-medium mb-2"
 								>
-									Security Deposit (£) *
+									Security Deposit (£)
 								</label>
 								<InputNumber
 									id="deposit"
@@ -499,9 +435,6 @@ const AddProperty = () => {
 									mode="currency"
 									currency="GBP"
 									locale="en-GB"
-									className={classNames({
-										"p-invalid": errors.deposit
-									})}
 								/>
 							</div>
 						</div>
@@ -511,16 +444,13 @@ const AddProperty = () => {
 									htmlFor="availabilityDate"
 									className="font-medium mb-2"
 								>
-									Available From *
+									Available From
 								</label>
 								<Calendar
 									id="availabilityDate"
 									value={availabilityDate}
 									onChange={e => setAvailabilityDate(e.value)}
 									showIcon
-									className={classNames({
-										"p-invalid": errors.availabilityDate
-									})}
 								/>
 							</div>
 							<div className="flex flex-col">
@@ -528,7 +458,7 @@ const AddProperty = () => {
 									htmlFor="leaseDuration"
 									className="font-medium mb-2"
 								>
-									Lease Duration *
+									Lease Duration
 								</label>
 								<Dropdown
 									id="leaseDuration"
@@ -536,9 +466,6 @@ const AddProperty = () => {
 									options={leaseOptions}
 									onChange={e => setLeaseDuration(e.value)}
 									placeholder="Select a duration"
-									className={classNames({
-										"p-invalid": errors.leaseDuration
-									})}
 								/>
 							</div>
 						</div>
@@ -564,7 +491,7 @@ const AddProperty = () => {
 					<div className="space-y-6">
 						<div>
 							<label className="font-medium mb-4 block">
-								Furnishing Status *
+								Furnishing Status
 							</label>
 							<div className="flex flex-col gap-3">
 								{furnishingOptions.map(option => (
@@ -583,10 +510,6 @@ const AddProperty = () => {
 												furnishingStatus ===
 												option.value
 											}
-											className={classNames({
-												"p-invalid":
-													errors.furnishingStatus
-											})}
 										/>
 										<label
 											htmlFor={option.value}
@@ -603,7 +526,7 @@ const AddProperty = () => {
 								htmlFor="epcRating"
 								className="font-medium mb-2"
 							>
-								EPC Rating (optional)
+								EPC Rating
 							</label>
 							<Dropdown
 								id="epcRating"
@@ -634,12 +557,9 @@ const AddProperty = () => {
 				<StepperPanel header="Photos">
 					<div className="space-y-6">
 						<div>
-							<label className="font-medium">Photos *</label>
+							<label className="font-medium">Photos</label>
 							<div
-								className={classNames(
-									"border-2 border-dashed p-8 rounded text-center cursor-pointer mt-2",
-									{ "p-invalid": errors.photos }
-								)}
+								className="border-2 border-dashed p-8 rounded text-center cursor-pointer mt-2"
 								onClick={() => fileInputRef.current?.click()}
 								onDrop={e => {
 									e.preventDefault();
@@ -659,11 +579,6 @@ const AddProperty = () => {
 									onChange={onPhotoSelect}
 								/>
 							</div>
-							{errors.photos && (
-								<small className="p-error">
-									{errors.photos}
-								</small>
-							)}
 							<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
 								{photos.map((p, idx) => (
 									<div
@@ -701,7 +616,7 @@ const AddProperty = () => {
 								htmlFor="videoLink"
 								className="font-medium mb-2"
 							>
-								Video Tour Link (optional)
+								Video Tour Link
 							</label>
 							<InputText
 								id="videoLink"
@@ -715,7 +630,7 @@ const AddProperty = () => {
 								htmlFor="floorPlan"
 								className="font-medium mb-2"
 							>
-								Floor Plan Image (optional)
+								Floor Plan Image
 							</label>
 							<Button
 								type="button"

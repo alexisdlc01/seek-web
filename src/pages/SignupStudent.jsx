@@ -4,6 +4,7 @@ import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function SignUpLandlord() {
 	const [email, setEmail] = useState("");
@@ -13,7 +14,12 @@ export default function SignUpLandlord() {
 
 	return (
 		<div className="min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
-			<div className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]">
+			<motion.div
+				initial={{ opacity: 0, y: 30 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.5 }}
+				className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
+			>
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Create Student Account
 				</h1>
@@ -77,12 +83,19 @@ export default function SignUpLandlord() {
 					<label htmlFor="confirmPwd">Confirm Password</label>
 				</FloatLabel>
 
-				<Button
-					label="Send Activation Email"
-					className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
-				/>
+				<motion.div whileHover={{ scale: 1.02 }}>
+					<Button
+						label="Send Activation Email"
+						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
+					/>
+				</motion.div>
 
-				<p className="text-sm text-center text-[var(--text-color-secondary)] pt-6">
+				<motion.p
+					initial={{ opacity: 0, y: 10 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.4, delay: 0.2 }}
+					className="text-sm text-center text-[var(--text-color-secondary)] pt-6"
+				>
 					Already have an account?{" "}
 					<Link
 						to="/signin/student"
@@ -90,8 +103,8 @@ export default function SignUpLandlord() {
 					>
 						Login
 					</Link>
-				</p>
-			</div>
+				</motion.p>
+			</motion.div>
 		</div>
 	);
 }

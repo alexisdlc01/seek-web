@@ -1,13 +1,20 @@
 import React from "react";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function LandingPage() {
 	const navigate = useNavigate();
+
 	return (
 		<div className="min-h-screen flex flex-col">
 			{/* Hero Section */}
-			<section className="bg-[var(--primary-color)] text-[var(--primary-color-text)] py-16 text-center px-4">
+			<motion.section
+				initial={{ opacity: 0, y: -30 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.6 }}
+				className="bg-[var(--primary-color)] text-[var(--primary-color-text)] py-16 text-center px-4"
+			>
 				<h1 className="text-3xl md:text-5xl font-bold mb-4">
 					Find Your Perfect Student Home
 				</h1>
@@ -15,74 +22,93 @@ export default function LandingPage() {
 					Connect students with trusted landlords in St Andrews
 				</p>
 				<div className="flex justify-center gap-4">
-					<Button
-						label="I'm a Student"
-						className="bg-[var(--primary-color-text)] font-bold px-4 py-2"
-						onClick={() => navigate("/signup/student")}
-					/>
-					<Button
-						label="I'm a Landlord"
-						className="bg-[var(--primary-color-text)] font-bold px-4 py-2"
-						onClick={() => navigate("/signup/landlord")}
-					/>
+					<motion.div whileHover={{ scale: 1.05 }}>
+						<Button
+							label="I'm a Student"
+							className="bg-[var(--primary-color-text)] font-bold px-4 py-2"
+							onClick={() => navigate("/signup/student")}
+						/>
+					</motion.div>
+					<motion.div whileHover={{ scale: 1.05 }}>
+						<Button
+							label="I'm a Landlord"
+							className="bg-[var(--primary-color-text)] font-bold px-4 py-2"
+							onClick={() => navigate("/signup/landlord")}
+						/>
+					</motion.div>
 				</div>
-			</section>
+			</motion.section>
 
 			{/* Features Section */}
-			<section className="bg-[var(--surface-a)] py-16 px-4 text-center">
+			<motion.section
+				initial={{ opacity: 0, y: 30 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.6, delay: 0.2 }}
+				className="bg-[var(--surface-a)] py-16 px-4 text-center"
+			>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
-					<div>
-						<div className="flex justify-center mb-3">
-							<span className="pi pi-search text-4xl bg-[var(--surface-c)] p-4 rounded-full text-[var(--text-color)]"></span>
-						</div>
-						<h3 className="text-lg font-semibold mb-2 text-[var(--text-color)]">
-							Easy Search
-						</h3>
-						<p className="text-[var(--text-color-secondary)] text-sm">
-							Find properties that match your needs with our
-							advanced search filters
-						</p>
-					</div>
-					<div>
-						<div className="flex justify-center mb-3">
-							<span className="pi pi-check-circle text-4xl bg-[var(--surface-c)] p-4 rounded-full text-green-500"></span>
-						</div>
-						<h3 className="text-lg font-semibold mb-2 text-[var(--text-color)]">
-							Verified Listings
-						</h3>
-						<p className="text-[var(--text-color-secondary)] text-sm">
-							All properties are verified to ensure quality and
-							safety standards
-						</p>
-					</div>
-					<div>
-						<div className="flex justify-center mb-3">
-							<span className="pi pi-comment text-4xl bg-[var(--surface-c)] p-4 rounded-full text-[var(--text-color)]"></span>
-						</div>
-						<h3 className="text-lg font-semibold mb-2 text-[var(--text-color)]">
-							Direct Communication
-						</h3>
-						<p className="text-[var(--text-color-secondary)] text-sm">
-							Message landlords directly through our secure
-							platform
-						</p>
-					</div>
+					{[
+						{
+							icon: "pi pi-search",
+							title: "Easy Search",
+							desc: "Find properties that match your needs with our advanced search filters"
+						},
+						{
+							icon: "pi pi-check-circle text-green-500",
+							title: "Verified Listings",
+							desc: "All properties are verified to ensure quality and safety standards"
+						},
+						{
+							icon: "pi pi-comment",
+							title: "Direct Communication",
+							desc: "Message landlords directly through our secure platform"
+						}
+					].map((item, idx) => (
+						<motion.div
+							key={idx}
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							viewport={{ once: true }}
+							transition={{ duration: 0.5, delay: idx * 0.2 }}
+						>
+							<div className="flex justify-center mb-3">
+								<motion.span
+									whileHover={{ scale: 1.1 }}
+									className={`${item.icon} text-4xl bg-[var(--surface-c)] p-4 rounded-full text-[var(--text-color)]`}
+								></motion.span>
+							</div>
+							<h3 className="text-lg font-semibold mb-2 text-[var(--text-color)]">
+								{item.title}
+							</h3>
+							<p className="text-[var(--text-color-secondary)] text-sm">
+								{item.desc}
+							</p>
+						</motion.div>
+					))}
 				</div>
-			</section>
+			</motion.section>
 
 			{/* Call to Action */}
-			<section className="text-center py-12 px-4 bg-[var(--surface-a)]">
+			<motion.section
+				initial={{ opacity: 0 }}
+				whileInView={{ opacity: 1 }}
+				viewport={{ once: true }}
+				transition={{ duration: 0.6 }}
+				className="text-center py-12 px-4 bg-[var(--surface-a)]"
+			>
 				<h2 className="text-2xl font-bold mb-2 text-[var(--text-color)]">
 					Ready to Get Started?
 				</h2>
 				<p className="text-[var(--text-color-secondary)] mb-4">
 					Join thousands of students and landlords already using Seek
 				</p>
-				<Button
-					label="Sign Up Today"
-					className="bg-[var(--primary-color)] text-[var(--primary-color-text)] px-5 py-3 font-semibold"
-				/>
-			</section>
+				<motion.div whileHover={{ scale: 1.05 }}>
+					<Button
+						label="Sign Up Today"
+						className="bg-[var(--primary-color)] text-[var(--primary-color-text)] px-5 py-3 font-semibold"
+					/>
+				</motion.div>
+			</motion.section>
 		</div>
 	);
 }

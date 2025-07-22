@@ -4,6 +4,7 @@ import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 
 export default function SignInLandlord() {
@@ -19,7 +20,10 @@ export default function SignInLandlord() {
 
 	return (
 		<div className="min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
-			<form
+			<motion.form
+				initial={{ opacity: 0, y: 30 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.5 }}
 				className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
 				onSubmit={handleSubmit}
 			>
@@ -75,12 +79,19 @@ export default function SignInLandlord() {
 					<label htmlFor="password">Password</label>
 				</FloatLabel>
 
-				<Button
-					label="Sign in"
-					className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
-				/>
+				<motion.div whileHover={{ scale: 1.02 }}>
+					<Button
+						label="Sign in"
+						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
+					/>
+				</motion.div>
 
-				<p className="text-sm text-center text-[var(--text-color-secondary)] pt-6">
+				<motion.p
+					initial={{ opacity: 0, y: 10 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.4, delay: 0.2 }}
+					className="text-sm text-center text-[var(--text-color-secondary)] pt-6"
+				>
 					Don't have an account?{" "}
 					<Link
 						to="/signup/student"
@@ -88,8 +99,14 @@ export default function SignInLandlord() {
 					>
 						Signup
 					</Link>
-				</p>
-				<p className="text-sm text-center text-[var(--text-color-secondary)]">
+				</motion.p>
+
+				<motion.p
+					initial={{ opacity: 0, y: 10 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.4, delay: 0.3 }}
+					className="text-sm text-center text-[var(--text-color-secondary)]"
+				>
 					Forgot your password?{" "}
 					<Link
 						to="/resetpassword"
@@ -97,8 +114,8 @@ export default function SignInLandlord() {
 					>
 						Reset Password
 					</Link>
-				</p>
-			</form>
+				</motion.p>
+			</motion.form>
 		</div>
 	);
 }

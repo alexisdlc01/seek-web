@@ -58,36 +58,40 @@ const BasicInfoStep = ({
 						/>
 					</div>
 				</div>
-				<div className="flex flex-col">
-					<label
-						htmlFor="propertyType"
-						className="font-medium mb-2"
-					>
-						Property Type
-					</label>
-					<Dropdown
-						id="propertyType"
-						value={propertyType}
-						options={propertyTypes}
-						onChange={e => setPropertyType(e.value)}
-						placeholder="Select a Type"
-					/>
-				</div>
-				{propertyType === "Other (please specify)" && (
+				<div
+					className={`grid grid-cols-1 ${propertyType === "Other (please specify)" ? "md:grid-cols-2" : ""} gap-4`}
+				>
 					<div className="flex flex-col">
 						<label
-							htmlFor="otherType"
+							htmlFor="propertyType"
 							className="font-medium mb-2"
 						>
-							Please Specify Type
+							Property Type
 						</label>
-						<InputText
-							id="otherType"
-							value={otherType}
-							onChange={e => setOtherType(e.target.value)}
+						<Dropdown
+							id="propertyType"
+							value={propertyType}
+							options={propertyTypes}
+							onChange={e => setPropertyType(e.value)}
+							placeholder="Select a Type"
 						/>
 					</div>
-				)}
+					{propertyType === "Other (please specify)" && (
+						<div className="flex flex-col">
+							<label
+								htmlFor="otherType"
+								className="font-medium mb-2"
+							>
+								Please Specify Type
+							</label>
+							<InputText
+								id="otherType"
+								value={otherType}
+								onChange={e => setOtherType(e.target.value)}
+							/>
+						</div>
+					)}
+				</div>
 				<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 					<div className="flex flex-col">
 						<label
@@ -124,7 +128,7 @@ const BasicInfoStep = ({
 							htmlFor="bathrooms"
 							className="font-medium mb-2"
 						>
-							Bathrooms
+							Bathrooms (Not including en-suites)
 						</label>
 						<Dropdown
 							id="bathrooms"
@@ -140,7 +144,7 @@ const BasicInfoStep = ({
 						htmlFor="description"
 						className="font-medium mb-2"
 					>
-						Description
+						Description of Property
 					</label>
 					<InputTextarea
 						id="description"

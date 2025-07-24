@@ -72,6 +72,20 @@ export const UserProvider = ({ children }) => {
 		setUser(null);
 	};
 
+	const signup = async (name, email, password) => {
+		await axios.post(
+			"/api/auth/signup",
+			{
+				name,
+				email,
+				password
+			},
+			{
+				withCredentials: true
+			}
+		);
+	};
+
 	return (
 		<UserContext.Provider value={{ user, loading, login, logout }}>
 			{children}

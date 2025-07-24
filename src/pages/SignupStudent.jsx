@@ -10,6 +10,7 @@ export default function SignUpLandlord() {
 	const [pwd, setPwd] = useState("");
 	const [confirmPwd, setConfirmPwd] = useState("");
 	const [confirm, setConfirm] = useState("");
+	const [name, setName] = useState("");
 
 	return (
 		<div className="min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
@@ -18,6 +19,17 @@ export default function SignUpLandlord() {
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Create Student Account
 				</h1>
+				<FloatLabel className="p-float-label mt-5">
+					<div className="p-inputgroup w-full">
+						<InputText
+							id="name"
+							value={name}
+							onChange={e => setName(e.target.value)}
+							className="flex-1"
+						/>
+					</div>
+					<label htmlFor="name">Name</label>
+				</FloatLabel>
 				<FloatLabel className="p-float-label mt-5">
 					<div className="p-inputgroup w-full">
 						<InputText

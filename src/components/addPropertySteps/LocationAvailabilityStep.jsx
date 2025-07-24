@@ -142,7 +142,7 @@ const LocationAvailabilityStep = ({
 					</div>
 				</div>
 			</div>
-			<div className="flex pt-4 justify-between">
+			<div className="flex pt-8 justify-between">
 				<Button
 					label="Back"
 					severity="secondary"

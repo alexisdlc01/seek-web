@@ -176,7 +176,7 @@ const BasicInfoStep = ({
 					</div>
 				</div>
 			</div>
-			<div className="flex pt-4 justify-end">
+			<div className="flex pt-8 justify-end">
 				<Button
 					label="Next"
 					icon="pi pi-arrow-right"

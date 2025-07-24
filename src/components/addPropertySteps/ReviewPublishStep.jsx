@@ -10,7 +10,7 @@ const ReviewPublishStep = ({ back, publish }) => {
 					Please review all information before publishing.
 				</div>
 			</div>
-			<div className="flex pt-4 justify-between">
+			<div className="flex pt-8 justify-between">
 				<Button
 					label="Back"
 					severity="secondary"

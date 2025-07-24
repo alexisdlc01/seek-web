@@ -65,6 +65,8 @@ const AddProperty = () => {
 	const [rent, setRent] = useState(null);
 	const [deposit, setDeposit] = useState(null);
 	const [availabilityDate, setAvailabilityDate] = useState(null);
+	const [endAvailabilityDate, setEndAvailabilityDate] = useState(null);
+
 	const leaseOptions = [
 		{ label: "12 Months", value: "12 Months" },
 		{ label: "Academic Year (Approx 9-10 Months)", value: "Academic Year" },
@@ -232,8 +234,8 @@ const AddProperty = () => {
 						setDeposit={setDeposit}
 						availabilityDate={availabilityDate}
 						setAvailabilityDate={setAvailabilityDate}
-						leaseDuration={leaseDuration}
-						setLeaseDuration={setLeaseDuration}
+						endAvailabilityDate={endAvailabilityDate}
+						setEndAvailabilityDate={setEndAvailabilityDate}
 						leaseOptions={leaseOptions}
 						back={back}
 						next={next}

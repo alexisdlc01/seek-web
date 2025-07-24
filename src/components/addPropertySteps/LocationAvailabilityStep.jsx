@@ -20,6 +20,8 @@ const LocationAvailabilityStep = ({
 	deposit,
 	setDeposit,
 	availabilityDate,
+	endAvailabilityDate,
+	setEndAvailabilityDate,
 	setAvailabilityDate,
 	leaseDuration,
 	setLeaseDuration,
@@ -126,17 +128,16 @@ const LocationAvailabilityStep = ({
 					</div>
 					<div className="flex flex-col">
 						<label
-							htmlFor="leaseDuration"
+							htmlFor="availabilityDate"
 							className="font-medium mb-2"
 						>
-							Lease Duration
+							Available Untill
 						</label>
-						<Dropdown
-							id="leaseDuration"
-							value={leaseDuration}
-							options={leaseOptions}
-							onChange={e => setLeaseDuration(e.value)}
-							placeholder="Select a duration"
+						<Calendar
+							id="availabilityDate"
+							value={endAvailabilityDate}
+							onChange={e => setEndAvailabilityDate(e.value)}
+							showIcon
 						/>
 					</div>
 				</div>

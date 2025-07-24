@@ -3,11 +3,11 @@ import { Stepper } from "primereact/stepper";
 import { StepperPanel } from "primereact/stepperpanel";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import BasicInfoStep from "../components/BasicInfoStep";
-import LocationAvailabilityStep from "../components/LocationAvailabilityStep";
-import FeaturesStep from "../components/FeaturesStep";
-import PhotosMediaStep from "../components/PhotosMediaStep";
-import ReviewPublishStep from "../components/ReviewPublishStep";
+import BasicInfoStep from "../components/addPropertySteps/BasicInfoStep";
+import LocationAvailabilityStep from "../components/addPropertySteps/LocationAvailabilityStep";
+import FeaturesStep from "../components/addPropertySteps/FeaturesStep";
+import PhotosMediaStep from "../components/addPropertySteps/PhotosMediaStep";
+import ReviewPublishStep from "../components/addPropertySteps/ReviewPublishStep";
 
 const AddProperty = () => {
 	const toast = useRef(null);

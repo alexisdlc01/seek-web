@@ -1,12 +1,12 @@
 import React from "react";
 import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
-import properties from "../dummyData/dummyLandlordProperties";
+import properties from "../dummyData/DummyListings";
 import houseImage from "../assets/house.jpg";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
-export default function Landlord() {
+export default function Listings() {
 	const navigate = useNavigate();
 
 	return (

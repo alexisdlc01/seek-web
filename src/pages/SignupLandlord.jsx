@@ -66,7 +66,7 @@ export default function SignUpLandlord() {
 					<Button
 						label="Create Account"
 						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
-						onClick={() => navigate("/landlord")}
+						onClick={() => navigate("/listings")}
 					/>
 				</motion.div>
 
@@ -82,7 +82,7 @@ export default function SignUpLandlord() {
 							label="Sign up with Google"
 							icon="pi pi-google"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
-							onClick={() => navigate("/landlord")}
+							onClick={() => navigate("/listings")}
 						/>
 					</motion.div>
 					<motion.div whileHover={{ scale: 1.02 }}>
@@ -90,7 +90,7 @@ export default function SignUpLandlord() {
 							label="Sign up with Apple"
 							icon="pi pi-apple"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
-							onClick={() => navigate("/landlord")}
+							onClick={() => navigate("/listings")}
 						/>
 					</motion.div>
 				</div>

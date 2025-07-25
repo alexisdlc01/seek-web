@@ -2,17 +2,18 @@ import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 const UserContext = createContext(undefined);
 
 export default UserContext;
-
 export const UserProvider = ({ children }) => {
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 
 	const fetchUser = async () => {
-		const res = await axios.get("/api/auth/currentUser", {
+		const res = await axios.get(`${BASE_URL}/auth/currentUser`, {
 			withCredentials: true
 		});
 		return res.data;
@@ -20,7 +21,7 @@ export const UserProvider = ({ children }) => {
 
 	const refreshAccessToken = async () => {
 		await axios.post(
-			"/api/auth/refresh",
+			`${BASE_URL}/auth/refresh`,
 			{},
 			{
 				withCredentials: true
@@ -50,7 +51,7 @@ export const UserProvider = ({ children }) => {
 
 	const login = async (email, password) => {
 		await axios.post(
-			"/api/auth/login",
+			`${BASE_URL}/auth/login`,
 			{ email, password },
 			{
 				withCredentials: true
@@ -63,7 +64,7 @@ export const UserProvider = ({ children }) => {
 
 	const logout = async () => {
 		await axios.post(
-			"/api/auth/logout",
+			`${BASE_URL}/auth/logout`,
 			{},
 			{
 				withCredentials: true

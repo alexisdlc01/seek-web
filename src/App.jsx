@@ -9,15 +9,19 @@ import SignUpLandlord from "./pages/SignupLandlord";
 import SignInLandlord from "./pages/SigninLandlord";
 import SignInStudent from "./pages/SigninStudent";
 import SignUpStudent from "./pages/SignupStudent";
+import AddProperty from "./pages/AddProperty";
 import ResetPassword from "./pages/ResetPassword";
-import Landlord from "./pages/Landlord";
+import Listings from "./pages/Listings";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const NotFound = () => {
 	const navigate = useNavigate();
+
+
 	return (
 		<div className="flex flex-col items-center justify-center h-screen text-center">
 			<h1 className="text-4xl font-bold mb-4">404 - Page Not Found</h1>
@@ -47,7 +51,8 @@ function App() {
 				<Route path="/signup/student" element={<SignUpStudent />} />
 				<Route path="/signin/landlord" element={<SignInLandlord />} />
 				<Route path="/signin/student" element={<SignInStudent />} />
-				<Route path="/landlord" element={<Landlord />} />
+				<Route path="/listings" element={<Listings />} />
+				<Route path="/addproperty" element={<AddProperty />} />
 				<Route path="/resetpassword" element={<ResetPassword />} />
 				<Route path="/security" element={<Security />} />
 				<Route path="*" element={<NotFound />} />

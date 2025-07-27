@@ -2,9 +2,12 @@ import React from "react";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import CountUp from "react-countup";
+import { useState } from "react";
 
 export default function LandingPage() {
 	const navigate = useNavigate();
+	const [showPlus, setShowPlus] = useState(false);
 
 	return (
 		<div className="min-h-screen flex flex-col">
@@ -109,6 +112,34 @@ export default function LandingPage() {
 					/>
 				</motion.div>
 			</motion.section>
+
+
+			{/* Stats Section */}
+			<motion.section
+				initial={{ opacity: 0, y: 30 }}
+				whileInView={{ opacity: 1, y: 0 }}
+				viewport={{ once: true }}
+				transition={{ duration: 0.6 }}
+				className="py-16 bg-white text-center"
+			>
+				<h2 className="text-2xl md:text-3xl font-bold mb-6 text-[var(--text-color)]">
+					Trusted by Over
+				</h2>
+				<div className="text-5xl font-extrabold text-[var(--primary-color)]">
+					<CountUp
+						end={100}
+						duration={1}
+						enableScrollSpy
+						onEnd={() => setShowPlus(true)}
+					/>
+					{showPlus && "+"}
+				</div>
+
+				<p className="text-[var(--text-color-secondary)] mt-2">
+					Landlords nationwide
+				</p>
+			</motion.section>
+
 		</div>
 	);
 }

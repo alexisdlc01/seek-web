@@ -103,7 +103,7 @@ export default function LandingPage() {
 					Ready to Get Started?
 				</h2>
 				<p className="text-[var(--text-color-secondary)] mb-4">
-					Join thousands of students and landlords already using Seek
+					Connect with thousands of students and landlords and use Seek
 				</p>
 				<motion.div whileHover={{ scale: 1.05 }}>
 					<Button
@@ -112,7 +112,6 @@ export default function LandingPage() {
 					/>
 				</motion.div>
 			</motion.section>
-
 
 			{/* Stats Section */}
 			<motion.section
@@ -139,7 +138,6 @@ export default function LandingPage() {
 					Landlords nationwide
 				</p>
 			</motion.section>
-
 		</div>
 	);
 }

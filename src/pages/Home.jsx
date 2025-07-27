@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import { useState } from "react";
+import Steps from "../components/Steps";
 
 export default function LandingPage() {
 	const navigate = useNavigate();
@@ -55,6 +56,17 @@ export default function LandingPage() {
 				</div>
 			</motion.section>
 
+			<section className="bg-white py-12 text-center">
+				<h2 className="text-3xl md:text-4xl font-bold text-[var(--text-color)]">
+					How It Works
+				</h2>
+				<p className="mt-2 text-lg text-[var(--text-color-secondary)]">
+					A quick breakdown of the process for students and landlords
+				</p>
+			</section>
+
+			<Steps />
+
 			{/* Features Section */}
 			<motion.section
 				initial={{ opacity: 0, y: 30 }}
@@ -103,7 +115,6 @@ export default function LandingPage() {
 					))}
 				</div>
 			</motion.section>
-
 			{/* Call to Action */}
 			<motion.section
 				initial={{ opacity: 0 }}
@@ -126,7 +137,6 @@ export default function LandingPage() {
 					/>
 				</motion.div>
 			</motion.section>
-
 			{/* Stats Section */}
 			<motion.section
 				initial={{ opacity: 0, y: 30 }}

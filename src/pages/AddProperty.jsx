@@ -185,95 +185,97 @@ const AddProperty = () => {
 	return (
 		<div className="min-h-screen bg-white p-4 md:p-6">
 			<Toast ref={toast} />
-			<Stepper
-				ref={stepperRef}
-				activeIndex={step}
-				onStepChange={e => setStep(e.index)}
-				linear
-			>
-				<StepperPanel header="Basic Info">
-					<BasicInfoStep
-						title={title}
-						setTitle={setTitle}
-						sizeSqM={sizeSqM}
-						setSizeSqM={setSizeSqM}
-						propertyType={propertyType}
-						setPropertyType={setPropertyType}
-						propertyTypes={propertyTypes}
-						otherType={otherType}
-						setOtherType={setOtherType}
-						regularBedrooms={regularBedrooms}
-						setRegularBedrooms={setRegularBedrooms}
-						ensuiteBedrooms={ensuiteBedrooms}
-						setEnsuiteBedrooms={setEnsuiteBedrooms}
-						bedroomOptions={bedroomOptions}
-						bathrooms={bathrooms}
-						setBathrooms={setBathrooms}
-						bathroomOptions={bathroomOptions}
-						description={description}
-						setDescription={setDescription}
-						amenities={amenities}
-						onAmenityChange={onAmenityChange}
-						amenitiesList={amenitiesList}
-						next={next}
-					/>
-				</StepperPanel>
-				<StepperPanel header="Location & Availability">
-					<LocationAvailabilityStep
-						street={street}
-						setStreet={setStreet}
-						city={city}
-						setCity={setCity}
-						postcode={postcode}
-						setPostcode={setPostcode}
-						country={country}
-						setCountry={setCountry}
-						rent={rent}
-						setRent={setRent}
-						deposit={deposit}
-						setDeposit={setDeposit}
-						availabilityDate={availabilityDate}
-						setAvailabilityDate={setAvailabilityDate}
-						endAvailabilityDate={endAvailabilityDate}
-						setEndAvailabilityDate={setEndAvailabilityDate}
-						leaseOptions={leaseOptions}
-						back={back}
-						next={next}
-					/>
-				</StepperPanel>
-				<StepperPanel header="Features">
-					<FeaturesStep
-						furnishingStatus={furnishingStatus}
-						setFurnishingStatus={setFurnishingStatus}
-						furnishingOptions={furnishingOptions}
-						epcRating={epcRating}
-						setEpcRating={setEpcRating}
-						epcOptions={epcOptions}
-						back={back}
-						next={next}
-					/>
-				</StepperPanel>
-				<StepperPanel header="Photos & Media">
-					<PhotosMediaStep
-						photos={photos}
-						videoLink={videoLink}
-						setVideoLink={setVideoLink}
-						floorPlan={floorPlan}
-						setFloorPlan={setFloorPlan}
-						fileInputRef={fileInputRef}
-						floorPlanInputRef={floorPlanInputRef}
-						onPhotoSelect={onPhotoSelect}
-						onDragStart={onDragStart}
-						onDrop={onDrop}
-						removePhoto={removePhoto}
-						back={back}
-						next={next}
-					/>
-				</StepperPanel>
-				<StepperPanel header="Review & Publish">
-					<ReviewPublishStep back={back} publish={publish} />
-				</StepperPanel>
-			</Stepper>
+			<div className="w-full 2xl:max-w-[60%] xl:max-w-[70%] lg:max-w-[80%] mx-auto">
+				<Stepper
+					ref={stepperRef}
+					activeIndex={step}
+					onStepChange={e => setStep(e.index)}
+					linear
+				>
+					<StepperPanel header="Basic Info">
+						<BasicInfoStep
+							title={title}
+							setTitle={setTitle}
+							sizeSqM={sizeSqM}
+							setSizeSqM={setSizeSqM}
+							propertyType={propertyType}
+							setPropertyType={setPropertyType}
+							propertyTypes={propertyTypes}
+							otherType={otherType}
+							setOtherType={setOtherType}
+							regularBedrooms={regularBedrooms}
+							setRegularBedrooms={setRegularBedrooms}
+							ensuiteBedrooms={ensuiteBedrooms}
+							setEnsuiteBedrooms={setEnsuiteBedrooms}
+							bedroomOptions={bedroomOptions}
+							bathrooms={bathrooms}
+							setBathrooms={setBathrooms}
+							bathroomOptions={bathroomOptions}
+							description={description}
+							setDescription={setDescription}
+							amenities={amenities}
+							onAmenityChange={onAmenityChange}
+							amenitiesList={amenitiesList}
+							next={next}
+						/>
+					</StepperPanel>
+					<StepperPanel header="Location & Availability">
+						<LocationAvailabilityStep
+							street={street}
+							setStreet={setStreet}
+							city={city}
+							setCity={setCity}
+							postcode={postcode}
+							setPostcode={setPostcode}
+							country={country}
+							setCountry={setCountry}
+							rent={rent}
+							setRent={setRent}
+							deposit={deposit}
+							setDeposit={setDeposit}
+							availabilityDate={availabilityDate}
+							setAvailabilityDate={setAvailabilityDate}
+							endAvailabilityDate={endAvailabilityDate}
+							setEndAvailabilityDate={setEndAvailabilityDate}
+							leaseOptions={leaseOptions}
+							back={back}
+							next={next}
+						/>
+					</StepperPanel>
+					<StepperPanel header="Features">
+						<FeaturesStep
+							furnishingStatus={furnishingStatus}
+							setFurnishingStatus={setFurnishingStatus}
+							furnishingOptions={furnishingOptions}
+							epcRating={epcRating}
+							setEpcRating={setEpcRating}
+							epcOptions={epcOptions}
+							back={back}
+							next={next}
+						/>
+					</StepperPanel>
+					<StepperPanel header="Photos & Media">
+						<PhotosMediaStep
+							photos={photos}
+							videoLink={videoLink}
+							setVideoLink={setVideoLink}
+							floorPlan={floorPlan}
+							setFloorPlan={setFloorPlan}
+							fileInputRef={fileInputRef}
+							floorPlanInputRef={floorPlanInputRef}
+							onPhotoSelect={onPhotoSelect}
+							onDragStart={onDragStart}
+							onDrop={onDrop}
+							removePhoto={removePhoto}
+							back={back}
+							next={next}
+						/>
+					</StepperPanel>
+					<StepperPanel header="Review & Publish">
+						<ReviewPublishStep back={back} publish={publish} />
+					</StepperPanel>
+				</Stepper>
+			</div>
 		</div>
 	);
 };

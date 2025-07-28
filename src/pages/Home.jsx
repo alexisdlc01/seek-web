@@ -30,7 +30,6 @@ export default function LandingPage() {
 					Your browser does not support the background video.
 				</video>
 
-				{/* Overlay */}
 				<div className="relative z-10 text-white max-w-2xl">
 					<h1 className="text-3xl md:text-5xl font-bold mb-4 drop-shadow-lg">
 						Find Your Perfect Student Home with Seek
@@ -56,60 +55,67 @@ export default function LandingPage() {
 					</div>
 				</div>
 			</motion.section>
-<section className="py-20 bg-gray-50">
-			<div className="max-w-6xl mx-auto px-4 text-center">
-				<motion.h2
-					initial={{ opacity: 0, y: 40 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					viewport={{ once: true }}
-					transition={{ duration: 0.6 }}
-					className="text-4xl font-bold text-[var(--text-color)] mb-8"
-				>
-					Why Landlords Choose Us
-				</motion.h2>
+			<section className="py-20 bg-gray-50">
+				<div className="max-w-6xl mx-auto px-4 text-center">
+					<motion.h2
+						initial={{ opacity: 0, y: 40 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6 }}
+						className="text-4xl font-bold text-[var(--text-color)] mb-8"
+					>
+						Features
+					</motion.h2>
 
-				<motion.p
-					initial={{ opacity: 0 }}
-					whileInView={{ opacity: 1 }}
-					viewport={{ once: true }}
-					transition={{ delay: 0.2, duration: 0.6 }}
-					className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
-				>
-					We’re not just another letting agency. We offer tailored solutions, lower fees, better support, and data-backed tools that help you maximize income and minimize stress.
-				</motion.p>
+					<motion.p
+						initial={{ opacity: 0 }}
+						whileInView={{ opacity: 1 }}
+						viewport={{ once: true }}
+						transition={{ delay: 0.2, duration: 0.6 }}
+						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
+					>
+						We have lots of features to help you find the perfect
+						student accommodation or manage your properties.
 
-				<div className="grid md:grid-cols-3 gap-10 text-left">
-					{[
-						{
-							title: "Lower Fees, No Compromise",
-							body: "Our transparent pricing saves you money without sacrificing service quality. No hidden costs, ever."
-						},
-						{
-							title: "Real-Time Insights",
-							body: "Track rent, maintenance, and tenant feedback with live dashboards designed for proactive property management."
-						},
-						{
-							title: "Expert Human Support",
-							body: "Chat with real people who know your property. We resolve issues fast—so you don’t have to."
-						}
-					].map((card, i) => (
-						<motion.div
-							key={i}
-							initial={{ opacity: 0, y: 20 }}
-							whileInView={{ opacity: 1, y: 0 }}
-							viewport={{ once: true }}
-							transition={{ delay: i * 0.2, duration: 0.5 }}
-							className="bg-white shadow-xl rounded-2xl p-6"
-						>
-							<h3 className="text-xl font-semibold text-[var(--primary-color)] mb-2">
-								{card.title}
-							</h3>
-							<p className="text-[var(--text-color-secondary)]">{card.body}</p>
-						</motion.div>
-					))}
+						Likely another paragraph here about the features of the platform.
+
+						Text here could be longer if you wanted I suppose.
+					</motion.p>
+
+					<div className="grid md:grid-cols-3 gap-10 text-left">
+						{[
+							{
+								title: "Feature 1 Title",
+								body: "Feature 1 description goes here. This should be a brief overview of what the feature does and how it benefits users."
+							},
+							{
+								title: "Feature 2 Title",
+								body: "Feature 2 description goes here. This should be a brief overview of what the feature does and how it benefits users."
+							},
+							{
+								title: "Feature 3 Title",
+								body: "Feature 3 description goes here. This should be a brief overview of what the feature does and how it benefits users."
+							}
+						].map((card, i) => (
+							<motion.div
+								key={i}
+								initial={{ opacity: 0, y: 20 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								viewport={{ once: true }}
+								transition={{ delay: i * 0.2, duration: 0.5 }}
+								className="bg-white shadow-xl rounded-2xl p-6"
+							>
+								<h3 className="text-xl font-semibold text-[var(--primary-color)] mb-2">
+									{card.title}
+								</h3>
+								<p className="text-[var(--text-color-secondary)]">
+									{card.body}
+								</p>
+							</motion.div>
+						))}
+					</div>
 				</div>
-			</div>
-		</section>
+			</section>
 			<section className="bg-white py-12 text-center">
 				<div className="mx-auto px-4 sm:px-6 max-w-2xl">
 					<h2 className="text-3xl md:text-4xl font-bold text-[var(--text-color)]">
@@ -124,7 +130,6 @@ export default function LandingPage() {
 
 			<Steps />
 
-			{/* Features Section */}
 			<motion.section
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -154,7 +159,10 @@ export default function LandingPage() {
 							initial={{ opacity: 0, y: 20 }}
 							whileInView={{ opacity: 1, y: 0 }}
 							viewport={{ once: true }}
-							transition={{ duration: 0.5, delay: idx * 0.2 }}
+							transition={{
+								duration: 0.5,
+								delay: idx * 0.2
+							}}
 						>
 							<div className="flex justify-center mb-3">
 								<motion.span
@@ -172,7 +180,6 @@ export default function LandingPage() {
 					))}
 				</div>
 			</motion.section>
-			{/* Call to Action */}
 			<motion.section
 				initial={{ opacity: 0 }}
 				whileInView={{ opacity: 1 }}
@@ -195,8 +202,6 @@ export default function LandingPage() {
 				</motion.div>
 			</motion.section>
 
-			{/* Stats Section */}
-
 			<motion.section
 				initial={{ opacity: 0, y: 30 }}
 				whileInView={{ opacity: 1, y: 0 }}
@@ -209,7 +214,6 @@ export default function LandingPage() {
 				</h2>
 
 				<div className="flex flex-col md:flex-row justify-center gap-y-10 gap-x-8 sm:gap-x-12 md:gap-x-16 lg:gap-x-24 xl:gap-x-40 2xl:gap-x-60">
-					{/* Stat 1 */}
 					<div>
 						<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
 							<CountUp end={50} duration={1} enableScrollSpy />
@@ -220,7 +224,6 @@ export default function LandingPage() {
 						</p>
 					</div>
 
-					{/* Stat 2 */}
 					<div>
 						<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
 							<CountUp end={1000} duration={1} enableScrollSpy />
@@ -231,7 +234,6 @@ export default function LandingPage() {
 						</p>
 					</div>
 
-					{/* Stat 3 */}
 					<div>
 						<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
 							<CountUp end={500} duration={1} enableScrollSpy />

@@ -8,6 +8,7 @@ import UserContext from "../context/UserContext.jsx";
 export default function Navbar() {
 	const navigate = useNavigate();
 	const { user, logout } = useContext(UserContext);
+	const [menuKey, setMenuKey] = useState(0);
 	const loggedIn = !!user;
 
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -68,7 +69,6 @@ export default function Navbar() {
 		? [
 				{ label: "Home", command: () => navigate("/") },
 				{ label: "About", command: () => navigate("/about") },
-				{ label: "For Landlords", command: () => navigate("/help") },
 				{ label: "Help", command: () => navigate("/help") },
 				{
 					label: "Login As Student",
@@ -82,7 +82,6 @@ export default function Navbar() {
 		: [
 				{ label: "Home", command: () => navigate("/") },
 				{ label: "About", command: () => navigate("/about") },
-				{ label: "For Landlords" },
 				{ label: "Help", command: () => navigate("/help") },
 				{ separator: true, className: "ml-4" },
 				{

@@ -13,7 +13,7 @@ import AddProperty from "./pages/AddProperty";
 import ResetPassword from "./pages/ResetPassword";
 import Listings from "./pages/Listings";
 import ActivationSent from "./pages/ActivationSent";
-import VerifyingEmail from "./pages/VerifyingEmail.jsx";		
+import VerifyingEmail from "./pages/VerifyingEmail.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import { Button } from "primereact/button";
@@ -49,7 +49,7 @@ function App() {
 					initial={{ opacity: 0, y: 10 }}
 					animate={{ opacity: 1, y: 0 }}
 					exit={{ opacity: 0, y: 5 }}
-					transition={{ duration: .2 }}
+					transition={{ duration: 0.2 }}
 				>
 					<Routes location={location}>
 						<Route path="/" element={<Home />} />
@@ -81,11 +81,11 @@ function App() {
 							element={<ResetPassword />}
 						/>
 						<Route
-							path="/activationsent"
+							path="/activationSent"
 							element={<ActivationSent />}
 						/>
 						<Route
-							path="/verifyingemail"
+							path="/verify-email"
 							element={<VerifyingEmail />}
 						/>
 						<Route path="/security" element={<Security />} />

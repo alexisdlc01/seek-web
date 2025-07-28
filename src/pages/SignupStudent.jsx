@@ -17,7 +17,7 @@ export default function SignUpLandlord() {
 	const navigate = useNavigate();
 	const toast = useRef(null);
 
-	const showError = (detail) => {
+	const showError = detail => {
 		toast.current.show({
 			severity: "error",
 			summary: "Error",
@@ -30,12 +30,14 @@ export default function SignUpLandlord() {
 		const nameParts = name.trim().split(/\s+/);
 
 		if (nameParts.length !== 2) {
-			showError("Please enter exactly your first and last name, eg: Tom Flag");
+			showError(
+				"Please enter exactly your first and last name, eg: Tom Flag"
+			);
 			return false;
 		} else {
 			return true;
 		}
-	}
+	};
 
 	const validateEmail = () => {
 		const regex = /^[a-zA-Z0-9._-]+$/;
@@ -46,7 +48,9 @@ export default function SignUpLandlord() {
 		}
 
 		if (!regex.test(email)) {
-			showError("Please enter only your email prefix (before @st-andrews.ac.uk)");
+			showError(
+				"Please enter only your email prefix (before @st-andrews.ac.uk)"
+			);
 			return false;
 		}
 
@@ -64,16 +68,19 @@ export default function SignUpLandlord() {
 			return false;
 		}
 
-		const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+		const strongPasswordRegex =
+			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 		if (!strongPasswordRegex.test(password)) {
-			showError("Password must be at least 8 characters, with uppercase, lowercase, number, and symbol.");
+			showError(
+				"Password must be at least 8 characters, with uppercase, lowercase, number, and symbol."
+			);
 			return false;
 		}
 
 		return true;
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async e => {
 		e.preventDefault();
 
 		if (!validateName()) return;
@@ -81,7 +88,7 @@ export default function SignUpLandlord() {
 		if (!validatePasswords()) return;
 
 		await signup(name, `${email}@st-andrews.ac.uk`, password, "STUDENT");
-		navigate("/");
+		navigate("/activationSent");
 	};
 
 	return (

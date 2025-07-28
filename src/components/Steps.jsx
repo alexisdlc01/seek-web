@@ -65,7 +65,7 @@ export default function Steps() {
 
 	return (
 		<div className="w-full">
-			<div className="relative mx-auto max-w-7xl lg:flex scroll-smooth">
+			<div className="mx-auto max-w-7xl lg:flex scroll-smooth">
 				{/* Start of left panel */}
 				<aside className="lg:w-80 shrink-0 lg:pr-8 lg:border-r border-[var(--surface-border)]">
 					{maxSeen >= 0 && (
@@ -74,7 +74,7 @@ export default function Steps() {
 								<button
 									key={s.title}
 									onClick={() => goTo(i)}
-									className="block w-full text-left py-3 px-1 font-semibold text-[var(--primary-color)] hover:bg-[var(--surface-b)] focus:outline-none"
+									className="py-3 px-1 text-left font-semibold text-[var(--primary-color)] hover:bg-[var(--surface-b)] focus:outline-none"
 								>
 									{s.title}
 								</button>
@@ -90,7 +90,7 @@ export default function Steps() {
 							key={s.title}
 							data-idx={i}
 							ref={el => (refs.current[i] = el)}
-							className="min-h-screen flex flex-col border-b border-[var(--surface-border)] last:border-b-0 max-w-7xl mx-auto py-12"
+							className="min-h-screen flex flex-col border-b border-[var(--surface-border)] last:border-b-0 py-12"
 						>
 							<div className="text-center mb-12 mt-6">
 								<h2 className="text-3xl md:text-4xl font-extrabold text-[var(--primary-color)]">
@@ -99,7 +99,7 @@ export default function Steps() {
 							</div>
 
 							<div className="flex flex-col md:flex-row gap-12 flex-grow">
-								{s.cards.slice(0, 2).map(card => (
+								{s.cards.map(card => (
 									<div
 										key={card.heading}
 										className="flex flex-col justify-between flex-1 bg-[var(--surface-b)] rounded-xl p-8 shadow-sm"

@@ -1,76 +1,37 @@
 import React, { useRef, useEffect, useState } from "react";
 
+const DUMMY_TEXT = `In the heart of a forgotten forest stood a glass greenhouse, untouched by time. Vines crawled its frame, yet inside it flourished with vibrant, impossible flora—flowers that shimmered like stars and leaves that whispered secrets when brushed by wind. No path led to it, and those who stumbled upon it could never retrace their steps. \nLegend told of an old botanist who had vanished after claiming he could grow memories. Some say the plants hold echoes of his life—fragments of love, sorrow, and joy blooming eternally. Every decade, a wanderer finds the greenhouse and hears their own forgotten story among the petals. Then, like the botanist, they stay—rooted in wonder, part of the garden, never to be seen again.`;
 const STEPS = [
 	{
 		title: "Step 1 Title",
-		heading: "Create your account",
+		heading: "Step 1 Heading",
 		cards: [
-			{
-				heading: "Quick Sign-up",
-				body: "Sign up using your student email in seconds."
-			},
-			{
-				heading: "Verify Email",
-				body: "Confirm your identity through a secure link."
-			},
-			{
-				heading: "Set Preferences",
-				body: "Customize your profile to get relevant listings."
-			}
+			{ heading: "Sub Info 1 A", body: DUMMY_TEXT },
+			{ heading: "Sub Info 1 B", body: DUMMY_TEXT }
 		]
 	},
 	{
 		title: "Step 2 Title",
-		heading: "Search listings",
+		heading: "Step 2 Heading",
 		cards: [
-			{
-				heading: "Use Filters",
-				body: "Narrow down by price, size, and amenities."
-			},
-			{
-				heading: "Interactive Map",
-				body: "View listings by location on the map."
-			},
-			{
-				heading: "Save Favorites",
-				body: "Bookmark listings you like to view later."
-			}
+			{ heading: "Sub Info 2 A", body: DUMMY_TEXT },
+			{ heading: "Sub Info 2 B", body: DUMMY_TEXT }
 		]
 	},
 	{
 		title: "Step 3 Title",
-		heading: "Apply & communicate",
+		heading: "Step 3 Heading",
 		cards: [
-			{
-				heading: "One-click Apply",
-				body: "Apply directly within the platform."
-			},
-			{
-				heading: "Secure Messaging",
-				body: "Talk to landlords without sharing your personal info."
-			},
-			{
-				heading: "Track Status",
-				body: "Know when your application is viewed or accepted."
-			}
+			{ heading: "Sub Info 3 A", body: DUMMY_TEXT },
+			{ heading: "Sub Info 3 B", body: DUMMY_TEXT }
 		]
 	},
 	{
 		title: "Step 4 Title",
-		heading: "Secure down‑payment",
+		heading: "Step 4 Heading",
 		cards: [
-			{
-				heading: "Reserve Property",
-				body: "Lock in your spot with a small deposit."
-			},
-			{
-				heading: "Digital Contract",
-				body: "Sign everything online — no printing needed."
-			},
-			{
-				heading: "Get Ready to Move",
-				body: "Checklists and reminders to prepare you."
-			}
+			{ heading: "Sub Info 4 A", body: DUMMY_TEXT },
+			{ heading: "Sub Info 4 B", body: DUMMY_TEXT }
 		]
 	}
 ];
@@ -107,11 +68,9 @@ export default function Steps() {
 		<div className="w-full">
 			<div className="relative mx-auto max-w-7xl lg:flex scroll-smooth">
 				{/* LEFT sticky list */}
-				{/* LEFT sticky list */}
-				{/* LEFT sticky list */}
 				<aside
 					className="
-    lg:w-60 shrink-0 lg:pr-8
+    lg:w-80 shrink-0 lg:pr-8
     lg:border-r  border-[var(--surface-border)]  /* ← vertical divider */
   "
 				>
@@ -157,20 +116,20 @@ export default function Steps() {
 							</div>
 
 							{/* 2 cards per step */}
-							<div className="flex flex-col md:flex-row gap-6 flex-grow">
+							<div className="flex flex-col md:flex-row gap-12 flex-grow">
 								{s.cards.slice(0, 2).map(card => (
 									<div
 										key={card.heading}
 										className="
               flex flex-col justify-between
-              flex-1 bg-[var(--surface-b)] rounded-xl p-6 shadow-sm
+              flex-1 bg-[var(--surface-b)] rounded-xl p-8 shadow-sm
             "
 									>
 										<div>
-											<h3 className="mb-2 font-semibold text-[var(--primary-color)]">
+											<h3 className="mb-7 font-semibold text-[var(--primary-color)] text-lg md:text-xl">
 												{card.heading}
 											</h3>
-											<p className="text-[var(--text-color-secondary)]">
+											<p className="text-[var(--text-color-secondary)] text-base md:text-lg">
 												{card.body}
 											</p>
 										</div>

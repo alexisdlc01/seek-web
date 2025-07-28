@@ -64,7 +64,7 @@ export default function LandingPage() {
 						transition={{ duration: 0.6 }}
 						className="text-4xl font-bold text-[var(--text-color)] mb-8"
 					>
-						Why Landlords Choose Us
+						Some Text here
 					</motion.h2>
 
 					<motion.p
@@ -74,9 +74,10 @@ export default function LandingPage() {
 						transition={{ delay: 0.2, duration: 0.6 }}
 						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
 					>
-						We’re not just another letting agency. We offer tailored
-						solutions, lower fees, better support, and data-backed
-						tools that help you maximize income and minimize stress.
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+						Suspendisse potenti. Duis non tortor justo. Sed euismod,
+						nisi vel consectetur interdum, nisl nisi aliquet nunc,
+						nec aliquet nunc nisl euismod nisi.
 					</motion.p>
 
 					<div className="grid md:grid-cols-3 gap-10 text-left">
@@ -141,143 +142,6 @@ export default function LandingPage() {
 
 			<section className="py-20 bg-gray-50 h-[700px]">
 				<div className="max-w-6xl mx-auto px-4 text-center mb-16">
-					<h2 className="text-4xl font-bold text-[var(--text-color)] mb-4">
-						Why Landlords Choose Us
-					</h2>
-					<p className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto">
-						We’re not just another letting agency. We offer tailored
-						solutions, lower fees, better support, and data‑backed
-						tools that help you maximize income and minimize stress.
-					</p>
-				</div>
-
-				<div className="w-full h-full bg-gray-50 pointer-events-none">
-  <ReactFlow
-    style={{ width: "100%", height: "100%" }}
-    fitView
-    fitViewOptions={{ padding: 0.4 }}
-    nodesDraggable={false}
-    nodesConnectable={false}
-    elementsSelectable={false}
-    zoomOnScroll={false}
-    panOnScroll={false}
-    zoomOnPinch={false}
-    zoomOnDoubleClick={false}
-    panOnDrag={false}
-    proOptions={{ hideAttribution: true }}
-nodes={[
-  {
-    id: "1",
-    position: { x: 0, y: 0 },
-    data: {
-      label: (
-        <div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
-          <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
-            Lower Fees, No Compromise
-          </h3>
-          <p className="text-lg leading-relaxed text-[var(--text-color-secondary)]">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel felis eget nisl posuere blandit.
-          </p>
-        </div>
-      ),
-    },
-  },
-  {
-    id: "2",
-    position: { x: 320, y: 160 },
-    data: {
-      label: (
-        <div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
-          <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
-            Real-Time Insights
-          </h3>
-          <p className="text-lg leading-relaxed text-[var(--text-color-secondary)]">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent commodo enim non fermentum feugiat.
-          </p>
-        </div>
-      ),
-    },
-  },
-  {
-    id: "3",
-    position: { x: 640, y: 320 },
-    data: {
-      label: (
-        <div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
-          <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
-            Expert Human Support
-          </h3>
-          <p className="text-lg leading-relaxed text-[var(--text-color-secondary)]">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla in sem non eros malesuada tincidunt.
-          </p>
-        </div>
-      ),
-    },
-  },
-  {
-    id: "4",
-    position: { x: 320, y: 400 },
-    data: {
-      label: (
-        <div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
-          <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
-            AI-Powered Tools
-          </h3>
-          <p className="text-lg leading-relaxed text-[var(--text-color-secondary)]">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse potenti. Duis non tortor justo.
-          </p>
-        </div>
-      ),
-    },
-  },
-  {
-    id: "5",
-    position: { x: 0, y: 200 },
-    data: {
-      label: (
-        <div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
-          <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
-            Seamless Integration
-          </h3>
-          <p className="text-lg leading-relaxed text-[var(--text-color-secondary)]">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed facilisis elit vel diam dapibus, at convallis nisi interdum.
-          </p>
-        </div>
-      ),
-    },
-  },
-  {
-    id: "6",
-    position: { x: 640, y: 0 },
-    data: {
-      label: (
-        <div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
-          <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
-            Custom Reports
-          </h3>
-          <p className="text-lg leading-relaxed text-[var(--text-color-secondary)]">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed urna at justo cursus facilisis.
-          </p>
-        </div>
-      ),
-    },
-  },
-]}
-
-    edges={[
-      { id: "e1-2", source: "1", target: "2", type: "step", animated: true, style: { strokeWidth: 2, stroke: "var(--primary-color)" } },
-      { id: "e2-3", source: "2", target: "3", type: "step", animated: true, style: { strokeWidth: 2, stroke: "var(--primary-color)" } },
-      { id: "e2-4", source: "2", target: "4", type: "step", animated: true, style: { strokeWidth: 2, stroke: "var(--primary-color)" } },
-      { id: "e4-5", source: "4", target: "5", type: "step", animated: true, style: { strokeWidth: 2, stroke: "var(--primary-color)" } },
-      { id: "e4-6", source: "4", target: "6", type: "step", animated: true, style: { strokeWidth: 2, stroke: "var(--primary-color)" } },
-    ]}
-  />
-				</div>
-			</section>
-			<div className="h-16" />
-
-			<section className="text-center py-20 bg-white">
-				<div className="max-w-6xl mx-auto px-4 text-center">
 					<motion.h2
 						initial={{ opacity: 0, y: 40 }}
 						whileInView={{ opacity: 1, y: 0 }}
@@ -285,8 +149,9 @@ nodes={[
 						transition={{ duration: 0.6 }}
 						className="text-4xl font-bold text-[var(--text-color)] mb-8"
 					>
-						Ready to Get Started?
+						Some Text here
 					</motion.h2>
+
 					<motion.p
 						initial={{ opacity: 0 }}
 						whileInView={{ opacity: 1 }}
@@ -294,17 +159,164 @@ nodes={[
 						transition={{ delay: 0.2, duration: 0.6 }}
 						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
 					>
-						Connect with thousands of students and landlords. Create
-						an account today and find what you're looking for.
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+						Suspendisse potenti. Duis non tortor justo. Sed euismod,
+						nisi vel consectetur interdum, nisl nisi aliquet nunc,
+						nec aliquet nunc nisl euismod nisi.
 					</motion.p>
-					<motion.div whileHover={{ scale: 1.05 }}>
-						<Button
-							label="Sign Up Today"
-							className="bg-[var(--primary-color)] text-[var(--primary-color-text)] px-5 py-3 font-bold"
-						/>
-					</motion.div>
+				</div>
+
+				<div className="w-full h-full bg-gray-50 pointer-events-none">
+					<ReactFlow
+						style={{ width: "100%", height: "100%" }}
+						fitView
+						fitViewOptions={{ padding: 0.4 }}
+						nodesDraggable={false}
+						nodesConnectable={false}
+						elementsSelectable={false}
+						zoomOnScroll={false}
+						panOnScroll={false}
+						zoomOnPinch={false}
+						zoomOnDoubleClick={false}
+						panOnDrag={false}
+						proOptions={{ hideAttribution: true }}
+						nodes={[
+							{
+								id: "1",
+								position: { x: 0, y: 0 },
+								data: {
+									label: (
+										<div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
+											<h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+												Some Node
+											</h3>
+											<p className="text-2xl leading-relaxed text-[var(--text-color-secondary)]">
+												Lorem ipsum dolor sit amet,
+												consectetur adipiscing elit.
+												Quisque sed urna at justo cursus
+												facilisis.
+											</p>
+										</div>
+									)
+								}
+							},
+							{
+								id: "2",
+								position: { x: 800, y: 0 },
+								data: {
+									label: (
+										<div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
+											<h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+												Some Node
+											</h3>
+											<p className="text-2xl leading-relaxed text-[var(--text-color-secondary)]">
+												Lorem ipsum dolor sit amet,
+												consectetur adipiscing elit.
+												Quisque sed urna at justo cursus
+												facilisis.
+											</p>
+										</div>
+									)
+								}
+							},
+							{
+								id: "3",
+								position: { x: 0, y: 500 },
+								data: {
+									label: (
+										<div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
+											<h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+												Some Node
+											</h3>
+											<p className="text-2xl leading-relaxed text-[var(--text-color-secondary)]">
+												Lorem ipsum dolor sit amet,
+												consectetur adipiscing elit.
+												Quisque sed urna at justo cursus
+												facilisis.
+											</p>
+										</div>
+									)
+								}
+							},
+							{
+								id: "4",
+								position: { x: 800, y: 500 },
+								data: {
+									label: (
+										<div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
+											<h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+												Some Node
+											</h3>
+											<p className="text-2xl leading-relaxed text-[var(--text-color-secondary)]">
+												Lorem ipsum dolor sit amet,
+												consectetur adipiscing elit.
+												Quisque sed urna at justo cursus
+												facilisis.
+											</p>
+										</div>
+									)
+								}
+							},
+							{
+								id: "6",
+								position: { x: 400, y: 500 },
+								data: {
+									label: (
+										<div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
+											<h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+												Some Node
+											</h3>
+											<p className="text-2xl leading-relaxed text-[var(--text-color-secondary)]">
+												Lorem ipsum dolor sit amet,
+												consectetur adipiscing elit.
+												Quisque sed urna at justo cursus
+												facilisis.
+											</p>
+										</div>
+									)
+								}
+							}
+						]}
+						edges={[
+							{
+								id: "e1-2",
+								source: "1",
+								target: "2",
+								type: "step",
+								animated: true,
+								style: {
+									strokeWidth: 2,
+									stroke: "var(--primary-color)"
+								}
+							},
+							{
+								id: "e2-3",
+								source: "2",
+								target: "3",
+								type: "step",
+								animated: true,
+								style: {
+									strokeWidth: 2,
+									stroke: "var(--primary-color)"
+								}
+							},
+							{
+								id: "e2-4",
+								source: "2",
+								target: "4",
+								type: "step",
+								animated: true,
+								style: {
+									strokeWidth: 2,
+									stroke: "var(--primary-color)"
+								}
+							}
+						]}
+					/>
 				</div>
 			</section>
+			<div className="h-30" />
+
 			<section className="py-20 bg-gray-50">
 				<div className="max-w-6xl mx-auto px-4 text-center">
 					<motion.h2
@@ -371,6 +383,36 @@ nodes={[
 							</p>
 						</div>
 					</div>
+				</div>
+			</section>
+
+			<section className="text-center py-20 bg-white">
+				<div className="max-w-6xl mx-auto px-4 text-center">
+					<motion.h2
+						initial={{ opacity: 0, y: 40 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6 }}
+						className="text-4xl font-bold text-[var(--text-color)] mb-8"
+					>
+						Ready to Get Started?
+					</motion.h2>
+					<motion.p
+						initial={{ opacity: 0 }}
+						whileInView={{ opacity: 1 }}
+						viewport={{ once: true }}
+						transition={{ delay: 0.2, duration: 0.6 }}
+						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
+					>
+						Connect with thousands of students and landlords. Create
+						an account today and find what you're looking for.
+					</motion.p>
+					<motion.div whileHover={{ scale: 1.05 }}>
+						<Button
+							label="Sign Up Today"
+							className="bg-[var(--primary-color)] text-[var(--primary-color-text)] px-5 py-3 font-bold"
+						/>
+					</motion.div>
 				</div>
 			</section>
 		</div>

@@ -213,7 +213,7 @@ export default function LandingPage() {
 					<motion.div whileHover={{ scale: 1.05 }}>
 						<Button
 							label="Sign Up Today"
-							className="bg-[var(--primary-color)] text-[var(--primary-color-text)] px-5 py-3 font-semibold"
+							className="bg-[var(--primary-color)] text-[var(--primary-color-text)] px-5 py-3 font-bold"
 						/>
 					</motion.div>
 				</div>

@@ -25,7 +25,6 @@ export default function LandingPage() {
 					playsInline
 					className="absolute top-0 left-0 w-full h-full object-cover z-0"
 					onContextMenu={e => e.preventDefault()}
-
 				>
 					<source src="/dummy_background.mp4" type="video/mp4" />
 					Your browser does not support the background video.
@@ -57,18 +56,71 @@ export default function LandingPage() {
 					</div>
 				</div>
 			</motion.section>
+<section className="py-20 bg-gray-50">
+			<div className="max-w-6xl mx-auto px-4 text-center">
+				<motion.h2
+					initial={{ opacity: 0, y: 40 }}
+					whileInView={{ opacity: 1, y: 0 }}
+					viewport={{ once: true }}
+					transition={{ duration: 0.6 }}
+					className="text-4xl font-bold text-[var(--text-color)] mb-8"
+				>
+					Why Landlords Choose Us
+				</motion.h2>
 
-<section className="bg-white py-12 text-center">
-	<div className="mx-auto px-4 sm:px-6 max-w-2xl">
-		<h2 className="text-3xl md:text-4xl font-bold text-[var(--text-color)]">
-			How It Works
-		</h2>
-		<p className="mt-2 text-lg text-[var(--text-color-secondary)]">
-			A quick breakdown of the process for students and landlords
-		</p>
-	</div>
-</section>
+				<motion.p
+					initial={{ opacity: 0 }}
+					whileInView={{ opacity: 1 }}
+					viewport={{ once: true }}
+					transition={{ delay: 0.2, duration: 0.6 }}
+					className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
+				>
+					We’re not just another letting agency. We offer tailored solutions, lower fees, better support, and data-backed tools that help you maximize income and minimize stress.
+				</motion.p>
 
+				<div className="grid md:grid-cols-3 gap-10 text-left">
+					{[
+						{
+							title: "Lower Fees, No Compromise",
+							body: "Our transparent pricing saves you money without sacrificing service quality. No hidden costs, ever."
+						},
+						{
+							title: "Real-Time Insights",
+							body: "Track rent, maintenance, and tenant feedback with live dashboards designed for proactive property management."
+						},
+						{
+							title: "Expert Human Support",
+							body: "Chat with real people who know your property. We resolve issues fast—so you don’t have to."
+						}
+					].map((card, i) => (
+						<motion.div
+							key={i}
+							initial={{ opacity: 0, y: 20 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							viewport={{ once: true }}
+							transition={{ delay: i * 0.2, duration: 0.5 }}
+							className="bg-white shadow-xl rounded-2xl p-6"
+						>
+							<h3 className="text-xl font-semibold text-[var(--primary-color)] mb-2">
+								{card.title}
+							</h3>
+							<p className="text-[var(--text-color-secondary)]">{card.body}</p>
+						</motion.div>
+					))}
+				</div>
+			</div>
+		</section>
+			<section className="bg-white py-12 text-center">
+				<div className="mx-auto px-4 sm:px-6 max-w-2xl">
+					<h2 className="text-3xl md:text-4xl font-bold text-[var(--text-color)]">
+						How It Works
+					</h2>
+					<p className="mt-2 text-lg text-[var(--text-color-secondary)]">
+						A quick breakdown of the process for students and
+						landlords
+					</p>
+				</div>
+			</section>
 
 			<Steps />
 
@@ -142,7 +194,9 @@ export default function LandingPage() {
 					/>
 				</motion.div>
 			</motion.section>
+
 			{/* Stats Section */}
+
 			<motion.section
 				initial={{ opacity: 0, y: 30 }}
 				whileInView={{ opacity: 1, y: 0 }}
@@ -150,22 +204,44 @@ export default function LandingPage() {
 				transition={{ duration: 0.6 }}
 				className="py-16 bg-white text-center"
 			>
-				<h2 className="text-2xl md:text-3xl font-bold mb-6 text-[var(--text-color)]">
-					Trusted by Over
+				<h2 className="text-2xl md:text-3xl font-bold mb-10 text-[var(--text-color)]">
+					Our Experiences
 				</h2>
-				<div className="text-5xl font-extrabold text-[var(--primary-color)]">
-					<CountUp
-						end={100}
-						duration={1}
-						enableScrollSpy
-						onEnd={() => setShowPlus(true)}
-					/>
-					{showPlus && "+"}
-				</div>
 
-				<p className="text-[var(--text-color-secondary)] mt-2">
-					Landlords nationwide
-				</p>
+				<div className="flex flex-col md:flex-row justify-center gap-y-10 gap-x-8 sm:gap-x-12 md:gap-x-16 lg:gap-x-24 xl:gap-x-40 2xl:gap-x-60">
+					{/* Stat 1 */}
+					<div>
+						<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
+							<CountUp end={50} duration={1} enableScrollSpy />
+							{"+"}
+						</div>
+						<p className="text-[var(--text-color-secondary)] mt-2">
+							Landlords already on Seek
+						</p>
+					</div>
+
+					{/* Stat 2 */}
+					<div>
+						<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
+							<CountUp end={1000} duration={1} enableScrollSpy />
+							{"+"}
+						</div>
+						<p className="text-[var(--text-color-secondary)] mt-2">
+							New Properties Listed Weekly
+						</p>
+					</div>
+
+					{/* Stat 3 */}
+					<div>
+						<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
+							<CountUp end={500} duration={1} enableScrollSpy />
+							{"+"}
+						</div>
+						<p className="text-[var(--text-color-secondary)] mt-2">
+							Downloads of the Seek App
+						</p>
+					</div>
+				</div>
 			</motion.section>
 		</div>
 	);

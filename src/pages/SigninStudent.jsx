@@ -1,21 +1,56 @@
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
+import { Toast } from "primereact/toast";
 
 export default function SignInLandlord() {
 	const { login } = useContext(UserContext);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const navigate = useNavigate();
+
+	const toast = useRef(null);
+
+	const showError = () => {
+		toast.current.show({
+			severity: "error",
+			summary: "Error",
+			detail: "Invalid email or password",
+			life: 3000
+		});
+	};
 
 	const handleSubmit = async e => {
 		e.preventDefault();
-		console.log("logging in with", email, password);
-		login(email, password);
+
+		if (!validateEmailPrefix(email) || email.includes("@")) {
+			toast.current.show({
+				severity: "error",
+				summary: "Invalid Email",
+				detail: "Please enter only your email prefix (before @st-andrews.ac.uk)",
+				life: 3000
+			});
+			return;
+		}
+
+		const fullEmail = `${email}@st-andrews.ac.uk`;
+		const res = await login(fullEmail, password);
+
+		if (res === "Credentials are not valid." || res === "Unauthorized") {
+			showError();
+		} else {
+			navigate("/");
+		}
+	};
+
+	const validateEmailPrefix = prefix => {
+		const emailPrefixRegex = /^[a-zA-Z0-9._-]+$/;
+		return emailPrefixRegex.test(prefix);
 	};
 
 	return (
@@ -27,12 +62,12 @@ export default function SignInLandlord() {
 				className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
 				onSubmit={handleSubmit}
 			>
-				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
+				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)] mb-8">
 					Welcome Back, Student
 				</h1>
 
 				{/* Desktop version */}
-				<div className="hidden sm:block">
+				<div className="hidden sm:block mb-8">
 					<FloatLabel className="w-full">
 						<div className="p-inputgroup w-full">
 							<InputText
@@ -67,7 +102,7 @@ export default function SignInLandlord() {
 					</div>
 				</div>
 
-				<FloatLabel>
+				<FloatLabel className={"mb-8"}>
 					<Password
 						inputId="password"
 						value={password}
@@ -75,10 +110,20 @@ export default function SignInLandlord() {
 						feedback={false}
 						className="w-full"
 						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
+						toggleMask
+						pt={{
+							showIcon: {
+								className: "-translate-y-1/4 -translate-x-2/3"
+							},
+							hideIcon: {
+								className: "-translate-y-1/4 -translate-x-2/3"
+							}
+						}}
 					/>
 					<label htmlFor="password">Password</label>
 				</FloatLabel>
 
+				<Toast ref={toast} />
 				<motion.div whileHover={{ scale: 1.02 }}>
 					<Button
 						label="Sign in"

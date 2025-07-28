@@ -2,3 +2,7 @@
 @import "./theme.css";
 @import "primereact/resources/primereact.min.css";
 @import "primeicons/primeicons.css";
+
+.p-password {
+    display: inline;
+}

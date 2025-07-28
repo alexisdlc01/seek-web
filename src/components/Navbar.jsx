@@ -7,7 +7,7 @@ import UserContext from "../context/UserContext.jsx";
 
 export default function Navbar() {
 	const navigate = useNavigate();
-	const { user, loading, logout } = useContext(UserContext);
+	const { user, logout } = useContext(UserContext);
 	const loggedIn = !!user;
 
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);

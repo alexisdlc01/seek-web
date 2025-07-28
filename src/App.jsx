@@ -12,6 +12,7 @@ import SignUpStudent from "./pages/SignupStudent";
 import AddProperty from "./pages/AddProperty";
 import ResetPassword from "./pages/ResetPassword";
 import Listings from "./pages/Listings";
+import ActivationSent from "./pages/ActivationSent";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import { Button } from "primereact/button";
@@ -71,11 +72,16 @@ function App() {
 							path="/signin/student"
 							element={<SignInStudent />}
 						/>
+
 						<Route path="/listings" element={<Listings />} />
 						<Route path="/addproperty" element={<AddProperty />} />
 						<Route
 							path="/resetpassword"
 							element={<ResetPassword />}
+						/>
+						<Route
+							path="/activationsent"
+							element={<ActivationSent />}
 						/>
 						<Route path="/security" element={<Security />} />
 						<Route path="*" element={<NotFound />} />

@@ -25,15 +25,6 @@ export default function SignInLandlord() {
 		});
 	};
 
-	const showSuccess = () => {
-		toast.current.show({
-			severity: "success",
-			summary: "Success",
-			detail: "You're signed in!",
-			life: 3000
-		});
-	};
-
 	const handleSubmit = async e => {
 		e.preventDefault();
 
@@ -53,10 +44,7 @@ export default function SignInLandlord() {
 		if (res === "Credentials are not valid." || res === "Unauthorized") {
 			showError();
 		} else {
-			showSuccess();
-			setTimeout(() => {
-				navigate("/");
-			}, 250);
+			navigate("/");
 		}
 	};
 

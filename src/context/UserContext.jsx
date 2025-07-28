@@ -55,10 +55,9 @@ export const UserProvider = ({ children }) => {
 			);
 
 			try {
-				const res = await axios.get(
-					`${BASE_URL}/auth/currentUser`,
-					{ withCredentials: true }
-				);
+				const res = await axios.get(`${BASE_URL}/auth/currentUser`, {
+					withCredentials: true
+				});
 				setUser(res.data);
 			} catch (err) {
 				if (err.response.status === 401) {
@@ -86,12 +85,31 @@ export const UserProvider = ({ children }) => {
 		}
 	};
 
-	const signUp = async (name, email, password, role) => {
-
-	}
+	const signup = async (name, email, password, role = "STUDENT") => {
+		try {
+			await axios.post(
+				`${BASE_URL}/auth/signup`,
+				{
+					name,
+					email,
+					password,
+					role
+				},
+				{
+					withCredentials: true
+				}
+			);
+			const res = await axios.get(`${BASE_URL}/auth/currentUser`, {
+				withCredentials: true
+			});
+			setUser(res.data);
+		} catch (err) {
+			console.log("Error trying to sign up", err);
+		}
+	};
 
 	return (
-		<UserContext.Provider value={{ user, setUser, login, logout }}>
+		<UserContext.Provider value={{ user, setUser, login, logout, signup }}>
 			{children}
 		</UserContext.Provider>
 	);

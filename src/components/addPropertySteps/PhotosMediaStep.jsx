@@ -1,5 +1,3 @@
-import React from "react";
-import { StepperPanel } from "primereact/stepperpanel";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 

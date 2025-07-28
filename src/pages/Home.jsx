@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import { useState } from "react";
+import Steps from "../components/Steps";
 
 export default function LandingPage() {
 	const navigate = useNavigate();
@@ -11,36 +12,63 @@ export default function LandingPage() {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			{/* Hero Section */}
 			<motion.section
 				initial={{ opacity: 0, y: -30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.6 }}
-				className="bg-[var(--primary-color)] text-[var(--primary-color-text)] py-16 text-center px-4"
+				className="relative h-screen text-center flex items-center justify-center px-4 overflow-hidden"
 			>
-				<h1 className="text-3xl md:text-5xl font-bold mb-4">
-					Find Your Perfect Student Home
-				</h1>
-				<p className="text-lg md:text-xl mb-6">
-					Connect students with trusted landlords in St Andrews
-				</p>
-				<div className="flex justify-center gap-4">
-					<motion.div whileHover={{ scale: 1.05 }}>
-						<Button
-							label="I'm a Student"
-							className="bg-[var(--primary-color-text)] font-bold px-4 py-2"
-							onClick={() => navigate("/signup/student")}
-						/>
-					</motion.div>
-					<motion.div whileHover={{ scale: 1.05 }}>
-						<Button
-							label="I'm a Landlord"
-							className="bg-[var(--primary-color-text)] font-bold px-4 py-2"
-							onClick={() => navigate("/signup/landlord")}
-						/>
-					</motion.div>
+				<video
+					autoPlay
+					loop
+					muted
+					playsInline
+					className="absolute top-0 left-0 w-full h-full object-cover z-0"
+				>
+					<source src="/dummy_background.mp4" type="video/mp4" />
+					Your browser does not support the background video.
+				</video>
+
+				{/* Overlay */}
+				<div className="relative z-10 text-white max-w-2xl">
+					<h1 className="text-3xl md:text-5xl font-bold mb-4 drop-shadow-lg">
+						Find Your Perfect Student Home with Seek
+					</h1>
+					<p className="text-lg md:text-xl mb-6 drop-shadow">
+						Connecting students with trusted landlords in St Andrews
+					</p>
+					<div className="flex justify-center gap-4 flex-wrap">
+						<motion.div whileHover={{ scale: 1.05 }}>
+							<Button
+								label="I'm a Student"
+								className="bg-white text-[var(--primary-color)] font-bold px-4 py-2"
+								onClick={() => navigate("/signup/student")}
+							/>
+						</motion.div>
+						<motion.div whileHover={{ scale: 1.05 }}>
+							<Button
+								label="I'm a Landlord"
+								className="bg-white text-[var(--primary-color)] font-bold px-4 py-2"
+								onClick={() => navigate("/signup/landlord")}
+							/>
+						</motion.div>
+					</div>
 				</div>
 			</motion.section>
+
+<section className="bg-white py-12 text-center">
+	<div className="mx-auto px-4 sm:px-6 max-w-2xl">
+		<h2 className="text-3xl md:text-4xl font-bold text-[var(--text-color)]">
+			How It Works
+		</h2>
+		<p className="mt-2 text-lg text-[var(--text-color-secondary)]">
+			A quick breakdown of the process for students and landlords
+		</p>
+	</div>
+</section>
+
+
+			<Steps />
 
 			{/* Features Section */}
 			<motion.section
@@ -90,7 +118,6 @@ export default function LandingPage() {
 					))}
 				</div>
 			</motion.section>
-
 			{/* Call to Action */}
 			<motion.section
 				initial={{ opacity: 0 }}
@@ -103,7 +130,8 @@ export default function LandingPage() {
 					Ready to Get Started?
 				</h2>
 				<p className="text-[var(--text-color-secondary)] mb-4">
-					Connect with thousands of students and landlords and use Seek
+					Connect with thousands of students and landlords and use
+					Seek
 				</p>
 				<motion.div whileHover={{ scale: 1.05 }}>
 					<Button
@@ -112,7 +140,6 @@ export default function LandingPage() {
 					/>
 				</motion.div>
 			</motion.section>
-
 			{/* Stats Section */}
 			<motion.section
 				initial={{ opacity: 0, y: 30 }}

@@ -41,20 +41,21 @@ export default function LandingPage() {
 						<motion.div whileHover={{ scale: 1.05 }}>
 							<Button
 								label="I'm a Student"
-								className="bg-white text-[var(--primary-color)] font-bold px-4 py-2"
+								className="bg-white text-[var(--primary-color)] font-bold px-5 py-3"
 								onClick={() => navigate("/signup/student")}
 							/>
 						</motion.div>
 						<motion.div whileHover={{ scale: 1.05 }}>
 							<Button
 								label="I'm a Landlord"
-								className="bg-white text-[var(--primary-color)] font-bold px-4 py-2"
+								className="bg-white text-[var(--primary-color)] font-bold px-5 py-3"
 								onClick={() => navigate("/signup/landlord")}
 							/>
 						</motion.div>
 					</div>
 				</div>
 			</motion.section>
+
 			<section className="py-20 bg-gray-50">
 				<div className="max-w-6xl mx-auto px-4 text-center">
 					<motion.h2
@@ -64,7 +65,7 @@ export default function LandingPage() {
 						transition={{ duration: 0.6 }}
 						className="text-4xl font-bold text-[var(--text-color)] mb-8"
 					>
-						Features
+						Why Landlords Choose Us
 					</motion.h2>
 
 					<motion.p
@@ -74,27 +75,22 @@ export default function LandingPage() {
 						transition={{ delay: 0.2, duration: 0.6 }}
 						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
 					>
-						We have lots of features to help you find the perfect
-						student accommodation or manage your properties.
-
-						Likely another paragraph here about the features of the platform.
-
-						Text here could be longer if you wanted I suppose.
+						We’re not just another letting agency. We offer tailored solutions, lower fees, better support, and data-backed tools that help you maximize income and minimize stress.
 					</motion.p>
 
 					<div className="grid md:grid-cols-3 gap-10 text-left">
 						{[
 							{
-								title: "Feature 1 Title",
-								body: "Feature 1 description goes here. This should be a brief overview of what the feature does and how it benefits users."
+								title: "Lower Fees, No Compromise",
+								body: "Our transparent pricing saves you money without sacrificing service quality. No hidden costs, ever."
 							},
 							{
-								title: "Feature 2 Title",
-								body: "Feature 2 description goes here. This should be a brief overview of what the feature does and how it benefits users."
+								title: "Real-Time Insights",
+								body: "Track rent, maintenance, and tenant feedback with live dashboards designed for proactive property management."
 							},
 							{
-								title: "Feature 3 Title",
-								body: "Feature 3 description goes here. This should be a brief overview of what the feature does and how it benefits users."
+								title: "Expert Human Support",
+								body: "Chat with real people who know your property. We resolve issues fast—so you don’t have to."
 							}
 						].map((card, i) => (
 							<motion.div
@@ -103,148 +99,181 @@ export default function LandingPage() {
 								whileInView={{ opacity: 1, y: 0 }}
 								viewport={{ once: true }}
 								transition={{ delay: i * 0.2, duration: 0.5 }}
-								className="bg-white shadow-xl rounded-2xl p-6"
+								className="bg-white shadow-lg rounded-2xl p-6"
 							>
 								<h3 className="text-xl font-semibold text-[var(--primary-color)] mb-2">
 									{card.title}
 								</h3>
-								<p className="text-[var(--text-color-secondary)]">
-									{card.body}
-								</p>
+								<p className="text-[var(--text-color-secondary)]">{card.body}</p>
 							</motion.div>
 						))}
 					</div>
 				</div>
 			</section>
-			<section className="bg-white py-12 text-center">
-				<div className="mx-auto px-4 sm:px-6 max-w-2xl">
-					<h2 className="text-3xl md:text-4xl font-bold text-[var(--text-color)]">
+
+			<section className="bg-white py-20">
+				<div className="max-w-6xl mx-auto px-4 text-center">
+					<motion.h2
+						initial={{ opacity: 0, y: 40 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6 }}
+						className="text-4xl font-bold text-[var(--text-color)] mb-8"
+					>
 						How It Works
-					</h2>
-					<p className="mt-2 text-lg text-[var(--text-color-secondary)]">
-						A quick breakdown of the process for students and
-						landlords
-					</p>
+					</motion.h2>
+					<motion.p
+						initial={{ opacity: 0 }}
+						whileInView={{ opacity: 1 }}
+						viewport={{ once: true }}
+						transition={{ delay: 0.2, duration: 0.6 }}
+						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
+					>
+						A quick breakdown of the process for students and landlords. We've made it simple and straightforward to get started.
+					</motion.p>
+					<Steps />
 				</div>
 			</section>
 
-			<Steps />
+			<section className="py-20 bg-gray-50">
+				<div className="max-w-6xl mx-auto px-4 text-center">
+					<motion.h2
+						initial={{ opacity: 0, y: 40 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6 }}
+						className="text-4xl font-bold text-[var(--text-color)] mb-8"
+					>
+						Our Core Features
+					</motion.h2>
 
-			<motion.section
-				initial={{ opacity: 0, y: 30 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.6, delay: 0.2 }}
-				className="bg-[var(--surface-a)] py-16 px-4 text-center"
-			>
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
-					{[
-						{
-							icon: "pi pi-search",
-							title: "Easy Search",
-							desc: "Find properties that match your needs with our advanced search filters"
-						},
-						{
-							icon: "pi pi-check-circle text-green-500",
-							title: "Verified Listings",
-							desc: "All properties are verified to ensure quality and safety standards"
-						},
-						{
-							icon: "pi pi-comment",
-							title: "Direct Communication",
-							desc: "Message landlords directly through our secure platform"
-						}
-					].map((item, idx) => (
-						<motion.div
-							key={idx}
-							initial={{ opacity: 0, y: 20 }}
-							whileInView={{ opacity: 1, y: 0 }}
-							viewport={{ once: true }}
-							transition={{
-								duration: 0.5,
-								delay: idx * 0.2
-							}}
-						>
-							<div className="flex justify-center mb-3">
-								<motion.span
-									whileHover={{ scale: 1.1 }}
-									className={`${item.icon} text-4xl bg-[var(--surface-c)] p-4 rounded-full text-[var(--text-color)]`}
-								></motion.span>
+					<motion.p
+						initial={{ opacity: 0 }}
+						whileInView={{ opacity: 1 }}
+						viewport={{ once: true }}
+						transition={{ delay: 0.2, duration: 0.6 }}
+						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
+					>
+						We provide a comprehensive set of tools to make finding and managing properties easier than ever.
+					</motion.p>
+
+					<div className="grid md:grid-cols-3 gap-10 text-left">
+						{[
+							{
+								title: "Easy Search",
+								body: "Find properties that match your needs with our advanced search filters"
+							},
+							{
+								title: "Verified Listings",
+								body: "All properties are verified to ensure quality and safety standards"
+							},
+							{
+								title: "Direct Communication",
+								body: "Message landlords directly through our secure platform"
+							}
+						].map((card, i) => (
+							<motion.div
+								key={i}
+								initial={{ opacity: 0, y: 20 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								viewport={{ once: true }}
+								transition={{ delay: i * 0.2, duration: 0.5 }}
+								className="bg-white shadow-lg rounded-2xl p-6"
+							>
+								<h3 className="text-xl font-semibold text-[var(--primary-color)] mb-2">
+									{card.title}
+								</h3>
+								<p className="text-[var(--text-color-secondary)]">{card.body}</p>
+							</motion.div>
+						))}
+					</div>
+				</div>
+			</section>
+
+			<section className="text-center py-20 bg-white">
+				<div className="max-w-6xl mx-auto px-4 text-center">
+					<motion.h2
+						initial={{ opacity: 0, y: 40 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6 }}
+						className="text-4xl font-bold text-[var(--text-color)] mb-8"
+					>
+						Ready to Get Started?
+					</motion.h2>
+					<motion.p
+						initial={{ opacity: 0 }}
+						whileInView={{ opacity: 1 }}
+						viewport={{ once: true }}
+						transition={{ delay: 0.2, duration: 0.6 }}
+						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
+					>
+						Connect with thousands of students and landlords. Create an account today and find what you're looking for.
+					</motion.p>
+					<motion.div whileHover={{ scale: 1.05 }}>
+						<Button
+							label="Sign Up Today"
+							className="bg-[var(--primary-color)] text-[var(--primary-color-text)] px-5 py-3 font-semibold"
+						/>
+					</motion.div>
+				</div>
+			</section>
+
+			<section className="py-20 bg-gray-50">
+				<div className="max-w-6xl mx-auto px-4 text-center">
+					<motion.h2
+						initial={{ opacity: 0, y: 40 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6 }}
+						className="text-4xl font-bold text-[var(--text-color)] mb-8"
+					>
+						Our Experiences
+					</motion.h2>
+
+					<motion.p
+						initial={{ opacity: 0 }}
+						whileInView={{ opacity: 1 }}
+						viewport={{ once: true }}
+						transition={{ delay: 0.2, duration: 0.6 }}
+						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
+					>
+						Join a growing community of students and landlords who trust Seek to deliver the best rental experience.
+					</motion.p>
+
+					<div className="flex flex-col md:flex-row justify-center gap-y-10 gap-x-8 sm:gap-x-12 md:gap-x-16 lg:gap-x-24 xl:gap-x-40 2xl:gap-x-60">
+						<div>
+							<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
+								<CountUp end={50} duration={1} enableScrollSpy />
+								{"+"}
 							</div>
-							<h3 className="text-lg font-semibold mb-2 text-[var(--text-color)]">
-								{item.title}
-							</h3>
-							<p className="text-[var(--text-color-secondary)] text-sm">
-								{item.desc}
+							<p className="text-[var(--text-color-secondary)] mt-2">
+								Landlords already on Seek
 							</p>
-						</motion.div>
-					))}
-				</div>
-			</motion.section>
-			<motion.section
-				initial={{ opacity: 0 }}
-				whileInView={{ opacity: 1 }}
-				viewport={{ once: true }}
-				transition={{ duration: 0.6 }}
-				className="text-center py-12 px-4 bg-[var(--surface-a)]"
-			>
-				<h2 className="text-2xl font-bold mb-2 text-[var(--text-color)]">
-					Ready to Get Started?
-				</h2>
-				<p className="text-[var(--text-color-secondary)] mb-4">
-					Connect with thousands of students and landlords and use
-					Seek
-				</p>
-				<motion.div whileHover={{ scale: 1.05 }}>
-					<Button
-						label="Sign Up Today"
-						className="bg-[var(--primary-color)] text-[var(--primary-color-text)] px-5 py-3 font-semibold"
-					/>
-				</motion.div>
-			</motion.section>
-
-			<motion.section
-				initial={{ opacity: 0, y: 30 }}
-				whileInView={{ opacity: 1, y: 0 }}
-				viewport={{ once: true }}
-				transition={{ duration: 0.6 }}
-				className="py-16 bg-white text-center"
-			>
-				<h2 className="text-2xl md:text-3xl font-bold mb-10 text-[var(--text-color)]">
-					Our Experiences
-				</h2>
-
-				<div className="flex flex-col md:flex-row justify-center gap-y-10 gap-x-8 sm:gap-x-12 md:gap-x-16 lg:gap-x-24 xl:gap-x-40 2xl:gap-x-60">
-					<div>
-						<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
-							<CountUp end={50} duration={1} enableScrollSpy />
-							{"+"}
 						</div>
-						<p className="text-[var(--text-color-secondary)] mt-2">
-							Landlords already on Seek
-						</p>
-					</div>
 
-					<div>
-						<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
-							<CountUp end={1000} duration={1} enableScrollSpy />
-							{"+"}
+						<div>
+							<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
+								<CountUp end={1000} duration={1} enableScrollSpy />
+								{"+"}
+							</div>
+							<p className="text-[var(--text-color-secondary)] mt-2">
+								New Properties Listed Weekly
+							</p>
 						</div>
-						<p className="text-[var(--text-color-secondary)] mt-2">
-							New Properties Listed Weekly
-						</p>
-					</div>
 
-					<div>
-						<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
-							<CountUp end={500} duration={1} enableScrollSpy />
-							{"+"}
+						<div>
+							<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
+								<CountUp end={500} duration={1} enableScrollSpy />
+								{"+"}
+							</div>
+							<p className="text-[var(--text-color-secondary)] mt-2">
+								Downloads of the Seek App
+							</p>
 						</div>
-						<p className="text-[var(--text-color-secondary)] mt-2">
-							Downloads of the Seek App
-						</p>
 					</div>
 				</div>
-			</motion.section>
+			</section>
 		</div>
 	);
 }

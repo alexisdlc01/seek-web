@@ -104,7 +104,7 @@ export default function Steps() {
 								{s.cards.map(card => (
 									<div
 										key={card.heading}
-										className="flex flex-col justify-between flex-1 bg-[var(--surface-b)] rounded-xl p-8 shadow-sm"
+										className="flex flex-col justify-between flex-1 bg-[var(--surface-b)] rounded-xl p-8 shadow-lg"
 									>
 										<div>
 											<h3 className="mb-7 font-semibold text-[var(--primary-color)] text-lg md:text-xl">

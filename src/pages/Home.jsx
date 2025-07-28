@@ -56,14 +56,17 @@ export default function LandingPage() {
 				</div>
 			</motion.section>
 
-			<section className="bg-white py-12 text-center">
-				<h2 className="text-3xl md:text-4xl font-bold text-[var(--text-color)]">
-					How It Works
-				</h2>
-				<p className="mt-2 text-lg text-[var(--text-color-secondary)]">
-					A quick breakdown of the process for students and landlords
-				</p>
-			</section>
+<section className="bg-white py-12 text-center">
+	<div className="mx-auto px-4 sm:px-6 max-w-2xl">
+		<h2 className="text-3xl md:text-4xl font-bold text-[var(--text-color)]">
+			How It Works
+		</h2>
+		<p className="mt-2 text-lg text-[var(--text-color-secondary)]">
+			A quick breakdown of the process for students and landlords
+		</p>
+	</div>
+</section>
+
 
 			<Steps />
 

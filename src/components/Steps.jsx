@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 
-const DUMMY_TEXT = `In the heart of a forgotten forest stood a glass greenhouse, untouched by time. Vines crawled its frame, yet inside it flourished with vibrant, impossible flora—flowers that shimmered like stars and leaves that whispered secrets when brushed by wind. No path led to it, and those who stumbled upon it could never retrace their steps. \nLegend told of an old botanist who had vanished after claiming he could grow memories. Some say the plants hold echoes of his life—fragments of love, sorrow, and joy blooming eternally. Every decade, a wanderer finds the greenhouse and hears their own forgotten story among the petals. Then, like the botanist, they stay—rooted in wonder, part of the garden, never to be seen again.`;
+const DUMMY_TEXT = `In the heart of a forgotten forest stood a glass greenhouse, untouched by time. Vines crawled its frame, yet inside it flourished with vibrant, impossible flora—flowers that shimmered like stars and leaves that whispered secrets when brushed by wind. No path led to it, and those who stumbled upon it could never retrace their steps. \nLegend told of an old botanist who had vanished after claiming he could grow memories. Some say the plants hold echoes of his life—fragments of love, sorrow, and joy blooming eternally.`;
 
 const STEPS = [
 	{
@@ -67,21 +67,23 @@ export default function Steps() {
 		<div className="w-full">
 			<div className="mx-auto max-w-7xl lg:flex scroll-smooth">
 				{/* Start of left panel */}
-				<aside className="lg:w-80 shrink-0 lg:pr-8 lg:border-r border-[var(--surface-border)]">
-					{maxSeen >= 0 && (
-						<div className="sticky top-24 flex flex-col divide-y divide-[var(--surface-border)]">
-							{STEPS.slice(0, maxSeen + 1).map((s, i) => (
-								<button
-									key={s.title}
-									onClick={() => goTo(i)}
-									className="py-3 px-1 text-left font-semibold text-[var(--primary-color)] hover:bg-[var(--surface-b)] focus:outline-none"
-								>
-									{s.title}
-								</button>
-							))}
-						</div>
-					)}
-				</aside>
+				{/* Start of left panel */}
+<aside className="hidden lg:block lg:w-100 shrink-0 lg:pr-8 lg:border-r border-[var(--surface-border)]">
+	{maxSeen >= 0 && (
+		<div className="sticky top-24 flex flex-col divide-y divide-[var(--surface-border)]">
+			{STEPS.slice(0, maxSeen + 1).map((s, i) => (
+				<button
+					key={s.title}
+					onClick={() => goTo(i)}
+					className="py-3 px-1 text-left font-semibold text-[var(--primary-color)] hover:bg-[var(--surface-b)] focus:outline-none"
+				>
+					{s.title}
+				</button>
+			))}
+		</div>
+	)}
+</aside>
+
 
 				{/* Start of right panel */}
 				<main className="flex-1 px-6 lg:pl-12">
@@ -92,7 +94,7 @@ export default function Steps() {
 							ref={el => (refs.current[i] = el)}
 							className="min-h-screen flex flex-col border-b border-[var(--surface-border)] last:border-b-0 py-12"
 						>
-							<div className="text-center mb-12 mt-6">
+							<div className="text-center mb-12 mt-0">
 								<h2 className="text-3xl md:text-4xl font-extrabold text-[var(--primary-color)]">
 									{s.heading}
 								</h2>

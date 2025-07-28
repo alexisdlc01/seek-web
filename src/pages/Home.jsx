@@ -3,12 +3,12 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
-import { useState } from "react";
 import Steps from "../components/Steps";
+import ReactFlow, { Background, Controls } from "reactflow";
+import "reactflow/dist/style.css";
 
 export default function LandingPage() {
 	const navigate = useNavigate();
-	const [showPlus, setShowPlus] = useState(false);
 
 	return (
 		<div className="min-h-screen flex flex-col">
@@ -55,7 +55,6 @@ export default function LandingPage() {
 					</div>
 				</div>
 			</motion.section>
-
 			<section className="py-20 bg-gray-50">
 				<div className="max-w-6xl mx-auto px-4 text-center">
 					<motion.h2
@@ -75,22 +74,24 @@ export default function LandingPage() {
 						transition={{ delay: 0.2, duration: 0.6 }}
 						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
 					>
-						We’re not just another letting agency. We offer tailored solutions, lower fees, better support, and data-backed tools that help you maximize income and minimize stress.
+						We’re not just another letting agency. We offer tailored
+						solutions, lower fees, better support, and data-backed
+						tools that help you maximize income and minimize stress.
 					</motion.p>
 
 					<div className="grid md:grid-cols-3 gap-10 text-left">
 						{[
 							{
-								title: "Lower Fees, No Compromise",
-								body: "Our transparent pricing saves you money without sacrificing service quality. No hidden costs, ever."
+								title: "Feature 1 Title",
+								body: "Feature 1 description goes here. This should be a brief overview of what the feature does and how it benefits users."
 							},
 							{
-								title: "Real-Time Insights",
-								body: "Track rent, maintenance, and tenant feedback with live dashboards designed for proactive property management."
+								title: "Feature 2 Title",
+								body: "Feature 2 description goes here. This should be a brief overview of what the feature does and how it benefits users."
 							},
 							{
-								title: "Expert Human Support",
-								body: "Chat with real people who know your property. We resolve issues fast—so you don’t have to."
+								title: "Feature 3 Title",
+								body: "Feature 3 description goes here. This should be a brief overview of what the feature does and how it benefits users."
 							}
 						].map((card, i) => (
 							<motion.div
@@ -104,13 +105,14 @@ export default function LandingPage() {
 								<h3 className="text-xl font-semibold text-[var(--primary-color)] mb-2">
 									{card.title}
 								</h3>
-								<p className="text-[var(--text-color-secondary)]">{card.body}</p>
+								<p className="text-[var(--text-color-secondary)]">
+									{card.body}
+								</p>
 							</motion.div>
 						))}
 					</div>
 				</div>
 			</section>
-
 			<section className="bg-white py-20">
 				<div className="max-w-6xl mx-auto px-4 text-center">
 					<motion.h2
@@ -129,66 +131,150 @@ export default function LandingPage() {
 						transition={{ delay: 0.2, duration: 0.6 }}
 						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
 					>
-						A quick breakdown of the process for students and landlords. We've made it simple and straightforward to get started.
+						A quick breakdown of the process for students and
+						landlords. We've made it simple and straightforward to
+						get started.
 					</motion.p>
 					<Steps />
 				</div>
 			</section>
 
-			<section className="py-20 bg-gray-50">
-				<div className="max-w-6xl mx-auto px-4 text-center">
-					<motion.h2
-						initial={{ opacity: 0, y: 40 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true }}
-						transition={{ duration: 0.6 }}
-						className="text-4xl font-bold text-[var(--text-color)] mb-8"
-					>
-						Our Core Features
-					</motion.h2>
+			<section className="py-20 bg-gray-50 h-[700px]">
+				<div className="max-w-6xl mx-auto px-4 text-center mb-16">
+					<h2 className="text-4xl font-bold text-[var(--text-color)] mb-4">
+						Why Landlords Choose Us
+					</h2>
+					<p className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto">
+						We’re not just another letting agency. We offer tailored
+						solutions, lower fees, better support, and data‑backed
+						tools that help you maximize income and minimize stress.
+					</p>
+				</div>
 
-					<motion.p
-						initial={{ opacity: 0 }}
-						whileInView={{ opacity: 1 }}
-						viewport={{ once: true }}
-						transition={{ delay: 0.2, duration: 0.6 }}
-						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
-					>
-						We provide a comprehensive set of tools to make finding and managing properties easier than ever.
-					</motion.p>
+				<div className="w-full h-full bg-gray-50 pointer-events-none">
+  <ReactFlow
+    style={{ width: "100%", height: "100%" }}
+    fitView
+    fitViewOptions={{ padding: 0.4 }}
+    nodesDraggable={false}
+    nodesConnectable={false}
+    elementsSelectable={false}
+    zoomOnScroll={false}
+    panOnScroll={false}
+    zoomOnPinch={false}
+    zoomOnDoubleClick={false}
+    panOnDrag={false}
+    proOptions={{ hideAttribution: true }}
+nodes={[
+  {
+    id: "1",
+    position: { x: 0, y: 0 },
+    data: {
+      label: (
+        <div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
+          <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+            Lower Fees, No Compromise
+          </h3>
+          <p className="text-lg leading-relaxed text-[var(--text-color-secondary)]">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel felis eget nisl posuere blandit.
+          </p>
+        </div>
+      ),
+    },
+  },
+  {
+    id: "2",
+    position: { x: 320, y: 160 },
+    data: {
+      label: (
+        <div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
+          <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+            Real-Time Insights
+          </h3>
+          <p className="text-lg leading-relaxed text-[var(--text-color-secondary)]">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent commodo enim non fermentum feugiat.
+          </p>
+        </div>
+      ),
+    },
+  },
+  {
+    id: "3",
+    position: { x: 640, y: 320 },
+    data: {
+      label: (
+        <div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
+          <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+            Expert Human Support
+          </h3>
+          <p className="text-lg leading-relaxed text-[var(--text-color-secondary)]">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla in sem non eros malesuada tincidunt.
+          </p>
+        </div>
+      ),
+    },
+  },
+  {
+    id: "4",
+    position: { x: 320, y: 400 },
+    data: {
+      label: (
+        <div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
+          <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+            AI-Powered Tools
+          </h3>
+          <p className="text-lg leading-relaxed text-[var(--text-color-secondary)]">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse potenti. Duis non tortor justo.
+          </p>
+        </div>
+      ),
+    },
+  },
+  {
+    id: "5",
+    position: { x: 0, y: 200 },
+    data: {
+      label: (
+        <div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
+          <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+            Seamless Integration
+          </h3>
+          <p className="text-lg leading-relaxed text-[var(--text-color-secondary)]">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed facilisis elit vel diam dapibus, at convallis nisi interdum.
+          </p>
+        </div>
+      ),
+    },
+  },
+  {
+    id: "6",
+    position: { x: 640, y: 0 },
+    data: {
+      label: (
+        <div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
+          <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+            Custom Reports
+          </h3>
+          <p className="text-lg leading-relaxed text-[var(--text-color-secondary)]">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed urna at justo cursus facilisis.
+          </p>
+        </div>
+      ),
+    },
+  },
+]}
 
-					<div className="grid md:grid-cols-3 gap-10 text-left">
-						{[
-							{
-								title: "Easy Search",
-								body: "Find properties that match your needs with our advanced search filters"
-							},
-							{
-								title: "Verified Listings",
-								body: "All properties are verified to ensure quality and safety standards"
-							},
-							{
-								title: "Direct Communication",
-								body: "Message landlords directly through our secure platform"
-							}
-						].map((card, i) => (
-							<motion.div
-								key={i}
-								initial={{ opacity: 0, y: 20 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								viewport={{ once: true }}
-								transition={{ delay: i * 0.2, duration: 0.5 }}
-								className="bg-white shadow-lg rounded-2xl p-6"
-							>
-								<h3 className="text-xl font-semibold text-[var(--primary-color)] mb-2">
-									{card.title}
-								</h3>
-								<p className="text-[var(--text-color-secondary)]">{card.body}</p>
-							</motion.div>
-						))}
-					</div>
+    edges={[
+      { id: "e1-2", source: "1", target: "2", type: "step", animated: true, style: { strokeWidth: 2, stroke: "var(--primary-color)" } },
+      { id: "e2-3", source: "2", target: "3", type: "step", animated: true, style: { strokeWidth: 2, stroke: "var(--primary-color)" } },
+      { id: "e2-4", source: "2", target: "4", type: "step", animated: true, style: { strokeWidth: 2, stroke: "var(--primary-color)" } },
+      { id: "e4-5", source: "4", target: "5", type: "step", animated: true, style: { strokeWidth: 2, stroke: "var(--primary-color)" } },
+      { id: "e4-6", source: "4", target: "6", type: "step", animated: true, style: { strokeWidth: 2, stroke: "var(--primary-color)" } },
+    ]}
+  />
 				</div>
 			</section>
+			<div className="h-16" />
 
 			<section className="text-center py-20 bg-white">
 				<div className="max-w-6xl mx-auto px-4 text-center">
@@ -208,7 +294,8 @@ export default function LandingPage() {
 						transition={{ delay: 0.2, duration: 0.6 }}
 						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
 					>
-						Connect with thousands of students and landlords. Create an account today and find what you're looking for.
+						Connect with thousands of students and landlords. Create
+						an account today and find what you're looking for.
 					</motion.p>
 					<motion.div whileHover={{ scale: 1.05 }}>
 						<Button
@@ -218,7 +305,6 @@ export default function LandingPage() {
 					</motion.div>
 				</div>
 			</section>
-
 			<section className="py-20 bg-gray-50">
 				<div className="max-w-6xl mx-auto px-4 text-center">
 					<motion.h2
@@ -238,13 +324,18 @@ export default function LandingPage() {
 						transition={{ delay: 0.2, duration: 0.6 }}
 						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
 					>
-						Join a growing community of students and landlords who trust Seek to deliver the best rental experience.
+						Join a growing community of students and landlords who
+						trust Seek to deliver the best rental experience.
 					</motion.p>
 
 					<div className="flex flex-col md:flex-row justify-center gap-y-10 gap-x-8 sm:gap-x-12 md:gap-x-16 lg:gap-x-24 xl:gap-x-40 2xl:gap-x-60">
 						<div>
 							<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
-								<CountUp end={50} duration={1} enableScrollSpy />
+								<CountUp
+									end={50}
+									duration={1}
+									enableScrollSpy
+								/>
 								{"+"}
 							</div>
 							<p className="text-[var(--text-color-secondary)] mt-2">
@@ -254,7 +345,11 @@ export default function LandingPage() {
 
 						<div>
 							<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
-								<CountUp end={1000} duration={1} enableScrollSpy />
+								<CountUp
+									end={1000}
+									duration={1}
+									enableScrollSpy
+								/>
 								{"+"}
 							</div>
 							<p className="text-[var(--text-color-secondary)] mt-2">
@@ -264,7 +359,11 @@ export default function LandingPage() {
 
 						<div>
 							<div className="w-24 text-5xl font-extrabold text-[var(--primary-color)]">
-								<CountUp end={500} duration={1} enableScrollSpy />
+								<CountUp
+									end={500}
+									duration={1}
+									enableScrollSpy
+								/>
 								{"+"}
 							</div>
 							<p className="text-[var(--text-color-secondary)] mt-2">

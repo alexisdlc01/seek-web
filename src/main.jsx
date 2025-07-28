@@ -7,7 +7,7 @@ import { PrimeReactProvider } from "primereact/api";
 import { UserProvider } from "./context/UserContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-	<PrimeReactProvider>
+	<PrimeReactProvider value={{ ripple: true }}>
 		<BrowserRouter>
 			<UserProvider>
 				<App />

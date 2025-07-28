@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Help from "./pages/Help";
@@ -15,12 +15,10 @@ import Listings from "./pages/Listings";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import { Button } from "primereact/button";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 const NotFound = () => {
 	const navigate = useNavigate();
-
 
 	return (
 		<div className="flex flex-col items-center justify-center h-screen text-center">
@@ -38,25 +36,52 @@ const NotFound = () => {
 };
 
 function App() {
+	const location = useLocation();
+
 	return (
 		<>
 			<Navbar />
-			<Routes>
-				<Route path="/" element={<Home />} />
-				<Route path="/terms" element={<Terms />} />
-				<Route path="/privacy" element={<Privacy />} />
-				<Route path="/help" element={<Help />} />
-				<Route path="/about" element={<About />} />
-				<Route path="/signup/landlord" element={<SignUpLandlord />} />
-				<Route path="/signup/student" element={<SignUpStudent />} />
-				<Route path="/signin/landlord" element={<SignInLandlord />} />
-				<Route path="/signin/student" element={<SignInStudent />} />
-				<Route path="/listings" element={<Listings />} />
-				<Route path="/addproperty" element={<AddProperty />} />
-				<Route path="/resetpassword" element={<ResetPassword />} />
-				<Route path="/security" element={<Security />} />
-				<Route path="*" element={<NotFound />} />
-			</Routes>
+			<AnimatePresence mode="wait">
+				<motion.div
+					key={location.pathname}
+					initial={{ opacity: 0, y: 10 }}
+					animate={{ opacity: 1, y: 0 }}
+					exit={{ opacity: 0, y: 5 }}
+					transition={{ duration: 0.05 }}
+				>
+					<Routes location={location}>
+						<Route path="/" element={<Home />} />
+						<Route path="/terms" element={<Terms />} />
+						<Route path="/privacy" element={<Privacy />} />
+						<Route path="/help" element={<Help />} />
+						<Route path="/about" element={<About />} />
+						<Route
+							path="/signup/landlord"
+							element={<SignUpLandlord />}
+						/>
+						<Route
+							path="/signup/student"
+							element={<SignUpStudent />}
+						/>
+						<Route
+							path="/signin/landlord"
+							element={<SignInLandlord />}
+						/>
+						<Route
+							path="/signin/student"
+							element={<SignInStudent />}
+						/>
+						<Route path="/listings" element={<Listings />} />
+						<Route path="/addproperty" element={<AddProperty />} />
+						<Route
+							path="/resetpassword"
+							element={<ResetPassword />}
+						/>
+						<Route path="/security" element={<Security />} />
+						<Route path="*" element={<NotFound />} />
+					</Routes>
+				</motion.div>
+			</AnimatePresence>
 			<Footer />
 		</>
 	);

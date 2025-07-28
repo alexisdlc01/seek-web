@@ -6,3 +6,16 @@
 .p-password {
     display: inline;
 }
+
+.custom-node {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.custom-node .react-flow__handle {
+  background: transparent;
+  border: none;
+  width: 0;
+  height: 0;
+}

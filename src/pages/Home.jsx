@@ -184,10 +184,12 @@ export default function LandingPage() {
 							{
 								id: "1",
 								position: { x: 0, y: 0 },
+								className: "custom-node",
+
 								data: {
 									label: (
-										<div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
-											<h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+										<div className="bg-white shadow-lg rounded-2xl p-8 w-[340px]">
+											<h3 className="text-3xl font-bold text-[var(--primary-color)] mb-3">
 												Some Node
 											</h3>
 											<p className="text-2xl leading-relaxed text-[var(--text-color-secondary)]">
@@ -203,10 +205,12 @@ export default function LandingPage() {
 							{
 								id: "2",
 								position: { x: 800, y: 0 },
+								className: "custom-node",
+
 								data: {
 									label: (
-										<div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
-											<h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+										<div className="bg-white shadow-lg rounded-2xl p-8 w-[340px]">
+											<h3 className="text-3xl font-bold text-[var(--primary-color)] mb-3">
 												Some Node
 											</h3>
 											<p className="text-2xl leading-relaxed text-[var(--text-color-secondary)]">
@@ -222,10 +226,12 @@ export default function LandingPage() {
 							{
 								id: "3",
 								position: { x: 0, y: 500 },
+								className: "custom-node",
+
 								data: {
 									label: (
-										<div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
-											<h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+										<div className="bg-white shadow-lg rounded-2xl p-8 w-[340px]">
+											<h3 className="text-3xl font-bold text-[var(--primary-color)] mb-3">
 												Some Node
 											</h3>
 											<p className="text-2xl leading-relaxed text-[var(--text-color-secondary)]">
@@ -241,10 +247,12 @@ export default function LandingPage() {
 							{
 								id: "4",
 								position: { x: 800, y: 500 },
+								className: "custom-node",
+
 								data: {
 									label: (
-										<div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
-											<h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+										<div className="bg-white shadow-lg rounded-2xl p-8 w-[340px]">
+											<h3 className="text-3xl font-bold text-[var(--primary-color)] mb-3">
 												Some Node
 											</h3>
 											<p className="text-2xl leading-relaxed text-[var(--text-color-secondary)]">
@@ -260,10 +268,12 @@ export default function LandingPage() {
 							{
 								id: "6",
 								position: { x: 400, y: 500 },
+								className: "custom-node",
+
 								data: {
 									label: (
-										<div className="bg-white shadow-lg rounded-2xl p-6 w-[280px]">
-											<h3 className="text-2xl font-bold text-[var(--primary-color)] mb-3">
+										<div className="bg-white shadow-lg rounded-2xl p-8 w-[340px]">
+											<h3 className="text-3xl font-bold text-[var(--primary-color)] mb-3">
 												Some Node
 											</h3>
 											<p className="text-2xl leading-relaxed text-[var(--text-color-secondary)]">
@@ -282,10 +292,9 @@ export default function LandingPage() {
 								id: "e1-2",
 								source: "1",
 								target: "2",
-								type: "step",
 								animated: true,
 								style: {
-									strokeWidth: 2,
+									strokeWidth: 6,
 									stroke: "var(--primary-color)"
 								}
 							},
@@ -293,10 +302,9 @@ export default function LandingPage() {
 								id: "e2-3",
 								source: "2",
 								target: "3",
-								type: "step",
 								animated: true,
 								style: {
-									strokeWidth: 2,
+									strokeWidth: 6,
 									stroke: "var(--primary-color)"
 								}
 							},
@@ -304,10 +312,19 @@ export default function LandingPage() {
 								id: "e2-4",
 								source: "2",
 								target: "4",
-								type: "step",
 								animated: true,
 								style: {
-									strokeWidth: 2,
+									strokeWidth: 6,
+									stroke: "var(--primary-color)"
+								}
+							},
+							{
+								id: "e5-6",
+								source: "4",
+								target: "6",
+								animated: true,
+								style: {
+									strokeWidth: 6,
 									stroke: "var(--primary-color)"
 								}
 							}

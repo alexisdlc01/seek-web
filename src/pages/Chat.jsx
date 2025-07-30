@@ -76,7 +76,7 @@ export default function ChatPage() {
 						<div
 							key={c.id}
 							onClick={() => setSelectedId(c.id)}
-							className={`flex items-center justify-between gap-3 p-3 px-4 cursor-pointer transition ${
+							className={`flex items-center justify-between gap-4 p-4 px-5 cursor-pointer transition ${
 								selectedId === c.id
 									? "bg-white shadow-sm"
 									: "hover:bg-white"
@@ -84,14 +84,14 @@ export default function ChatPage() {
 						>
 							{/* Left: Avatar + Name + Message */}
 							<div className="flex items-center gap-3 overflow-hidden">
-								<div className="w-10 h-10 rounded-full bg-white text-blue-900 flex items-center justify-center font-semibold text-sm border border-blue-200 shrink-0">
+								<div className="w-11 h-11 rounded-full bg-white text-blue-900 flex items-center justify-center font-semibold text-sm border border-blue-200 shrink-0">
 									{c.initials}
 								</div>
 								<div className="overflow-hidden">
-									<p className="font-medium text-sm text-blue-900 truncate">
+									<p className="font-medium text-base text-blue-900 truncate">
 										{c.name}
 									</p>
-									<p className="text-xs text-gray-500 truncate">
+									<p className="text-sm text-gray-500 truncate">
 										{c.messages.at(-1)?.from === "me"
 											? "You: "
 											: ""}
@@ -101,16 +101,18 @@ export default function ChatPage() {
 							</div>
 
 							{/* Right: Time + Unread */}
-							<div className="text-right shrink-0">
-								<p className="text-xs text-gray-400">
-									{new Date().toLocaleTimeString([], {
-										hour: "2-digit",
-										minute: "2-digit"
-									})}
-								</p>
-								{Math.random() > 0.5 && (
-									<div className="w-4 h-4 bg-blue-600 rounded-full mx-auto mt-1"></div>
-								)}
+							<div classNamee="flex flex-col items-end shrink-0 min-w-[50px]">
+								<div className="flex items-center gap-1">
+									{Math.random() > 0.5 && (
+										<div className="w-2.5 h-2.5 bg-blue-600 rounded-full" />
+									)}
+									<p className="text-sm text-gray-400">
+										{new Date().toLocaleTimeString([], {
+											hour: "2-digit",
+											minute: "2-digit"
+										})}
+									</p>
+								</div>
 							</div>
 						</div>
 					))}

@@ -37,8 +37,18 @@ export default function ChatPage() {
 			<div className="w-1/3 bg-blue-50 border-r border-gray-200 flex flex-col">
 				{/* Top bar: Search + Filters */}
 				<div className="p-4 border-b border-blue-200">
+					{/* Listing header */}
+					<div className="flex items-center justify-between mb-3 px-1">
+						<h2 className="text-md font-semibold text-blue-900">
+							Applicants for 14 North Street
+						</h2>
+						<button className="text-sm text-blue-600 border border-blue-300 rounded-full px-2 py-0.5 hover:bg-blue-50">
+							Switch
+						</button>
+					</div>
+
 					{/* Search bar */}
-					<div className="flex items-center bg-white border border-blue-200 rounded-full px-4 py-3 text-sm text-blue-900 mb-2 shadow-sm">
+					<div className="flex items-center bg-white border border-blue-200 rounded-full px-4 py-3 text-sm text-blue-900 mb-4 mt-2 shadow-sm">
 						<i className="pi pi-search mr-2 text-blue-500" />
 						<input
 							type="text"
@@ -47,17 +57,13 @@ export default function ChatPage() {
 						/>
 					</div>
 
-					<div className="flex gap-2 justify-start text-sm">
+					<div className="flex gap-3 justify-start text-sm">
 						<Chip
 							label="All"
-							className="bg-blue-700 text-white text-xs px-3 py-1 rounded-full cursor-pointer"
-						/>
-						<Chip
-							label="Unread"
 							className="border border-blue-500 text-blue-600 bg-white text-xs px-3 py-1 rounded-full cursor-pointer"
 						/>
 						<Chip
-							label="Switch"
+							label="Unread"
 							className="border border-blue-500 text-blue-600 bg-white text-xs px-3 py-1 rounded-full cursor-pointer"
 						/>
 					</div>

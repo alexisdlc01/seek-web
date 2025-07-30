@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Button } from "primereact/button";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+
 
 const newApplicants = [
 	{
@@ -33,6 +35,8 @@ const approvedApplicants = [
 ];
 
 export default function Applicants() {
+	const navigate = useNavigate();
+
 	const [activeTab, setActiveTab] = useState("new");
 
 	const renderApplicantCard = (applicant, buttons) => (
@@ -124,6 +128,7 @@ export default function Applicants() {
 									label: "View Profile",
 									icon: "pi pi-user",
 									severity: "primary",
+									onClick: () => navigate("/application"),
 								},
 								{
 									label: "Approve",

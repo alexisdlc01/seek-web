@@ -13,6 +13,7 @@ import AddProperty from "./pages/AddProperty";
 import ResetPassword from "./pages/ResetPassword";
 import Listings from "./pages/Listings";
 import Applicants from "./pages/Applicants";
+import Application from "./pages/Application";
 import ActivationSent from "./pages/ActivationSent";
 import VerifyingEmail from "./pages/VerifyingEmail.jsx";
 import Navbar from "./components/Navbar.jsx";
@@ -78,6 +79,7 @@ function App() {
 						<Route path="/listings" element={<Listings />} />
 						<Route path="/applicants" element={<Applicants />} />
 						<Route path="/addproperty" element={<AddProperty />} />
+						<Route path="/application" element={<Application />} />
 						<Route
 							path="/resetpassword"
 							element={<ResetPassword />}

@@ -3,15 +3,21 @@ import { Button } from "primereact/button";
 import { Chip } from "primereact/chip";
 import { InputText } from "primereact/inputtext";
 
-const conversations = Array.from({ length: 20 }, (_, i) => ({
-	id: i + 1,
-	name: `User ${i + 1}`,
-	initials: `U${i + 1}`,
-	messages: [
-		{ from: "them", text: "Sample message?" },
-		{ from: "me", text: "Yes!" }
-	]
-}));
+const conversations = Array.from({ length: 20 }, (_, i) => {
+	const messages = Array.from({ length: 50 }, (_, j) => ({
+		from: j % 2 === 0 ? "them" : "me",
+		text: j % 2 === 0
+			? `Message ${j + 1} from User ${i + 1}`
+			: `You replied to message ${j + 1}`
+	}));
+
+	return {
+		id: i + 1,
+		name: `User ${i + 1}`,
+		initials: `U${i + 1}`,
+		messages
+	};
+});
 
 export default function ChatPage() {
 	useEffect(() => {
@@ -118,6 +124,8 @@ export default function ChatPage() {
 					))}
 				</div>
 			</div>
+
+
 
 			{/* Right Chat Area */}
 			<div className="w-2/3 flex flex-col px-6 py-4">

@@ -5,6 +5,7 @@ import properties from "../dummyData/DummyListings";
 import houseImage from "../assets/house.jpg";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Badge } from "primereact/badge";
 
 export default function Listings() {
 	const navigate = useNavigate();
@@ -21,15 +22,35 @@ export default function Listings() {
 				<h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-color)]">
 					My Listings
 				</h1>
-				<motion.div whileHover={{ scale: 1.02 }}>
-					<Button
-						label="Add New Property"
-						icon="pi pi-plus"
-						severity="primary"
-						className="w-full sm:w-auto"
-						onClick={() => navigate("/addproperty")}
-					/>
-				</motion.div>
+				<div className="flex gap-3 ml-auto">
+					<motion.div
+						whileHover={{ scale: 1.01 }}
+						className="relative inline-block"
+					>
+						<Button
+							label="View Properties Pending Approval"
+							icon="pi pi-eye"
+							severity="primary"
+							size="small"
+							className="w-full sm:w-auto"
+						/>
+						<Badge
+							value="1"
+							severity="danger"
+							className="absolute -top-2 -right-2"
+						/>
+					</motion.div>
+					<motion.div whileHover={{ scale: 1.01 }}>
+						<Button
+							label="Add New Property"
+							icon="pi pi-plus"
+							size="small"
+							severity="primary"
+							className="w-full sm:w-auto"
+							onClick={() => navigate("/addproperty")}
+						/>
+					</motion.div>
+				</div>
 			</motion.div>
 
 			{/* Listings */}
@@ -73,34 +94,42 @@ export default function Listings() {
 
 						{/* Buttons */}
 						<div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-							{["View Applicants", "Edit Listing", ""].map(
-								(label, j) => (
-									<motion.div
-										key={j}
-										whileHover={{ scale: 1.02 }}
-									>
-										<Button
-											label={label || undefined}
-											icon={
-												j === 0
-													? "pi pi-users"
-													: j === 1
-													? "pi pi-pencil"
-													: "pi pi-ellipsis-h"
-											}
-											size="small"
-											severity="primary"
-											outlined
-											aria-label={
-												!label
-													? "More options"
-													: undefined
-											}
-											className="w-full sm:w-auto"
-										/>
-									</motion.div>
-								)
-							)}
+							{/* View Applicants */}
+							<motion.div whileHover={{ scale: 1.01 }}>
+								<Button
+									label="View Applicants"
+									icon="pi pi-users"
+									size="small"
+									severity="primary"
+									outlined
+									className="w-full sm:w-auto"
+									onClick={() => navigate("/applicants")}
+								/>
+							</motion.div>
+
+							{/* Edit Listing */}
+							<motion.div whileHover={{ scale: 1.01 }}>
+								<Button
+									label="Edit Listing"
+									icon="pi pi-pencil"
+									size="small"
+									severity="primary"
+									outlined
+									className="w-full sm:w-auto"
+								/>
+							</motion.div>
+
+							{/* More Options */}
+							<motion.div whileHover={{ scale: 1.02 }}>
+								<Button
+									icon="pi pi-ellipsis-h"
+									size="small"
+									severity="primary"
+									outlined
+									aria-label="More options"
+									className="w-full sm:w-auto"
+								/>
+							</motion.div>
 						</div>
 					</motion.div>
 				))}

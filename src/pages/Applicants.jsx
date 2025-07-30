@@ -3,7 +3,6 @@ import { Button } from "primereact/button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-
 const newApplicants = [
 	{
 		id: 1,
@@ -11,7 +10,7 @@ const newApplicants = [
 		names: "Emma Smith and Ethan Smith",
 		genders: "Female & Male",
 		degrees: "Economics and Finance Students",
-		years: "3rd Years",
+		years: "3rd Years"
 	},
 	{
 		id: 2,
@@ -19,8 +18,8 @@ const newApplicants = [
 		names: "James Miller & 3 Others",
 		genders: "All Male",
 		degrees: "Math and Computer Science Students",
-		years: "2nd Year & 3rd Years",
-	},
+		years: "2nd Year & 3rd Years"
+	}
 ];
 
 const approvedApplicants = [
@@ -30,8 +29,8 @@ const approvedApplicants = [
 		names: "Sarah Chen and Olivia Green",
 		genders: "Both Female",
 		degrees: "Psychology and Biology Students",
-		years: "4th Years",
-	},
+		years: "4th Years"
+	}
 ];
 
 export default function Applicants() {
@@ -57,7 +56,8 @@ export default function Applicants() {
 						{applicant.names}
 					</h2>
 					<p className="text-sm text-gray-500">
-						{applicant.genders} • {applicant.degrees} • {applicant.years}
+						{applicant.genders} • {applicant.degrees} •{" "}
+						{applicant.years}
 					</p>
 				</div>
 			</div>
@@ -122,33 +122,34 @@ export default function Applicants() {
 			{/* Applicant Cards */}
 			<div className="space-y-6">
 				{activeTab === "new"
-					? newApplicants.map((a) =>
+					? newApplicants.map(a =>
 							renderApplicantCard(a, [
 								{
 									label: "View Profile",
 									icon: "pi pi-user",
 									severity: "primary",
-									onClick: () => navigate("/application"),
+									onClick: () => navigate("/application")
 								},
 								{
 									label: "Approve",
 									icon: "pi pi-check",
-									severity: "primary",
-								},
+									severity: "primary"
+								}
 							])
 					  )
-					: approvedApplicants.map((a) =>
+					: approvedApplicants.map(a =>
 							renderApplicantCard(a, [
 								{
 									label: "Chat",
 									icon: "pi pi-comments",
 									severity: "primary",
+									onClick: () => navigate("/chat")
 								},
 								{
 									label: "Reject Application",
 									icon: "pi pi-times",
-									severity: "danger",
-								},
+									severity: "danger"
+								}
 							])
 					  )}
 			</div>

@@ -36,35 +36,36 @@ export default function ChatPage() {
 			{/* Sidebar */}
 			<div className="w-1/3 bg-blue-50 border-r border-gray-200 flex flex-col">
 				{/* Top bar: Search + Filters */}
-				<div className="p-4 border-b border-blue-200">
+				<div className="p-4 border-b border-blue-200 bg-blue-50">
 					{/* Listing header */}
-					<div className="flex items-center justify-between mb-3 px-1">
-						<h2 className="text-md font-semibold text-blue-900">
+					<div className="flex items-center justify-between mb-3">
+						<h2 className="text-lg font-semibold text-blue-900">
 							Applicants for 14 North Street
 						</h2>
-						<button className="text-sm text-blue-600 border border-blue-300 rounded-full px-2 py-0.5 hover:bg-blue-50">
+						<button className="text-sm text-blue-600 border border-blue-300 rounded-full px-3 py-1 hover:bg-blue-100">
 							Switch
 						</button>
 					</div>
 
 					{/* Search bar */}
-					<div className="flex items-center bg-white border border-blue-200 rounded-full px-4 py-3 text-sm text-blue-900 mb-4 mt-2 shadow-sm">
-						<i className="pi pi-search mr-2 text-blue-500" />
+					<div className="flex items-center bg-white border border-blue-200 rounded-full px-4 py-2.5 text-sm text-blue-900 shadow-sm mb-3">
+						<i className="pi pi-search mr-2 text-blue-500 text-base" />
 						<input
 							type="text"
-							placeholder="Search or start a new chat"
-							className="bg-transparent focus:outline-none w-full placeholder-blue-500 text-sm"
+							placeholder="Search by Name"
+							className="bg-transparent focus:outline-none w-full placeholder-blue-400 text-base"
 						/>
 					</div>
 
-					<div className="flex gap-3 justify-start text-sm">
+					{/* Filter chips */}
+					<div className="flex gap-2">
 						<Chip
 							label="All"
-							className="border border-blue-500 text-blue-600 bg-white text-xs px-3 py-1 rounded-full cursor-pointer"
+							className="border border-blue-500 text-blue-600 bg-white text-xs px-2 py-0.5 rounded-full cursor-pointer"
 						/>
 						<Chip
 							label="Unread"
-							className="border border-blue-500 text-blue-600 bg-white text-xs px-3 py-1 rounded-full cursor-pointer"
+							className="border border-blue-500 text-blue-600 bg-white text-xs px-2 py-0.5 rounded-full cursor-pointer"
 						/>
 					</div>
 				</div>

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "primereact/button";
 import { Chip } from "primereact/chip";
-import { InputText } from "primereact/inputtext";
 
 const conversations = Array.from({ length: 20 }, (_, i) => {
 	const messages = Array.from({ length: 50 }, (_, j) => ({
 		from: j % 2 === 0 ? "them" : "me",
-		text: j % 2 === 0
-			? `Message ${j + 1} from User ${i + 1}`
-			: `You replied to message ${j + 1}`
+		text:
+			j % 2 === 0
+				? `Message ${j + 1} from User ${i + 1}`
+				: `You replied to message ${j + 1}`
 	}));
 
 	return {
@@ -38,12 +38,11 @@ export default function ChatPage() {
 	};
 
 	return (
-		<div className="flex h-screen bg-gray-50">
+		<div className="flex h-screen bg-gray-50 border-t-2 border-gray-200">
 			{/* Sidebar */}
 			<div className="w-1/3 bg-blue-50 border-r border-gray-200 flex flex-col">
 				{/* Top bar: Search + Filters */}
 				<div className="p-4 border-b border-blue-200 bg-blue-50">
-					{/* Listing header */}
 					<div className="flex items-center justify-between mb-3">
 						<h2 className="text-lg font-semibold text-blue-900">
 							Applicants for 14 North Street
@@ -53,7 +52,6 @@ export default function ChatPage() {
 						</button>
 					</div>
 
-					{/* Search bar */}
 					<div className="flex items-center bg-white border border-blue-200 rounded-full px-4 py-2.5 text-sm text-blue-900 shadow-sm mb-3">
 						<i className="pi pi-search mr-2 text-blue-500 text-base" />
 						<input
@@ -63,7 +61,6 @@ export default function ChatPage() {
 						/>
 					</div>
 
-					{/* Filter chips */}
 					<div className="flex gap-2">
 						<Chip
 							label="All"
@@ -88,7 +85,6 @@ export default function ChatPage() {
 									: "hover:bg-white"
 							}`}
 						>
-							{/* Left: Avatar + Name + Message */}
 							<div className="flex items-center gap-3 overflow-hidden">
 								<div className="w-11 h-11 rounded-full bg-white text-blue-900 flex items-center justify-center font-semibold text-sm border border-blue-200 shrink-0">
 									{c.initials}
@@ -106,8 +102,7 @@ export default function ChatPage() {
 								</div>
 							</div>
 
-							{/* Right: Time + Unread */}
-							<div classNamee="flex flex-col items-end shrink-0 min-w-[50px]">
+							<div className="flex flex-col items-end shrink-0 min-w-[50px]">
 								<div className="flex items-center gap-1">
 									{Math.random() > 0.5 && (
 										<div className="w-2.5 h-2.5 bg-blue-600 rounded-full" />
@@ -125,64 +120,46 @@ export default function ChatPage() {
 				</div>
 			</div>
 
-
-
-			{/* Right Chat Area */}
-			<div className="w-2/3 flex flex-col px-6 py-4">
-				{/* Chat header */}
-				<div className="mb-4 border-b pb-2 border-gray-200">
-					<h2 className="text-xl font-semibold text-gray-800">
+			{/* Chat Panel */}
+			<div className="w-2/3 flex flex-col border-l border-gray-200 bg-white">
+				{/* Header */}
+				<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+					<h2 className="text-lg font-semibold text-gray-800">
 						{selectedChat.name}
 					</h2>
+					<div className="flex gap-2">
+						<Button
+							label="Approve"
+							icon="pi pi-check"
+							className="px-4 py-1 border border-green-600 text-green-600 bg-transparent rounded-full text-sm"
+							outlined
+						/>
+						<Button
+							label="Reject"
+							icon="pi pi-times"
+							className="px-4 py-1 border border-red-600 text-red-600 bg-transparent rounded-full text-sm"
+							outlined
+						/>
+					</div>
 				</div>
 
-				{/* Messages area */}
-				<div className="flex-1 border border-gray-200 rounded-xl bg-white p-4 overflow-y-auto space-y-3 mb-4 max-h-[60vh]">
-					{selectedChat.messages.map((msg, i) => (
-						<div
-							key={i}
-							className={`max-w-[75%] px-4 py-2 text-sm rounded-xl shadow-sm ${
-								msg.from === "me"
-									? "ml-auto bg-blue-100 text-blue-900"
-									: "bg-gray-100 text-gray-800"
-							}`}
-						>
-							{msg.text}
-						</div>
-					))}
-				</div>
-
-				{/* Input + send */}
-				<div className="flex gap-2 mb-4">
-					<InputText
-						value={input}
-						onChange={e => setInput(e.target.value)}
-						placeholder="Type a message..."
-						className="flex-1 rounded-xl border border-blue-300 px-4 py-2 text-sm"
-						onKeyDown={e => e.key === "Enter" && sendMessage()}
-					/>
-					<Button
-						icon="pi pi-send"
-						className="w-10 h-10 p-0 border border-blue-600 text-blue-600 bg-transparent rounded-full flex items-center justify-center"
-						outlined
-						onClick={sendMessage}
-					/>
-				</div>
-
-				{/* Action buttons */}
-				<div className="flex justify-center gap-4">
-					<Button
-						label="Approve"
-						icon="pi pi-check"
-						className="px-6 py-2 border border-green-600 text-green-600 bg-transparent rounded-xl"
-						outlined
-					/>
-					<Button
-						label="Reject"
-						icon="pi pi-times"
-						className="px-6 py-2 border border-red-600 text-red-600 bg-transparent rounded-xl"
-						outlined
-					/>
+				{/* Messages and Input */}
+				<div className="flex flex-col flex-1 overflow-hidden">
+					{/* Messages */}
+					<div className="flex-1 px-6 py-4 overflow-y-auto space-y-3 bg-gray-50">
+						{selectedChat.messages.map((msg, i) => (
+							<div
+								key={i}
+								className={`max-w-[75%] px-4 py-2 text-sm rounded-xl shadow ${
+									msg.from === "me"
+										? "ml-auto bg-blue-100 text-blue-900"
+										: "bg-white text-gray-800"
+								}`}
+							>
+								{msg.text}
+							</div>
+						))}
+					</div>
 				</div>
 			</div>
 		</div>

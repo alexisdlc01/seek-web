@@ -17,8 +17,8 @@ export default function ResetPassword() {
 					Reset Password
 				</h1>
 				<FloatLabel className="mt-5">
-					<InputText id="email" className={`w-full p-3 text-lg}`} />
-					<label htmlFor="email" className="ml-2">
+					<InputText id="reset-email" className={`w-full p-3 text-lg}`} />
+					<label htmlFor="reset-email" className="ml-2">
 						Email associated with your account
 					</label>
 				</FloatLabel>

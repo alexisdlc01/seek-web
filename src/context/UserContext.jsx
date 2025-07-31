@@ -85,7 +85,7 @@ export const UserProvider = ({ children }) => {
 		}
 	};
 
-	const signup = async (name, email, password, role = "STUDENT") => {
+	const signup = async (name, email, password, role) => {
 		try {
 			await axios.post(
 				`${BASE_URL}/auth/signup`,

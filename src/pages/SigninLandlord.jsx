@@ -1,20 +1,78 @@
-import React, { useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
+import { Toast } from "primereact/toast";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import UserContext from "../context/UserContext.jsx";
+import axios from "axios";
 
 export default function SignInLandlord() {
 	const navigate = useNavigate();
 	const [email, setEmail] = useState("");
-	const [pwd, setPwd] = useState("");
-	const [confirm, setConfirm] = useState("");
+	const [password, setPassword] = useState("");
+
+	const {login} = useContext(UserContext);
+
+	const toast = useRef(null);
+
+	const showError = detail => {
+		toast.current.show({
+			severity: "error",
+			summary: "Error",
+			detail,
+			life: 3000
+		});
+	};
+
+	const validatePassword = () => {
+		const strongPasswordRegex =
+			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+		if (!strongPasswordRegex.test(password)) {
+			showError(
+				"Password must be at least 8 characters, with uppercase, lowercase, number, and symbol."
+			);
+			return false;
+		}
+
+		return true;
+	};
+
+	const validateEmail = () => {
+		const regex =/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+		if (!email.trim()) {
+			showError("Email is required.");
+			return false;
+		}
+
+		if (!regex.test(email)) {
+			showError(
+				"Please a valid email address."
+			);
+			return false;
+		}
+
+		return true;
+	};
+
+	const handleSubmit = async e => {
+		e.preventDefault();
+		if (!validateEmail()) return;
+		if (!validatePassword()) return;
+
+		await login(email, password);
+		navigate("/");
+	};
 
 	return (
-		<div className="min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
+		<form
+			className="min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4"
+			onSubmit={handleSubmit}
+		>
 			<motion.div
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -40,20 +98,30 @@ export default function SignInLandlord() {
 				<FloatLabel>
 					<Password
 						inputId="confirm"
-						value={confirm}
-						onChange={e => setConfirm(e.target.value)}
+						value={password}
+						onChange={e => setPassword(e.target.value)}
 						feedback={false}
 						className="w-full"
 						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
+						toggleMask
+						pt={{
+							showIcon: {
+								className: "-translate-y-1/4 -translate-x-2/3"
+							},
+							hideIcon: {
+								className: "-translate-y-1/4 -translate-x-2/3"
+							}
+						}}
 					/>
 					<label htmlFor="confirm">Password</label>
 				</FloatLabel>
+
+				<Toast ref={toast} />
 
 				<motion.div whileHover={{ scale: 1.02 }}>
 					<Button
 						label="Sign in"
 						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
-						onClick={() => navigate("/listings")}
 					/>
 				</motion.div>
 
@@ -66,18 +134,21 @@ export default function SignInLandlord() {
 				<div className="flex flex-col gap-2">
 					<motion.div whileHover={{ scale: 1.02 }}>
 						<Button
-							label="Sign up with Google"
+							label="Sign in with Google"
 							icon="pi pi-google"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
-							onClick={() => navigate("/listings")}
+							type="button"
+							onClick={() => {
+								window.location.href = 'http://localhost:3000/auth/google';
+							}}
 						/>
 					</motion.div>
 					<motion.div whileHover={{ scale: 1.02 }}>
 						<Button
-							label="Sign up with Apple"
+							label="Sign in with Apple"
 							icon="pi pi-apple"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
-							onClick={() => navigate("/listings")}
+							type="button"
 						/>
 					</motion.div>
 				</div>
@@ -112,6 +183,6 @@ export default function SignInLandlord() {
 					</Link>
 				</motion.p>
 			</motion.div>
-		</div>
+		</form>
 	);
 }

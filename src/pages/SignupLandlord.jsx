@@ -9,6 +9,8 @@ import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import { Toast } from "primereact/toast";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 export default function SignUpLandlord() {
 	const navigate = useNavigate();
 	const [name, setName] = useState("");
@@ -196,7 +198,7 @@ export default function SignUpLandlord() {
 							className="w-full border border-gray-300 text-gray-800 bg-white"
 							type="button"
 							onClick={() => {
-								window.location.href = 'http://localhost:3000/auth/google';
+								window.location.href = `${BASE_URL}/auth/google`;
 							}}
 						/>
 					</motion.div>

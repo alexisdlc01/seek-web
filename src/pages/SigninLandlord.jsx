@@ -8,7 +8,8 @@ import { Toast } from "primereact/toast";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
-import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function SignInLandlord() {
 	const navigate = useNavigate();
@@ -139,7 +140,7 @@ export default function SignInLandlord() {
 							className="w-full border border-gray-300 text-gray-800 bg-white"
 							type="button"
 							onClick={() => {
-								window.location.href = 'http://localhost:3000/auth/google';
+								window.location.href = `${BASE_URL}/auth/google`;
 							}}
 						/>
 					</motion.div>

@@ -194,6 +194,10 @@ export default function SignUpLandlord() {
 							label="Sign up with Google"
 							icon="pi pi-google"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
+							type="button"
+							onClick={() => {
+								window.location.href = 'http://localhost:3000/auth/google';
+							}}
 						/>
 					</motion.div>
 					<motion.div whileHover={{ scale: 1.02 }}>

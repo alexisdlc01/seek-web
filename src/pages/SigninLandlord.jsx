@@ -8,6 +8,7 @@ import { Toast } from "primereact/toast";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
+import axios from "axios";
 
 export default function SignInLandlord() {
 	const navigate = useNavigate();
@@ -133,16 +134,21 @@ export default function SignInLandlord() {
 				<div className="flex flex-col gap-2">
 					<motion.div whileHover={{ scale: 1.02 }}>
 						<Button
-							label="Sign up with Google"
+							label="Sign in with Google"
 							icon="pi pi-google"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
+							type="button"
+							onClick={() => {
+								window.location.href = 'http://localhost:3000/auth/google';
+							}}
 						/>
 					</motion.div>
 					<motion.div whileHover={{ scale: 1.02 }}>
 						<Button
-							label="Sign up with Apple"
+							label="Sign in with Apple"
 							icon="pi pi-apple"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
+							type="button"
 						/>
 					</motion.div>
 				</div>

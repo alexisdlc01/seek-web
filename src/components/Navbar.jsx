@@ -29,7 +29,7 @@ export default function Navbar() {
 
 	return (
 		<motion.div
-			initial={{ opacity: 0, y: -20 }}
+			initial={{ opacity: 0, y: -10 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.4 }}
 			className="relative w-full mt-4 mb-4 md:mt-0 md:mb-0 bg-white"

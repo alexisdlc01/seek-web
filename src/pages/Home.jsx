@@ -58,8 +58,22 @@ export default function LandingPage() {
 					</div>
 				</div>
 			</motion.section>
-			<section className="py-20 bg-gray-50">
-				<div className="max-w-6xl mx-auto px-4 text-center">
+			<section className="relative pt-0 pb-32 bg-white overflow-hidden">
+				{/* Background Shape */}
+				<div className="absolute inset-0 z-0">
+					<svg
+						className="w-full h-full"
+						viewBox="0 0 1440 600"
+						preserveAspectRatio="none"
+					>
+						<path
+							fill="#1E3A8A"
+							d="M0,0 C400,400 1040,0 1440,300 L1440,600 L0,600 Z"
+						/>
+					</svg>
+				</div>
+
+				<div className="relative z-10 max-w-6xl mx-auto px-4 text-center mb-15">
 					<motion.h2
 						initial={{ opacity: 0, y: 40 }}
 						whileInView={{ opacity: 1, y: 0 }}
@@ -117,6 +131,7 @@ export default function LandingPage() {
 					</div>
 				</div>
 			</section>
+
 			<section className="bg-white py-20">
 				<div className="max-w-6xl mx-auto px-4 text-center">
 					<motion.h2
@@ -143,8 +158,8 @@ export default function LandingPage() {
 				</div>
 			</section>
 
-			<section className="py-20 bg-gray-50 h-[700px]">
-				<div className="max-w-6xl mx-auto px-4 text-center mb-16">
+			<section className="py-2 bg-gray-50 h-[100px]">
+				<div className="max-w-6xl mx-auto px-4 text-center mb-4">
 					<motion.h2
 						initial={{ opacity: 0, y: 40 }}
 						whileInView={{ opacity: 1, y: 0 }}

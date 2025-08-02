@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Stepper } from "primereact/stepper";
 import { StepperPanel } from "primereact/stepperpanel";
-import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import BasicInfoStep from "../components/addPropertySteps/BasicInfoStep";
 import LocationAvailabilityStep from "../components/addPropertySteps/LocationAvailabilityStep";

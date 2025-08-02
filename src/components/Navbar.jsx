@@ -5,6 +5,7 @@ import UserContext from "../context/UserContext.jsx";
 import NavbarMobile from "./NavbarMobile";
 import NavbarDesktop from "./NavbarDesktop";
 
+
 export default function Navbar() {
 	const navigate = useNavigate();
 	const { user, logout } = useContext(UserContext);

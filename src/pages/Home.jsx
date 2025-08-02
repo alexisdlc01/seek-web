@@ -89,7 +89,7 @@ export default function LandingPage() {
 						whileInView={{ opacity: 1 }}
 						viewport={{ once: true }}
 						transition={{ delay: 0.2, duration: 0.6 }}
-						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-16"
+						className="text-lg text-[var(--text-color-secondary)] max-w-3xl mx-auto mb-50"
 					>
 						Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 						Suspendisse potenti. Duis non tortor justo. Sed euismod,
@@ -97,7 +97,7 @@ export default function LandingPage() {
 						nec aliquet nunc nisl euismod nisi.
 					</motion.p>
 
-					<div className="grid md:grid-cols-3 gap-10 text-left">
+					<div className="grid md:grid-cols-3 gap-10 text-left mt-20">
 						{[
 							{
 								title: "Feature 1 Title",

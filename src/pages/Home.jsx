@@ -1,34 +1,37 @@
 import React from "react";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import Steps from "../components/Steps";
 import ReactFlow, { Background, Controls } from "reactflow";
 import "reactflow/dist/style.css";
+import { useViewportScroll, useTransform, motion } from "framer-motion";
 
 export default function LandingPage() {
 	const navigate = useNavigate();
+	const { scrollY } = useViewportScroll();
+	const videoY = useTransform(scrollY, [0, 600], [0, -300]);
 
 	return (
 		<div className="min-h-screen flex flex-col">
 			<motion.section
-				initial={{ opacity: 0, y: -30 }}
+				initial={{ opacity: 0, y: -10 }}
 				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.6 }}
+				transition={{ duration: 0.4 }}
 				className="relative h-screen text-center flex items-center justify-center px-4 overflow-hidden"
 			>
-				<video
+				<motion.video
 					autoPlay
 					loop
 					muted
 					playsInline
+					style={{ y: videoY }}
 					className="absolute top-0 left-0 w-full h-full object-cover z-0"
 					onContextMenu={e => e.preventDefault()}
 				>
 					<source src="/dummy_background.mp4" type="video/mp4" />
 					Your browser does not support the background video.
-				</video>
+				</motion.video>
 
 				<div className="relative z-10 text-white max-w-2xl">
 					<h1 className="text-3xl md:text-5xl font-bold mb-4 drop-shadow-lg">

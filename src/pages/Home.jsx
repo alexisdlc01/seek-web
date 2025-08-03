@@ -35,7 +35,7 @@ export default function LandingPage() {
 
 				<div className="relative z-10 text-white max-w-2xl">
 					<h1 className="text-3xl md:text-5xl font-bold mb-4 drop-shadow-lg">
-						Find Your Perfect Student Home with Seek
+						One Swipe Closer to Home
 					</h1>
 					<p className="text-lg md:text-xl mb-6 drop-shadow">
 						Connecting students with trusted landlords in St Andrews

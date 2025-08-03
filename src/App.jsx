@@ -46,6 +46,7 @@ function App() {
 	return (
 		<>
 			<Navbar />
+			<div className="pt-[60px]">
 			<AnimatePresence mode="wait">
 				<motion.div
 					key={location.pathname}
@@ -99,6 +100,7 @@ function App() {
 					</Routes>
 				</motion.div>
 			</AnimatePresence>
+			</div>
 			<Footer />
 		</>
 	);

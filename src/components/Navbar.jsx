@@ -29,17 +29,17 @@ export default function Navbar() {
 	);
 
 	return (
-		<motion.div
-			initial={{ opacity: 0, y: -10 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.4 }}
-			className="relative w-full mt-4 mb-4 md:mt-0 md:mb-0 bg-white"
-		>
-			{isMobile ? (
-				<NavbarMobile user={user} logout={logout} logo={logo} />
-			) : (
-				<NavbarDesktop user={user} logout={logout} logo={logo} />
-			)}
-		</motion.div>
+<motion.div
+	initial={{ opacity: 0, y: -10 }}
+	animate={{ opacity: 1, y: 0 }}
+	transition={{ duration: 0.4 }}
+	className="fixed top-0 left-0 w-full z-50 bg-white shadow"
+>
+	{isMobile ? (
+		<NavbarMobile user={user} logout={logout} logo={logo} />
+	) : (
+		<NavbarDesktop user={user} logout={logout} logo={logo} />
+	)}
+</motion.div>
 	);
 }

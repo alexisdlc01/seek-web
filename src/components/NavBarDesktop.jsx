@@ -16,10 +16,10 @@ export default function NavbarDesktop({ user, logout, logo }) {
 
 	// switched from font-medium → font-semibold
 	const baseStyle =
-		"text-base font-semibold text-blue-900 relative hover:bg-transparent focus:ring-0 focus:outline-none active:bg-transparent after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:w-0 after:bg-blue-900 after:transition-all after:duration-300 hover:after:w-full";
+		"navbar-buttons text-base font-semibold text-blue-900 relative hover:bg-transparent focus:ring-0 focus:outline-none active:bg-transparent after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:w-0 after:bg-blue-900 after:transition-all after:duration-300 hover:after:w-full";
 
 	const logoutStyle =
-		"text-base font-semibold text-red-600 relative hover:bg-transparent focus:ring-0 focus:outline-none active:bg-transparent after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:w-0 after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full";
+		"navbar-buttons text-base font-semibold text-red-600 relative hover:bg-transparent focus:ring-0 focus:outline-none active:bg-transparent after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:w-0 after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full";
 
 	const start = <div className="ml-4">{logo}</div>;
 
@@ -96,11 +96,13 @@ export default function NavbarDesktop({ user, logout, logo }) {
 			<Menubar
 				start={start}
 				end={end}
-				className="white-navbar"
 				pt={{
-					root: "flex justify-between items-center !border-none !shadow-none bg-white py-4",
+					root: "flex justify-between items-center !border-none !shadow-none py-4",
 					menu: { className: "hidden" },
 					button: { className: "hidden" }
+				}}
+				style={{
+					background: "#0F0F23"
 				}}
 			/>
 			<Menu
@@ -119,8 +121,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 				ref={loginMenuRef}
 				id="popup_menu_right"
 				popupAlignment="right"
-                  style={{ width: '10rem' }}
-
+				style={{ width: "10rem" }}
 			/>
 		</>
 	);

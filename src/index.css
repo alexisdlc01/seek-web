@@ -4,18 +4,36 @@
 @import "primeicons/primeicons.css";
 
 .p-password {
-    display: inline;
+	display: inline;
 }
 
 .custom-node {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
 }
 
 .custom-node .react-flow__handle {
-  background: transparent;
-  border: none;
-  width: 0;
-  height: 0;
+	background: transparent;
+	border: none;
+	width: 0;
+	height: 0;
+}
+
+.navbar-buttons {
+	font-weight: 450; 
+	font-size: 1.125rem; 
+	background-color: inherit !important;
+	box-shadow: none !important;
+	filter: none !important;
+  color: white !important;
+}
+
+.p-button {
+	border-radius: 0.4rem;
+}
+
+html,
+body {
+	overscroll-behavior-y: none;
 }

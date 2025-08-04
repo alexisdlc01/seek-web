@@ -137,20 +137,53 @@ export default function LandingPage() {
 			</div>
 
 			{/* Section 2 */}
-			<div className="sticky top-0 h-screen flex items-center justify-center">
-				<motion.div
-					style={{ opacity: section2Opacity, y: section2Y }}
-					className="absolute text-white text-center max-w-xl px-4"
-				>
-					<h1 className="text-4xl font-semibold mb-4 drop-shadow-lg">
-						Verified Listings Only
-					</h1>
-					<p className="text-lg drop-shadow">
-						Every property is checked so you can browse with
-						confidence.
-					</p>
-				</motion.div>
-			</div>
+<div className="sticky top-0 h-screen flex items-center justify-center">
+	<motion.div
+		style={{ opacity: section2Opacity, y: section2Y }}
+		className="absolute text-white text-center px-4 max-w-4xl w-full"
+	>
+		<div className="flex flex-col md:flex-row justify-between items-center gap-8">
+			<motion.div
+				initial={{ opacity: 0, x: -50 }}
+				animate={{ opacity: 1, x: 0 }}
+				transition={{ duration: 0.8, ease: "easeOut" }}
+				className="text-2xl md:text-3xl font-semibold drop-shadow text-left w-full md:w-1/2"
+			>
+				Looking for your next place to live?
+			</motion.div>
+
+			<motion.div
+				initial={{ opacity: 0, x: 50 }}
+				animate={{ opacity: 1, x: 0 }}
+				transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
+				className="text-2xl md:text-3xl font-semibold drop-shadow text-right w-full md:w-1/2"
+			>
+				Or have a property you want to rent out?
+			</motion.div>
+		</div>
+
+		{/* Buttons */}
+		<div className="mt-12 flex justify-center gap-6">
+			<motion.button
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
+				className="px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
+			>
+				I’m a student
+			</motion.button>
+			<motion.button
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
+				className="px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
+			>
+				I’m a landlord
+			</motion.button>
+		</div>
+	</motion.div>
+</div>
+
 
 			{/* Section 3 */}
 			<div className="sticky top-0 h-screen flex items-center justify-center">

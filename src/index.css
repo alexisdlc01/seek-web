@@ -21,16 +21,20 @@
 }
 
 .navbar-buttons {
-	font-weight: 450; 
-	font-size: 1.125rem; 
+	font-weight: 450;
+	font-size: 1.125rem;
 	background-color: inherit !important;
 	box-shadow: none !important;
 	filter: none !important;
-  color: white !important;
+	color: white !important;
 }
 
 .p-button {
 	border-radius: 0.4rem;
+}
+
+.p-menubar {
+	border-radius: 0;
 }
 
 html,

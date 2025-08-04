@@ -5,12 +5,10 @@ import UserContext from "../context/UserContext.jsx";
 import NavbarMobile from "./NavBarMobile.jsx";
 import NavbarDesktop from "./NavBarDesktop.jsx";
 
-
 export default function Navbar() {
 	const navigate = useNavigate();
 	const { user, logout } = useContext(UserContext);
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-	const loggedIn = !!user;
 
 	useEffect(() => {
 		const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -29,17 +27,17 @@ export default function Navbar() {
 	);
 
 	return (
-<motion.div
-	initial={{ opacity: 0, y: -10 }}
-	animate={{ opacity: 1, y: 0 }}
-	transition={{ duration: 0.4 }}
-	className="fixed top-0 left-0 w-full z-50 bg-white shadow"
->
-	{isMobile ? (
-		<NavbarMobile user={user} logout={logout} logo={logo} />
-	) : (
-		<NavbarDesktop user={user} logout={logout} logo={logo} />
-	)}
-</motion.div>
+		<motion.div
+			initial={{ opacity: 0, y: -10 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.4 }}
+			className="fixed top-0 left-0 w-full z-50 bg-white shadow"
+		>
+			{isMobile ? (
+				<NavbarMobile user={user} logout={logout} logo={logo} />
+			) : (
+				<NavbarDesktop user={user} logout={logout} logo={logo} />
+			)}
+		</motion.div>
 	);
 }

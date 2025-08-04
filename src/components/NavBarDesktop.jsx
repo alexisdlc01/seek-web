@@ -10,8 +10,30 @@ export default function NavbarDesktop({ user, logout, logo }) {
 	const loggedIn = !!user;
 
 	const loginItems = [
-		{ label: "As Student", command: () => navigate("/signin/student") },
-		{ label: "As Landlord", command: () => navigate("/signin/landlord") }
+		{
+			label: (
+				<span
+					style={{
+						color: "#0F0F23"
+					}}
+				>
+					As Student
+				</span>
+			),
+			command: () => navigate("/signin/student")
+		},
+		{
+			label: (
+				<span
+					style={{
+						color: "#0F0F23"
+					}}
+				>
+					As Landlord
+				</span>
+			),
+			command: () => navigate("/signin/landlord")
+		}
 	];
 
 	// switched from font-medium → font-semibold
@@ -121,7 +143,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 				ref={loginMenuRef}
 				id="popup_menu_right"
 				popupAlignment="right"
-				style={{ width: "10rem" }}
+				style={{ width: "10rem", color: "#0F0F23" }}
 			/>
 		</>
 	);

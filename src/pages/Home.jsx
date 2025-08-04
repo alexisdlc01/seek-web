@@ -11,14 +11,12 @@ export default function LandingPage() {
 	const { scrollY } = useScroll();
 	const videoRef = useRef(null);
 
-	// Scroll range
 	const BLUR_START = 50;
 	const BLUR_END = 300;
-	const MAX_BLUR = 12; // px
+	const MAX_BLUR = 12;
 	const MAX_SCALE = 1.05;
 	const MIN_BRIGHTNESS = 0.5;
 
-	// Motion values
 	const blurValue = useTransform(
 		scrollY,
 		[BLUR_START, BLUR_END],
@@ -54,44 +52,23 @@ export default function LandingPage() {
 		return () => unsubscribe();
 	}, [scrollY]);
 
-	// Text animation transforms
 	const section1Opacity = useTransform(scrollY, [0, 300], [1, 0]);
 	const section1Y = useTransform(scrollY, [0, 300], [0, -50]);
 
-	const section3Opacity = useTransform(scrollY, [800, 1300], [0, 1]);
-	const section3Y = useTransform(scrollY, [800, 1300], [50, 0]);
+	// Blur Section 1 – Left
+	const blur1Opacity = useTransform(scrollY, [600, 900, 1400], [0, 1, 0]);
+	const blur1X = useTransform(scrollY, [600, 900], [-100, 0]);
 
-	const section4Start = 1300;
-	const section4End = 1900;
+	// Blur Section 2 – Right
+	const blur2Opacity = useTransform(scrollY, [1000, 1300, 1700], [0, 1, 0]);
+	const blur2X = useTransform(scrollY, [1000, 1300], [100, 0]);
 
-	const section4Scale = useTransform(
-		scrollY,
-		[section4Start, (section4Start + section4End) / 2, section4End],
-		[1, 1.2, 0.5]
-	);
-
-	const section4Opacity = useTransform(
-		scrollY,
-		[section4Start, (section4Start + section4End) / 2, section4End],
-		[0, 1, 0]
-	);
-
-	const section4X = useTransform(
-		scrollY,
-		[section4Start, section4End],
-		[-100, 0]
-	);
-
-	// Blurb 1 – left
-	const blurb1Opacity = useTransform(scrollY, [2000, 2200, 2400], [0, 1, 0]);
-	const blurb1X = useTransform(scrollY, [2000, 2200], [-200, 0]);
-
-	// Blurb 2 – right
-	const blurb2Opacity = useTransform(scrollY, [2500, 2700, 2900], [0, 1, 0]);
-	const blurb2X = useTransform(scrollY, [2500, 2700], [200, 0]);
+	// Blur Section 3 – Left
+	const blur3Opacity = useTransform(scrollY, [1500, 1800, 2200], [0, 1, 0]);
+	const blur3X = useTransform(scrollY, [1500, 1800], [-100, 0]);
 
 	return (
-		<div className="relative h-[300vh] overflow-x-hidden">
+		<div className="relative h-[400vh] overflow-x-hidden">
 			{/* Video Background */}
 			<div className="fixed inset-0 z-[-1] overflow-hidden">
 				<motion.video
@@ -110,7 +87,7 @@ export default function LandingPage() {
 				</motion.video>
 			</div>
 
-			{/* Overlay Sections */}
+			{/* Hero Section */}
 			<div className="sticky top-0 h-screen flex items-center justify-center">
 				<motion.div
 					style={{ opacity: section1Opacity, y: section1Y }}
@@ -119,11 +96,7 @@ export default function LandingPage() {
 					<motion.h1
 						initial={{ opacity: 0, y: 30 }}
 						animate={{ opacity: 1, y: 0 }}
-						transition={{
-							duration: 0.8,
-							ease: "easeOut",
-							delay: 0
-						}}
+						transition={{ duration: 0.8, ease: "easeOut" }}
 						className="text-5xl font-bold mb-4 drop-shadow-lg"
 					>
 						One Swipe Closer to Home
@@ -141,18 +114,19 @@ export default function LandingPage() {
 					>
 						Connecting students with trusted landlords in St Andrews
 					</motion.p>
+
 					<motion.button
-						initial={{ opacity: 0, y: 0 }}
-						animate={{ opacity: 1, y: 0 }}
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
 						transition={{
 							duration: 0.8,
 							ease: "easeOut",
-							delay: 0
+							delay: 0.2
 						}}
 						className="mt-4 px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
 						onClick={() =>
 							window.scrollTo({
-								top: window.innerHeight,
+								top: 900,
 								behavior: "smooth"
 							})
 						}
@@ -162,38 +136,65 @@ export default function LandingPage() {
 				</motion.div>
 			</div>
 
-			{/* Section 3 */}
-			<div className="sticky top-0 h-screen flex items-center justify-center">
+			{/* Blur Section 1 – Left */}
+			<div className="h-screen relative">
 				<motion.div
-					style={{ opacity: section3Opacity, y: section3Y }}
-					className="absolute text-white text-center max-w-xl px-4"
+					style={{
+						opacity: blur1Opacity,
+						x: blur1X,
+						transformOrigin: "left"
+					}}
+					className="fixed top-1/2 left-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
 				>
-					<h1 className="text-4xl font-semibold mb-4 drop-shadow-lg">
-						Find Your Match
+					<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+						Ready to Move In?
 					</h1>
 					<p className="text-lg drop-shadow">
-						Filter listings by budget, location, and amenities to
-						find what suits you.
+						Start exploring listings today and secure your new home
+						with confidence. Every property is hand-checked, and
+						listings update in real-time as availability changes.
 					</p>
 				</motion.div>
 			</div>
 
-			{/* Section 4 */}
+			{/* Blur Section 2 – Right */}
 			<div className="h-screen relative">
 				<motion.div
 					style={{
-						scale: section4Scale,
-						opacity: section4Opacity,
-						x: section4X,
-						transformOrigin: "center"
+						opacity: blur2Opacity,
+						x: blur2X,
+						transformOrigin: "right"
 					}}
-					className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center max-w-xl px-4 pointer-events-none"
+					className="fixed top-1/2 right-[20%] -translate-y-1/2 text-white text-right max-w-md px-4 pointer-events-none"
 				>
-					<h1 className="text-4xl font-semibold mb-4 drop-shadow-lg">
-						Ready to Move In?
+					<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+						Only Real Listings
 					</h1>
 					<p className="text-lg drop-shadow">
-						Start exploring listings today and secure your new home.
+						We eliminate scams and outdated posts, showing you only
+						what’s genuinely available. Our moderation team actively
+						reviews every listing so you don't waste time.
+					</p>
+				</motion.div>
+			</div>
+
+			{/* Blur Section 3 – Left */}
+			<div className="h-screen relative">
+				<motion.div
+					style={{
+						opacity: blur3Opacity,
+						x: blur3X,
+						transformOrigin: "left"
+					}}
+					className="fixed top-1/2 left-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
+				>
+					<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+						Instant Apply
+					</h1>
+					<p className="text-lg drop-shadow">
+						No more endless paperwork. Tap once to apply, attach
+						your details, and receive confirmation directly. It’s
+						that simple — moving in has never been faster.
 					</p>
 				</motion.div>
 			</div>

@@ -10,6 +10,7 @@ import SignInLandlord from "./pages/SigninLandlord";
 import SignInStudent from "./pages/SigninStudent";
 import SignUpStudent from "./pages/SignupStudent";
 import AddProperty from "./pages/AddProperty";
+import ContactPage from "./pages/Contact";
 import ResetPassword from "./pages/ResetPassword";
 import Listings from "./pages/Listings";
 import Applicants from "./pages/Applicants";
@@ -59,6 +60,7 @@ function App() {
 						<Route path="/" element={<Home />} />
 						<Route path="/terms" element={<Terms />} />
 						<Route path="/privacy" element={<Privacy />} />
+						<Route path="/contact" element={<ContactPage />} />
 						<Route path="/help" element={<Help />} />
 						<Route path="/about" element={<About />} />
 						<Route

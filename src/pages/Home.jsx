@@ -1,4 +1,4 @@
-import  { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
 	motion,
 	useTransform,
@@ -90,11 +90,80 @@ export default function LandingPage() {
 					style={{ opacity: section1Opacity, y: section1Y }}
 					className="absolute text-white text-center max-w-xl px-4"
 				>
-					<h1 className="text-5xl font-bold mb-4 drop-shadow-lg">
+					<motion.h1
+						initial={{ opacity: 0, y: 30 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{
+							duration: 0.8,
+							ease: "easeOut",
+							delay: 0
+						}}
+						className="text-5xl font-bold mb-4 drop-shadow-lg"
+					>
 						One Swipe Closer to Home
-					</h1>
-					<p className="text-xl drop-shadow">
+					</motion.h1>
+
+					<motion.p
+						initial={{ opacity: 0, y: 30 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{
+							duration: 0.8,
+							ease: "easeOut",
+							delay: 0.1
+						}}
+						className="text-xl drop-shadow mb-8"
+					>
 						Connecting students with trusted landlords in St Andrews
+					</motion.p>
+					<motion.button
+						initial={{ opacity: 0, y: 0 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{
+							duration: 0.8,
+							ease: "easeOut",
+							delay: 0
+						}}
+						className="mt-4 px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
+						onClick={() =>
+							window.scrollTo({
+								top: window.innerHeight,
+								behavior: "smooth"
+							})
+						}
+					>
+						↓ Scroll to Learn More
+					</motion.button>
+				</motion.div>
+			</div>
+
+			{/* Section 2 */}
+			<div className="sticky top-0 h-screen flex items-center justify-center">
+				<motion.div
+					style={{ opacity: section2Opacity, y: section2Y }}
+					className="absolute text-white text-center max-w-xl px-4"
+				>
+					<h1 className="text-4xl font-semibold mb-4 drop-shadow-lg">
+						Verified Listings Only
+					</h1>
+					<p className="text-lg drop-shadow">
+						Every property is checked so you can browse with
+						confidence.
+					</p>
+				</motion.div>
+			</div>
+
+			{/* Section 3 */}
+			<div className="sticky top-0 h-screen flex items-center justify-center">
+				<motion.div
+					style={{ opacity: section3Opacity, y: section3Y }}
+					className="absolute text-white text-center max-w-xl px-4"
+				>
+					<h1 className="text-4xl font-semibold mb-4 drop-shadow-lg">
+						Find Your Match
+					</h1>
+					<p className="text-lg drop-shadow">
+						Filter listings by budget, location, and amenities to
+						find what suits you.
 					</p>
 				</motion.div>
 			</div>

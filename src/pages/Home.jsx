@@ -58,11 +58,37 @@ export default function LandingPage() {
 	const section1Opacity = useTransform(scrollY, [0, 300], [1, 0]);
 	const section1Y = useTransform(scrollY, [0, 300], [0, -50]);
 
-	const section2Opacity = useTransform(scrollY, [300, 800], [0, 1]);
-	const section2Y = useTransform(scrollY, [300, 800], [50, 0]);
-
 	const section3Opacity = useTransform(scrollY, [800, 1300], [0, 1]);
 	const section3Y = useTransform(scrollY, [800, 1300], [50, 0]);
+
+	const section4Start = 1300;
+	const section4End = 1900;
+
+	const section4Scale = useTransform(
+		scrollY,
+		[section4Start, (section4Start + section4End) / 2, section4End],
+		[1, 1.2, 0.5]
+	);
+
+	const section4Opacity = useTransform(
+		scrollY,
+		[section4Start, (section4Start + section4End) / 2, section4End],
+		[0, 1, 0]
+	);
+
+	const section4X = useTransform(
+		scrollY,
+		[section4Start, section4End],
+		[-100, 0]
+	);
+
+	// Blurb 1 – left
+	const blurb1Opacity = useTransform(scrollY, [2000, 2200, 2400], [0, 1, 0]);
+	const blurb1X = useTransform(scrollY, [2000, 2200], [-200, 0]);
+
+	// Blurb 2 – right
+	const blurb2Opacity = useTransform(scrollY, [2500, 2700, 2900], [0, 1, 0]);
+	const blurb2X = useTransform(scrollY, [2500, 2700], [200, 0]);
 
 	return (
 		<div className="relative h-[300vh] overflow-x-hidden">
@@ -136,55 +162,6 @@ export default function LandingPage() {
 				</motion.div>
 			</div>
 
-			{/* Section 2 */}
-<div className="sticky top-0 h-screen flex items-center justify-center">
-	<motion.div
-		style={{ opacity: section2Opacity, y: section2Y }}
-		className="absolute text-white text-center px-4 max-w-4xl w-full"
-	>
-		<div className="flex flex-col md:flex-row justify-between items-center gap-8">
-			<motion.div
-				initial={{ opacity: 0, x: -50 }}
-				animate={{ opacity: 1, x: 0 }}
-				transition={{ duration: 0.8, ease: "easeOut" }}
-				className="text-2xl md:text-3xl font-semibold drop-shadow text-left w-full md:w-1/2"
-			>
-				Looking for your next place to live?
-			</motion.div>
-
-			<motion.div
-				initial={{ opacity: 0, x: 50 }}
-				animate={{ opacity: 1, x: 0 }}
-				transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-				className="text-2xl md:text-3xl font-semibold drop-shadow text-right w-full md:w-1/2"
-			>
-				Or have a property you want to rent out?
-			</motion.div>
-		</div>
-
-		{/* Buttons */}
-		<div className="mt-12 flex justify-center gap-6">
-			<motion.button
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
-				className="px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
-			>
-				I’m a student
-			</motion.button>
-			<motion.button
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
-				className="px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
-			>
-				I’m a landlord
-			</motion.button>
-		</div>
-	</motion.div>
-</div>
-
-
 			{/* Section 3 */}
 			<div className="sticky top-0 h-screen flex items-center justify-center">
 				<motion.div
@@ -197,6 +174,26 @@ export default function LandingPage() {
 					<p className="text-lg drop-shadow">
 						Filter listings by budget, location, and amenities to
 						find what suits you.
+					</p>
+				</motion.div>
+			</div>
+
+			{/* Section 4 */}
+			<div className="h-screen relative">
+				<motion.div
+					style={{
+						scale: section4Scale,
+						opacity: section4Opacity,
+						x: section4X,
+						transformOrigin: "center"
+					}}
+					className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center max-w-xl px-4 pointer-events-none"
+				>
+					<h1 className="text-4xl font-semibold mb-4 drop-shadow-lg">
+						Ready to Move In?
+					</h1>
+					<p className="text-lg drop-shadow">
+						Start exploring listings today and secure your new home.
 					</p>
 				</motion.div>
 			</div>

@@ -1,11 +1,12 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
 	motion,
 	useTransform,
 	useSpring,
 	useMotionTemplate,
-	useScroll
+	useScroll, useInView
 } from "framer-motion";
+import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 
 export default function ContactPage() {
 	const { scrollY } = useScroll();
@@ -59,6 +60,18 @@ export default function ContactPage() {
 		[BLUR_END, BLUR_END + 100],
 		[0, 1]
 	);
+
+	const cardRef = useRef(null);
+	const isInView = useInView(cardRef, { margin: "-20% 0px -20% 0px" });
+	const { setTheme } = useNavbarTheme();
+
+	useEffect(() => {
+		if (isInView) {
+			setTheme("dark");
+		} else {
+			setTheme("light");
+		}
+	}, [isInView, setTheme]);
 
 	return (
 		<div className="relative h-[400vh] overflow-x-hidden">
@@ -118,7 +131,7 @@ export default function ContactPage() {
 			</motion.div>
 
 			{/* Hero Section */}
-			<div className="sticky top-0 h-screen flex items-center justify-center">
+			<div className="sticky top-0 h-screen flex items-center justify-center" ref={cardRef}>
 				<motion.div
 					style={{ opacity: section1Opacity, y: section1Y }}
 					className="absolute text-white text-center max-w-xl px-4"

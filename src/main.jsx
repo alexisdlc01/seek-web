@@ -5,6 +5,7 @@ import App from "./App";
 import "./index.css";
 import { PrimeReactProvider } from "primereact/api";
 import { UserProvider } from "./context/UserContext.jsx";
+import { NavbarThemeProvider } from "./context/NavBarThemeContext.jsx";
 import { ProgressSpinner } from "primereact/progressspinner";
 
 const LoadingScreen = () => (
@@ -18,7 +19,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 		<Suspense fallback={<LoadingScreen />}>
 			<BrowserRouter>
 				<UserProvider>
-					<App />
+					<NavbarThemeProvider>
+						<App />
+					</NavbarThemeProvider>
 				</UserProvider>
 			</BrowserRouter>
 		</Suspense>

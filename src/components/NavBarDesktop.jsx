@@ -3,11 +3,16 @@ import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
 import { useNavigate } from "react-router-dom";
+import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 
 export default function NavbarDesktop({ user, logout, logo }) {
 	const navigate = useNavigate();
 	const loginMenuRef = useRef(null);
 	const loggedIn = !!user;
+	const { theme } = useNavbarTheme();
+
+	const backgroundTheme = theme === "dark" ? "#0F0F23" : "white";
+	const oppositeBackgroundTheme = theme !== "dark" ? "#0F0F23" : "white";
 
 	const loginItems = [
 		{
@@ -83,25 +88,41 @@ export default function NavbarDesktop({ user, logout, logo }) {
 			) : (
 				<>
 					<Button
-						label="Home"
+						label={
+							<span style={{ color: oppositeBackgroundTheme }}>
+								Home
+							</span>
+						}
 						text
 						className={baseStyle}
 						onClick={() => navigate("/")}
 					/>
 					<Button
-						label="About"
+						label={
+							<span style={{ color: oppositeBackgroundTheme }}>
+								About
+							</span>
+						}
 						text
 						className={baseStyle}
 						onClick={() => navigate("/about")}
 					/>
 					<Button
-						label="Help"
+						label={
+							<span style={{ color: oppositeBackgroundTheme }}>
+								Help
+							</span>
+						}
 						text
 						className={baseStyle}
 						onClick={() => navigate("/help")}
 					/>
 					<Button
-						label="Login"
+						label={
+							<span style={{ color: oppositeBackgroundTheme }}>
+								Login
+							</span>
+						}
 						icon="pi pi-chevron-down"
 						iconPos="right"
 						text
@@ -119,13 +140,17 @@ export default function NavbarDesktop({ user, logout, logo }) {
 				start={start}
 				end={end}
 				pt={{
-					root: "flex justify-between items-center !border-none !shadow-none py-4",
+					root: {
+						className:
+							"flex justify-between items-center !border-none !shadow-none py-4"
+					},
 					menu: { className: "hidden" },
 					button: { className: "hidden" }
 				}}
 				style={{
-					background: "#0F0F23"
+					background: backgroundTheme
 				}}
+				className={`transition-colors duration-500 ease-in-out ${theme === "dark" ? "bg-black text-white" : "bg-white text-black"}`}
 			/>
 			<Menu
 				model={loginItems.map(item => ({

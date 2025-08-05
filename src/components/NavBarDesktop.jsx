@@ -9,8 +9,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 	const navigate = useNavigate();
 	const loginMenuRef = useRef(null);
 	const loggedIn = !!user;
-	const { theme } = useNavbarTheme();
-
+	const { theme = "dark" } = useNavbarTheme();
 	const backgroundTheme = theme === "dark" ? "#0F0F23" : "white";
 	const oppositeBackgroundTheme = theme !== "dark" ? "#0F0F23" : "white";
 
@@ -150,7 +149,11 @@ export default function NavbarDesktop({ user, logout, logo }) {
 				style={{
 					background: backgroundTheme
 				}}
-				className={`transition-colors duration-500 ease-in-out ${theme === "dark" ? "bg-black text-white" : "bg-white text-black"}`}
+				className={`transition-colors duration-500 ease-in-out ${
+					theme === "dark"
+						? "bg-black text-white"
+						: "bg-white text-black"
+				}`}
 			/>
 			<Menu
 				model={loginItems.map(item => ({

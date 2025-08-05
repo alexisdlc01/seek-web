@@ -69,7 +69,7 @@ export default function ContactPage() {
 		if (isInView) {
 			setTheme("dark");
 		} else {
-			setTheme("light");
+			setTheme("white");
 		}
 	}, [isInView, setTheme]);
 

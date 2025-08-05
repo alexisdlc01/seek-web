@@ -6,10 +6,12 @@ import {
 	useMotionTemplate,
 	useScroll
 } from "framer-motion";
+import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 
 export default function LandingPage() {
 	const { scrollY } = useScroll();
 	const videoRef = useRef(null);
+	const { setTheme } = useNavbarTheme();
 
 	const BLUR_START = 50;
 	const BLUR_END = 300;
@@ -45,8 +47,13 @@ export default function LandingPage() {
 	useEffect(() => {
 		const unsubscribe = scrollY.onChange(latest => {
 			if (videoRef.current) {
-				if (latest > BLUR_END) videoRef.current.pause();
-				else videoRef.current.play();
+				if (latest > BLUR_END) {
+					videoRef.current.pause();
+					setTheme("dark")
+				} else {
+					videoRef.current.play();
+					setTheme("white")
+				}
 			}
 		});
 		return () => unsubscribe();

@@ -9,7 +9,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 	const navigate = useNavigate();
 	const loginMenuRef = useRef(null);
 	const loggedIn = !!user;
-	const { theme = "dark" } = useNavbarTheme();
+	const { theme } = useNavbarTheme();
 	const backgroundTheme = theme === "dark" ? "#0F0F23" : "white";
 	const oppositeBackgroundTheme = theme !== "dark" ? "#0F0F23" : "white";
 
@@ -128,6 +128,20 @@ export default function NavbarDesktop({ user, logout, logo }) {
 						className={baseStyle}
 						onClick={e => loginMenuRef.current.toggle(e)}
 					/>
+					{/*<Button*/}
+					{/*	label={<span style={{ color: oppositeBackgroundTheme }}>Login</span>}*/}
+					{/*	icon={*/}
+					{/*		<i*/}
+					{/*			className="pi pi-chevron-down"*/}
+					{/*			style={{ color: oppositeBackgroundTheme }}*/}
+					{/*		/>*/}
+					{/*	}*/}
+					{/*	iconPos="right"*/}
+					{/*	text*/}
+					{/*	className={baseStyle}*/}
+					{/*	onClick={e => loginMenuRef.current.toggle(e)}*/}
+					{/*/>*/}
+
 				</>
 			)}
 		</div>

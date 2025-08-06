@@ -47,3 +47,11 @@ body {
   margin: 0;
   background-color: #0F0F23;
 }
+
+.navbar-dark .pi {
+	color: white;
+}
+
+.navbar-light .pi {
+	color: #0F0F23; /* or black */
+}

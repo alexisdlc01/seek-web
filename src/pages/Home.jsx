@@ -101,12 +101,12 @@ export default function LandingPage() {
 		return { opacity, x, rotate, scale };
 	};
 
-	const blur1 = makeSection(BLUR1_OFFSET, -100, 0);
-	const blur2 = makeSection(BLUR2_OFFSET, 100, 0);
-	const blur3 = makeSection(BLUR3_OFFSET, -100, 0);
+	const blur1 = makeSection(BLUR1_OFFSET, -100, -50);
+	const blur2 = makeSection(BLUR2_OFFSET, 100, 50);
+	const blur3 = makeSection(BLUR3_OFFSET, -100, -50);
 
 	return (
-		<div className="relative h-[500vh] overflow-x-hidden">
+		<div className="relative h-[800vh] overflow-x-hidden">
 			{/* Videix Background */}
 			<div className="fixed inset-0 z-[-1] overflow-hidden">
 				<motion.video
@@ -177,7 +177,7 @@ export default function LandingPage() {
 						className="mt-4 px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
 						onClick={() =>
 							window.scrollTo({
-								top: BLUR1_OFFSET,
+								top: BLUR1_OFFSET + 500,
 								behavior: "smooth"
 							})
 						}
@@ -189,95 +189,78 @@ export default function LandingPage() {
 
 			{/* Blur Section 1 – Left */}
 			<div className="h-screen relative">
-				<motion.div
-					style={{
-						opacity: blur1.opacity,
-						x: blur1.x,
-						rotate: blur1.rotate,
-						scale: blur1.scale,
-						transformOrigin: "left center"
-					}}
-					className="fixed top-1/2 left-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
-				>
-					<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-						Ready to Move In?
-					</h1>
-					<p className="text-lg drop-shadow">
-						Start exploring listings today and secure your new home
-						with confidence. Every property is hand-checked, and
-						listings update in real-time as availability changes.
-					</p>
-				</motion.div>
+				<div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+					<motion.div
+						style={{
+							opacity: blur1.opacity,
+							x: blur1.x,
+							rotate: blur1.rotate,
+							scale: blur1.scale,
+							transformOrigin: "left center"
+						}}
+						className="text-white text-center max-w-md px-4"
+					>
+						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+							Ready to Move In?
+						</h1>
+						<p className="text-lg drop-shadow">
+							Start exploring listings today and secure your new
+							home with confidence. Every property is
+							hand-checked, and listings update in real-time as
+							availability changes.
+						</p>
+					</motion.div>
+				</div>
 			</div>
 
 			{/* Blur Section 2 – Right */}
 			<div className="h-screen relative">
-				<motion.div
-					style={{
-						opacity: blur2.opacity,
-						x: blur2.x,
-						rotate: blur2.rotate,
-						scale: blur2.scale,
-						transformOrigin: "right center"
-					}}
-					className="fixed top-1/2 right-[20%] -translate-y-1/2 text-white text-right max-w-md px-4 pointer-events-none"
-				>
-					<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-						Only Real Listings
-					</h1>
-					<p className="text-lg drop-shadow">
-						We eliminate scams and outdated posts, showing you only
-						what’s genuinely available. Our moderation team actively
-						reviews every listing so you don't waste time.
-					</p>
-				</motion.div>
+				<div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+					<motion.div
+						style={{
+							opacity: blur2.opacity,
+							x: blur2.x,
+							rotate: blur2.rotate,
+							scale: blur2.scale,
+							transformOrigin: "right center"
+						}}
+						className="text-white text-center max-w-md px-4"
+					>
+						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+							Only Real Listings
+						</h1>
+						<p className="text-lg drop-shadow">
+							We eliminate scams and outdated posts, showing you
+							only what’s genuinely available. Our moderation team
+							actively reviews every listing so you don't waste
+							time.
+						</p>
+					</motion.div>
+				</div>
 			</div>
 
 			{/* Blur Section 3 – Left */}
 			<div className="h-screen relative">
-				<motion.div
-					style={{
-						opacity: blur3.opacity,
-						x: blur3.x,
-						rotate: blur3.rotate,
-						scale: blur3.scale,
-						transformOrigin: "left center"
-					}}
-					className="fixed top-1/2 left-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
-				>
-					<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-						Instant Apply
-					</h1>
-					<p className="text-lg drop-shadow">
-						No more endless paperwork. Tap once to apply, attach
-						your details, and receive confirmation directly. It’s
-						that simple — moving in has never been faster.
-					</p>
-				</motion.div>
-			</div>
-
-			{/* Final Static Card */}
-			<div className="h-screen flex items-center justify-center">
-				<div className="text-white text-left max-w-md px-4">
-					<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-						Safe, Simple, Student-First
-					</h1>
-					<p className="text-lg drop-shadow">
-						Lorem ipsum dolor sit amet, consectetur adipisicing
-						elit. Ab accusamus assumenda cum dicta dolorem enim
-						ipsa, necessitatibus omnis praesentium, quia, sapiente
-						sit voluptatibus voluptatum? Distinctio ea labore
-						necessitatibus non quam sapiente. Aperiam, architecto
-						dicta dolores ducimus facere facilis ipsam laboriosam,
-						maxime modi nemo nesciunt nulla obcaecati officia quis
-						repellendus. Beatae eaque, earum expedita inventore
-						magnam nemo numquam omnis, quaerat reprehenderit tempora
-						veritatis, voluptatem! A ab assumenda consequatur eius
-						eos eum illo in maxime molestiae non, pariatur, porro
-						quo recusandae repellat unde vel vero voluptas. Animi at
-						delectus est inventore quasi qui reiciendis? Architecto
-						dolore, dolorum molestiae quo repellat ullam vel?
-					</p>
+				<div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+					<motion.div
+						style={{
+							opacity: blur3.opacity,
+							x: blur3.x,
+							rotate: blur3.rotate,
+							scale: blur3.scale,
+							transformOrigin: "left center"
+						}}
+						className="text-white text-center max-w-md px-4"
+					>
+						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+							Instant Apply
+						</h1>
+						<p className="text-lg drop-shadow">
+							No more endless paperwork. Tap once to apply, attach
+							your details, and receive confirmation directly.
+							It’s that simple — moving in has never been faster.
+						</p>
+					</motion.div>
 				</div>
 			</div>
 		</div>

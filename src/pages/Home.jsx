@@ -23,14 +23,18 @@ export default function LandingPage() {
 	// —— Hero section scroll threshold ——
 	const HERO_SCROLL_END = 300;
 
-	// —— Blur animation timing ——
-	const FADE_IN_DURATION = 300; // px to fade-in
-	const HOLD_DURATION = 400; // px to hold
+	// …above your existing constants…
+	const FADE_IN_DURATION = 300;
+	const HOLD_DURATION = 400;
+	const GAP_BETWEEN = 200; // px of blank scroll between sections
 
-	// —— Per-section starting offsets ——
+	// total time for one section (fade-in + hold + fade-out)
+	const SECTION_LENGTH =
+		FADE_IN_DURATION /*in*/ + HOLD_DURATION + FADE_IN_DURATION; /*out*/
+
 	const BLUR1_OFFSET = 500;
-	const BLUR2_OFFSET = 1100;
-	const BLUR3_OFFSET = 1700;
+	const BLUR2_OFFSET = BLUR1_OFFSET + SECTION_LENGTH + GAP_BETWEEN; // e.g. 500 + 300+400+300 + 200 = 1700
+	const BLUR3_OFFSET = BLUR2_OFFSET + SECTION_LENGTH + GAP_BETWEEN; // pushes section 3 further down
 
 	// springify the video filters
 	const blurValue = useTransform(
@@ -91,7 +95,7 @@ export default function LandingPage() {
 		);
 		const x = useTransform(scrollY, [offset, fadeInEnd], [xFrom, xTo]);
 		const rotate = useTransform(scrollY, [offset, fadeInEnd], [6, 0]);
-		const scale = useTransform(scrollY, [offset, fadeInEnd], [0.8, 1]);
+		const scale = useTransform(scrollY, [offset, fadeInEnd], [0.8, 1.2]);
 
 		return { opacity, x, rotate, scale };
 	};

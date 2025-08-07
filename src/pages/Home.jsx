@@ -7,6 +7,7 @@ import {
 	useScroll
 } from "framer-motion";
 import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
+import { Button } from "primereact/button";
 
 export default function LandingPage() {
 	const { scrollY } = useScroll();
@@ -148,6 +149,22 @@ export default function LandingPage() {
 					>
 						Connecting students with trusted landlords in St Andrews
 					</motion.p>
+					<div className="flex justify-center gap-4 flex-wrap">
+						<motion.div whileHover={{ scale: 1.05 }}>
+							<Button
+								label="I'm a Student"
+								className="bg-white text-[var(--primary-color)] font-bold px-5 py-3"
+								onClick={() => navigate("/signup/student")}
+							/>
+						</motion.div>
+						<motion.div whileHover={{ scale: 1.05 }}>
+							<Button
+								label="I'm a Landlord"
+								className="bg-white text-[var(--primary-color)] font-bold px-5 py-3"
+								onClick={() => navigate("/signup/landlord")}
+							/>
+						</motion.div>
+					</div>
 
 					<motion.button
 						initial={{ opacity: 0 }}
@@ -237,6 +254,31 @@ export default function LandingPage() {
 						that simple — moving in has never been faster.
 					</p>
 				</motion.div>
+			</div>
+
+			{/* Final Static Card */}
+			<div className="h-screen flex items-center justify-center">
+				<div className="text-white text-left max-w-md px-4">
+					<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+						Safe, Simple, Student-First
+					</h1>
+					<p className="text-lg drop-shadow">
+						Lorem ipsum dolor sit amet, consectetur adipisicing
+						elit. Ab accusamus assumenda cum dicta dolorem enim
+						ipsa, necessitatibus omnis praesentium, quia, sapiente
+						sit voluptatibus voluptatum? Distinctio ea labore
+						necessitatibus non quam sapiente. Aperiam, architecto
+						dicta dolores ducimus facere facilis ipsam laboriosam,
+						maxime modi nemo nesciunt nulla obcaecati officia quis
+						repellendus. Beatae eaque, earum expedita inventore
+						magnam nemo numquam omnis, quaerat reprehenderit tempora
+						veritatis, voluptatem! A ab assumenda consequatur eius
+						eos eum illo in maxime molestiae non, pariatur, porro
+						quo recusandae repellat unde vel vero voluptas. Animi at
+						delectus est inventore quasi qui reiciendis? Architecto
+						dolore, dolorum molestiae quo repellat ullam vel?
+					</p>
+				</div>
 			</div>
 		</div>
 	);

@@ -125,23 +125,9 @@ export default function NavbarDesktop({ user, logout, logo }) {
 						icon="pi pi-chevron-down"
 						iconPos="right"
 						text
-						className={baseStyle}
+						className={`${baseStyle} ${theme === "dark" ? "text-white" : "text-black"}`}
 						onClick={e => loginMenuRef.current.toggle(e)}
 					/>
-					{/*<Button*/}
-					{/*	label={<span style={{ color: oppositeBackgroundTheme }}>Login</span>}*/}
-					{/*	icon={*/}
-					{/*		<i*/}
-					{/*			className="pi pi-chevron-down"*/}
-					{/*			style={{ color: oppositeBackgroundTheme }}*/}
-					{/*		/>*/}
-					{/*	}*/}
-					{/*	iconPos="right"*/}
-					{/*	text*/}
-					{/*	className={baseStyle}*/}
-					{/*	onClick={e => loginMenuRef.current.toggle(e)}*/}
-					{/*/>*/}
-
 				</>
 			)}
 		</div>
@@ -165,8 +151,8 @@ export default function NavbarDesktop({ user, logout, logo }) {
 				}}
 				className={`transition-colors duration-500 ease-in-out ${
 					theme === "dark"
-						? "bg-black text-white"
-						: "bg-white text-black"
+						? "navbar-dark bg-black text-white"
+						: "navbar-light bg-white text-black"
 				}`}
 			/>
 			<Menu

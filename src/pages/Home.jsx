@@ -132,7 +132,7 @@ export default function LandingPage() {
 						initial={{ opacity: 0, y: 30 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.8, ease: "easeOut" }}
-						className="text-5xl font-bold mb-4 drop-shadow-lg"
+						className="text-3xl md:text-3xl lg:text-5xl font-extrabold mb-6 tracking-tight drop-shadow-lg"
 					>
 						One Swipe Closer to Home
 					</motion.h1>
@@ -145,11 +145,11 @@ export default function LandingPage() {
 							ease: "easeOut",
 							delay: 0.1
 						}}
-						className="text-xl drop-shadow mb-8"
+						className="text-xl drop-shadow mb-4"
 					>
 						Connecting students with trusted landlords in St Andrews
 					</motion.p>
-					<div className="flex justify-center gap-4 flex-wrap">
+					<div className="flex justify-center gap-4 flex-wrap mb-30">
 						<motion.div whileHover={{ scale: 1.05 }}>
 							<Button
 								label="I'm a Student"
@@ -174,7 +174,7 @@ export default function LandingPage() {
 							ease: "easeOut",
 							delay: 0.2
 						}}
-						className="mt-4 px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
+						className="px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
 						onClick={() =>
 							window.scrollTo({
 								top: BLUR1_OFFSET + 500,

@@ -173,8 +173,28 @@ export default function LandingPage() {
 		return () => unsub();
 	}, [scrollY, startCounts, EXP_OFFSET, expFadeOutEnd]);
 
+	const { scrollYProgress } = useScroll();
+	const progressX = useSpring(scrollYProgress, {
+		stiffness: 100,
+		damping: 30,
+		restDelta: 0.001
+	});
 	return (
 		<div className="relative overflow-x-hidden">
+			<motion.div
+				style={{
+					position: "fixed",
+					top: 0,
+					left: 0,
+					right: 0,
+					height: 4,
+					background: "linear-gradient(135deg, #8B5CF6, #06B6D4)",
+					zIndex: 50,
+					transformOrigin: "left",
+					scaleX: progressX
+				}}
+			/>
+
 			<div style={{ height: spacerHeight }}>
 				{/* Fixed Video Background */}
 				<div className="fixed inset-0 z-[-1] overflow-hidden">
@@ -237,25 +257,6 @@ export default function LandingPage() {
 								/>
 							</motion.div>
 						</div>
-
-						<motion.button
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							transition={{
-								duration: 0.8,
-								ease: "easeOut",
-								delay: 0.2
-							}}
-							className="mt-4 px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
-							onClick={() =>
-								window.scrollTo({
-									top: BLUR1_OFFSET + 500,
-									behavior: "smooth"
-								})
-							}
-						>
-							↓ Scroll to Learn More
-						</motion.button>
 					</motion.div>
 				</div>
 

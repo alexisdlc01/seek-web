@@ -37,6 +37,7 @@ export default function LandingPage() {
 	const BLUR1_OFFSET = 500;
 	const BLUR2_OFFSET = BLUR1_OFFSET + SECTION_LENGTH + GAP_BETWEEN;
 	const BLUR3_OFFSET = BLUR2_OFFSET + SECTION_LENGTH + GAP_BETWEEN;
+	const BLUR4_OFFSET = BLUR3_OFFSET + SECTION_LENGTH + GAP_BETWEEN;
 
 	// —— Experiences timing (longer hold) ——
 	const EXP_FADE_IN_DURATION = 300;
@@ -45,7 +46,17 @@ export default function LandingPage() {
 	const EXP_SECTION_LENGTH =
 		EXP_FADE_IN_DURATION + EXP_HOLD_DURATION + EXP_FADE_OUT_DURATION;
 
-	const EXP_OFFSET = BLUR3_OFFSET + SECTION_LENGTH + GAP_BETWEEN;
+	const EXP_OFFSET = BLUR4_OFFSET + SECTION_LENGTH + GAP_BETWEEN;
+
+	// —— CTA timing (fade/hold/fade) ——
+	const CTA_FADE_IN_DURATION = 300;
+	const CTA_HOLD_DURATION = 900; // stays on screen longer
+	const CTA_FADE_OUT_DURATION = 300;
+	const CTA_SECTION_LENGTH =
+		CTA_FADE_IN_DURATION + CTA_HOLD_DURATION + CTA_FADE_OUT_DURATION;
+
+	// start CTA after Experiences
+	const CTA_OFFSET = EXP_OFFSET + EXP_SECTION_LENGTH + GAP_BETWEEN;
 
 	// Video filters
 	const blurValue = useTransform(
@@ -74,7 +85,7 @@ export default function LandingPage() {
 	const filterStyle = useMotionTemplate`blur(${blurSpring}px) brightness(${brightSpring})`;
 
 	// Scroll spacer to push past all four panels
-	const TIMELINE_END = EXP_OFFSET + EXP_SECTION_LENGTH;
+	const TIMELINE_END = CTA_OFFSET + CTA_SECTION_LENGTH;
 	const spacerHeight = TIMELINE_END + 2 * window.innerHeight;
 
 	useEffect(() => {
@@ -116,11 +127,28 @@ export default function LandingPage() {
 	const blur1 = makeSection(BLUR1_OFFSET, -100, 0);
 	const blur2 = makeSection(BLUR2_OFFSET, 100, 0);
 	const blur3 = makeSection(BLUR3_OFFSET, -100, 0);
+	const blur4 = makeSection(BLUR4_OFFSET, 100, 0);
 
 	// Experiences panel transforms (centered, transparent)
 	const expFadeInEnd = EXP_OFFSET + EXP_FADE_IN_DURATION;
 	const expHoldEnd = expFadeInEnd + EXP_HOLD_DURATION;
 	const expFadeOutEnd = expHoldEnd + EXP_FADE_OUT_DURATION;
+
+	const ctaFadeInEnd = CTA_OFFSET + CTA_FADE_IN_DURATION;
+	const ctaHoldEnd = ctaFadeInEnd + CTA_HOLD_DURATION;
+	const ctaFadeOutEnd = ctaHoldEnd + CTA_FADE_OUT_DURATION;
+
+	const ctaOpacity = useTransform(
+		scrollY,
+		[CTA_OFFSET, ctaFadeInEnd, ctaHoldEnd, ctaFadeOutEnd],
+		[0, 1, 1, 0]
+	);
+	const ctaY = useTransform(scrollY, [CTA_OFFSET, ctaFadeInEnd], [24, 0]);
+	const ctaScale = useTransform(
+		scrollY,
+		[CTA_OFFSET, ctaFadeInEnd],
+		[0.96, 1.03]
+	);
 
 	const expOpacity = useTransform(
 		scrollY,
@@ -196,14 +224,15 @@ export default function LandingPage() {
 							<motion.div whileHover={{ scale: 1.05 }}>
 								<Button
 									label="I'm a Student"
-									className="bg-white text-[var(--primary-color)] font-bold px-5 py-3"
+									className="!bg-white !text-[var(--primary-color)] !font-bold !px-6 !py-3 !rounded-xl !shadow-none !border-none hover:!opacity-90"
 									onClick={() => navigate("/signup/student")}
 								/>
 							</motion.div>
+
 							<motion.div whileHover={{ scale: 1.05 }}>
 								<Button
 									label="I'm a Landlord"
-									className="bg-white text-[var(--primary-color)] font-bold px-5 py-3"
+									className="!bg-transparent !text-white !font-bold !px-6 !py-3 !rounded-xl !border-2 !border-white/80 hover:!bg-white/10"
 									onClick={() => navigate("/signup/landlord")}
 								/>
 							</motion.div>
@@ -243,13 +272,28 @@ export default function LandingPage() {
 						className="fixed z-0 top-1/2 left-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
 					>
 						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-							Ready to Move In?
+							Trusted & Relevant Matches Guaranteed
 						</h1>
+
+						<p className="text-lg drop-shadow mb-3">
+							Our advanced AI-Opimized algorithms and powerful
+							filters connect students with their ideal properties
+						</p>
+
+						<p className="text-lg drop-shadow mb-3">
+							Only serious, high-fit applications reach landlords,
+							cutting irrelevant inquiries.
+						</p>
+
+						<p className="text-lg drop-shadow mb-3">
+							Students engage exclusively with legitimate,
+							verified landlords.
+						</p>
+
 						<p className="text-lg drop-shadow">
-							Start exploring listings today and secure your new
-							home with confidence. Every property is
-							hand-checked, and listings update in real-time as
-							availability changes.
+							Every user signs in through a secure process; all
+							applications and listings are verified by our team
+							before going live.
 						</p>
 					</motion.div>
 				</div>
@@ -267,13 +311,26 @@ export default function LandingPage() {
 						className="fixed z-0 top-1/2 right-[20%] -translate-y-1/2 text-white text-right max-w-md px-4 pointer-events-none"
 					>
 						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-							Only Real Listings
+							Agree & Secure Your Space in Days, Not Months
 						</h1>
+
+						<p className="text-lg drop-shadow mb-3">
+							Built by students for students, our app speeds up
+							the entire housing process through a comprehensive
+							and trending user experience.
+						</p>
+
+						<p className="text-lg drop-shadow mb-3">
+							As a Student, you instantly discover verified
+							properties and can apply in seconds with all
+							required information ready.
+						</p>
+
 						<p className="text-lg drop-shadow">
-							We eliminate scams and outdated posts, showing you
-							only what’s genuinely available. Our moderation team
-							actively reviews every listing so you don't waste
-							time.
+							As Landlord, you can review complete applications
+							quickly, access pre-submitted student details
+							instantly, accept tenants faster to reduce vacancy
+							periods and boost occupancy rates.
 						</p>
 					</motion.div>
 				</div>
@@ -291,12 +348,70 @@ export default function LandingPage() {
 						className="fixed z-0 top-1/2 left-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
 					>
 						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-							Instant Apply
+							Completely Free of Charge: SEEK is On Us, For You
 						</h1>
+
+						<p className="text-lg drop-shadow mb-3">
+							Unlike traditional platforms, SEEK is 100% free of
+							charge for everyone.
+						</p>
+
+						<p className="text-lg drop-shadow mb-3">
+							Students get access to comprehensive, centralized
+							listings with no subscription fees.
+						</p>
+
+						<p className="text-lg drop-shadow mb-3">
+							Landlords and Agencies get powerful, free
+							advertising for properties – no listing charges or
+							commissions.
+						</p>
+
 						<p className="text-lg drop-shadow">
-							No more endless paperwork. Tap once to apply, attach
-							your details, and receive confirmation directly.
-							It’s that simple — moving in has never been faster.
+							SEEK is a true win-win that makes the St Andrews
+							housing market more accessible and efficient for
+							everyone.
+						</p>
+					</motion.div>
+				</div>
+
+				{/* Blur Section 3 – Left */}
+				<div className="h-screen relative">
+					<motion.div
+						style={{
+							opacity: blur4.opacity,
+							x: blur4.x,
+							rotate: blur4.rotate,
+							scale: blur4.scale,
+							transformOrigin: "right center"
+						}}
+						className="fixed z-0 top-1/2 right-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
+					>
+						<h1 className="text-xl font-semibold mb-2 drop-shadow-lg">
+							Complete Transparency & Control
+						</h1>
+
+						<p className="text-lg drop-shadow mb-4">
+							You maintain full control
+						</p>
+
+						<p className="text-lg drop-shadow mb-3">
+							As a student, you gain unparalleled insight into the
+							St Andrews market, browse comprehensive listings
+							with direct landlord access, and make confident,
+							informed housing decisions.
+						</p>
+
+						<p className="text-lg drop-shadow mb-3">
+							As a landlord, you retain full autonomy through a
+							dedicated management dashboard where you can easily
+							manage your listings and track applications while
+							communicating directly with tenants.
+						</p>
+
+						<p className="text-lg drop-shadow">
+							SEEK means clear communication, a smoother process,
+							and better outcomes for everyone.
 						</p>
 					</motion.div>
 				</div>
@@ -333,7 +448,7 @@ export default function LandingPage() {
 
 						<div className="flex flex-col md:flex-row justify-center gap-y-10 gap-x-16">
 							<div>
-								<div className="text-5xl font-extrabold">
+								<div className="text-6xl font-extrabold">
 									{startCounts && (
 										<CountUp
 											start={0}
@@ -344,13 +459,13 @@ export default function LandingPage() {
 									)}
 									+
 								</div>
-								<p className="mt-2 opacity-90">
+								<p className="mt-2 opacity-90 text-lg">
 									Landlords already on Seek
 								</p>
 							</div>
 
 							<div>
-								<div className="text-5xl font-extrabold">
+								<div className="text-6xl font-extrabold">
 									{startCounts && (
 										<CountUp
 											start={0}
@@ -361,13 +476,13 @@ export default function LandingPage() {
 									)}
 									+
 								</div>
-								<p className="mt-2 opacity-90">
+								<p className="mt-2 opacity-90 text-lg">
 									New Properties Listed Weekly
 								</p>
 							</div>
 
 							<div>
-								<div className="text-5xl font-extrabold">
+								<div className="text-6xl font-extrabold">
 									{startCounts && (
 										<CountUp
 											start={0}
@@ -378,10 +493,51 @@ export default function LandingPage() {
 									)}
 									+
 								</div>
-								<p className="mt-2 opacity-90">
+								<p className="mt-2 opacity-90 text-lg">
 									Downloads of the Seek App
 								</p>
 							</div>
+						</div>
+					</motion.div>
+				</div>
+
+				<div className="h-screen relative">
+					<motion.div
+						style={{
+							opacity: ctaOpacity,
+							y: ctaY,
+							scale: ctaScale
+						}}
+						className="fixed z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center px-6 pointer-events-none"
+					>
+						<motion.h2
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6, ease: "easeOut" }}
+							className="text-4xl md:text-5xl font-extrabold mb-6 drop-shadow-lg"
+						>
+							Ready to Get Started?
+						</motion.h2>
+
+						<motion.p
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 0.1, duration: 0.6 }}
+							className="text-xl md:text-2xl opacity-80 drop-shadow mb-12 max-w-3xl mx-auto"
+						>
+							Join thousands of students and landlords already
+							using Seek
+						</motion.p>
+
+						<div className="flex justify-center">
+							<motion.button
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.98 }}
+								className="!bg-transparent !text-white !font-bold !px-6 !py-3 !rounded-xl !border-2 !border-white/80 hover:!bg-white/10"
+								onClick={() => navigate("/signup")}
+							>
+								Sign up today
+							</motion.button>
 						</div>
 					</motion.div>
 				</div>

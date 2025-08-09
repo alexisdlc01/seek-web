@@ -214,7 +214,7 @@ export default function LandingPage() {
 								ease: "easeOut",
 								delay: 0.1
 							}}
-							className="text-xl drop-shadow mb-8"
+							className="text-lg md:text-xl drop-shadow mb-8"
 						>
 							Connecting students with trusted landlords in St
 							Andrews
@@ -249,7 +249,7 @@ export default function LandingPage() {
 							className="mt-4 px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
 							onClick={() =>
 								window.scrollTo({
-									top: BLUR1_OFFSET,
+									top: BLUR1_OFFSET + 500,
 									behavior: "smooth"
 								})
 							}
@@ -271,26 +271,26 @@ export default function LandingPage() {
 						}}
 						className="fixed z-0 top-1/2 left-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
 					>
-						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+						<h2 className="text-2xl md:text-3xl font-bold mb-6 drop-shadow-lg">
 							Trusted & Relevant Matches Guaranteed
-						</h1>
+						</h2>
 
-						<p className="text-lg drop-shadow mb-3">
+						<p className="text-lg md:text-xl drop-shadow mb-4">
 							Our advanced AI-Opimized algorithms and powerful
 							filters connect students with their ideal properties
 						</p>
 
-						<p className="text-lg drop-shadow mb-3">
+						<p className="text-lg md:text-xl drop-shadow mb-4">
 							Only serious, high-fit applications reach landlords,
 							cutting irrelevant inquiries.
 						</p>
 
-						<p className="text-lg drop-shadow mb-3">
+						<p className="text-lg md:text-xl drop-shadow mb-4">
 							Students engage exclusively with legitimate,
 							verified landlords.
 						</p>
 
-						<p className="text-lg drop-shadow">
+						<p className="text-lg md:text-xl drop-shadow">
 							Every user signs in through a secure process; all
 							applications and listings are verified by our team
 							before going live.
@@ -310,23 +310,23 @@ export default function LandingPage() {
 						}}
 						className="fixed z-0 top-1/2 right-[20%] -translate-y-1/2 text-white text-right max-w-md px-4 pointer-events-none"
 					>
-						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+						<h2 className="text-2xl md:text-3xl font-bold mb-6 drop-shadow-lg">
 							Agree & Secure Your Space in Days, Not Months
-						</h1>
+						</h2>
 
-						<p className="text-lg drop-shadow mb-3">
+						<p className="text-lg md:text-xl drop-shadow mb-4">
 							Built by students for students, our app speeds up
 							the entire housing process through a comprehensive
 							and trending user experience.
 						</p>
 
-						<p className="text-lg drop-shadow mb-3">
+						<p className="text-lg md:text-xl drop-shadow mb-4">
 							As a Student, you instantly discover verified
 							properties and can apply in seconds with all
 							required information ready.
 						</p>
 
-						<p className="text-lg drop-shadow">
+						<p className="text-lg md:text-xl drop-shadow">
 							As Landlord, you can review complete applications
 							quickly, access pre-submitted student details
 							instantly, accept tenants faster to reduce vacancy
@@ -347,27 +347,27 @@ export default function LandingPage() {
 						}}
 						className="fixed z-0 top-1/2 left-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
 					>
-						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+						<h2 className="text-2xl md:text-3xl font-bold mb-6 drop-shadow-lg">
 							Completely Free of Charge: SEEK is On Us, For You
-						</h1>
+						</h2>
 
-						<p className="text-lg drop-shadow mb-3">
+						<p className="text-lg md:text-xl drop-shadow mb-4">
 							Unlike traditional platforms, SEEK is 100% free of
 							charge for everyone.
 						</p>
 
-						<p className="text-lg drop-shadow mb-3">
+						<p className="text-lg md:text-xl drop-shadow mb-4">
 							Students get access to comprehensive, centralized
 							listings with no subscription fees.
 						</p>
 
-						<p className="text-lg drop-shadow mb-3">
+						<p className="text-lg md:text-xl drop-shadow mb-4">
 							Landlords and Agencies get powerful, free
 							advertising for properties – no listing charges or
 							commissions.
 						</p>
 
-						<p className="text-lg drop-shadow">
+						<p className="text-lg md:text-xl drop-shadow">
 							SEEK is a true win-win that makes the St Andrews
 							housing market more accessible and efficient for
 							everyone.
@@ -375,7 +375,7 @@ export default function LandingPage() {
 					</motion.div>
 				</div>
 
-				{/* Blur Section 3 – Left */}
+				{/* Blur Section 4 – Right */}
 				<div className="h-screen relative">
 					<motion.div
 						style={{
@@ -387,31 +387,26 @@ export default function LandingPage() {
 						}}
 						className="fixed z-0 top-1/2 right-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
 					>
-						<h1 className="text-xl font-semibold mb-2 drop-shadow-lg">
+						<h2 className="text-2xl md:text-3xl font-bold mb-6 drop-shadow-lg">
 							Complete Transparency & Control
-						</h1>
+						</h2>
 
-						<p className="text-lg drop-shadow mb-4">
+						<p className="text-lg md:text-xl drop-shadow mb-4">
 							You maintain full control
 						</p>
 
-						<p className="text-lg drop-shadow mb-3">
+						<p className="text-lg md:text-xl drop-shadow mb-4">
 							As a student, you gain unparalleled insight into the
 							St Andrews market, browse comprehensive listings
 							with direct landlord access, and make confident,
 							informed housing decisions.
 						</p>
 
-						<p className="text-lg drop-shadow mb-3">
+						<p className="text-lg md:text-xl drop-shadow">
 							As a landlord, you retain full autonomy through a
 							dedicated management dashboard where you can easily
 							manage your listings and track applications while
 							communicating directly with tenants.
-						</p>
-
-						<p className="text-lg drop-shadow">
-							SEEK means clear communication, a smoother process,
-							and better outcomes for everyone.
 						</p>
 					</motion.div>
 				</div>
@@ -430,7 +425,7 @@ export default function LandingPage() {
 							initial={{ opacity: 0, y: 10 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.6, ease: "easeOut" }}
-							className="text-4xl md:text-5xl font-bold mb-6 drop-shadow-lg"
+							className="text-3xl md:text-4xl font-bold mb-6 drop-shadow-lg"
 						>
 							Our Experiences
 						</motion.h2>
@@ -459,7 +454,7 @@ export default function LandingPage() {
 									)}
 									+
 								</div>
-								<p className="mt-2 opacity-90 text-lg">
+								<p className="mt-2 opacity-90 text-lg md:text-xl">
 									Landlords already on Seek
 								</p>
 							</div>
@@ -476,7 +471,7 @@ export default function LandingPage() {
 									)}
 									+
 								</div>
-								<p className="mt-2 opacity-90 text-lg">
+								<p className="mt-2 opacity-90 text-lg md:text-xl">
 									New Properties Listed Weekly
 								</p>
 							</div>
@@ -493,7 +488,7 @@ export default function LandingPage() {
 									)}
 									+
 								</div>
-								<p className="mt-2 opacity-90 text-lg">
+								<p className="mt-2 opacity-90 text-lg md:text-xl">
 									Downloads of the Seek App
 								</p>
 							</div>
@@ -514,7 +509,7 @@ export default function LandingPage() {
 							initial={{ opacity: 0, y: 10 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.6, ease: "easeOut" }}
-							className="text-4xl md:text-5xl font-extrabold mb-6 drop-shadow-lg"
+							className="text-3xl md:text-4xl font-bold mb-6 drop-shadow-lg"
 						>
 							Ready to Get Started?
 						</motion.h2>
@@ -523,7 +518,7 @@ export default function LandingPage() {
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 0.1, duration: 0.6 }}
-							className="text-xl md:text-2xl opacity-80 drop-shadow mb-12 max-w-3xl mx-auto"
+							className="text-lg md:text-xl opacity-80 drop-shadow mb-12 max-w-3xl mx-auto"
 						>
 							Join thousands of students and landlords already
 							using Seek

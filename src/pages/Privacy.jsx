@@ -1,124 +1,266 @@
-export default function Privacy() {
+import { useEffect, useRef } from "react";
+import {
+	motion,
+	useTransform,
+	useSpring,
+	useMotionTemplate,
+	useScroll
+} from "framer-motion";
+import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
+import { Button } from "primereact/button";
+
+export default function LandingPage() {
+	const { scrollY } = useScroll();
+	const videoRef = useRef(null);
+	const { setTheme } = useNavbarTheme();
+
+	// —— Global video blur/scale settings ——
+	const BLUR_START = 50;
+	const BLUR_END = 300;
+	const MAX_BLUR = 12;
+	const MAX_SCALE = 1.05;
+	const MIN_BRIGHTNESS = 0.5;
+
+	// —— Hero section scroll threshold ——
+	const HERO_SCROLL_END = 300;
+
+	// …above your existing constants…
+	const FADE_IN_DURATION = 300;
+	const HOLD_DURATION = 400;
+	const GAP_BETWEEN = 200; // px of blank scroll between sections
+
+	// total time for one section (fade-in + hold + fade-out)
+	const SECTION_LENGTH =
+		FADE_IN_DURATION /*in*/ + HOLD_DURATION + FADE_IN_DURATION; /*out*/
+
+	const BLUR1_OFFSET = 500;
+	const BLUR2_OFFSET = BLUR1_OFFSET + SECTION_LENGTH + GAP_BETWEEN; // e.g. 500 + 300+400+300 + 200 = 1700
+	const BLUR3_OFFSET = BLUR2_OFFSET + SECTION_LENGTH + GAP_BETWEEN; // pushes section 3 further down
+
+	// springify the video filters
+	const blurValue = useTransform(
+		scrollY,
+		[BLUR_START, BLUR_END],
+		[0, MAX_BLUR]
+	);
+	const scaleValueVid = useTransform(
+		scrollY,
+		[BLUR_START, BLUR_END],
+		[1, MAX_SCALE]
+	);
+	const brightValue = useTransform(
+		scrollY,
+		[BLUR_START, BLUR_END],
+		[1, MIN_BRIGHTNESS]
+	);
+
+	const blurSpring = useSpring(blurValue, { stiffness: 80, damping: 20 });
+	const scaleSpringVid = useSpring(scaleValueVid, {
+		stiffness: 80,
+		damping: 20
+	});
+	const brightSpring = useSpring(brightValue, { stiffness: 80, damping: 20 });
+
+	const filterStyle = useMotionTemplate`
+    blur(${blurSpring}px) brightness(${brightSpring})
+  `;
+
+	useEffect(() => {
+		const unsub = scrollY.onChange(latest => {
+			if (!videoRef.current) return;
+			if (latest > BLUR_END) {
+				videoRef.current.pause();
+				setTheme("dark");
+			} else {
+				videoRef.current.play();
+				setTheme("white");
+			}
+		});
+		return () => unsub();
+	}, [scrollY]);
+
+	// Hero section transforms
+	const section1Opacity = useTransform(scrollY, [0, HERO_SCROLL_END], [1, 0]);
+	const section1Y = useTransform(scrollY, [0, HERO_SCROLL_END], [0, -50]);
+
+	// Utility to build each blur section’s timing + rotation + scale
+	const makeSection = (offset, xFrom, xTo) => {
+		const fadeInEnd = offset + FADE_IN_DURATION;
+		const holdEnd = fadeInEnd + HOLD_DURATION;
+		const fadeOutEnd = holdEnd + FADE_IN_DURATION;
+
+		const opacity = useTransform(
+			scrollY,
+			[offset, fadeInEnd, holdEnd, fadeOutEnd],
+			[0, 1, 1, 0]
+		);
+		const x = useTransform(scrollY, [offset, fadeInEnd], [xFrom, xTo]);
+		const rotate = useTransform(scrollY, [offset, fadeInEnd], [6, 0]);
+		const scale = useTransform(scrollY, [offset, fadeInEnd], [0.8, 1.2]);
+
+		return { opacity, x, rotate, scale };
+	};
+
+	const blur1 = makeSection(BLUR1_OFFSET, -100, -50);
+	const blur2 = makeSection(BLUR2_OFFSET, 100, 50);
+	const blur3 = makeSection(BLUR3_OFFSET, -100, -50);
+
 	return (
-		<div className="min-h-screen bg-[var(--surface-a)] text-[var(--text-color)] px-4 py-16">
-			<div className="max-w-3xl mx-auto space-y-8">
-				<h1 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)]">
-					Privacy Policy
-				</h1>
-				<p className="text-[var(--text-color-secondary)]">
-					Last updated: January 2024
-				</p>
+		<div className="relative h-[800vh] overflow-x-hidden">
+			{/* Videix Background */}
+			<div className="fixed inset-0 z-[-1] overflow-hidden">
+				<motion.video
+					ref={videoRef}
+					autoPlay
+					loop
+					muted
+					playsInline
+					className="w-full h-full object-cover"
+					style={{ filter: filterStyle, scale: scaleSpringVid }}
+				>
+					<source src="/dummy_background.mp4" type="video/mp4" />
+				</motion.video>
+			</div>
 
-				<div className="space-y-6">
-					<div>
-						<h2 className="font-semibold text-[var(--text-color)]">
-							1. Information We Collect
-						</h2>
-						<p className="text-[var(--text-color-secondary)]">
-							We collect information you provide directly to us,
-							such as when you create an account, list a property,
-							or contact us. This may include your name, email
-							address, phone number, and property details.
-						</p>
+			{/* Hero Section */}
+			<div className="sticky top-0 h-screen flex items-center justify-center">
+				<motion.div
+					style={{ opacity: section1Opacity, y: section1Y }}
+					className="absolute text-white text-center max-w-xl px-4"
+				>
+					<motion.h1
+						initial={{ opacity: 0, y: 30 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8, ease: "easeOut" }}
+						className="text-3xl md:text-3xl lg:text-5xl font-extrabold mb-6 tracking-tight drop-shadow-lg"
+					>
+						One Swipe Closer to Home
+					</motion.h1>
+
+					<motion.p
+						initial={{ opacity: 0, y: 30 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{
+							duration: 0.8,
+							ease: "easeOut",
+							delay: 0.1
+						}}
+						className="text-xl drop-shadow mb-4"
+					>
+						Connecting students with trusted landlords in St Andrews
+					</motion.p>
+					<div className="flex justify-center gap-4 flex-wrap mb-30">
+						<motion.div whileHover={{ scale: 1.05 }}>
+							<Button
+								label="I'm a Student"
+								className="bg-white text-[var(--primary-color)] font-bold px-5 py-3"
+								onClick={() => navigate("/signup/student")}
+							/>
+						</motion.div>
+						<motion.div whileHover={{ scale: 1.05 }}>
+							<Button
+								label="I'm a Landlord"
+								className="bg-white text-[var(--primary-color)] font-bold px-5 py-3"
+								onClick={() => navigate("/signup/landlord")}
+							/>
+						</motion.div>
 					</div>
 
-					<div>
-						<h2 className="font-semibold text-[var(--text-color)]">
-							2. How We Use Your Information
-						</h2>
-						<p className="text-[var(--text-color-secondary)]">
-							We use the information we collect to provide,
-							maintain, and improve our services, to process
-							transactions, to communicate with you, and to comply
-							with legal obligations.
-						</p>
-					</div>
+					<motion.button
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{
+							duration: 0.8,
+							ease: "easeOut",
+							delay: 0.2
+						}}
+						className="px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
+						onClick={() =>
+							window.scrollTo({
+								top: BLUR1_OFFSET + 500,
+								behavior: "smooth"
+							})
+						}
+					>
+						↓ Scroll to Learn More
+					</motion.button>
+				</motion.div>
+			</div>
 
-					<div>
-						<h2 className="font-semibold text-[var(--text-color)]">
-							3. Information Sharing
-						</h2>
-						<p className="text-[var(--text-color-secondary)]">
-							We do not sell, trade, or rent your personal
-							information to third parties. We may share your
-							information with service providers who assist us in
-							operating our platform, conducting our business, or
-							serving our users.
+			{/* Blur Section 1 – Left */}
+			<div className="h-screen relative">
+				<div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+					<motion.div
+						style={{
+							opacity: blur1.opacity,
+							x: blur1.x,
+							rotate: blur1.rotate,
+							scale: blur1.scale,
+							transformOrigin: "left center"
+						}}
+						className="text-white text-center max-w-md px-4"
+					>
+						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+							Ready to Move In?
+						</h1>
+						<p className="text-lg drop-shadow">
+							Start exploring listings today and secure your new
+							home with confidence. Every property is
+							hand-checked, and listings update in real-time as
+							availability changes.
 						</p>
-					</div>
+					</motion.div>
+				</div>
+			</div>
 
-					<div>
-						<h2 className="font-semibold text-[var(--text-color)]">
-							4. Data Security
-						</h2>
-						<p className="text-[var(--text-color-secondary)]">
-							We implement appropriate technical and
-							organizational measures to protect your personal
-							information against unauthorized access, alteration,
-							disclosure, or destruction.
+			{/* Blur Section 2 – Right */}
+			<div className="h-screen relative">
+				<div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+					<motion.div
+						style={{
+							opacity: blur2.opacity,
+							x: blur2.x,
+							rotate: blur2.rotate,
+							scale: blur2.scale,
+							transformOrigin: "right center"
+						}}
+						className="text-white text-center max-w-md px-4"
+					>
+						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+							Only Real Listings
+						</h1>
+						<p className="text-lg drop-shadow">
+							We eliminate scams and outdated posts, showing you
+							only what’s genuinely available. Our moderation team
+							actively reviews every listing so you don't waste
+							time.
 						</p>
-					</div>
+					</motion.div>
+				</div>
+			</div>
 
-					<div>
-						<h2 className="font-semibold text-[var(--text-color)]">
-							5. Your Rights
-						</h2>
-						<p className="text-[var(--text-color-secondary)]">
-							You have the right to access, update, or delete your
-							personal information. You may also opt out of
-							certain communications from us. To exercise these
-							rights, please contact us at{" "}
-							<a
-								href="mailto:privacy@seekstandrews.com"
-								className="text-[var(--primary-color)] underline"
-							>
-								privacy@seekstandrews.com
-							</a>
-							.
+			{/* Blur Section 3 – Left */}
+			<div className="h-screen relative">
+				<div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+					<motion.div
+						style={{
+							opacity: blur3.opacity,
+							x: blur3.x,
+							rotate: blur3.rotate,
+							scale: blur3.scale,
+							transformOrigin: "left center"
+						}}
+						className="text-white text-center max-w-md px-4"
+					>
+						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
+							Instant Apply
+						</h1>
+						<p className="text-lg drop-shadow">
+							No more endless paperwork. Tap once to apply, attach
+							your details, and receive confirmation directly.
+							It’s that simple — moving in has never been faster.
 						</p>
-					</div>
-
-					<div>
-						<h2 className="font-semibold text-[var(--text-color)]">
-							6. Cookies
-						</h2>
-						<p className="text-[var(--text-color-secondary)]">
-							We use cookies and similar tracking technologies to
-							track activity on our Service and hold certain
-							information. You can instruct your browser to refuse
-							all cookies or to indicate when a cookie is being
-							sent.
-						</p>
-					</div>
-
-					<div>
-						<h2 className="font-semibold text-[var(--text-color)]">
-							7. Changes to This Policy
-						</h2>
-						<p className="text-[var(--text-color-secondary)]">
-							We may update our Privacy Policy from time to time.
-							We will notify you of any changes by posting the new
-							Privacy Policy on this page and updating the "Last
-							updated" date.
-						</p>
-					</div>
-
-					<div>
-						<h2 className="font-semibold text-[var(--text-color)]">
-							8. Contact Us
-						</h2>
-						<p className="text-[var(--text-color-secondary)]">
-							If you have any questions about this Privacy Policy,
-							please contact us at{" "}
-							<a
-								href="mailto:privacy@seekstandrews.com"
-								className="text-[var(--primary-color)] underline"
-							>
-								privacy@seekstandrews.com
-							</a>
-							.
-						</p>
-					</div>
+					</motion.div>
 				</div>
 			</div>
 		</div>

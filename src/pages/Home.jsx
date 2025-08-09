@@ -271,26 +271,26 @@ export default function LandingPage() {
 						}}
 						className="fixed z-0 top-1/2 left-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
 					>
-						<h2 className="text-2xl md:text-3xl font-bold mb-6 drop-shadow-lg">
+						<h2 className="text-xl md:text-2xl font-bold mb-6 drop-shadow-lg">
 							Trusted & Relevant Matches Guaranteed
 						</h2>
 
-						<p className="text-lg md:text-xl drop-shadow mb-4">
+						<p className="text-base md:text-lg drop-shadow mb-4">
 							Our advanced AI-Opimized algorithms and powerful
 							filters connect students with their ideal properties
 						</p>
 
-						<p className="text-lg md:text-xl drop-shadow mb-4">
+						<p className="text-base md:text-lg drop-shadow mb-4">
 							Only serious, high-fit applications reach landlords,
 							cutting irrelevant inquiries.
 						</p>
 
-						<p className="text-lg md:text-xl drop-shadow mb-4">
+						<p className="text-base md:text-lg drop-shadow mb-4">
 							Students engage exclusively with legitimate,
 							verified landlords.
 						</p>
 
-						<p className="text-lg md:text-xl drop-shadow">
+						<p className="text-base md:text-lg drop-shadow">
 							Every user signs in through a secure process; all
 							applications and listings are verified by our team
 							before going live.
@@ -310,23 +310,23 @@ export default function LandingPage() {
 						}}
 						className="fixed z-0 top-1/2 right-[20%] -translate-y-1/2 text-white text-right max-w-md px-4 pointer-events-none"
 					>
-						<h2 className="text-2xl md:text-3xl font-bold mb-6 drop-shadow-lg">
+						<h2 className="text-xl md:text-2xl font-bold mb-6 drop-shadow-lg">
 							Agree & Secure Your Space in Days, Not Months
 						</h2>
 
-						<p className="text-lg md:text-xl drop-shadow mb-4">
+						<p className="text-base md:text-lg drop-shadow mb-4">
 							Built by students for students, our app speeds up
 							the entire housing process through a comprehensive
 							and trending user experience.
 						</p>
 
-						<p className="text-lg md:text-xl drop-shadow mb-4">
+						<p className="text-base md:text-lg drop-shadow mb-4">
 							As a Student, you instantly discover verified
 							properties and can apply in seconds with all
 							required information ready.
 						</p>
 
-						<p className="text-lg md:text-xl drop-shadow">
+						<p className="text-base md:text-lg drop-shadow">
 							As Landlord, you can review complete applications
 							quickly, access pre-submitted student details
 							instantly, accept tenants faster to reduce vacancy
@@ -347,27 +347,27 @@ export default function LandingPage() {
 						}}
 						className="fixed z-0 top-1/2 left-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
 					>
-						<h2 className="text-2xl md:text-3xl font-bold mb-6 drop-shadow-lg">
+						<h2 className="text-xl md:text-2xl font-bold mb-6 drop-shadow-lg">
 							Completely Free of Charge: SEEK is On Us, For You
 						</h2>
 
-						<p className="text-lg md:text-xl drop-shadow mb-4">
+						<p className="text-base md:text-lg drop-shadow mb-4">
 							Unlike traditional platforms, SEEK is 100% free of
 							charge for everyone.
 						</p>
 
-						<p className="text-lg md:text-xl drop-shadow mb-4">
+						<p className="text-base md:text-lg drop-shadow mb-4">
 							Students get access to comprehensive, centralized
 							listings with no subscription fees.
 						</p>
 
-						<p className="text-lg md:text-xl drop-shadow mb-4">
+						<p className="text-base md:text-lg drop-shadow mb-4">
 							Landlords and Agencies get powerful, free
 							advertising for properties – no listing charges or
 							commissions.
 						</p>
 
-						<p className="text-lg md:text-xl drop-shadow">
+						<p className="text-base md:text-lg drop-shadow">
 							SEEK is a true win-win that makes the St Andrews
 							housing market more accessible and efficient for
 							everyone.
@@ -387,22 +387,22 @@ export default function LandingPage() {
 						}}
 						className="fixed z-0 top-1/2 right-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
 					>
-						<h2 className="text-2xl md:text-3xl font-bold mb-6 drop-shadow-lg">
+						<h2 className="text-xl md:text-2xl font-bold mb-6 drop-shadow-lg">
 							Complete Transparency & Control
 						</h2>
 
-						<p className="text-lg md:text-xl drop-shadow mb-4">
+						<p className="text-base md:text-lg drop-shadow mb-4">
 							You maintain full control
 						</p>
 
-						<p className="text-lg md:text-xl drop-shadow mb-4">
+						<p className="text-base md:text-lg drop-shadow mb-4">
 							As a student, you gain unparalleled insight into the
 							St Andrews market, browse comprehensive listings
 							with direct landlord access, and make confident,
 							informed housing decisions.
 						</p>
 
-						<p className="text-lg md:text-xl drop-shadow">
+						<p className="text-base md:text-lg drop-shadow">
 							As a landlord, you retain full autonomy through a
 							dedicated management dashboard where you can easily
 							manage your listings and track applications while

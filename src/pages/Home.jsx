@@ -244,7 +244,7 @@ export default function LandingPage() {
 							<motion.div whileHover={{ scale: 1.05 }}>
 								<Button
 									label="I'm a Student"
-									className="!bg-white !text-[var(--primary-color)] !font-bold !px-6 !py-3 !rounded-xl !shadow-none !border-none hover:!opacity-90"
+									className="equal-btn student"
 									onClick={() => navigate("/signup/student")}
 								/>
 							</motion.div>
@@ -252,7 +252,7 @@ export default function LandingPage() {
 							<motion.div whileHover={{ scale: 1.05 }}>
 								<Button
 									label="I'm a Landlord"
-									className="!bg-transparent !text-white !font-bold !px-6 !py-3 !rounded-xl !border-2 !border-white/80 hover:!bg-white/10"
+									className="equal-btn landlord"
 									onClick={() => navigate("/signup/landlord")}
 								/>
 							</motion.div>

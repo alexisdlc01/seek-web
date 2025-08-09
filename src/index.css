@@ -55,3 +55,37 @@ body {
 .navbar-light .pi {
 	color: #0F0F23; /* or black */
 }
+
+/* Ensure same button size by always having border */
+.equal-btn {
+  border-width: 2px !important;
+  border-style: solid !important;
+  padding: 0.75rem 1.5rem !important; /* matches px-6 py-3 */
+  font-weight: bold !important;
+  border-radius: 0.75rem !important;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Student button styles */
+.equal-btn.student {
+  background-color: white !important;
+  color: var(--primary-color) !important;
+  border-color: transparent !important;
+}
+.equal-btn.student:hover {
+  background-color: transparent !important;
+  color: white !important;
+  border-color: white !important;
+}
+
+/* Landlord button styles */
+.equal-btn.landlord {
+  background-color: transparent !important;
+  color: white !important;
+  border-color: white !important;
+}
+.equal-btn.landlord:hover {
+  background-color: white !important;
+  color: var(--primary-color) !important;
+  border-color: white !important;
+}

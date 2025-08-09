@@ -30,7 +30,7 @@ export default function LandingPage() {
 	// —— Side-panel timing ——
 	const FADE_IN_DURATION = 300;
 	const HOLD_DURATION = 400;
-	const GAP_BETWEEN = 200;
+	const GAP_BETWEEN = -200;
 
 	const SECTION_LENGTH = FADE_IN_DURATION + HOLD_DURATION + FADE_IN_DURATION;
 

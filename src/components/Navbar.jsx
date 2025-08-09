@@ -26,7 +26,7 @@ export default function Navbar() {
 			src={logoSrc}
 			alt="Logo"
 			whileHover={{ scale: 1.05 }}
-			className="h-9 w-auto object-cover scale-250 ml-2 cursor-pointer"
+			className="h-9 w-auto object-cover scale-450 ml-2 cursor-pointer"
 			onClick={() => navigate("/")}
 		/>
 	);

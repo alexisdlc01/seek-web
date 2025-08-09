@@ -4,11 +4,13 @@ import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import NavbarMobile from "./NavBarMobile.jsx";
 import NavbarDesktop from "./NavBarDesktop.jsx";
+import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 
 export default function Navbar() {
 	const navigate = useNavigate();
 	const { user, logout } = useContext(UserContext);
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+	const { theme } = useNavbarTheme();
 
 	useEffect(() => {
 		const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -16,12 +18,15 @@ export default function Navbar() {
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
+	const logoSrc =
+		theme === "dark" ? "/Seek_Small_White.svg" : "/Seek_Small_Blue.svg";
+
 	const logo = (
 		<motion.img
-			src="/whitelogo-notext.svg"
+			src={logoSrc}
 			alt="Logo"
 			whileHover={{ scale: 1.05 }}
-			className="h-9 w-auto object-contain ml-2 cursor-pointer"
+			className="h-9 w-auto object-cover scale-250 ml-2 cursor-pointer"
 			onClick={() => navigate("/")}
 		/>
 	);

@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import CountUp from "react-countup";
 
 export default function LandingPage() {
-	const { scrollY } = useScroll();
+	const { scrollY, scrollYProgress } = useScroll();
 	const videoRef = useRef(null);
 	const { setTheme } = useNavbarTheme();
 	const navigate = useNavigate();
@@ -38,25 +38,6 @@ export default function LandingPage() {
 	const BLUR2_OFFSET = BLUR1_OFFSET + SECTION_LENGTH + GAP_BETWEEN;
 	const BLUR3_OFFSET = BLUR2_OFFSET + SECTION_LENGTH + GAP_BETWEEN;
 	const BLUR4_OFFSET = BLUR3_OFFSET + SECTION_LENGTH + GAP_BETWEEN;
-
-	// —— Experiences timing (longer hold) ——
-	const EXP_FADE_IN_DURATION = 300;
-	const EXP_HOLD_DURATION = 900; // longer stay before fade-out
-	const EXP_FADE_OUT_DURATION = 300;
-	const EXP_SECTION_LENGTH =
-		EXP_FADE_IN_DURATION + EXP_HOLD_DURATION + EXP_FADE_OUT_DURATION;
-
-	const EXP_OFFSET = BLUR4_OFFSET + SECTION_LENGTH + GAP_BETWEEN;
-
-	// —— CTA timing (fade/hold/fade) ——
-	const CTA_FADE_IN_DURATION = 300;
-	const CTA_HOLD_DURATION = 900; // stays on screen longer
-	const CTA_FADE_OUT_DURATION = 300;
-	const CTA_SECTION_LENGTH =
-		CTA_FADE_IN_DURATION + CTA_HOLD_DURATION + CTA_FADE_OUT_DURATION;
-
-	// start CTA after Experiences
-	const CTA_OFFSET = EXP_OFFSET + EXP_SECTION_LENGTH + GAP_BETWEEN;
 
 	// Video filters
 	const blurValue = useTransform(
@@ -84,9 +65,9 @@ export default function LandingPage() {
 
 	const filterStyle = useMotionTemplate`blur(${blurSpring}px) brightness(${brightSpring})`;
 
-	// Scroll spacer to push past all four panels
-	const TIMELINE_END = CTA_OFFSET + CTA_SECTION_LENGTH;
-	const spacerHeight = TIMELINE_END + 2 * window.innerHeight;
+	// Stop the scrollytelling after blur4
+	const TIMELINE_END = BLUR4_OFFSET + SECTION_LENGTH;
+	const spacerHeight = TIMELINE_END + window.innerHeight * 0.6;
 
 	useEffect(() => {
 		const unsub = scrollY.onChange(latest => {
@@ -128,56 +109,16 @@ export default function LandingPage() {
 	const blur3 = makeSection(BLUR3_OFFSET, -100, 0);
 	const blur4 = makeSection(BLUR4_OFFSET, 100, 0);
 
-	// Experiences panel transforms (centered, transparent)
-	const expFadeInEnd = EXP_OFFSET + EXP_FADE_IN_DURATION;
-	const expHoldEnd = expFadeInEnd + EXP_HOLD_DURATION;
-	const expFadeOutEnd = expHoldEnd + EXP_FADE_OUT_DURATION;
-
-	const ctaFadeInEnd = CTA_OFFSET + CTA_FADE_IN_DURATION;
-	const ctaHoldEnd = ctaFadeInEnd + CTA_HOLD_DURATION;
-	const ctaFadeOutEnd = ctaHoldEnd + CTA_FADE_OUT_DURATION;
-
-	const ctaOpacity = useTransform(
-		scrollY,
-		[CTA_OFFSET, ctaFadeInEnd, ctaHoldEnd, ctaFadeOutEnd],
-		[0, 1, 1, 0]
-	);
-	const ctaY = useTransform(scrollY, [CTA_OFFSET, ctaFadeInEnd], [24, 0]);
-	const ctaScale = useTransform(
-		scrollY,
-		[CTA_OFFSET, ctaFadeInEnd],
-		[0.96, 1.03]
-	);
-
-	const expOpacity = useTransform(
-		scrollY,
-		[EXP_OFFSET, expFadeInEnd, expHoldEnd, expFadeOutEnd],
-		[0, 1, 1, 0]
-	);
-	const expY = useTransform(scrollY, [EXP_OFFSET, expFadeInEnd], [24, 0]);
-	const expScale = useTransform(
-		scrollY,
-		[EXP_OFFSET, expFadeInEnd],
-		[0.94, 1.04]
-	);
-
-	// Start CountUp only when experiences panel is active (animates numbers up)
-	const [startCounts, setStartCounts] = useState(false);
-	useEffect(() => {
-		const unsub = scrollY.on("change", v => {
-			if (!startCounts && v > EXP_OFFSET + 80 && v < expFadeOutEnd) {
-				setStartCounts(true);
-			}
-		});
-		return () => unsub();
-	}, [scrollY, startCounts, EXP_OFFSET, expFadeOutEnd]);
-
-	const { scrollYProgress } = useScroll();
+	// Progress bar
 	const progressX = useSpring(scrollYProgress, {
 		stiffness: 100,
 		damping: 30,
 		restDelta: 0.001
 	});
+
+	// CountUp trigger (no scroll math; set once when section comes into view/hover/focus)
+	const [startCounts, setStartCounts] = useState(false);
+
 	return (
 		<div className="relative overflow-x-hidden">
 			<motion.div
@@ -194,6 +135,7 @@ export default function LandingPage() {
 				}}
 			/>
 
+			{/* Scrollytelling container (video + hero + blur1..4) */}
 			<div style={{ height: spacerHeight }}>
 				{/* Fixed Video Background */}
 				<div className="fixed inset-0 z-[-1] overflow-hidden">
@@ -406,133 +348,131 @@ export default function LandingPage() {
 						</p>
 					</motion.div>
 				</div>
-
-				{/* Experiences Panel — Centered, transparent, longer hold */}
-				<div className="h-screen relative">
-					<motion.div
-						style={{
-							opacity: expOpacity,
-							y: expY,
-							scale: expScale
-						}}
-						className="fixed z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center px-6 pointer-events-none"
-					>
-						<motion.h2
-							initial={{ opacity: 0, y: 10 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.6, ease: "easeOut" }}
-							className="text-3xl md:text-4xl font-bold mb-6 drop-shadow-lg"
-						>
-							Our Experiences
-						</motion.h2>
-
-						<motion.p
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							transition={{ delay: 0.1, duration: 0.6 }}
-							className="text-lg md:text-xl drop-shadow mb-12 max-w-3xl mx-auto"
-						>
-							Join a growing community of students and landlords
-							who trust Seek to deliver the best rental
-							experience.
-						</motion.p>
-
-						<div className="flex flex-col md:flex-row justify-center gap-y-10 gap-x-16">
-							<div>
-								<div className="text-6xl font-extrabold">
-									{startCounts && (
-										<CountUp
-											start={0}
-											end={50}
-											duration={1.4}
-											separator=","
-										/>
-									)}
-									+
-								</div>
-								<p className="mt-2 opacity-90 text-lg md:text-xl">
-									Landlords already on Seek
-								</p>
-							</div>
-
-							<div>
-								<div className="text-6xl font-extrabold">
-									{startCounts && (
-										<CountUp
-											start={0}
-											end={1000}
-											duration={1.6}
-											separator=","
-										/>
-									)}
-									+
-								</div>
-								<p className="mt-2 opacity-90 text-lg md:text-xl">
-									New Properties Listed Weekly
-								</p>
-							</div>
-
-							<div>
-								<div className="text-6xl font-extrabold">
-									{startCounts && (
-										<CountUp
-											start={0}
-											end={500}
-											duration={1.5}
-											separator=","
-										/>
-									)}
-									+
-								</div>
-								<p className="mt-2 opacity-90 text-lg md:text-xl">
-									Downloads of the Seek App
-								</p>
-							</div>
-						</div>
-					</motion.div>
-				</div>
-
-				<div className="h-screen relative">
-					<motion.div
-						style={{
-							opacity: ctaOpacity,
-							y: ctaY,
-							scale: ctaScale
-						}}
-						className="fixed z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center px-6 pointer-events-none"
-					>
-						<motion.h2
-							initial={{ opacity: 0, y: 10 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.6, ease: "easeOut" }}
-							className="text-3xl md:text-4xl font-bold mb-6 drop-shadow-lg"
-						>
-							Ready to Get Started?
-						</motion.h2>
-
-						<motion.p
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							transition={{ delay: 0.1, duration: 0.6 }}
-							className="text-lg md:text-xl opacity-80 drop-shadow mb-12 max-w-3xl mx-auto"
-						>
-							Join thousands of students and landlords already
-							using Seek
-						</motion.p>
-
-						<div className="flex justify-center">
-							<motion.button
-								whileHover={{ scale: 1.05 }}
-								whileTap={{ scale: 0.98 }}
-								className="!bg-transparent !text-white !font-bold !px-6 !py-3 !rounded-xl !border-2 !border-white/80 hover:!bg-white/10"
-								onClick={() => navigate("/signup")}
-							>
-								Sign up today
-							</motion.button>
-						</div>
-					</motion.div>
-				</div>
 			</div>
+
+			{/* Normal page content starts here */}
+			<section className="relative py-24 text-white text-center px-6">
+				<motion.h2
+					initial={{ opacity: 0, y: 10 }}
+					whileInView={{ opacity: 1, y: 0 }}
+					viewport={{ once: true, amount: 0.3 }}
+					transition={{ duration: 0.6, ease: "easeOut" }}
+					className="text-3xl md:text-4xl font-bold mb-6 drop-shadow-lg"
+				>
+					Our Experiences
+				</motion.h2>
+
+				<motion.p
+					initial={{ opacity: 0 }}
+					whileInView={{ opacity: 1 }}
+					viewport={{ once: true, amount: 0.3 }}
+					transition={{ delay: 0.1, duration: 0.6 }}
+					className="text-lg md:text-xl drop-shadow mb-12 max-w-3xl mx-auto"
+				>
+					Join a growing community of students and landlords who trust
+					Seek to deliver the best rental experience.
+				</motion.p>
+
+				<motion.div
+					onViewportEnter={() => setStartCounts(true)}
+					viewport={{ once: true, amount: 0.4 }}
+					className="flex flex-col md:flex-row justify-center gap-y-10 gap-x-16"
+					onFocus={() => setStartCounts(true)}
+					onMouseEnter={() => setStartCounts(true)}
+				>
+					<div>
+						<div className="text-6xl font-extrabold">
+							{startCounts ? (
+								<CountUp
+									start={0}
+									end={50}
+									duration={1.4}
+									separator=","
+								/>
+							) : (
+								0
+							)}
+							+
+						</div>
+						<p className="mt-2 opacity-90 text-lg md:text-xl">
+							Landlords already on Seek
+						</p>
+					</div>
+
+					<div>
+						<div className="text-6xl font-extrabold">
+							{startCounts ? (
+								<CountUp
+									start={0}
+									end={1000}
+									duration={1.6}
+									separator=","
+								/>
+							) : (
+								0
+							)}
+							+
+						</div>
+						<p className="mt-2 opacity-90 text-lg md:text-xl">
+							New Properties Listed Weekly
+						</p>
+					</div>
+
+					<div>
+						<div className="text-6xl font-extrabold">
+							{startCounts ? (
+								<CountUp
+									start={0}
+									end={500}
+									duration={1.5}
+									separator=","
+								/>
+							) : (
+								0
+							)}
+							+
+						</div>
+						<p className="mt-2 opacity-90 text-lg md:text-xl">
+							Downloads of the Seek App
+						</p>
+					</div>
+				</motion.div>
+			</section>
+			<div className="h-20" />
+			<section className="relative py-24 text-white text-center px-6">
+				<motion.h2
+					initial={{ opacity: 0, y: 10 }}
+					whileInView={{ opacity: 1, y: 0 }}
+					viewport={{ once: true, amount: 0.3 }}
+					transition={{ duration: 0.6, ease: "easeOut" }}
+					className="text-3xl md:text-4xl font-bold mb-6 drop-shadow-lg"
+				>
+					Ready to Get Started?
+				</motion.h2>
+
+				<motion.p
+					initial={{ opacity: 0 }}
+					whileInView={{ opacity: 1 }}
+					viewport={{ once: true, amount: 0.3 }}
+					transition={{ delay: 0.1, duration: 0.6 }}
+					className="text-lg md:text-xl opacity-80 drop-shadow mb-12 max-w-3xl mx-auto"
+				>
+					Join thousands of students and landlords already using Seek
+				</motion.p>
+
+				<div className="flex justify-center">
+					<motion.button
+						whileHover={{ scale: 1.05 }}
+						whileTap={{ scale: 0.98 }}
+						className="!bg-transparent !text-white !font-bold !px-6 !py-3 !rounded-xl !border-2 !border-white/80 hover:!bg-white/10"
+						onClick={() => navigate("/signup")}
+					>
+						Sign up today
+					</motion.button>
+				</div>
+			</section>
+
+			<div className="h-20" />
 		</div>
 	);
 }

@@ -118,10 +118,9 @@ export default function LandingPage() {
 			[0, 1, 1, 0]
 		);
 		const x = useTransform(scrollY, [offset, fadeInEnd], [xFrom, xTo]);
-		const rotate = useTransform(scrollY, [offset, fadeInEnd], [6, 0]);
 		const scale = useTransform(scrollY, [offset, fadeInEnd], [0.8, 1.2]);
 
-		return { opacity, x, rotate, scale };
+		return { opacity, x, scale };
 	};
 
 	const blur1 = makeSection(BLUR1_OFFSET, -100, 0);
@@ -266,7 +265,6 @@ export default function LandingPage() {
 						style={{
 							opacity: blur1.opacity,
 							x: blur1.x,
-							rotate: blur1.rotate,
 							scale: blur1.scale,
 							transformOrigin: "left center"
 						}}
@@ -305,7 +303,6 @@ export default function LandingPage() {
 						style={{
 							opacity: blur2.opacity,
 							x: blur2.x,
-							rotate: blur2.rotate,
 							scale: blur2.scale,
 							transformOrigin: "right center"
 						}}
@@ -342,7 +339,6 @@ export default function LandingPage() {
 						style={{
 							opacity: blur3.opacity,
 							x: blur3.x,
-							rotate: blur3.rotate,
 							scale: blur3.scale,
 							transformOrigin: "left center"
 						}}
@@ -382,7 +378,6 @@ export default function LandingPage() {
 						style={{
 							opacity: blur4.opacity,
 							x: blur4.x,
-							rotate: blur4.rotate,
 							scale: blur4.scale,
 							transformOrigin: "right center"
 						}}

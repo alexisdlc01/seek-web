@@ -394,7 +394,7 @@ export default function LandingPage() {
 					onMouseEnter={() => setStartCounts(true)}
 				>
 					<div>
-						<div className="text-6xl font-extrabold">
+						<div className="text-5xl font-extrabold">
 							{startCounts ? (
 								<CountUp
 									start={0}
@@ -413,7 +413,7 @@ export default function LandingPage() {
 					</div>
 
 					<div>
-						<div className="text-6xl font-extrabold">
+						<div className="text-5xl font-extrabold">
 							{startCounts ? (
 								<CountUp
 									start={0}
@@ -432,7 +432,7 @@ export default function LandingPage() {
 					</div>
 
 					<div>
-						<div className="text-6xl font-extrabold">
+						<div className="text-5xl font-extrabold">
 							{startCounts ? (
 								<CountUp
 									start={0}

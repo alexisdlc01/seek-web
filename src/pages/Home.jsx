@@ -10,6 +10,7 @@ import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import CountUp from "react-countup";
+import Carousel from "../components/Carousel.jsx";
 
 export default function LandingPage() {
 	const { scrollY, scrollYProgress } = useScroll();
@@ -491,7 +492,8 @@ export default function LandingPage() {
 				</div>
 			</motion.section>
 
-			{/* spacer below new section */}
+			<div className="h-20" />
+			<Carousel />
 			<div className="h-20" />
 
 			{/* Ready to Get Started? */}

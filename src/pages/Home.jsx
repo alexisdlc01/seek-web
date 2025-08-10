@@ -529,14 +529,13 @@ export default function LandingPage() {
 				</motion.p>
 
 				<div className="flex justify-center">
-					<motion.button
-						whileHover={{ scale: 1.05 }}
-						whileTap={{ scale: 0.98 }}
-						className="!bg-transparent !text-white !font-bold !px-6 !py-3 !rounded-xl !border-2 !border-white/80 hover:!bg-white/10"
-						onClick={() => navigate("/signup")}
-					>
-						Sign up today
-					</motion.button>
+					<motion.div whileHover={{ scale: 1.05 }}>
+						<Button
+							label="Sign Up as a Landlord"
+							className="equal-btn student"
+							onClick={() => navigate("/signup/student")}
+						/>
+					</motion.div>
 				</div>
 			</section>
 

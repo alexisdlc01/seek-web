@@ -533,9 +533,9 @@ export default function LandingPage() {
 				<div className="flex justify-center">
 					<motion.div whileHover={{ scale: 1.05 }}>
 						<Button
-							label="Sign Up as a Landlord"
+							label="Sign Up Today"
 							className="equal-btn student"
-							onClick={() => navigate("/signup/student")}
+							onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
 						/>
 					</motion.div>
 				</div>

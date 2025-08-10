@@ -197,6 +197,7 @@ export default function LandingPage() {
 						<div className="flex justify-center gap-4 flex-wrap">
 							<motion.div whileHover={{ scale: 1.05 }}>
 								<Button
+									size ="small"
 									label="I'm a Student"
 									className="equal-btn student"
 									onClick={() => navigate("/signup/student")}
@@ -205,6 +206,7 @@ export default function LandingPage() {
 
 							<motion.div whileHover={{ scale: 1.05 }}>
 								<Button
+									size ="small"
 									label="I'm a Landlord"
 									className="equal-btn landlord"
 									onClick={() => navigate("/signup/landlord")}

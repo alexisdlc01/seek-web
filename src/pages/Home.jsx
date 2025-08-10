@@ -502,7 +502,7 @@ export default function LandingPage() {
 				</div>
 			</motion.section>
 
-			<div className="h-10" />
+			<div className="h-30" />
 			<Carousel />
 			<div className="h-30" />
 

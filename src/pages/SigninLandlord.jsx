@@ -70,15 +70,50 @@ export default function SignInLandlord() {
 	};
 
 	return (
-		<form
-			className="min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4"
+<form
 			onSubmit={handleSubmit}
+			className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4"
 		>
+			{/* Animated Particles (behind the card) */}
+			<div
+				aria-hidden
+				style={{
+					position: "absolute",
+					inset: 0,
+					pointerEvents: "none",
+					zIndex: 0
+				}}
+			>
+				{[...Array(20)].map((_, i) => (
+					<motion.div
+						key={i}
+						style={{
+							position: "absolute",
+							width: 8,
+							height: 8,
+							background: "#8B5CF6",
+							borderRadius: "50%",
+							left: `${Math.random() * 100}%`,
+							top: `${Math.random() * 100}%`
+						}}
+						animate={{
+							y: [0, -100, 0],
+							opacity: [0, 1, 0],
+							scale: [0, 1, 0]
+						}}
+						transition={{
+							duration: 3 + Math.random() * 2,
+							repeat: Infinity,
+							delay: Math.random() * 2
+						}}
+					/>
+				))}
+			</div>
 			<motion.div
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
-				className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
+				className="z-10 w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
 			>
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Welcome Back, Landlord

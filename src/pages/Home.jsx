@@ -18,6 +18,13 @@ export default function LandingPage() {
 	const { setTheme } = useNavbarTheme();
 	const navigate = useNavigate();
 
+	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+	useEffect(() => {
+		const onResize = () => setIsMobile(window.innerWidth < 768);
+		window.addEventListener("resize", onResize);
+		return () => window.removeEventListener("resize", onResize);
+	}, []);
+
 	// —— Global video blur/scale settings ——
 	const BLUR_START = 50;
 	const BLUR_END = 300;
@@ -57,6 +64,28 @@ export default function LandingPage() {
 		[1, MIN_BRIGHTNESS]
 	);
 
+	const makeSection = (offset, xFrom, xTo) => {
+		const fadeInEnd = offset + FADE_IN_DURATION;
+		const holdEnd = fadeInEnd + HOLD_DURATION;
+		const fadeOutEnd = holdEnd + FADE_IN_DURATION;
+
+		const opacity = useTransform(
+			scrollY,
+			[offset, fadeInEnd, holdEnd, fadeOutEnd],
+			[0, 1, 1, 0]
+		);
+
+		const x = isMobile
+			? useTransform(scrollY, [0, 1], [0, 0])
+			: useTransform(scrollY, [offset, fadeInEnd], [xFrom, xTo]);
+
+		const scale = isMobile
+			? useTransform(scrollY, [0, 1], [1, 1])
+			: useTransform(scrollY, [offset, fadeInEnd], [0.9, 1.1]);
+
+		return { opacity, x, scale };
+	};
+
 	const blurSpring = useSpring(blurValue, { stiffness: 80, damping: 20 });
 	const scaleSpringVid = useSpring(scaleValueVid, {
 		stiffness: 80,
@@ -87,23 +116,6 @@ export default function LandingPage() {
 	// Hero section transforms
 	const section1Opacity = useTransform(scrollY, [0, HERO_SCROLL_END], [1, 0]);
 	const section1Y = useTransform(scrollY, [0, HERO_SCROLL_END], [0, -50]);
-
-	// Utility for each side blur panel
-	const makeSection = (offset, xFrom, xTo) => {
-		const fadeInEnd = offset + FADE_IN_DURATION;
-		const holdEnd = fadeInEnd + HOLD_DURATION;
-		const fadeOutEnd = holdEnd + FADE_IN_DURATION;
-
-		const opacity = useTransform(
-			scrollY,
-			[offset, fadeInEnd, holdEnd, fadeOutEnd],
-			[0, 1, 1, 0]
-		);
-		const x = useTransform(scrollY, [offset, fadeInEnd], [xFrom, xTo]);
-		const scale = useTransform(scrollY, [offset, fadeInEnd], [0.8, 1.2]);
-
-		return { opacity, x, scale };
-	};
 
 	const blur1 = makeSection(BLUR1_OFFSET, -100, 0);
 	const blur2 = makeSection(BLUR2_OFFSET, 100, 0);

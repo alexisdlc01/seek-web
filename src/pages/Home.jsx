@@ -440,10 +440,8 @@ export default function LandingPage() {
 				</motion.div>
 			</section>
 
-			{/* spacer above new section */}
-			<div className="h-20" />
+			<div className="h-30" />
 
-			{/* NEW: “Discover Seek in X minutes” section */}
 			<motion.section
 				initial={{ opacity: 0, y: 16 }}
 				whileInView={{ opacity: 1, y: 0 }}
@@ -452,7 +450,7 @@ export default function LandingPage() {
 				className="px-6 text-white"
 			>
 				<div className="max-w-6xl mx-auto">
-					<h2 className="text-3xl md:text-5xl font-bold mb-8">
+					<h2 className="text-2xl md:text-4xl font-bold mb-10">
 						Discover Seek in X minutes
 					</h2>
 
@@ -492,9 +490,9 @@ export default function LandingPage() {
 				</div>
 			</motion.section>
 
-			<div className="h-20" />
+			<div className="h-10" />
 			<Carousel />
-			<div className="h-20" />
+			<div className="h-30" />
 
 			{/* Ready to Get Started? */}
 			<section className="relative py-24 text-white text-center px-6">
@@ -530,7 +528,7 @@ export default function LandingPage() {
 				</div>
 			</section>
 
-			<div className="h-20" />
+			<div className="h-30" />
 		</div>
 	);
 }

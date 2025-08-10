@@ -438,7 +438,63 @@ export default function LandingPage() {
 					</div>
 				</motion.div>
 			</section>
+
+			{/* spacer above new section */}
 			<div className="h-20" />
+
+			{/* NEW: “Discover Seek in X minutes” section */}
+			<motion.section
+				initial={{ opacity: 0, y: 16 }}
+				whileInView={{ opacity: 1, y: 0 }}
+				viewport={{ once: true, amount: 0.3 }}
+				transition={{ duration: 0.6, ease: "easeOut" }}
+				className="px-6 text-white"
+			>
+				<div className="max-w-6xl mx-auto">
+					<h2 className="text-3xl md:text-5xl font-bold mb-8">
+						Discover Seek in X minutes
+					</h2>
+
+					<div className="grid md:grid-cols-2 gap-10 items-center">
+						{/* Placeholder “video” (replace with your <video> later) */}
+						<div className="w-full">
+							<div className="relative aspect-video rounded-2xl bg-neutral-400/60">
+								{/* simple play badge */}
+								<div className="absolute inset-0 flex items-center justify-center">
+									<div className="w-16 h-16 rounded-full bg-white/80 flex items-center justify-center">
+										<svg
+											width="28"
+											height="28"
+											viewBox="0 0 24 24"
+											fill="currentColor"
+											className="text-black/80"
+										>
+											<path d="M8 5v14l11-7z" />
+										</svg>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						{/* Quote */}
+						<div>
+							<p className="text-2xl md:text-3xl font-semibold leading-snug opacity-95">
+								“Housing should be as easy as scrolling TikTok —
+								that’s what Seek is here to fix.”
+							</p>
+							<p className="mt-6 text-xl opacity-90">
+								Victor Trinel and Alexis de La Chapelle,
+								Co-founders
+							</p>
+						</div>
+					</div>
+				</div>
+			</motion.section>
+
+			{/* spacer below new section */}
+			<div className="h-20" />
+
+			{/* Ready to Get Started? */}
 			<section className="relative py-24 text-white text-center px-6">
 				<motion.h2
 					initial={{ opacity: 0, y: 10 }}

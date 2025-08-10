@@ -40,13 +40,13 @@ export default function QuotesCarouselSection() {
 						style={{ x }}
 					>
 						{[...Array(2)].map((_, k) => (
-							<div key={k} className="flex gap-12">
+							<div key={k} className="flex gap-26">
 								{quotes.map((q, i) => (
 									<figure
 										key={`${k}-${i}`}
-										className="shrink-0 w-[26rem] md:w-[34rem]"
+										className="shrink-0 w-[14rem] md:w-[16rem] whitespace-normal"
 									>
-										<blockquote className="text-xl md:text-2xl leading-relaxed">
+										<blockquote className="text-lg md:text-xl leading-relaxed">
 											“{q}”
 										</blockquote>
 										<figcaption className="mt-3 text-sm opacity-70">

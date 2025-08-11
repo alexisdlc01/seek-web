@@ -93,7 +93,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 							</span>
 						}
 						text
-						className={baseStyle}
+						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/")}
 					/>
 					<Button
@@ -103,7 +103,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 							</span>
 						}
 						text
-						className={baseStyle}
+						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/about")}
 					/>
 					<Button
@@ -113,7 +113,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 							</span>
 						}
 						text
-						className={baseStyle}
+						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/help")}
 					/>
 					<Button
@@ -125,7 +125,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 						icon="pi pi-chevron-down"
 						iconPos="right"
 						text
-						className={`${baseStyle} ${theme === "dark" ? "text-white" : "text-black"}`}
+						className={`${baseStyle} ${theme === "dark" ? "text-white after:bg-white" : "text-black"}`}
 						onClick={e => loginMenuRef.current.toggle(e)}
 					/>
 				</>

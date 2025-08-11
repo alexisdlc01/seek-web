@@ -54,31 +54,51 @@ export default function NavbarDesktop({ user, logout, logo }) {
 			{loggedIn ? (
 				<>
 					<Button
-						label="Dashboard"
+						label={
+							<span style={{ color: oppositeBackgroundTheme }}>
+								Dashboard
+							</span>
+						}
 						text
-						className={baseStyle}
+						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/dashboard")}
 					/>
 					<Button
-						label="Properties"
+						label={
+							<span style={{ color: oppositeBackgroundTheme }}>
+								Properties
+							</span>
+						}
 						text
-						className={baseStyle}
+						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/properties")}
 					/>
 					<Button
-						label="Messages"
+						label={
+							<span style={{ color: oppositeBackgroundTheme }}>
+								Messages
+							</span>
+						}
 						text
-						className={baseStyle}
+						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/messages")}
 					/>
 					<Button
-						label={user.name}
+						label={
+							<span style={{ color: oppositeBackgroundTheme }}>
+								Settings
+							</span>
+						}
 						text
-						className={baseStyle}
+						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/settings")}
 					/>
 					<Button
-						label="Logout"
+						label={
+							<span style={{ color: oppositeBackgroundTheme }}>
+								Logout
+							</span>
+						}
 						text
 						className={logoutStyle}
 						onClick={async () => await logout()}

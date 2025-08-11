@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "primereact/button";
+import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 
 export default function AboutPage() {
+	// const {setTheme} = useNavbarTheme()
+	// useEffect(() => {
+	// 	setTheme("dark")
+	// }, [])
 	return (
 		<div className="min-h-screen bg-[var(--surface-a)] text-[var(--text-color)] px-4 py-16">
 			<div className="max-w-3xl mx-auto space-y-10">

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
@@ -9,7 +9,16 @@ export default function NavbarDesktop({ user, logout, logo }) {
 	const navigate = useNavigate();
 	const loginMenuRef = useRef(null);
 	const loggedIn = !!user;
-	const { theme } = useNavbarTheme();
+	const { theme, setTheme } = useNavbarTheme();
+	const didInit = useRef(false);
+
+	useEffect(() => {
+		if (!didInit.current) {
+			didInit.current = true;
+			setTheme("dark");
+		}
+	}, [setTheme]);
+
 	const backgroundTheme = theme === "dark" ? "#0F0F23" : "white";
 	const oppositeBackgroundTheme = theme !== "dark" ? "#0F0F23" : "white";
 

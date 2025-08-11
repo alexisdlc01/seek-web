@@ -19,11 +19,18 @@ export default function LandingPage() {
 	const navigate = useNavigate();
 
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
 	useEffect(() => {
+		setTheme("white");
+
 		const onResize = () => setIsMobile(window.innerWidth < 768);
 		window.addEventListener("resize", onResize);
-		return () => window.removeEventListener("resize", onResize);
-	}, []);
+
+		return () => {
+			window.removeEventListener("resize", onResize);
+			setTheme("dark");
+		};
+	}, [setTheme]);
 
 	// —— Global video blur/scale settings ——
 	const BLUR_START = 50;
@@ -197,7 +204,7 @@ export default function LandingPage() {
 						<div className="flex justify-center gap-4 flex-wrap">
 							<motion.div whileHover={{ scale: 1.05 }}>
 								<Button
-									size ="small"
+									size="small"
 									label="I'm a Student"
 									className="equal-btn student"
 									onClick={() => navigate("/signup/student")}
@@ -206,7 +213,7 @@ export default function LandingPage() {
 
 							<motion.div whileHover={{ scale: 1.05 }}>
 								<Button
-									size ="small"
+									size="small"
 									label="I'm a Landlord"
 									className="equal-btn landlord"
 									onClick={() => navigate("/signup/landlord")}
@@ -535,7 +542,9 @@ export default function LandingPage() {
 						<Button
 							label="Sign Up Today"
 							className="equal-btn student"
-							onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+							onClick={() =>
+								window.scrollTo({ top: 0, behavior: "smooth" })
+							}
 						/>
 					</motion.div>
 				</div>

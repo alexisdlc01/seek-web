@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
@@ -7,10 +7,11 @@ import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 
 export default function NavbarDesktop({ user, logout, logo }) {
 	const navigate = useNavigate();
-	const loginMenuRef = useRef(null);
 	const loggedIn = !!user;
 	const { theme, setTheme } = useNavbarTheme();
 	const didInit = useRef(false);
+	const [loginOpen, setLoginOpen] = useState(false);
+	const loginWrapRef = useRef(null);
 
 	useEffect(() => {
 		if (!didInit.current) {
@@ -19,40 +20,42 @@ export default function NavbarDesktop({ user, logout, logo }) {
 		}
 	}, [setTheme]);
 
+	useEffect(() => {
+		const onDocClick = e => {
+			if (
+				loginWrapRef.current &&
+				!loginWrapRef.current.contains(e.target)
+			) {
+				setLoginOpen(false);
+			}
+		};
+		document.addEventListener("click", onDocClick);
+		return () => document.removeEventListener("click", onDocClick);
+	}, []);
+
 	const backgroundTheme = theme === "dark" ? "#0F0F23" : "white";
 	const oppositeBackgroundTheme = theme !== "dark" ? "#0F0F23" : "white";
+	const iconColorClass = theme === "dark" ? "!text-white" : "!text-[#0F0F23]";
 
 	const loginItems = [
 		{
-			label: (
-				<span
-					style={{
-						color: "#0F0F23"
-					}}
-				>
-					As Student
-				</span>
-			),
-			command: () => navigate("/signin/student")
+			label: <span style={{ color: "#0F0F23" }}>As Student</span>,
+			command: () => {
+				setLoginOpen(false);
+				navigate("/signin/student");
+			}
 		},
 		{
-			label: (
-				<span
-					style={{
-						color: "#0F0F23"
-					}}
-				>
-					As Landlord
-				</span>
-			),
-			command: () => navigate("/signin/landlord")
+			label: <span style={{ color: "#0F0F23" }}>As Landlord</span>,
+			command: () => {
+				setLoginOpen(false);
+				navigate("/signin/landlord");
+			}
 		}
 	];
 
-	// switched from font-medium → font-semibold
 	const baseStyle =
 		"navbar-buttons text-base font-semibold text-blue-900 relative hover:bg-transparent focus:ring-0 focus:outline-none active:bg-transparent after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:w-0 after:bg-blue-900 after:transition-all after:duration-300 hover:after:w-full";
-
 	const logoutStyle =
 		"navbar-buttons text-base font-semibold text-red-600 relative hover:bg-transparent focus:ring-0 focus:outline-none active:bg-transparent after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:w-0 after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full";
 
@@ -145,25 +148,54 @@ export default function NavbarDesktop({ user, logout, logo }) {
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/help")}
 					/>
-					<Button
-						label={
-							<span style={{ color: oppositeBackgroundTheme }}>
-								Login
-							</span>
-						}
-						icon="pi pi-chevron-down"
-						iconPos="right"
-						text
-						className={`${baseStyle} ${theme === "dark" ? "text-white after:bg-white" : "text-black"}`}
-						onClick={e => loginMenuRef.current.toggle(e)}
-					/>
+					<div ref={loginWrapRef} className="relative">
+						<Button
+							label={
+								<span
+									style={{ color: oppositeBackgroundTheme }}
+								>
+									Login
+								</span>
+							}
+							icon="pi pi-chevron-down"
+							iconPos="right"
+							text
+							className={`${baseStyle} ${theme === "dark" ? "text-white after:bg-white" : "text-black"}`}
+							onClick={() => setLoginOpen(v => !v)}
+							pt={{ icon: { className: iconColorClass } }}
+						/>
+						{loginOpen && (
+							<div
+								className="absolute right-0 top-[calc(100%+8px)] z-50"
+								style={{
+									width: "30%",
+									right: "155%"
+								}}
+							>
+								<Menu
+									model={loginItems.map(item => ({
+										...item,
+										template: (menuItem, options) => (
+											<Button
+												label={menuItem.label}
+												text
+												className={`${baseStyle} w-full text-left !py-2 !px-3`}
+												onClick={options.onClick}
+											/>
+										)
+									}))}
+									className="rounded-xl shadow-lg border bg-white p-1 min-w-0"
+								/>
+							</div>
+						)}
+					</div>
 				</>
 			)}
 		</div>
 	);
 
 	return (
-		<>
+		<div className="sticky top-0 z-50">
 			<Menubar
 				start={start}
 				end={end}
@@ -175,33 +207,9 @@ export default function NavbarDesktop({ user, logout, logo }) {
 					menu: { className: "hidden" },
 					button: { className: "hidden" }
 				}}
-				style={{
-					background: backgroundTheme
-				}}
-				className={`transition-colors duration-500 ease-in-out ${
-					theme === "dark"
-						? "navbar-dark bg-black text-white"
-						: "navbar-light bg-white text-black"
-				}`}
+				style={{ background: backgroundTheme }}
+				className={`transition-colors duration-500 ease-in-out ${theme === "dark" ? "bg-black text-white" : "bg-white text-black"}`}
 			/>
-			<Menu
-				model={loginItems.map(item => ({
-					...item,
-					template: (menuItem, options) => (
-						<Button
-							label={menuItem.label}
-							text
-							className={`${baseStyle} w-full text-left py-2`}
-							onClick={options.onClick}
-						/>
-					)
-				}))}
-				popup
-				ref={loginMenuRef}
-				id="popup_menu_right"
-				popupAlignment="right"
-				style={{ width: "10rem", color: "#0F0F23" }}
-			/>
-		</>
+		</div>
 	);
 }

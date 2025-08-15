@@ -236,7 +236,7 @@ export default function LandingPage() {
 								})
 							}
 						>
-							↓ 
+							↓
 						</motion.button>
 					</motion.div>
 				</div>
@@ -399,7 +399,7 @@ export default function LandingPage() {
 					transition={{ duration: 0.6, ease: "easeOut" }}
 					className="text-3xl md:text-4xl font-bold mb-6 drop-shadow-lg"
 				>
-					Our Experiences
+					Seek in Numbers
 				</motion.h2>
 
 				<motion.p
@@ -416,7 +416,7 @@ export default function LandingPage() {
 				<motion.div
 					onViewportEnter={() => setStartCounts(true)}
 					viewport={{ once: true, amount: 0.4 }}
-					className="flex flex-col md:flex-row justify-center gap-y-10 gap-x-16"
+					className="flex flex-col md:flex-row justify-center gap-y-10 gap-x-16 text-[#21b9c4]"
 					onFocus={() => setStartCounts(true)}
 					onMouseEnter={() => setStartCounts(true)}
 				>

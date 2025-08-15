@@ -290,7 +290,7 @@ export default function LandingPage() {
 							scale: blur2.scale,
 							transformOrigin: "right center"
 						}}
-						className="fixed z-0 top-1/2 right-[20%] -translate-y-1/2 text-white text-right max-w-md px-4 pointer-events-none"
+						className="fixed z-0 top-1/2 right-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
 					>
 						<h2 className="text-xl md:text-2xl font-bold mb-6 drop-shadow-lg">
 							Agree & Secure Your Space in Days, Not Months
@@ -388,6 +388,7 @@ export default function LandingPage() {
 							listings, track application, and communicate
 							directly with tenants.
 						</p>
+
 
 						<p className="text-base md:text-lg drop-shadow">
 							Our platform fosters clear, direct communication and

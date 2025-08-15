@@ -8,7 +8,7 @@ import FeaturesStep from "../components/addPropertySteps/FeaturesStep";
 import PhotosMediaStep from "../components/addPropertySteps/PhotosMediaStep";
 import ReviewPublishStep from "../components/addPropertySteps/ReviewPublishStep";
 
-const AddProperty = () => {
+const AddListing = () => {
 	const toast = useRef(null);
 	const stepperRef = useRef(null);
 	const fileInputRef = useRef(null);
@@ -279,4 +279,4 @@ const AddProperty = () => {
 	);
 };
 
-export default AddProperty;
+export default AddListing;

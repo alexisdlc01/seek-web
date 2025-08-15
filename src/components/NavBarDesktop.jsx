@@ -78,12 +78,12 @@ export default function NavbarDesktop({ user, logout, logo }) {
 					<Button
 						label={
 							<span style={{ color: oppositeBackgroundTheme }}>
-								Properties
+								Listings
 							</span>
 						}
 						text
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
-						onClick={() => navigate("/properties")}
+						onClick={() => navigate("/listings")}
 					/>
 					<Button
 						label={

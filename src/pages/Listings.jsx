@@ -28,7 +28,7 @@ export default function Listings() {
 						className="relative inline-block"
 					>
 						<Button
-							label="View Properties Pending Approval"
+							label="View Listings Pending Approval"
 							icon="pi pi-eye"
 							severity="primary"
 							size="small"
@@ -42,12 +42,12 @@ export default function Listings() {
 					</motion.div>
 					<motion.div whileHover={{ scale: 1.01 }}>
 						<Button
-							label="Add New Property"
+							label="Add New Listing"
 							icon="pi pi-plus"
 							size="small"
 							severity="primary"
 							className="w-full sm:w-auto"
-							onClick={() => navigate("/addproperty")}
+							onClick={() => navigate("/add-listing")}
 						/>
 					</motion.div>
 				</div>

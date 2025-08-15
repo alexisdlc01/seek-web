@@ -9,7 +9,7 @@ import SignUpLandlord from "./pages/SignupLandlord";
 import SignInLandlord from "./pages/SigninLandlord";
 import SignInStudent from "./pages/SigninStudent";
 import SignUpStudent from "./pages/SignupStudent";
-import AddProperty from "./pages/AddProperty";
+import AddListing from "./pages/AddListing.jsx";
 import ContactPage from "./pages/Contact";
 import ResetPassword from "./pages/ResetPassword";
 import Listings from "./pages/Listings";
@@ -48,60 +48,69 @@ function App() {
 		<>
 			<Navbar />
 			<div className="pt-[60px]">
-			<AnimatePresence mode="wait">
-				<motion.div
-					key={location.pathname}
-					initial={{ opacity: 0, y: 10 }}
-					animate={{ opacity: 1, y: 0 }}
-					exit={{ opacity: 0, y: 5 }}
-					transition={{ duration: 0.2 }}
-				>
-					<Routes location={location}>
-						<Route path="/" element={<Home />} />
-						<Route path="/terms" element={<Terms />} />
-						<Route path="/privacy" element={<Privacy />} />
-						<Route path="/contact" element={<ContactPage />} />
-						<Route path="/help" element={<Help />} />
-						<Route path="/about" element={<About />} />
-						<Route
-							path="/signup/landlord"
-							element={<SignUpLandlord />}
-						/>
-						<Route
-							path="/signup/student"
-							element={<SignUpStudent />}
-						/>
-						<Route
-							path="/signin/landlord"
-							element={<SignInLandlord />}
-						/>
-						<Route
-							path="/signin/student"
-							element={<SignInStudent />}
-						/>
+				<AnimatePresence mode="wait">
+					<motion.div
+						key={location.pathname}
+						initial={{ opacity: 0, y: 10 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: 5 }}
+						transition={{ duration: 0.2 }}
+					>
+						<Routes location={location}>
+							<Route path="/" element={<Home />} />
+							<Route path="/terms" element={<Terms />} />
+							<Route path="/privacy" element={<Privacy />} />
+							<Route path="/contact" element={<ContactPage />} />
+							<Route path="/help" element={<Help />} />
+							<Route path="/about" element={<About />} />
+							<Route
+								path="/signup/landlord"
+								element={<SignUpLandlord />}
+							/>
+							<Route
+								path="/signup/student"
+								element={<SignUpStudent />}
+							/>
+							<Route
+								path="/signin/landlord"
+								element={<SignInLandlord />}
+							/>
+							<Route
+								path="/signin/student"
+								element={<SignInStudent />}
+							/>
 
-						<Route path="/listings" element={<Listings />} />
-						<Route path="/applicants" element={<Applicants />} />
-						<Route path="/addproperty" element={<AddProperty />} />
-						<Route path="/application" element={<Application />} />
-						<Route path="/chat" element={<Chat />} />
-						<Route
-							path="/resetpassword"
-							element={<ResetPassword />}
-						/>
-						<Route
-							path="/activationSent"
-							element={<ActivationSent />}
-						/>
-						<Route
-							path="/verify-email"
-							element={<VerifyingEmail />}
-						/>
-						<Route path="/security" element={<Security />} />
-						<Route path="*" element={<NotFound />} />
-					</Routes>
-				</motion.div>
-			</AnimatePresence>
+							<Route path="/listings" element={<Listings />} />
+							<Route
+								path="/applicants"
+								element={<Applicants />}
+							/>
+							<Route
+								path="/add-listing"
+								element={<AddListing />}
+							/>
+							<Route
+								path="/application"
+								element={<Application />}
+							/>
+							<Route path="/chat" element={<Chat />} />
+							<Route
+								path="/resetpassword"
+								element={<ResetPassword />}
+							/>
+							<Route
+								path="/activationSent"
+								element={<ActivationSent />}
+							/>
+							<Route
+								path="/verify-email"
+								element={<VerifyingEmail />}
+							/>
+							<Route path="/security" element={<Security />} />
+							<Route path="*" element={<NotFound />} />
+						</Routes>
+					</motion.div>
+				</AnimatePresence>
 			</div>
 			<Footer />
 		</>

@@ -228,7 +228,7 @@ export default function LandingPage() {
 								ease: "easeOut",
 								delay: 0.2
 							}}
-							className=" w-16 h-16 px-6 mt-30 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
+							className="w-14 h-14 px-4 mt-30 py-2 bg-white text-black font-semibold rounded-3xl shadow-lg hover:bg-gray-200 transition"
 							onClick={() =>
 								window.scrollTo({
 									top: BLUR1_OFFSET + 500,
@@ -236,8 +236,11 @@ export default function LandingPage() {
 								})
 							}
 						>
-							↓
+							<span className="text-3xl">↓</span>
 						</motion.button>
+
+
+
 					</motion.div>
 				</div>
 

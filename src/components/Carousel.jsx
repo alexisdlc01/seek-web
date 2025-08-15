@@ -44,13 +44,21 @@ export default function QuotesCarouselSection() {
 								{quotes.map((q, i) => (
 									<figure
 										key={`${k}-${i}`}
-										className="shrink-0 w-[14rem] md:w-[16rem] whitespace-normal"
+										className="shrink-0 w-[18rem] md:w-[20rem] whitespace-normal"
 									>
 										<blockquote className="text-lg md:text-xl leading-relaxed">
 											“{q}”
 										</blockquote>
-										<figcaption className="mt-3 text-sm opacity-70">
-											— Seek User
+										<figcaption className="mt-3 flex items-center">
+											<div className="mr-4">
+												<div className="text-sm md:text-base font-semibold">
+													Graham Heathcote
+												</div>
+												<div className="text-xs md:text-sm opacity-70">
+													Seek User
+												</div>
+											</div>
+											<div className="h-6 md:h-8 w-px bg-sky-500/80" />
 										</figcaption>
 									</figure>
 								))}

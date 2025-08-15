@@ -257,24 +257,26 @@ export default function LandingPage() {
 						</h2>
 
 						<p className="text-base md:text-lg drop-shadow mb-4">
-							Our advanced AI-Opimized algorithms and powerful
-							filters connect students with their ideal properties
+							Our AI-optimized system, combined with powerful
+							filters, precisely matches students with their ideal
+							properties.
 						</p>
 
 						<p className="text-base md:text-lg drop-shadow mb-4">
-							Only serious, high-fit applications reach landlords,
-							cutting irrelevant inquiries.
+							This ensures landlords receive only highly relevant
+							inquiries, drastically reducing wasted time.
 						</p>
 
 						<p className="text-base md:text-lg drop-shadow mb-4">
-							Students engage exclusively with legitimate,
-							verified landlords.
+							Students connect exclusively with verified,
+							legitimate landlords.
 						</p>
 
 						<p className="text-base md:text-lg drop-shadow">
-							Every user signs in through a secure process; all
-							applications and listings are verified by our team
-							before going live.
+							To guarantee this safe environment, every user
+							completes a secure sign-in process, and all listings
+							are thoroughly checked by our team before going live
+							on the platform.
 						</p>
 					</motion.div>
 				</div>
@@ -295,22 +297,22 @@ export default function LandingPage() {
 						</h2>
 
 						<p className="text-base md:text-lg drop-shadow mb-4">
-							Built by students for students, our app speeds up
-							the entire housing process through a comprehensive
-							and trending user experience.
+							Tired of the endless housing hunt? Our data shows
+							36% of students currently take over a month to sign
+							leases.
 						</p>
 
 						<p className="text-base md:text-lg drop-shadow mb-4">
-							As a Student, you instantly discover verified
-							properties and can apply in seconds with all
-							required information ready.
+							SEEK speeds up the entire process. Students can
+							discover and apply for properties instantly with our
+							app made for students, by students.
 						</p>
 
 						<p className="text-base md:text-lg drop-shadow">
-							As Landlord, you can review complete applications
-							quickly, access pre-submitted student details
-							instantly, accept tenants faster to reduce vacancy
-							periods and boost occupancy rates.
+							Landlords can quickly review applications, access
+							uploaded student information requested prior to the
+							application, and accept tenants with unprecedented
+							efficiency, boosting occupancy rates.
 						</p>
 					</motion.div>
 				</div>
@@ -331,25 +333,25 @@ export default function LandingPage() {
 						</h2>
 
 						<p className="text-base md:text-lg drop-shadow mb-4">
-							Unlike traditional platforms, SEEK is 100% free of
-							charge for everyone.
+							Unlike traditional platforms, SEEK is completely
+							free for both students and landlords.
 						</p>
 
 						<p className="text-base md:text-lg drop-shadow mb-4">
 							Students get access to comprehensive, centralized
-							listings with no subscription fees.
+							listings without any subscription fees.
 						</p>
 
 						<p className="text-base md:text-lg drop-shadow mb-4">
-							Landlords and Agencies get powerful, free
-							advertising for properties – no listing charges or
-							commissions.
+							Landlords and agencies receive powerful, free
+							advertisement for their properties, reaching a
+							dedicated student audience without any listing
+							charges or commissions.
 						</p>
 
 						<p className="text-base md:text-lg drop-shadow">
-							SEEK is a true win-win that makes the St Andrews
-							housing market more accessible and efficient for
-							everyone.
+							It’s a win-win, designed to make the St Andrews
+							market more accessible and efficient for everyone.
 						</p>
 					</motion.div>
 				</div>
@@ -370,21 +372,26 @@ export default function LandingPage() {
 						</h2>
 
 						<p className="text-base md:text-lg drop-shadow mb-4">
-							You maintain full control
+							SEEK puts you in control.
 						</p>
 
 						<p className="text-base md:text-lg drop-shadow mb-4">
-							As a student, you gain unparalleled insight into the
-							St Andrews market, browse comprehensive listings
-							with direct landlord access, and make confident,
-							informed housing decisions.
+							Students gain unparalleled insight into the St
+							Andrews market with comprehensive listings and
+							direct access to landlords, helping them make
+							informed decisions.
 						</p>
 
 						<p className="text-base md:text-lg drop-shadow">
-							As a landlord, you retain full autonomy through a
-							dedicated management dashboard where you can easily
-							manage your listings and track applications while
-							communicating directly with tenants.
+							Landlords maintain full autonomy over their letting
+							process, with a dedicated dashboard to manage
+							listings, track application, and communicate
+							directly with tenants.
+						</p>
+
+						<p className="text-base md:text-lg drop-shadow">
+							Our platform fosters clear, direct communication and
+							a smoother process for everyone
 						</p>
 					</motion.div>
 				</div>

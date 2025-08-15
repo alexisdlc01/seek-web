@@ -220,6 +220,24 @@ export default function LandingPage() {
 								/>
 							</motion.div>
 						</div>
+						<motion.button
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{
+								duration: 0.8,
+								ease: "easeOut",
+								delay: 0.2
+							}}
+							className=" w-16 h-16 px-6 mt-30 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
+							onClick={() =>
+								window.scrollTo({
+									top: BLUR1_OFFSET + 500,
+									behavior: "smooth"
+								})
+							}
+						>
+							↓ 
+						</motion.button>
 					</motion.div>
 				</div>
 

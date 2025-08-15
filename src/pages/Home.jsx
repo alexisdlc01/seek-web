@@ -515,14 +515,22 @@ export default function LandingPage() {
 						</div>
 
 						{/* Quote */}
-						<div>
-							<p className="text-2xl md:text-3xl font-semibold leading-snug opacity-95">
-								“Housing should be as easy as scrolling TikTok —
-								that’s what Seek is here to fix.”
+						<div className="text-white max-w-3xl">
+							<p className="text-4xl font-bold leading-snug">
+								“Housing is the biggest stress students
+								shouldn’t have to carry. Our first priority is
+								to lift it.
 							</p>
-							<p className="mt-6 text-xl opacity-90">
-								Victor Trinel and Alexis de La Chapelle,
-								Co-founders
+							<p className="mt-6 text-4xl font-bold leading-snug">
+								At Seek, we replace luck with{" "}
+								<span style={{ color: "#21b9c4" }}>choice</span>
+								.”
+							</p>
+							<p className="mt-6 text-lg text-white/90">
+								Victor Trinel and Alexis de La Chapelle,{" "}
+								<span style={{ color: "#21b9c4" }}>
+									Co-founders
+								</span>
 							</p>
 						</div>
 					</div>

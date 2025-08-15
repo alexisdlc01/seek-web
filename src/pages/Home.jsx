@@ -382,7 +382,7 @@ export default function LandingPage() {
 							informed decisions.
 						</p>
 
-						<p className="text-base md:text-lg drop-shadow">
+						<p className="text-base md:text-lg drop-shadow mb-4">
 							Landlords maintain full autonomy over their letting
 							process, with a dedicated dashboard to manage
 							listings, track application, and communicate

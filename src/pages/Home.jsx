@@ -176,7 +176,7 @@ export default function LandingPage() {
 				<div className="sticky top-0 h-screen flex items-center justify-center">
 					<motion.div
 						style={{ opacity: section1Opacity, y: section1Y }}
-						className="absolute text-white text-center max-w-xl px-4"
+						className="text-white text-center max-w-xl px-4 space-y-8"
 					>
 						<motion.h1
 							initial={{ opacity: 0, y: 30 }}
@@ -201,7 +201,7 @@ export default function LandingPage() {
 							Andrews
 						</motion.p>
 
-						<div className="flex justify-center gap-4 flex-wrap">
+						<div className="flex justify-center gap-4 flex-wrap pb-15">
 							<motion.div whileHover={{ scale: 1.05 }}>
 								<Button
 									size="small"
@@ -220,6 +220,8 @@ export default function LandingPage() {
 								/>
 							</motion.div>
 						</div>
+
+						{/* Centered Arrow */}
 						<motion.button
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
@@ -228,7 +230,7 @@ export default function LandingPage() {
 								ease: "easeOut",
 								delay: 0.2
 							}}
-							className="w-14 h-14 px-4 mt-30 py-2 bg-white text-black font-semibold rounded-3xl shadow-lg hover:bg-gray-200 transition"
+							className="cursor-pointer mx-auto w-12 h-12 flex items-center justify-center bg-white text-black text-2xl font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
 							onClick={() =>
 								window.scrollTo({
 									top: BLUR1_OFFSET + 500,
@@ -236,7 +238,7 @@ export default function LandingPage() {
 								})
 							}
 						>
-							<span className="text-3xl">↓</span>
+							↓
 						</motion.button>
 					</motion.div>
 				</div>

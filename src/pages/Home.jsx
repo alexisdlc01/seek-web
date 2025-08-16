@@ -548,6 +548,9 @@ export default function LandingPage() {
 			</motion.section>
 
 			<div className="h-30" />
+			<h2 className="text-2xl md:text-4xl font-bold mb-10 max-w-6xl mx-auto">
+				Hear from our Partners & Customers
+			</h2>
 			<Carousel />
 			<div className="h-30" />
 

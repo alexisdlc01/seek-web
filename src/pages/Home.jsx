@@ -238,9 +238,6 @@ export default function LandingPage() {
 						>
 							<span className="text-3xl">↓</span>
 						</motion.button>
-
-
-
 					</motion.div>
 				</div>
 
@@ -392,7 +389,6 @@ export default function LandingPage() {
 							directly with tenants.
 						</p>
 
-
 						<p className="text-base md:text-lg drop-shadow">
 							Our platform fosters clear, direct communication and
 							a smoother process for everyone
@@ -527,10 +523,13 @@ export default function LandingPage() {
 
 						{/* Quote */}
 						<div className="text-white max-w-3xl">
-							<p className="text-4xl font-bold leading-snug">
-								“Housing is the biggest stress students
-								shouldn’t have to carry. Our first priority is
-								to lift it.
+							<div className="text-[#21b9c4] text-9xl font-bold leading-none mb-[-40px]">
+								“
+							</div>
+
+							<p className="text-4xl font-bold leading-snug mt-0">
+								Housing is the biggest stress students shouldn’t
+								have to carry. Our first priority is to lift it.
 							</p>
 							<p className="mt-6 text-4xl font-bold leading-snug">
 								At Seek, we replace luck with{" "}

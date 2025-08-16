@@ -504,8 +504,14 @@ export default function LandingPage() {
 
 					<div className="grid md:grid-cols-2 gap-10 items-stretch">
 						{/* Video column */}
-						<div className="w-full h-full">
-							<div className="relative w-full h-full rounded-2xl bg-neutral-400/60 flex items-center justify-center">
+						<div className="w-full">
+							<div
+								className="
+								    relative w-full
+								    aspect-video md:aspect-auto md:h-full
+								    rounded-2xl bg-neutral-400/60 flex items-center justify-center
+								  "
+							>
 								<div className="w-16 h-16 rounded-full bg-white/80 flex items-center justify-center">
 									<svg
 										width="28"

@@ -488,8 +488,6 @@ export default function LandingPage() {
 				</motion.div>
 			</section>
 
-			<div className="h-30" />
-
 			<motion.section
 				initial={{ opacity: 0, y: 16 }}
 				whileInView={{ opacity: 1, y: 0 }}
@@ -543,7 +541,7 @@ export default function LandingPage() {
 							</p>
 							<p className="mt-6 text-lg text-white/90">
 								Victor Trinel and Alexis de La Chapelle,{" "}
-								<span style={{ color: "#21b9c4" }}>
+								<span style={{ color: "#21b9c4", display: "block" }}>
 									Co-founders
 								</span>
 							</p>

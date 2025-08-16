@@ -59,7 +59,7 @@ export default function NavbarMobile({ user, logout, logo }) {
 
 	return (
 		<Menubar
-			start={<div className="pl-4 flex items-center w-32">
+			start={<div className="p-1 flex items-center w-32">
 				{logo}
 			</div>}
 			end={

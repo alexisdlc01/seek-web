@@ -19,14 +19,14 @@ export default function Navbar() {
 	}, []);
 
 	const logoSrc =
-		theme === "dark" ? "/Seek_Small_White.svg" : "/Seek_Small_Blue.svg";
+		theme === "dark" ? "/SEEK_WHITE_FINAL.svg" : "/SEEK_BLUE_FINAL.svg";
 
 	const logo = (
 		<motion.img
 			src={logoSrc}
 			alt="Logo"
 			whileHover={{ scale: 1.05 }}
-			className="h-9 w-auto object-cover scale-450 ml-2 cursor-pointer"
+			className="w-20 h-auto object-cover ml-2 cursor-pointer"
 			onClick={() => navigate("/")}
 		/>
 	);

@@ -500,23 +500,20 @@ export default function LandingPage() {
 						Discover Seek in X minutes
 					</h2>
 
-					<div className="grid md:grid-cols-2 gap-10 items-center">
-						{/* Placeholder “video” (replace with your <video> later) */}
-						<div className="w-full">
-							<div className="relative aspect-video rounded-2xl bg-neutral-400/60">
-								{/* simple play badge */}
-								<div className="absolute inset-0 flex items-center justify-center">
-									<div className="w-16 h-16 rounded-full bg-white/80 flex items-center justify-center">
-										<svg
-											width="28"
-											height="28"
-											viewBox="0 0 24 24"
-											fill="currentColor"
-											className="text-black/80"
-										>
-											<path d="M8 5v14l11-7z" />
-										</svg>
-									</div>
+					<div className="grid md:grid-cols-2 gap-10 items-stretch">
+						{/* Video column */}
+						<div className="w-full h-full">
+							<div className="relative w-full h-full rounded-2xl bg-neutral-400/60 flex items-center justify-center">
+								<div className="w-16 h-16 rounded-full bg-white/80 flex items-center justify-center">
+									<svg
+										width="28"
+										height="28"
+										viewBox="0 0 24 24"
+										fill="currentColor"
+										className="text-black/80"
+									>
+										<path d="M8 5v14l11-7z" />
+									</svg>
 								</div>
 							</div>
 						</div>

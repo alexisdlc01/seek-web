@@ -1,10 +1,10 @@
-// QuotesCarouselSection.jsx
 import {
 	motion,
 	useAnimationFrame,
 	useMotionValue,
 	useTransform
 } from "framer-motion";
+import { useRef, useLayoutEffect, useState } from "react";
 
 function wrap(min, max, v) {
 	const range = max - min;
@@ -21,26 +21,38 @@ export default function QuotesCarouselSection() {
 	];
 
 	const base = useMotionValue(0);
-	const baseSpeed = 3;
+	const baseSpeed = 60;
+
+	const containerRef = useRef(null);
+	const [contentWidth, setContentWidth] = useState(0);
+
+	useLayoutEffect(() => {
+		if (containerRef.current) {
+			setContentWidth(containerRef.current.scrollWidth / 2);
+		}
+	}, []);
 
 	useAnimationFrame((_, delta) => {
 		base.set(base.get() + (baseSpeed * delta) / 1000);
 	});
 
-	const x = useTransform(base, v => `${wrap(-100, 0, -v)}%`);
+	const x = useTransform(base, v =>
+		contentWidth ? -wrap(0, contentWidth, v) : 0
+	);
 
 	return (
 		<section className="px-6 text-white">
 			<div className="max-w-6xl mx-auto">
 				<div className="relative overflow-hidden">
 					<motion.div
+						ref={containerRef}
 						aria-label="Quotes carousel"
 						role="list"
 						className="flex gap-12 whitespace-nowrap py-8 md:py-10 will-change-transform"
 						style={{ x }}
 					>
 						{[...Array(2)].map((_, k) => (
-							<div key={k} className="flex gap-26">
+							<div key={k} className="flex gap-12">
 								{quotes.map((q, i) => (
 									<figure
 										key={`${k}-${i}`}
@@ -50,10 +62,6 @@ export default function QuotesCarouselSection() {
 											“{q}”
 										</blockquote>
 										<figcaption className="mt-3 flex justify-end items-center">
-											{/* Vertical line first */}
-
-
-											{/* Text on the right */}
 											<div className="text-right">
 												<div className="text-sm md:text-base font-semibold">
 													Kshitij Verma
@@ -64,8 +72,6 @@ export default function QuotesCarouselSection() {
 											</div>
 											<div className="h-6 md:h-8 w-px bg-sky-500/80 ml-2" />
 										</figcaption>
-
-
 									</figure>
 								))}
 							</div>

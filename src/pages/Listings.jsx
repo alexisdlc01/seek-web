@@ -11,7 +11,13 @@ export default function Listings() {
 	const navigate = useNavigate();
 
 	return (
-		<div className="min-h-screen bg-white px-4 py-6 sm:px-6 lg:px-8">
+		<div
+			className="min-h-screen bg-white px-4 py-6 sm:px-6 lg:px-8"
+			style={{ background: "#0f0f23",
+				margin: "0 auto",
+				width: "80%"
+			}}
+		>
 			{/* Header with Add New Property Button */}
 			<motion.div
 				initial={{ opacity: 0, y: -20 }}
@@ -33,6 +39,9 @@ export default function Listings() {
 							severity="primary"
 							size="small"
 							className="w-full sm:w-auto"
+							style={{
+								background: "#23b7c5"
+							}}
 						/>
 						<Badge
 							value="1"
@@ -47,6 +56,9 @@ export default function Listings() {
 							size="small"
 							severity="primary"
 							className="w-full sm:w-auto"
+							style={{
+								background: "#23b7c5"
+							}}
 							onClick={() => navigate("/add-listing")}
 						/>
 					</motion.div>
@@ -61,7 +73,10 @@ export default function Listings() {
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.4, delay: i * 0.1 }}
-						className="flex flex-col md:flex-row items-start md:items-center justify-between bg-white border border-[var(--surface-border)] rounded-xl px-4 py-5 shadow-sm gap-4"
+						className="flex flex-col md:flex-row items-start md:items-center justify-between border border-[var(--surface-border)] rounded-xl px-4 py-5 shadow-sm gap-4"
+						style={{
+							background: "#626262"
+						}}
 					>
 						{/* Image */}
 						<div className="w-full md:w-32 h-40 md:h-20 flex-shrink-0 rounded-md overflow-hidden">
@@ -77,12 +92,15 @@ export default function Listings() {
 							<h2 className="font-semibold text-[var(--text-color)] text-base mt-2 md:mt-0">
 								{prop.address}
 							</h2>
-							<p className="text-sm text-gray-500">{prop.city}</p>
+							<p className="text-sm text-white">{prop.city}</p>
 							<div className="flex flex-wrap gap-2 mt-2">
 								<Tag
 									value="2 New Applicants"
 									severity="info"
 									className="text-xs font-medium px-3 py-1 rounded-full"
+									style={{
+										background: "#23b7c5"
+									}}
 								/>
 								<Tag
 									value="3 New Messages"
@@ -102,7 +120,10 @@ export default function Listings() {
 									size="small"
 									severity="primary"
 									outlined
-									className="w-full sm:w-auto"
+									className="w-full sm:w-auto "
+									style={{
+										background: "white"
+									}}
 									onClick={() => navigate("/applicants")}
 								/>
 							</motion.div>
@@ -116,6 +137,9 @@ export default function Listings() {
 									severity="primary"
 									outlined
 									className="w-full sm:w-auto"
+									style={{
+										background: "white"
+									}}
 								/>
 							</motion.div>
 
@@ -128,6 +152,9 @@ export default function Listings() {
 									outlined
 									aria-label="More options"
 									className="w-full sm:w-auto"
+									style={{
+										background: "white"
+									}}
 								/>
 							</motion.div>
 						</div>

@@ -182,16 +182,28 @@ const AddListing = () => {
 	const removePhoto = id => setPhotos(photos.filter(p => p.id !== id));
 
 	return (
-		<div className="min-h-screen bg-white p-4 md:p-6">
+		<div className="min-h-screen py-6 px-2 md:px-4" style={{ background: "#0f0f23" }}>
 			<Toast ref={toast} />
-			<div className="w-full 2xl:max-w-[60%] xl:max-w-[70%] lg:max-w-[80%] mx-auto">
+			<div className="w-[75%] max-w-screen-2xl mx-auto px-2 md:px-4">
+				<h1 className="pt-10 pb-10">Add new Listing</h1>
 				<Stepper
 					ref={stepperRef}
 					activeIndex={step}
-					onStepChange={e => setStep(e.index)}
+					onStepChange={(e) => setStep(e.index)}
 					linear
+					pt={{
+						nav: {
+							className:
+								"pr-stepper-flat relative before:content-[''] before:absolute " +
+								"before:inset-x-0 before:top-[26px] before:h-[2px] before:bg-white before:z-0"
+						},
+						header: "relative z-10 flex flex-col items-center gap-1",
+						number: "relative z-20",
+						separator: "hidden"
+					}}
 				>
-					<StepperPanel header="Basic Info">
+
+				<StepperPanel header="Basic Info">
 						<BasicInfoStep
 							title={title}
 							setTitle={setTitle}

@@ -33,7 +33,10 @@ const BasicInfoStep = ({
 	next
 }) => {
 	return (
-		<>
+		<div style={{
+			background: "#0f0f23",
+			color: "white"
+		}}>
 			<div className="space-y-4">
 				<div className="flex flex-col"></div>
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -184,7 +187,7 @@ const BasicInfoStep = ({
 					onClick={next}
 				/>
 			</div>
-		</>
+		</div>
 	);
 };
 

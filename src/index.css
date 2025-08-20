@@ -3,6 +3,14 @@
 @import "primereact/resources/primereact.min.css";
 @import "primeicons/primeicons.css";
 
+@layer utilities {
+    .pr-stepper-flat .p-stepper-separator,
+    .pr-stepper-flat .p-stepper-header::before,
+    .pr-stepper-flat .p-stepper-header::after {
+        display: none !important;
+    }
+}
+
 .p-password {
 	display: inline;
 }
@@ -42,10 +50,9 @@ body {
 	overscroll-behavior-y: none;
 }
 
-
 body {
-  margin: 0;
-  background-color: #0F0F23;
+	margin: 0;
+	background-color: #0f0f23;
 }
 
 .navbar-dark .pi {
@@ -53,44 +60,82 @@ body {
 }
 
 .navbar-light .pi {
-	color: #0F0F23; /* or black */
+	color: #0f0f23; /* or black */
 }
 
 /* Ensure same button size by always having border */
 .equal-btn {
-  border-width: 2px !important;
-  border-style: solid !important;
-  padding: 0.75rem 1.5rem !important; /* matches px-6 py-3 */
-  font-weight: bold !important;
-  border-radius: 0.75rem !important;
-  transition: all 0.2s ease-in-out;
+	border-width: 2px !important;
+	border-style: solid !important;
+	padding: 0.75rem 1.5rem !important; /* matches px-6 py-3 */
+	font-weight: bold !important;
+	border-radius: 0.75rem !important;
+	transition: all 0.2s ease-in-out;
 }
 
 /* Student button styles */
 .equal-btn.student {
-  background-color: white !important;
-  color: var(--primary-color) !important;
-  border-color: transparent !important;
+	background-color: white !important;
+	color: var(--primary-color) !important;
+	border-color: transparent !important;
 }
 .equal-btn.student:hover {
-  background-color: transparent !important;
-  color: white !important;
-  border-color: white !important;
+	background-color: transparent !important;
+	color: white !important;
+	border-color: white !important;
 }
 
 /* Landlord button styles */
 .equal-btn.landlord {
-  background-color: transparent !important;
-  color: white !important;
-  border-color: white !important;
+	background-color: transparent !important;
+	color: white !important;
+	border-color: white !important;
 }
 .equal-btn.landlord:hover {
-  background-color: white !important;
-  color: var(--primary-color) !important;
-  border-color: white !important;
+	background-color: white !important;
+	color: var(--primary-color) !important;
+	border-color: white !important;
 }
 
 .p-icon {
-    height: 1.5rem !important;
-    width: 1.5rem !important;
+	height: 1.5rem !important;
+	width: 1.5rem !important;
+}
+
+.p-stepper .p-stepper-panels {
+	background: #0f0f23;
+}
+
+.p-stepper .p-stepper-header .p-stepper-action {
+	background: #0f0f23;
+}
+
+.p-stepper .p-stepper-header.p-highlight .p-stepper-title {
+	color: white;
+}
+
+.p-stepper .p-stepper-header .p-stepper-action {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.25rem;
+}
+.p-stepper .p-stepper-header .p-stepper-title {
+	margin: 0;
+	text-align: center;
+}
+
+/* Remove the built-in short lines */
+.p-stepper .p-stepper-separator {
+	display: none !important;
+}
+
+/* nuke all default connectors/progress tints */
+.p-stepper .p-stepper-separator,
+.p-stepper .p-stepper-header::before,
+.p-stepper .p-stepper-header::after {
+	display: none !important;
+	background: transparent !important;
+	border: 0 !important;
+	box-shadow: none !important;
 }

@@ -106,10 +106,6 @@ body {
 	background: #0f0f23;
 }
 
-.p-stepper .p-stepper-header .p-stepper-action {
-	background: #0f0f23;
-}
-
 .p-stepper .p-stepper-header.p-highlight .p-stepper-title {
 	color: white;
 }
@@ -139,3 +135,35 @@ body {
 	border: 0 !important;
 	box-shadow: none !important;
 }
+
+/* Make numbers opaque and mask the line underneath */
+.seek-stepper .p-stepper-number {
+	background: #0f0f23 !important;          /* same as page */
+	box-shadow: 0 0 0 6px #0f0f23 !important; /* “ring” that covers the line */
+}
+
+/* after primereact css */
+.seek-stepper .p-stepper-header .p-stepper-action {
+	background: transparent !important;
+}
+
+.seek-stepper .p-stepper-number {
+	background: #0f0f23 !important;
+	box-shadow: 0 0 0 6px #0f0f23 !important; /* masks the line under the circle */
+}
+
+
+
+.seek-stepper .p-stepper-header .p-stepper-action { background: transparent !important; }
+.seek-stepper .p-stepper-header { overflow: visible; }   /* lets the mask show */
+
+.seek-stepper .p-stepper-number {
+	position: relative !important;
+	z-index: 30 !important;                 /* above the line */
+	background: #0f0f23 !important;         /* page bg */
+	border: 2px solid rgba(255,255,255,.7) !important;
+	color: #fff !important;
+	border-radius: 9999px !important;
+	box-shadow: 0 0 0 7px #0f0f23 !important; /* masks the line around the circle */
+}
+

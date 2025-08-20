@@ -73,7 +73,6 @@ const AddListing = () => {
 		{ label: "Quarter", value: "Quarter" },
 		{ label: "Flexible", value: "Flexible" }
 	];
-	const [leaseDuration, setLeaseDuration] = useState(null);
 
 	// Step 3 state
 	const furnishingOptions = [
@@ -182,11 +181,19 @@ const AddListing = () => {
 	const removePhoto = id => setPhotos(photos.filter(p => p.id !== id));
 
 	return (
-		<div className="min-h-screen py-6 px-2 md:px-4" style={{ background: "#0f0f23" }}>
+		<div
+			className="min-h-screen py-6 px-2 md:px-4"
+			style={{ background: "#0f0f23" }}
+		>
 			<Toast ref={toast} />
 			<div className="w-[75%] max-w-screen-2xl mx-auto px-2 md:px-4">
-				<h1 className="pt-10 pb-10">Add new Listing</h1>
+				<h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-color)] pb-8" style={{
+					color: "#23b7c5"
+				}}>
+					Add Listing
+				</h1>
 				<Stepper
+					className="seek-stepper"
 					ref={stepperRef}
 					activeIndex={step}
 					onStepChange={(e) => setStep(e.index)}
@@ -194,13 +201,14 @@ const AddListing = () => {
 					pt={{
 						nav: {
 							className:
-								"pr-stepper-flat relative before:content-[''] before:absolute " +
-								"before:inset-x-0 before:top-[26px] before:h-[2px] before:bg-white before:z-0"
+								"relative before:content-[''] before:absolute before:inset-x-0 " +
+								"before:top-[26px] before:h-[2px] before:bg-white before:z-0"
 						},
-						header: "relative z-10 flex flex-col items-center gap-1",
-						number: "relative z-20",
-						separator: "hidden"
+						header: { className: "relative z-[1] flex flex-col items-center gap-1" },
+						number: { className: "relative z-[2] rounded-full border border-white/70 text-white" },
+						separator: { className: "hidden" }
 					}}
+
 				>
 
 				<StepperPanel header="Basic Info">

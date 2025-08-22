@@ -6,6 +6,120 @@ import { Tag } from "primereact/tag";
 import { Chart } from "primereact/chart";
 import "chart.js/auto";
 
+export function SeekPerformanceSection({ onGetReport }) {
+  const left = [
+    {
+      t: "Portfolio performance at a glance",
+      d: "Find all your personal dashboard analytics and KPIs in one place, transformed into a comprehensive, easy-to-understand analysis."
+    },
+    {
+      t: "A macro view of the market",
+      d: "High-level overview of the entire St Andrews market including demand/supply trends, hotspots, and property-type breakdowns."
+    },
+    {
+      t: "Audience insights",
+      d: "Analytics on top search filters, amenities, application demographics, and lease duration trends."
+    },
+    {
+      t: "Competitive analysis",
+      d: "Benchmark your listings against the market to optimize pricing and maximize performance."
+    }
+  ];
+
+  const right = [
+    {
+      t: "Student behavior & intent analysis",
+      d: "Understand student intent via search patterns and listing interactions on SEEK to attract ideal tenants."
+    },
+    {
+      t: "Financial & Attribute Benchmarking",
+      d: "Objective financial analysis benchmarking your pricing and property attributes against the wider market."
+    },
+    {
+      t: "Actionable Strategy & Recommendations",
+      d: "Personalized, data-driven strategy and trend forecast to stay ahead and maximize returns."
+    }
+  ];
+
+  const Check = () => (
+    <span
+      className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-xs"
+      style={{ borderColor: "var(--primary-color)", color: "var(--primary-color)" }}
+    >
+      ✓
+    </span>
+  );
+
+  return (
+    <section className="py-12">
+      {/* headline with thicker dividers */}
+      <div className="mx-auto max-w-5xl px-4">
+        <div className="flex items-center gap-4">
+          <span className="h-[2px] flex-1 bg-white/30" />
+          <h2 className="text-center text-xl font-semibold text-[var(--primary-color)]">
+            Ready to Get to Know<br />Your Market?
+          </h2>
+          <span className="h-[2px] flex-1 bg-white/30" />
+        </div>
+        <p className="mt-4 text-center text-[var(--text-secondary-color)]">
+          With SEEKPerformance, go beyond your portfolio. Get the data-driven edge you need to optimize pricing,
+          forecast demand, and attract the right tenants.
+        </p>
+      </div>
+
+      {/* subheader */}
+      <div className="mx-auto mt-10 max-w-6xl px-4">
+        <p className="text-lg font-semibold text-[var(--primary-color)]">
+          SEEKPerformance: Your Competitive Edge
+        </p>
+        <p className="mt-1 text-[var(--text-secondary-color)]">What’s included?</p>
+
+        {/* TWO COLUMNS, both BELOW the subheader */}
+        <div className="mt-8 grid gap-10 md:grid-cols-2">
+          <ul className="space-y-6">
+            {left.map((x, i) => (
+              <li key={i} className="flex gap-3">
+                <Check />
+                <div>
+                  <p className="font-semibold text-[var(--text-color)]">{x.t}</p>
+                  <p className="mt-1 text-sm text-[var(--text-secondary-color)]">{x.d}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <ul className="space-y-6">
+            {right.map((x, i) => (
+              <li key={i} className="flex gap-3">
+                <Check />
+                <div>
+                  <p className="font-semibold text-[var(--text-color)]">{x.t}</p>
+                  <p className="mt-1 text-sm text-[var(--text-secondary-color)]">{x.d}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* CTA */}
+        <div className="mt-8 flex items-center justify-end gap-4">
+          <span className="text-sm text-[var(--text-secondary-color)]">And more...</span>
+          <Button
+            label="Get My Report"
+            onClick={onGetReport}
+            className="px-4"
+            style={{
+              background: "var(--primary-color)",
+              borderColor: "var(--primary-color)",
+              color: "black"
+            }}
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function StatusUpdatesCarousel({ items, onReview }) {
   const [i, setI] = useState(0);
   const n = items.length;
@@ -324,7 +438,7 @@ export default function Dashboard() {
 						className="md:col-span-7 rounded-xl border border-[var(--surface-border)] p-6"
 						style={{ background: "var(--surface-card)" }}
 					>
-						<h2 className="text-xl font-semibold text-[var(--text-color)] text-center">
+						<h2 className="text-xl font-semibold text-[var(--primary-color)] text-center">
 							Ready to Get to Know Your Market?
 						</h2>
 						<p className="mt-4 text-[var(--text-secondary-color)] text-center">
@@ -354,6 +468,10 @@ export default function Dashboard() {
 						<Button label="Learn more" className="mt-4" />
 					</div>
 				</div>
+
+                <SeekPerformanceSection
+                    onGetReport={() => alert("Get Report clicked!")}
+                />
 			</div>
 		</div>
 	);

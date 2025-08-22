@@ -112,3 +112,43 @@ body {
 	margin: 0;
 	text-align: center;
 }
+
+
+
+
+
+
+/* PrimeReact Dropdown — dark theme match */
+.p-dropdown{
+  background: var(--surface-card) !important;
+  border: 1px solid var(--surface-border) !important;
+  color: var(--text-color) !important;
+}
+.p-dropdown .p-dropdown-label{ color: var(--text-color) !important; }
+.p-dropdown .p-placeholder{ color: var(--text-secondary-color) !important; }
+.p-dropdown .p-dropdown-trigger{ color: var(--text-secondary-color) !important; }
+
+/* hover / focus */
+.p-dropdown:not(.p-disabled):hover{
+  border-color: var(--primary-color) !important;
+}
+.p-dropdown:not(.p-disabled).p-focus,
+.p-inputwrapper-focus > .p-dropdown{
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--primary-color) 30%, transparent) !important;
+}
+
+/* panel + items */
+.p-dropdown-panel{
+  background: var(--surface-card) !important;
+  border: 1px solid var(--surface-border) !important;
+  color: var(--text-color) !important;
+}
+.p-dropdown-item{ color: var(--text-color) !important; }
+.p-dropdown-item:not(.p-highlight):hover{
+  background: color-mix(in oklab, var(--primary-color) 12%, transparent) !important;
+}
+.p-dropdown-item.p-highlight{
+  background: color-mix(in oklab, var(--primary-color) 20%, transparent) !important;
+  color: var(--text-color) !important;
+}

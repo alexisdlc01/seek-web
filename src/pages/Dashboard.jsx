@@ -133,6 +133,7 @@ export default function Dashboard() {
 							/>
 							<Badge
 								value="4"
+                                severity="danger"
 								className="absolute -top-2 -right-2"
 							/>
 						</div>

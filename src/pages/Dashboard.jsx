@@ -204,7 +204,6 @@ export default function Dashboard() {
 						</div>
 					</div>
 					<div className="flex items-center gap-3">
-						<Tag value="Active" severity="success" />
 						<Button label="Manage listings" size="small" outlined />
 					</div>
 				</div>

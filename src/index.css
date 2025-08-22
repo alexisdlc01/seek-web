@@ -95,10 +95,6 @@ body {
 	background: #0f0f23;
 }
 
-.p-stepper .p-stepper-header .p-stepper-action {
-	background: #0f0f23;
-}
-
 .p-stepper .p-stepper-header.p-highlight .p-stepper-title {
 	color: white;
 }

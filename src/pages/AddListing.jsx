@@ -186,6 +186,10 @@ const AddListing = () => {
 			className="min-h-screen py-6 px-2 md:px-4"
 			style={{ background: "#0f0f23" }}
 		>
+		<div
+			className="min-h-screen py-6 px-2 md:px-4"
+			style={{ background: "#0f0f23" }}
+		>
 			<Toast ref={toast} />
 			<div className="w-[75%] max-w-screen-2xl mx-auto px-2 md:px-4">
 				<h1 className="text-2xl sm:text-3xl font-bold text-[var(--primary-color)] pb-6">

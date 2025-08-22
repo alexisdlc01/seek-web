@@ -151,7 +151,7 @@ export default function Dashboard() {
 					<p className="text-[var(--text-secondary-color)]">
 						Status Updates (2):
 					</p>
-					<div className="grid gap-4 md:grid-cols-2">
+					<div className="grid gap-4 md:grid-cols-3">
 						{[
 							{
 								title: "123 North Street, St Andrews, KY16 9AZ",

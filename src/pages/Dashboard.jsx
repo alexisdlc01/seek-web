@@ -6,6 +6,49 @@ import { Tag } from "primereact/tag";
 import { Chart } from "primereact/chart";
 import "chart.js/auto";
 
+function StatusUpdatesCarousel({ items, onReview }) {
+  const [i, setI] = useState(0);
+  const n = items.length;
+  const s = items[i];
+  const prev = () => setI((i - 1 + n) % n);
+  const next = () => setI((i + 1) % n);
+
+  return (
+    <div className="space-y-2">
+      <p className="text-[var(--text-secondary-color)]">Status Updates ({n}):</p>
+
+      <div
+        className="rounded-xl border border-[var(--surface-border)] p-4 shadow-sm"
+        style={{ background: "var(--surface-card)" }}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="font-medium text-[var(--text-color)]">{s.title}</p>
+            <p className="text-sm text-[var(--text-secondary-color)] mt-1">{s.text}</p>
+            <p className="text-xs text-[var(--text-secondary-color)] mt-2">1 day ago</p>
+          </div>
+          <Button label="Review" size="small" onClick={() => onReview?.(s)} />
+        </div>
+      </div>
+
+      {/* controls below (no overlay) */}
+      <div className="flex items-center justify-center gap-2">
+        <Button icon="pi pi-chevron-left" text rounded onClick={prev} aria-label="Previous" />
+        <div className="flex gap-1">
+          {items.map((_, k) => (
+            <span
+              key={k}
+              className={`h-1.5 w-4 rounded-full ${
+                k === i ? "bg-[var(--primary-color)]" : "bg-[var(--surface-border)]"
+              }`}
+            />
+          ))}
+        </div>
+        <Button icon="pi pi-chevron-right" text rounded onClick={next} aria-label="Next" />
+      </div>
+    </div>
+  );
+}
 export default function Dashboard() {
 	const [range, setRange] = useState("All time");
 	const [selectedProperty, setSelectedProperty] = useState(
@@ -147,42 +190,27 @@ export default function Dashboard() {
 				</div>
 
 				{/* Status updates */}
-				<div className="space-y-2">
-					<p className="text-[var(--text-secondary-color)]">
-						Status Updates (2):
-					</p>
-					<div className="grid gap-4 md:grid-cols-3">
-						{[
-							{
-								title: "123 North Street, St Andrews, KY16 9AZ",
-								text: "Alexis has uploaded his proof of study and passport for the application."
-							},
-							{
-								title: "28 Market Street, St Andrews, KY16 9BC",
-								text: "New application received."
-							}
-						].map((s, i) => (
-							<div
-								key={i}
-								className="flex items-start justify-between gap-4 rounded-xl border border-[var(--surface-border)] p-4 shadow-sm"
-								style={{ background: "var(--surface-card)" }}
-							>
-								<div>
-									<p className="font-medium text-[var(--text-color)]">
-										{s.title}
-									</p>
-									<p className="text-sm text-[var(--text-secondary-color)] mt-1">
-										{s.text}
-									</p>
-									<p className="text-xs text-[var(--text-secondary-color)] mt-2">
-										1 day ago
-									</p>
-								</div>
-								<Button label="Review" size="small" />
-							</div>
-						))}
-					</div>
-				</div>
+				<StatusUpdatesCarousel
+  items={[
+    {
+      title: "123 North Street, St Andrews, KY16 9AZ",
+      text: "Alexis has uploaded his proof of study and passport for the application."
+    },
+    {
+      title: "28 Market Street, St Andrews, KY16 9BC",
+      text: "New application received."
+    },
+        {
+      title: "123 North Street, St Andrews, KY16 9AZ",
+      text: "Alexis has uploaded his proof of study and passport for the application."
+    },
+    {
+      title: "28 Market Street, St Andrews, KY16 9BC",
+      text: "New application received."
+    }
+  ]}
+  onReview={(s) => console.log("Review", s)}
+/>
 
 				{/* Active listings (simple row) */}
 				<div

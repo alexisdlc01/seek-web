@@ -15,7 +15,10 @@ const FeaturesStep = ({
 	next
 }) => {
 	return (
-		<>
+				<div style={{
+			background: "#0f0f23",
+			color: "white"
+		}}>
 			<div className="space-y-6">
 				<div>
 					<label className="font-medium mb-4 block">
@@ -78,7 +81,7 @@ const FeaturesStep = ({
 					onClick={next}
 				/>
 			</div>
-		</>
+		</div>
 	);
 };
 

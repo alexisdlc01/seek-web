@@ -3,13 +3,6 @@
 @import "primereact/resources/primereact.min.css";
 @import "primeicons/primeicons.css";
 
-@layer utilities {
-    .pr-stepper-flat .p-stepper-separator,
-    .pr-stepper-flat .p-stepper-header::before,
-    .pr-stepper-flat .p-stepper-header::after {
-        display: none !important;
-    }
-}
 
 .p-password {
 	display: inline;
@@ -97,10 +90,6 @@ body {
 	border-color: white !important;
 }
 
-.p-icon {
-	height: 1.5rem !important;
-	width: 1.5rem !important;
-}
 
 .p-stepper .p-stepper-panels {
 	background: #0f0f23;
@@ -118,24 +107,8 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 0.25rem;
 }
 .p-stepper .p-stepper-header .p-stepper-title {
 	margin: 0;
 	text-align: center;
-}
-
-/* Remove the built-in short lines */
-.p-stepper .p-stepper-separator {
-	display: none !important;
-}
-
-/* nuke all default connectors/progress tints */
-.p-stepper .p-stepper-separator,
-.p-stepper .p-stepper-header::before,
-.p-stepper .p-stepper-header::after {
-	display: none !important;
-	background: transparent !important;
-	border: 0 !important;
-	box-shadow: none !important;
 }

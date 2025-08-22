@@ -30,7 +30,12 @@ const LocationAvailabilityStep = ({
 	next
 }) => {
 	return (
-		<>
+		<div
+			style={{
+				background: "#0f0f23",
+				color: "white"
+			}}
+		>
 			<div className="space-y-4">
 				<div className="flex flex-col">
 					<label htmlFor="street" className="font-medium mb-2">
@@ -54,10 +59,7 @@ const LocationAvailabilityStep = ({
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="postcode"
-							className="font-medium mb-2"
-						>
+						<label htmlFor="postcode" className="font-medium mb-2">
 							Postcode / ZIP
 						</label>
 						<InputText
@@ -67,10 +69,7 @@ const LocationAvailabilityStep = ({
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="country"
-							className="font-medium mb-2"
-						>
+						<label htmlFor="country" className="font-medium mb-2">
 							Country
 						</label>
 						<InputText
@@ -95,10 +94,7 @@ const LocationAvailabilityStep = ({
 						/>
 					</div>
 					<div className="flex flex-col">
-						<label
-							htmlFor="deposit"
-							className="font-medium mb-2"
-						>
+						<label htmlFor="deposit" className="font-medium mb-2">
 							Security Deposit (£)
 						</label>
 						<InputNumber
@@ -156,7 +152,7 @@ const LocationAvailabilityStep = ({
 					onClick={next}
 				/>
 			</div>
-		</>
+		</div>
 	);
 };
 

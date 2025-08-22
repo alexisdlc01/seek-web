@@ -21,6 +21,7 @@ import VerifyingEmail from "./pages/VerifyingEmail.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import { Button } from "primereact/button";
+import Dashboard from "./pages/Dashboard.jsx";
 import { AnimatePresence, motion } from "framer-motion";
 
 const NotFound = () => {
@@ -102,6 +103,7 @@ function App() {
 								path="/activationSent"
 								element={<ActivationSent />}
 							/>
+							<Route path="/dashboard" element={<Dashboard />} />
 							<Route
 								path="/verify-email"
 								element={<VerifyingEmail />}

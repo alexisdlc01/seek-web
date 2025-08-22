@@ -103,7 +103,6 @@ export function SeekPerformanceSection({ onGetReport }) {
 
         {/* CTA */}
         <div className="mt-8 flex items-center justify-end gap-4">
-          <span className="text-sm text-[var(--text-secondary-color)]">And more...</span>
           <Button
             label="Get My Report"
             onClick={onGetReport}
@@ -432,42 +431,6 @@ export default function Dashboard() {
 					</div>
 				</div>
 
-				{/* CTA + Market copy (simple) */}
-				<div className="grid gap-6 md:grid-cols-12">
-					<div
-						className="md:col-span-7 rounded-xl border border-[var(--surface-border)] p-6"
-						style={{ background: "var(--surface-card)" }}
-					>
-						<h2 className="text-xl font-semibold text-[var(--primary-color)] text-center">
-							Ready to Get to Know Your Market?
-						</h2>
-						<p className="mt-4 text-[var(--text-secondary-color)] text-center">
-							Go beyond your portfolio. Use data-driven insights
-							to optimize pricing, forecast demand, and attract
-							the right tenants.
-						</p>
-						<div className="mt-6 grid gap-3 md:grid-cols-2">
-							<Bullet text="Portfolio performance at a glance" />
-							<Bullet text="Audience insights & trends" />
-							<Bullet text="Student behavior & intent analysis" />
-							<Bullet text="Financial & attribute benchmarking" />
-						</div>
-					</div>
-
-					<div
-						className="md:col-span-5 rounded-xl border border-[var(--surface-border)] p-6"
-						style={{ background: "var(--surface-card)" }}
-					>
-						<h3 className="font-semibold text-[var(--text-color)]">
-							Go even further with SEEKPerformance
-						</h3>
-						<p className="mt-2 text-sm text-[var(--text-secondary-color)]">
-							A comprehensive, data-driven view of the entire
-							market to sharpen your competitive edge.
-						</p>
-						<Button label="Learn more" className="mt-4" />
-					</div>
-				</div>
 
                 <SeekPerformanceSection
                     onGetReport={() => alert("Get Report clicked!")}

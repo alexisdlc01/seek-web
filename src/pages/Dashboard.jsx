@@ -358,7 +358,7 @@ export default function Dashboard() {
     style={{ background: "var(--surface-card)" }}
   >
     <div className="flex items-center justify-between mb-3">
-      <p className="font-semibold text-[var(--text-color)]">Portfolio Engagement Trends</p>
+      <p className="font-semibold text-[var(--text-color)]">Portfolio Analytics</p>
       <Dropdown value={range} onChange={(e) => setRange(e.value)} options={ranges} className="w-36" />
     </div>
 

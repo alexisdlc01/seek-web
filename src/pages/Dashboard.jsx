@@ -167,13 +167,15 @@ function StatusUpdatesCarousel({ items, onReview }) {
 							</p>
 						</div>
 
-						<div className="mt-4 flex justify-end">
-							<Button
-								label="Review"
-								size="small"
-								onClick={() => onReview?.(s)}
-							/>
-						</div>
+<div className="mt-4 flex justify-end">
+  <Button
+    label="Review"
+    size="small"
+    onClick={() => onReview?.(s)}
+    className="review-btn"
+  />
+</div>
+
 					</div>
 				))}
 			</div>

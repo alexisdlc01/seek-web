@@ -113,11 +113,6 @@ body {
 	text-align: center;
 }
 
-
-
-
-
-
 /* PrimeReact Dropdown — dark theme match */
 .p-dropdown{
   background: var(--surface-card) !important;
@@ -151,4 +146,11 @@ body {
 .p-dropdown-item.p-highlight{
   background: color-mix(in oklab, var(--primary-color) 20%, transparent) !important;
   color: var(--text-color) !important;
+}
+
+
+.review-btn {
+  background-color: var(--primary-color-text) !important;
+  border-color: var(--primary-color-text) !important;
+  color: white !important;
 }

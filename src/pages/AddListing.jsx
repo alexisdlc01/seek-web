@@ -224,7 +224,7 @@ const AddListing = () => {
 							next={next}
 						/>
 					</StepperPanel>
-					<StepperPanel header="Location & Availability">
+					<StepperPanel header="Location">
 						<LocationAvailabilityStep
 							street={street}
 							setStreet={setStreet}
@@ -259,7 +259,7 @@ const AddListing = () => {
 							next={next}
 						/>
 					</StepperPanel>
-					<StepperPanel header="Photos & Media">
+					<StepperPanel header="Media">
 						<PhotosMediaStep
 							photos={photos}
 							videoLink={videoLink}
@@ -276,7 +276,7 @@ const AddListing = () => {
 							next={next}
 						/>
 					</StepperPanel>
-					<StepperPanel header="Review & Publish">
+					<StepperPanel header="Review">
 						<ReviewPublishStep back={back} publish={publish} />
 					</StepperPanel>
 				</Stepper>

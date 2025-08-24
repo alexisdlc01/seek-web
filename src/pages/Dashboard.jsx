@@ -378,8 +378,8 @@ export default function Dashboard() {
 						style={{ background: "var(--primary-color)" }}
 					>
 						<div className="flex items-center justify-between mb-3">
-							<p className="font-semibold text-[var(--primary-color-text)]">
-								Portfolio Analytics
+							<p className="font-bold text-[var(--primary-color-text)]">
+								Portfolio Engagement Trends:
 							</p>
 							<Dropdown
 								value={range}
@@ -500,7 +500,7 @@ export default function Dashboard() {
 							{/* time on market aligned under tiles */}
 							<div className="time-bar self-start">
 								<span className="time-value font-semibold text-[var(--primary-color-text)]">
-									Time on market:       24d
+									Time on market: 24d
 								</span>
 							</div>
 						</div>

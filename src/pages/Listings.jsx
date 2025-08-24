@@ -75,7 +75,7 @@ export default function Listings() {
 						transition={{ duration: 0.4, delay: i * 0.1 }}
 						className="flex flex-col md:flex-row items-start md:items-center justify-between border border-[var(--surface-border)] rounded-xl px-4 py-5 shadow-sm gap-4"
 						style={{
-							background: "#626262"
+							background: "var(--gray-62)"
 						}}
 					>
 						{/* Image */}

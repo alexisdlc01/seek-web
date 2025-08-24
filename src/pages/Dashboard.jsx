@@ -148,58 +148,34 @@ function StatusUpdatesCarousel({ items, onReview }) {
 				Status Updates ({n}):
 			</p>
 
-			<div
-				className="rounded-xl border border-[var(--surface-border)] p-4 shadow-sm"
-				style={{ background: "var(--surface-card)" }}
-			>
-				<div className="flex items-start justify-between gap-4">
-					<div className="min-w-0">
-						<p className="font-medium text-[var(--text-color)]">
-							{s.title}
-						</p>
-						<p className="text-sm text-[var(--text-secondary-color)] mt-1">
-							{s.text}
-						</p>
-						<p className="text-xs text-[var(--text-secondary-color)] mt-2">
-							1 day ago
-						</p>
-					</div>
-					<Button
-						label="Review"
-						size="small"
-						onClick={() => onReview?.(s)}
-					/>
-				</div>
-			</div>
+			<div className="grid grid-cols-4 gap-4">
+				{items.map((s, i) => (
+					<div
+						key={i}
+						className="rounded-xl border border-[var(--surface-border)] p-4 shadow-sm flex flex-col justify-between"
+						style={{ background: "var(--gray-62)" }}
+					>
+						<div>
+							<p className="font-medium text-[var(--text-color)]">
+								{s.title}
+							</p>
+							<p className="text-sm text-[var(--text-secondary-color)] mt-1">
+								{s.text}
+							</p>
+							<p className="text-xs text-[var(--text-secondary-color)] mt-2">
+								1 day ago
+							</p>
+						</div>
 
-			{/* controls below (no overlay) */}
-			<div className="flex items-center justify-center gap-2">
-				<Button
-					icon="pi pi-chevron-left"
-					text
-					rounded
-					onClick={prev}
-					aria-label="Previous"
-				/>
-				<div className="flex gap-1">
-					{items.map((_, k) => (
-						<span
-							key={k}
-							className={`h-1.5 w-4 rounded-full ${
-								k === i
-									? "bg-[var(--primary-color)]"
-									: "bg-[var(--surface-border)]"
-							}`}
-						/>
-					))}
-				</div>
-				<Button
-					icon="pi pi-chevron-right"
-					text
-					rounded
-					onClick={next}
-					aria-label="Next"
-				/>
+						<div className="mt-4 flex justify-end">
+							<Button
+								label="Review"
+								size="small"
+								onClick={() => onReview?.(s)}
+							/>
+						</div>
+					</div>
+				))}
 			</div>
 		</div>
 	);

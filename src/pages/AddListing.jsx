@@ -197,7 +197,7 @@ const AddListing = () => {
 					activeIndex={step}
 					onStepChange={e => setStep(e.index)}
 				>
-					<StepperPanel header="Basic Info">
+					<StepperPanel header="Basics">
 						<BasicInfoStep
 							title={title}
 							setTitle={setTitle}

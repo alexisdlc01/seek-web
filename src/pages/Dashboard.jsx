@@ -156,23 +156,23 @@ function StatusUpdatesCarousel({ items, onReview }) {
 						style={{ background: "var(--gray-62)" }}
 					>
 						<div>
-							<p className="font-medium text-[var(--text-color)]">
+							<p className="text-sm font-semibold text-[var(--text-color)]">
 								{s.title}
 							</p>
 							<p className="text-sm text-[var(--text-secondary-color)] mt-1">
 								{s.text}
 							</p>
-							<p className="text-xs text-[var(--text-secondary-color)] mt-2">
-								1 day ago
-							</p>
 						</div>
 
-						<div className="mt-4 flex justify-end">
+						<div className="mt-4 flex items-center justify-between">
+							<p className="text-xs text-[var(--text-secondary-color)]">
+								1 day ago
+							</p>
 							<Button
 								label="Review"
 								size="small"
 								onClick={() => onReview?.(s)}
-								className="review-btn"
+								className="review-btn shrink-0"
 							/>
 						</div>
 					</div>
@@ -192,8 +192,8 @@ export default function Dashboard() {
 		value: r
 	}));
 	const properties = [
-		"123 North Street, St Andrews, KY16 9AL",
-		"28 Market Street, St Andrews, KY16 9BC",
+		"123 North Street, St Andrews",
+		"28 Market Street, St Andrews",
 		"12 Union St, Dundee, DD1 4BG"
 	].map(p => ({ label: p, value: p }));
 
@@ -325,19 +325,19 @@ export default function Dashboard() {
 				<StatusUpdatesCarousel
 					items={[
 						{
-							title: "123 North Street, St Andrews, KY16 9AZ",
+							title: "123 North Street, St Andrews",
 							text: "Alexis has uploaded his proof of study and passport for the application."
 						},
 						{
-							title: "28 Market Street, St Andrews, KY16 9BC",
+							title: "28 Market Street, St Andrews",
 							text: "New application received."
 						},
 						{
-							title: "123 North Street, St Andrews, KY16 9AZ",
+							title: "123 North Street, St Andrews",
 							text: "Alexis has uploaded his proof of study and passport for the application."
 						},
 						{
-							title: "28 Market Street, St Andrews, KY16 9BC",
+							title: "28 Market Street, St Andrews",
 							text: "New application received."
 						}
 					]}
@@ -458,7 +458,7 @@ export default function Dashboard() {
 							<div className="mt-4 grid gap-5 md:grid-cols-12">
 								<div className="md:col-span-7">
 									<div
-										className="h-56 md:h-64 rounded-xl"
+										className="h-46 md:h-54 rounded-xl"
 										style={{ background: "var(--gray-62)" }}
 									/>
 								</div>

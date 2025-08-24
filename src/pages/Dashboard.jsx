@@ -167,15 +167,14 @@ function StatusUpdatesCarousel({ items, onReview }) {
 							</p>
 						</div>
 
-<div className="mt-4 flex justify-end">
-  <Button
-    label="Review"
-    size="small"
-    onClick={() => onReview?.(s)}
-    className="review-btn"
-  />
-</div>
-
+						<div className="mt-4 flex justify-end">
+							<Button
+								label="Review"
+								size="small"
+								onClick={() => onReview?.(s)}
+								className="review-btn"
+							/>
+						</div>
 					</div>
 				))}
 			</div>
@@ -346,9 +345,12 @@ export default function Dashboard() {
 				/>
 
 				{/* Active listings (simple row) */}
+				<p className="mb-2  text-[var(--text-secondary-color)]">
+					You have 5 Active Listings:
+				</p>
 				<div
 					className="flex items-center justify-between rounded-xl border border-[var(--surface-border)] p-4"
-					style={{ background: "var(--surface-card)" }}
+					style={{ background: "var(--gray-62)" }}
 				>
 					<div className="flex items-center gap-3">
 						<div
@@ -365,7 +367,7 @@ export default function Dashboard() {
 						</div>
 					</div>
 					<div className="flex items-center gap-3">
-						<Button label="Manage listings" size="small" outlined />
+						<Tag value="Active" rounded />
 					</div>
 				</div>
 

@@ -7,160 +7,202 @@ import { Chart } from "primereact/chart";
 import "chart.js/auto";
 
 export function SeekPerformanceSection({ onGetReport }) {
-  const left = [
-    {
-      t: "Portfolio performance at a glance",
-      d: "Find all your personal dashboard analytics and KPIs in one place, transformed into a comprehensive, easy-to-understand analysis."
-    },
-    {
-      t: "A macro view of the market",
-      d: "High-level overview of the entire St Andrews market including demand/supply trends, hotspots, and property-type breakdowns."
-    },
-    {
-      t: "Audience insights",
-      d: "Analytics on top search filters, amenities, application demographics, and lease duration trends."
-    },
-    {
-      t: "Competitive analysis",
-      d: "Benchmark your listings against the market to optimize pricing and maximize performance."
-    }
-  ];
+	const left = [
+		{
+			t: "Portfolio performance at a glance",
+			d: "Find all your personal dashboard analytics and KPIs in one place, transformed into a comprehensive, easy-to-understand analysis."
+		},
+		{
+			t: "A macro view of the market",
+			d: "High-level overview of the entire St Andrews market including demand/supply trends, hotspots, and property-type breakdowns."
+		},
+		{
+			t: "Audience insights",
+			d: "Analytics on top search filters, amenities, application demographics, and lease duration trends."
+		},
+		{
+			t: "Competitive analysis",
+			d: "Benchmark your listings against the market to optimize pricing and maximize performance."
+		}
+	];
 
-  const right = [
-    {
-      t: "Student behavior & intent analysis",
-      d: "Understand student intent via search patterns and listing interactions on SEEK to attract ideal tenants."
-    },
-    {
-      t: "Financial & Attribute Benchmarking",
-      d: "Objective financial analysis benchmarking your pricing and property attributes against the wider market."
-    },
-    {
-      t: "Actionable Strategy & Recommendations",
-      d: "Personalized, data-driven strategy and trend forecast to stay ahead and maximize returns."
-    }
-  ];
+	const right = [
+		{
+			t: "Student behavior & intent analysis",
+			d: "Understand student intent via search patterns and listing interactions on SEEK to attract ideal tenants."
+		},
+		{
+			t: "Financial & Attribute Benchmarking",
+			d: "Objective financial analysis benchmarking your pricing and property attributes against the wider market."
+		},
+		{
+			t: "Actionable Strategy & Recommendations",
+			d: "Personalized, data-driven strategy and trend forecast to stay ahead and maximize returns."
+		}
+	];
 
-  const Check = () => (
-    <span
-      className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-xs"
-      style={{ borderColor: "var(--primary-color)", color: "var(--primary-color)" }}
-    >
-      ✓
-    </span>
-  );
+	const Check = () => (
+		<span
+			className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-xs"
+			style={{
+				borderColor: "var(--primary-color)",
+				color: "var(--primary-color)"
+			}}
+		>
+			✓
+		</span>
+	);
 
-  return (
-    <section className="py-12">
-      {/* headline with thicker dividers */}
-      <div className="mx-auto max-w-5xl px-4">
-        <div className="flex items-center gap-4">
-          <span className="h-[2px] flex-1 bg-white/30" />
-          <h2 className="text-center text-xl font-semibold text-[var(--primary-color)]">
-            Ready to Get to Know<br />Your Market?
-          </h2>
-          <span className="h-[2px] flex-1 bg-white/30" />
-        </div>
-        <p className="mt-4 text-center text-[var(--text-secondary-color)]">
-          With SEEKPerformance, go beyond your portfolio. Get the data-driven edge you need to optimize pricing,
-          forecast demand, and attract the right tenants.
-        </p>
-      </div>
+	return (
+		<section className="py-12">
+			{/* headline with thicker dividers */}
+			<div className="mx-auto max-w-5xl px-4">
+				<div className="flex items-center gap-4">
+					<span className="h-[2px] flex-1 bg-white/30" />
+					<h2 className="text-center text-xl font-semibold text-[var(--primary-color)]">
+						Ready to Get to Know
+						<br />
+						Your Market?
+					</h2>
+					<span className="h-[2px] flex-1 bg-white/30" />
+				</div>
+				<p className="mt-4 text-center text-[var(--text-secondary-color)]">
+					With SEEKPerformance, go beyond your portfolio. Get the
+					data-driven edge you need to optimize pricing, forecast
+					demand, and attract the right tenants.
+				</p>
+			</div>
 
-      {/* subheader */}
-      <div className="mx-auto mt-10 max-w-6xl px-4">
-        <p className="text-lg font-semibold text-[var(--primary-color)]">
-          SEEKPerformance: Your Competitive Edge
-        </p>
-        <p className="mt-1 text-[var(--text-secondary-color)]">What’s included?</p>
+			{/* subheader */}
+			<div className="mx-auto mt-10 max-w-6xl px-4">
+				<p className="text-lg font-semibold text-[var(--primary-color)]">
+					SEEKPerformance: Your Competitive Edge
+				</p>
+				<p className="mt-1 text-[var(--text-secondary-color)]">
+					What’s included?
+				</p>
 
-        {/* TWO COLUMNS, both BELOW the subheader */}
-        <div className="mt-8 grid gap-10 md:grid-cols-2">
-          <ul className="space-y-6">
-            {left.map((x, i) => (
-              <li key={i} className="flex gap-3">
-                <Check />
-                <div>
-                  <p className="font-semibold text-[var(--text-color)]">{x.t}</p>
-                  <p className="mt-1 text-sm text-[var(--text-secondary-color)]">{x.d}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+				{/* TWO COLUMNS, both BELOW the subheader */}
+				<div className="mt-8 grid gap-10 md:grid-cols-2">
+					<ul className="space-y-6">
+						{left.map((x, i) => (
+							<li key={i} className="flex gap-3">
+								<Check />
+								<div>
+									<p className="font-semibold text-[var(--text-color)]">
+										{x.t}
+									</p>
+									<p className="mt-1 text-sm text-[var(--text-secondary-color)]">
+										{x.d}
+									</p>
+								</div>
+							</li>
+						))}
+					</ul>
 
-          <ul className="space-y-6">
-            {right.map((x, i) => (
-              <li key={i} className="flex gap-3">
-                <Check />
-                <div>
-                  <p className="font-semibold text-[var(--text-color)]">{x.t}</p>
-                  <p className="mt-1 text-sm text-[var(--text-secondary-color)]">{x.d}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+					<ul className="space-y-6">
+						{right.map((x, i) => (
+							<li key={i} className="flex gap-3">
+								<Check />
+								<div>
+									<p className="font-semibold text-[var(--text-color)]">
+										{x.t}
+									</p>
+									<p className="mt-1 text-sm text-[var(--text-secondary-color)]">
+										{x.d}
+									</p>
+								</div>
+							</li>
+						))}
+					</ul>
+				</div>
 
-        {/* CTA */}
-        <div className="mt-8 flex items-center justify-end gap-4">
-          <Button
-            label="Get My Report"
-            onClick={onGetReport}
-            className="px-4"
-            style={{
-              background: "var(--primary-color)",
-              borderColor: "var(--primary-color)",
-              color: "black"
-            }}
-          />
-        </div>
-      </div>
-    </section>
-  );
+				{/* CTA */}
+				<div className="mt-8 flex items-center justify-end gap-4">
+					<Button
+						label="Get My Report"
+						onClick={onGetReport}
+						className="px-4"
+						style={{
+							background: "var(--primary-color)",
+							borderColor: "var(--primary-color)",
+							color: "black"
+						}}
+					/>
+				</div>
+			</div>
+		</section>
+	);
 }
 
 function StatusUpdatesCarousel({ items, onReview }) {
-  const [i, setI] = useState(0);
-  const n = items.length;
-  const s = items[i];
-  const prev = () => setI((i - 1 + n) % n);
-  const next = () => setI((i + 1) % n);
+	const [i, setI] = useState(0);
+	const n = items.length;
+	const s = items[i];
+	const prev = () => setI((i - 1 + n) % n);
+	const next = () => setI((i + 1) % n);
 
-  return (
-    <div className="space-y-2">
-      <p className="text-[var(--text-secondary-color)]">Status Updates ({n}):</p>
+	return (
+		<div className="space-y-2">
+			<p className="text-[var(--text-secondary-color)]">
+				Status Updates ({n}):
+			</p>
 
-      <div
-        className="rounded-xl border border-[var(--surface-border)] p-4 shadow-sm"
-        style={{ background: "var(--surface-card)" }}
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <p className="font-medium text-[var(--text-color)]">{s.title}</p>
-            <p className="text-sm text-[var(--text-secondary-color)] mt-1">{s.text}</p>
-            <p className="text-xs text-[var(--text-secondary-color)] mt-2">1 day ago</p>
-          </div>
-          <Button label="Review" size="small" onClick={() => onReview?.(s)} />
-        </div>
-      </div>
+			<div
+				className="rounded-xl border border-[var(--surface-border)] p-4 shadow-sm"
+				style={{ background: "var(--surface-card)" }}
+			>
+				<div className="flex items-start justify-between gap-4">
+					<div className="min-w-0">
+						<p className="font-medium text-[var(--text-color)]">
+							{s.title}
+						</p>
+						<p className="text-sm text-[var(--text-secondary-color)] mt-1">
+							{s.text}
+						</p>
+						<p className="text-xs text-[var(--text-secondary-color)] mt-2">
+							1 day ago
+						</p>
+					</div>
+					<Button
+						label="Review"
+						size="small"
+						onClick={() => onReview?.(s)}
+					/>
+				</div>
+			</div>
 
-      {/* controls below (no overlay) */}
-      <div className="flex items-center justify-center gap-2">
-        <Button icon="pi pi-chevron-left" text rounded onClick={prev} aria-label="Previous" />
-        <div className="flex gap-1">
-          {items.map((_, k) => (
-            <span
-              key={k}
-              className={`h-1.5 w-4 rounded-full ${
-                k === i ? "bg-[var(--primary-color)]" : "bg-[var(--surface-border)]"
-              }`}
-            />
-          ))}
-        </div>
-        <Button icon="pi pi-chevron-right" text rounded onClick={next} aria-label="Next" />
-      </div>
-    </div>
-  );
+			{/* controls below (no overlay) */}
+			<div className="flex items-center justify-center gap-2">
+				<Button
+					icon="pi pi-chevron-left"
+					text
+					rounded
+					onClick={prev}
+					aria-label="Previous"
+				/>
+				<div className="flex gap-1">
+					{items.map((_, k) => (
+						<span
+							key={k}
+							className={`h-1.5 w-4 rounded-full ${
+								k === i
+									? "bg-[var(--primary-color)]"
+									: "bg-[var(--surface-border)]"
+							}`}
+						/>
+					))}
+				</div>
+				<Button
+					icon="pi pi-chevron-right"
+					text
+					rounded
+					onClick={next}
+					aria-label="Next"
+				/>
+			</div>
+		</div>
+	);
 }
 export default function Dashboard() {
 	const [range, setRange] = useState("All time");
@@ -289,7 +331,7 @@ export default function Dashboard() {
 							/>
 							<Badge
 								value="4"
-                                severity="danger"
+								severity="danger"
 								className="absolute -top-2 -right-2"
 							/>
 						</div>
@@ -304,26 +346,26 @@ export default function Dashboard() {
 
 				{/* Status updates */}
 				<StatusUpdatesCarousel
-  items={[
-    {
-      title: "123 North Street, St Andrews, KY16 9AZ",
-      text: "Alexis has uploaded his proof of study and passport for the application."
-    },
-    {
-      title: "28 Market Street, St Andrews, KY16 9BC",
-      text: "New application received."
-    },
-        {
-      title: "123 North Street, St Andrews, KY16 9AZ",
-      text: "Alexis has uploaded his proof of study and passport for the application."
-    },
-    {
-      title: "28 Market Street, St Andrews, KY16 9BC",
-      text: "New application received."
-    }
-  ]}
-  onReview={(s) => console.log("Review", s)}
-/>
+					items={[
+						{
+							title: "123 North Street, St Andrews, KY16 9AZ",
+							text: "Alexis has uploaded his proof of study and passport for the application."
+						},
+						{
+							title: "28 Market Street, St Andrews, KY16 9BC",
+							text: "New application received."
+						},
+						{
+							title: "123 North Street, St Andrews, KY16 9AZ",
+							text: "Alexis has uploaded his proof of study and passport for the application."
+						},
+						{
+							title: "28 Market Street, St Andrews, KY16 9BC",
+							text: "New application received."
+						}
+					]}
+					onReview={s => console.log("Review", s)}
+				/>
 
 				{/* Active listings (simple row) */}
 				<div
@@ -351,35 +393,62 @@ export default function Dashboard() {
 
 				{/* Analytics + KPIs */}
 				{/* Analytics + KPIs */}
-<div className="grid gap-6 md:grid-cols-12 items-stretch">
-  {/* Big chart */}
-  <div
-    className="md:col-span-8 rounded-xl border border-[var(--surface-border)] p-4 flex flex-col h-full"
-    style={{ background: "var(--surface-card)" }}
-  >
-    <div className="flex items-center justify-between mb-3">
-      <p className="font-semibold text-[var(--text-color)]">Portfolio Analytics</p>
-      <Dropdown value={range} onChange={(e) => setRange(e.value)} options={ranges} className="w-36" />
-    </div>
+				<div className="grid gap-6 md:grid-cols-12 items-stretch">
+					{/* Big chart */}
+					<div
+						className="md:col-span-8 rounded-xl border border-[var(--surface-border)] p-4 flex flex-col h-full"
+						style={{ background: "var(--surface-card)" }}
+					>
+						<div className="flex items-center justify-between mb-3">
+							<p className="font-semibold text-[var(--text-color)]">
+								Portfolio Analytics
+							</p>
+							<Dropdown
+								value={range}
+								onChange={e => setRange(e.value)}
+								options={ranges}
+								className="w-36"
+							/>
+						</div>
 
-    <div className="relative flex-1 min-h-0">
-      <Chart
-        type="line"
-        data={lineData}
-        options={{ ...lineOptions, maintainAspectRatio: false }}
-        className="w-full h-full"
-      />
-    </div>
-  </div>
+						<div className="relative flex-1 min-h-0">
+							<Chart
+								type="line"
+								data={lineData}
+								options={{
+									...lineOptions,
+									maintainAspectRatio: false
+								}}
+								className="w-full h-full"
+							/>
+						</div>
+					</div>
 
-  {/* KPI right rail */}
-  <div className="md:col-span-4 space-y-4">
-    <Kpi title="Total Applications" value="24" icon="pi pi-file" />
-    <Kpi title="Top Performing Property" value="123 North Street, St Andrews, KY16 9AL" icon="pi pi-chart-bar" small />
-    <Kpi title="Average Time to Lease" value="3 Days" icon="pi pi-clock" />
-    <Kpi title="Portfolio Occupancy Rate" value="42%" icon="pi pi-home" />
-  </div>
-</div>
+					{/* KPI right rail */}
+					<div className="md:col-span-4 space-y-4">
+						<Kpi
+							title="Total Applications"
+							value="24"
+							icon="pi pi-file"
+						/>
+						<Kpi
+							title="Top Performing Property"
+							value="123 North Street, St Andrews, KY16 9AL"
+							icon="pi pi-chart-bar"
+							small
+						/>
+						<Kpi
+							title="Average Time to Lease"
+							value="3 Days"
+							icon="pi pi-clock"
+						/>
+						<Kpi
+							title="Portfolio Occupancy Rate"
+							value="42%"
+							icon="pi pi-home"
+						/>
+					</div>
+				</div>
 
 				{/* Property Analytics */}
 				<div
@@ -431,10 +500,9 @@ export default function Dashboard() {
 					</div>
 				</div>
 
-
-                <SeekPerformanceSection
-                    onGetReport={() => alert("Get Report clicked!")}
-                />
+				<SeekPerformanceSection
+					onGetReport={() => alert("Get Report clicked!")}
+				/>
 			</div>
 		</div>
 	);

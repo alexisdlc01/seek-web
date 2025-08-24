@@ -436,75 +436,111 @@ export default function Dashboard() {
 					Property Analytics
 				</p>
 
-				{/* Property Analytics */}
-				<div
-					className="rounded-2xl p-4 md:p-6"
-					style={{ background: "var(--primary-color)" }}
-				>
-					<div className="flex items-center gap-3">
-						<Dropdown
-							value={selectedProperty}
-							onChange={e => setSelectedProperty(e.value)}
-							options={properties}
-							className="mr-auto w-full md:w-96 property-dropdown !rounded-lg"
-						/>
-					</div>
-
-					<p className="mt-4 text-2xl font-semibold text-[var(--primary-color-text)]">
-						Spacious 2-bed flat with garden:
-					</p>
-
-					{/* content: media left, metrics right */}
-					<div className="mt-4 grid gap-5 md:grid-cols-12">
-						{/* left image */}
-						<div className="md:col-span-7">
-							<div
-								className="h-56 md:h-64 rounded-xl"
-								style={{ background: "var(--gray-62)" }}
-							/>
-						</div>
-
-						{/* right metrics */}
-						<div className="md:col-span-5 flex flex-col gap-4">
-							<div className="grid grid-cols-2 gap-4">
-								<div className="metric-tile">
-									<div className="metric-label">
-										<i className="pi pi-file mr-2" /> Total
-										Applications
-									</div>
-									<div className="metric-value">15</div>
-								</div>
-								<div className="metric-tile">
-									<div className="metric-label">
-										<i className="pi pi-bookmark mr-2" />{" "}
-										Saves
-									</div>
-									<div className="metric-value">50</div>
-								</div>
-								<div className="metric-tile">
-									<div className="metric-label">
-										<i className="pi pi-share-alt mr-2" />{" "}
-										Shares
-									</div>
-									<div className="metric-value">8</div>
-								</div>
-								<div className="metric-tile">
-									<div className="metric-label">
-										<i className="pi pi-bolt mr-2" />{" "}
-										Engagement Rate (%)
-									</div>
-									<div className="metric-value">43</div>
-								</div>
+				<div className="grid gap-6 md:grid-cols-12">
+					<div className="md:col-span-9">
+						<div
+							className="rounded-2xl p-4 md:p-6"
+							style={{ background: "var(--primary-color)" }}
+						>
+							<div className="flex items-center gap-3">
+								<Dropdown
+									value={selectedProperty}
+									onChange={e => setSelectedProperty(e.value)}
+									options={properties}
+									className="mr-auto w-full md:w-96 property-dropdown !rounded-lg"
+								/>
 							</div>
 
-							{/* time on market aligned under tiles */}
-							<div className="time-bar self-start">
-								<span className="time-value font-semibold text-[var(--primary-color-text)]">
-									Time on market: 24d
+							<p className="mt-4 text-2xl font-semibold text-[var(--primary-color-text)]">
+								Spacious 2-bed flat with garden:
+							</p>
+
+							<div className="mt-4 grid gap-5 md:grid-cols-12">
+								<div className="md:col-span-7">
+									<div
+										className="h-56 md:h-64 rounded-xl"
+										style={{ background: "var(--gray-62)" }}
+									/>
+								</div>
+
+								<div className="md:col-span-5 flex flex-col gap-4">
+									<div className="grid grid-cols-2 gap-4">
+										<div className="metric-tile">
+											<div className="metric-label">
+												<i className="pi pi-file mr-2" />
+												Total Applications
+											</div>
+											<div className="metric-value">
+												15
+											</div>
+										</div>
+										<div className="metric-tile">
+											<div className="metric-label">
+												<i className="pi pi-bookmark mr-2" />
+												Saves
+											</div>
+											<div className="metric-value">
+												50
+											</div>
+										</div>
+										<div className="metric-tile">
+											<div className="metric-label">
+												<i className="pi pi-share-alt mr-2" />
+												Shares
+											</div>
+											<div className="metric-value">
+												8
+											</div>
+										</div>
+										<div className="metric-tile">
+											<div className="metric-label">
+												<i className="pi pi-bolt mr-2" />
+												Engagement Rate (%)
+											</div>
+											<div className="metric-value">
+												43
+											</div>
+										</div>
+									</div>
+
+									<div className="self-start">
+										<span className="font-semibold text-[var(--primary-color-text)]">
+											Time on market: 24d
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<aside className="md:col-span-3">
+						<div
+							className="rounded-2xl p-5 md:p-6 border border-[var(--surface-border)]"
+							style={{ background: "var(--gray-62)" }}
+						>
+							<p className="text-lg font-semibold text-[var(--text-color)]">
+								Go even further with{" "}
+								<span className="text-[var(--primary-color)]">
+									SEEKPerformance
 								</span>
-							</div>
+							</p>
+							<p className="mt-3 text-sm leading-6 text-[var(white)]">
+								SEEKPerformance takes you beyond your
+								portfolio’s limits with a comprehensive,
+								data-driven view of the market to sharpen your
+								competitive edge.
+							</p>
+							<button
+								className="mt-5 w-full md:w-auto rounded-xl px-4 py-2 font-medium border border-[var(--surface-border)]"
+								style={{
+									background: "var(--primary-color-text)",
+									color: "var(white)"
+								}}
+							>
+								Learn more
+							</button>
 						</div>
-					</div>
+					</aside>
 				</div>
 
 				<SeekPerformanceSection

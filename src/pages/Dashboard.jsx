@@ -512,6 +512,35 @@ export default function Dashboard() {
 							</div>
 						</div>
 					</div>
+
+					<aside className="md:col-span-3">
+						<div
+							className="rounded-2xl p-5 md:p-6 border border-[var(--surface-border)]"
+							style={{ background: "var(--gray-62)" }}
+						>
+							<p className="text-lg font-semibold text-[var(--text-color)]">
+								Go even further with{" "}
+								<span className="text-[var(--primary-color)]">
+									SEEKPerformance
+								</span>
+							</p>
+							<p className="mt-3 text-sm leading-6 text-[var(white)]">
+								SEEKPerformance takes you beyond your
+								portfolio’s limits with a comprehensive,
+								data-driven view of the market to sharpen your
+								competitive edge.
+							</p>
+							<button
+								className="mt-5 w-full md:w-auto rounded-xl px-4 py-2 font-medium border border-[var(--surface-border)]"
+								style={{
+									background: "var(--primary-color-text)",
+									color: "var(white)"
+								}}
+							>
+								Learn more
+							</button>
+						</div>
+					</aside>
 				</div>
 			</div>
 		</div>

@@ -154,3 +154,40 @@ body {
   border-color: var(--primary-color-text) !important;
   color: white !important;
 }
+
+
+.metric-tile {
+  background: var(--primary-color-text);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* small, muted label; bright value */
+.metric-label {
+  color: rgba(230, 231, 239, 0.85);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.metric-value {
+  color: white;
+  font-weight: 700;
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+/* make the dropdown look like the header chip */
+.property-dropdown .p-dropdown {
+  background: var(--primary-color-text);
+  border: none;
+  color: white;
+  border-radius: 10px;
+}
+.property-dropdown .p-dropdown-label,
+.property-dropdown .p-dropdown-trigger {
+  color: white;
+}

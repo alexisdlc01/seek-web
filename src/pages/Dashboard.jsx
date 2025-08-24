@@ -406,7 +406,7 @@ export default function Dashboard() {
 					</div>
 
 					{/* KPI right rail */}
-					<div className="md:col-span-4 space-y-4">
+					<div className="md:col-span-4 space-y-6">
 						<Kpi
 							title="Total Applications"
 							value="24"
@@ -495,19 +495,19 @@ function Kpi({ title, value, icon, small }) {
 	return (
 		<div
 			className="rounded-xl border border-[var(--surface-border)] p-4"
-			style={{ background: "var(--surface-card)" }}
+			style={{ background: "var(--primary-color)" }}
 		>
 			<div className="flex items-center gap-3">
 				<i
 					className={`${icon} text-xl`}
-					style={{ color: "var(--primary-color)" }}
+					style={{ color: "var(--primary-color-text)" }}
 				/>
-				<p className="text-sm text-[var(--text-secondary-color)]">
+				<p className="text-sm text-[var(--primary-color-text)]">
 					{title}
 				</p>
 			</div>
 			<p
-				className={`mt-2 font-semibold text-[var(--text-color)] ${
+				className={`mt-2 font-semibold text-[var(--primary-color-text)] ${
 					small ? "text-sm" : "text-2xl"
 				}`}
 			>

@@ -249,8 +249,8 @@ export default function Dashboard() {
 				backgroundColor: "#0f1523",
 				borderColor: "rgba(230,237,243,0.25)",
 				borderWidth: 1,
-				titleColor: "#E6EDF3",
-				bodyColor: "#E6EDF3",
+				titleColor: "#626262",
+				bodyColor: "#626262",
 				displayColors: false
 			}
 		},
@@ -258,7 +258,7 @@ export default function Dashboard() {
 			x: {
 				grid: { color: "rgba(230,237,243,0.10)" },
 				ticks: {
-					color: "#E6EDF3",
+					color: "#626262",
 					maxRotation: 0,
 					autoSkip: true,
 					font: { size: 12 }
@@ -267,7 +267,7 @@ export default function Dashboard() {
 			y: {
 				grid: { color: "rgba(230,237,243,0.10)" },
 				ticks: {
-					color: "#E6EDF3",
+					color: "#626262",
 					font: { size: 12 },
 					callback: v => Number(v).toLocaleString()
 				},
@@ -371,23 +371,21 @@ export default function Dashboard() {
 					</div>
 				</div>
 
-				{/* Analytics + KPIs */}
-				{/* Analytics + KPIs */}
 				<div className="grid gap-6 md:grid-cols-12 items-stretch">
 					{/* Big chart */}
 					<div
 						className="md:col-span-8 rounded-xl border border-[var(--surface-border)] p-4 flex flex-col h-full"
-						style={{ background: "var(--surface-card)" }}
+						style={{ background: "var(--primary-color)" }}
 					>
 						<div className="flex items-center justify-between mb-3">
-							<p className="font-semibold text-[var(--text-color)]">
+							<p className="font-semibold text-[var(--primary-color-text)]">
 								Portfolio Analytics
 							</p>
 							<Dropdown
 								value={range}
 								onChange={e => setRange(e.value)}
 								options={ranges}
-								className="w-36"
+								className="w-36 !rounded-lg"
 							/>
 						</div>
 
@@ -400,6 +398,9 @@ export default function Dashboard() {
 									maintainAspectRatio: false
 								}}
 								className="w-full h-full"
+								style={{ background: "white",
+									borderRadius: "8px"
+								 }}
 							/>
 						</div>
 					</div>

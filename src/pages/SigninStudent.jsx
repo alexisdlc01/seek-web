@@ -47,6 +47,8 @@ export default function SignInStudent() {
 
 	return (
 		<div className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
+
+			<Toast ref={toast} />
 			<BackgroundBubbles count={20} />
 
 			<motion.form
@@ -118,7 +120,6 @@ export default function SignInStudent() {
 					<label htmlFor="password">Password</label>
 				</FloatLabel>
 
-				<Toast ref={toast} />
 				<motion.div whileHover={{ scale: 1.02 }}>
 					<Button
 						label="Sign in"

@@ -8,6 +8,7 @@ import { Toast } from "primereact/toast";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
+import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -15,9 +16,7 @@ export default function SignInLandlord() {
 	const navigate = useNavigate();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-
 	const { login } = useContext(UserContext);
-
 	const toast = useRef(null);
 
 	const showError = detail => {
@@ -38,23 +37,19 @@ export default function SignInLandlord() {
 			);
 			return false;
 		}
-
 		return true;
 	};
 
 	const validateEmail = () => {
 		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 		if (!email.trim()) {
 			showError("Email is required.");
 			return false;
 		}
-
 		if (!regex.test(email)) {
-			showError("Please a valid email address.");
+			showError("Please enter a valid email address.");
 			return false;
 		}
-
 		return true;
 	};
 
@@ -62,7 +57,6 @@ export default function SignInLandlord() {
 		e.preventDefault();
 		if (!validateEmail()) return;
 		if (!validatePassword()) return;
-
 		await login(email, password);
 		navigate("/");
 	};
@@ -72,46 +66,16 @@ export default function SignInLandlord() {
 			onSubmit={handleSubmit}
 			className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4"
 		>
-			{/* Animated Particles (behind the card) */}
-			<div
-				aria-hidden
-				style={{
-					position: "absolute",
-					inset: 0,
-					pointerEvents: "none",
-					zIndex: 0
-				}}
-			>
-				{[...Array(20)].map((_, i) => (
-					<motion.div
-						key={i}
-						style={{
-							position: "absolute",
-							width: 8,
-							height: 8,
-							background: "#8B5CF6",
-							borderRadius: "50%",
-							left: `${Math.random() * 100}%`,
-							top: `${Math.random() * 100}%`
-						}}
-						animate={{
-							y: [0, -100, 0],
-							opacity: [0, 1, 0],
-							scale: [0, 1, 0]
-						}}
-						transition={{
-							duration: 3 + Math.random() * 2,
-							repeat: Infinity,
-							delay: Math.random() * 2
-						}}
-					/>
-				))}
-			</div>
+			{/* same frozen bubbles */}
+			<BackgroundBubbles count={20} color="#8B5CF6" />
+
+			<Toast ref={toast} />
+
 			<motion.div
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
-				className="z-10 w-full max-w-md  rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
+				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
 			>
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Welcome Back, Landlord
@@ -150,23 +114,20 @@ export default function SignInLandlord() {
 					<label htmlFor="confirm">Password</label>
 				</FloatLabel>
 
-				<Toast ref={toast} />
 
 				<motion.div whileHover={{ scale: 1.02 }}>
 					<Button
+						type="submit"
 						label="Sign in"
 						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
 					/>
 				</motion.div>
 
-				<Divider layout="horizontal" pt={{
-					content: {
-						className: "bg-[var(--primary-color)]"
-					}
-				}}>
-					<span className="text-sm text-white">
-						or sign up with
-					</span>
+				<Divider
+					layout="horizontal"
+					pt={{ content: { className: "bg-[var(--primary-color)]" } }}
+				>
+					<span className="text-sm text-white">or sign in with</span>
 				</Divider>
 
 				<div className="flex flex-col gap-2">

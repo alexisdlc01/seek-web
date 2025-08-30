@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import { Toast } from "primereact/toast";
+import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
 
 export default function SignUpStudent() {
 	const { signup } = useContext(UserContext);
@@ -28,32 +29,27 @@ export default function SignUpStudent() {
 
 	const validateName = () => {
 		const nameParts = name.trim().split(/\s+/);
-
 		if (nameParts.length !== 2) {
 			showError(
 				"Please enter exactly your first and last name, eg: Tom Flag"
 			);
 			return false;
-		} else {
-			return true;
 		}
+		return true;
 	};
 
 	const validateEmail = () => {
 		const regex = /^[a-zA-Z0-9._-]+$/;
-
 		if (!email.trim()) {
 			showError("Email is required.");
 			return false;
 		}
-
 		if (!regex.test(email)) {
 			showError(
 				"Please enter only your email prefix (before @st-andrews.ac.uk)"
 			);
 			return false;
 		}
-
 		return true;
 	};
 
@@ -62,12 +58,10 @@ export default function SignUpStudent() {
 			showError("Please enter both password fields.");
 			return false;
 		}
-
 		if (password !== confirmPassword) {
 			showError("Passwords do not match.");
 			return false;
 		}
-
 		const strongPasswordRegex =
 			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 		if (!strongPasswordRegex.test(password)) {
@@ -76,186 +70,155 @@ export default function SignUpStudent() {
 			);
 			return false;
 		}
-
 		return true;
 	};
 
 	const handleSubmit = async e => {
 		e.preventDefault();
-
 		if (!validateName()) return;
 		if (!validateEmail()) return;
 		if (!validatePasswords()) return;
-
 		await signup(name, `${email}@st-andrews.ac.uk`, password, "STUDENT");
 		navigate("/activationSent");
 	};
 
 	return (
-		<form
-			onSubmit={handleSubmit}
-			className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4"
-		>
-			{/* Animated Particles (behind the card) */}
-			<div
-				aria-hidden
-				style={{
-					position: "absolute",
-					inset: 0,
-					pointerEvents: "none",
-					zIndex: 0
-				}}
-			>
-				{[...Array(20)].map((_, i) => (
-					<motion.div
-						key={i}
-						style={{
-							position: "absolute",
-							width: 8,
-							height: 8,
-							background: "#8B5CF6",
-							borderRadius: "50%",
-							left: `${Math.random() * 100}%`,
-							top: `${Math.random() * 100}%`
-						}}
-						animate={{
-							y: [0, -100, 0],
-							opacity: [0, 1, 0],
-							scale: [0, 1, 0]
-						}}
-						transition={{
-							duration: 3 + Math.random() * 2,
-							repeat: Infinity,
-							delay: Math.random() * 2
-						}}
-					/>
-				))}
-			</div>
+		<div className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
+			{/* same bubbles as sign in */}
+			<BackgroundBubbles count={20} color="#8B5CF6" />
 
 			<motion.div
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
-				className="z-10 w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
+				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 border border-[var(--surface-border)]"
 			>
-				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)] mb-8">
-					Create Student Account
-				</h1>
+				<form onSubmit={handleSubmit} className="space-y-6">
+					<h1 className="text-center text-2xl font-bold text-[var(--primary-color)] mb-8">
+						Create Student Account
+					</h1>
 
-				<div className="hidden sm:block">
-					<FloatLabel className="w-full mb-8">
-						<div className="p-inputgroup w-full">
-							<InputText
-								id="name"
-								value={name}
-								onChange={e => setName(e.target.value)}
-								className="w-full"
-							/>
-						</div>
-						<label htmlFor="name">First and last name</label>
-					</FloatLabel>
-				</div>
+					<div className="hidden sm:block">
+						<FloatLabel className="w-full mb-8">
+							<div className="p-inputgroup w-full">
+								<InputText
+									id="name"
+									value={name}
+									onChange={e => setName(e.target.value)}
+									className="w-full"
+								/>
+							</div>
+							<label htmlFor="name">First and last name</label>
+						</FloatLabel>
+					</div>
 
-				<div className="hidden sm:block">
-					<FloatLabel className="w-full mb-8">
-						<div className="p-inputgroup w-full">
+					<div className="hidden sm:block">
+						<FloatLabel className="w-full mb-8">
+							<div className="p-inputgroup w-full">
+								<InputText
+									id="email"
+									value={email}
+									onChange={e => setEmail(e.target.value)}
+									className="w-full"
+								/>
+								<span className="p-inputgroup-addon">
+									@st-andrews.ac.uk
+								</span>
+							</div>
+							<label htmlFor="email">St Andrews Email</label>
+						</FloatLabel>
+					</div>
+
+					{/* Mobile */}
+					<div className="block sm:hidden">
+						<FloatLabel className="w-full mb-8">
 							<InputText
-								id="email"
+								id="emailMobile"
 								value={email}
 								onChange={e => setEmail(e.target.value)}
 								className="w-full"
 							/>
-							<span className="p-inputgroup-addon">
-								@st-andrews.ac.uk
-							</span>
+							<label htmlFor="emailMobile">
+								St Andrews Email Username
+							</label>
+						</FloatLabel>
+						<div className="p-inputgroup-addon w-full mt-2 text-center rounded bg-[var(--surface-c)] text-[var(--text-color)] py-2 text-sm">
+							@st-andrews.ac.uk
 						</div>
-						<label htmlFor="email">St Andrews Email</label>
-					</FloatLabel>
-				</div>
-
-				{/* Mobile version */}
-				<div className="block sm:hidden">
-					<FloatLabel className="w-full mb-8">
-						<InputText
-							id="emailMobile"
-							value={email}
-							onChange={e => setEmail(e.target.value)}
-							className="w-full"
-						/>
-						<label htmlFor="emailMobile">
-							St Andrews Email Username
-						</label>
-					</FloatLabel>
-					<div className="p-inputgroup-addon w-full mt-2 text-center rounded bg-[var(--surface-c)] text-[var(--text-color)] py-2 text-sm">
-						@st-andrews.ac.uk
 					</div>
-				</div>
 
-				<FloatLabel className={"mb-8"}>
-					<Password
-						inputId="password"
-						value={password}
-						onChange={e => setPassword(e.target.value)}
-						feedback={false}
-						className="w-full"
-						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
-						toggleMask
-						pt={{
-							showIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3"
-							},
-							hideIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3"
-							}
-						}}
-					/>
-					<label htmlFor="password">Password</label>
-				</FloatLabel>
+					<FloatLabel className="mb-8">
+						<Password
+							inputId="password"
+							value={password}
+							onChange={e => setPassword(e.target.value)}
+							feedback={false}
+							className="w-full"
+							inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
+							toggleMask
+							pt={{
+								showIcon: {
+									className:
+										"-translate-y-1/4 -translate-x-2/3"
+								},
+								hideIcon: {
+									className:
+										"-translate-y-1/4 -translate-x-2/3"
+								}
+							}}
+						/>
+						<label htmlFor="password">Password</label>
+					</FloatLabel>
 
-				<FloatLabel className={"mb-8"}>
-					<Password
-						inputId="confirmPwd"
-						value={confirmPassword}
-						onChange={e => setConfirmPassword(e.target.value)}
-						feedback={false}
-						className="w-full"
-						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
-						toggleMask
-						pt={{
-							showIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3"
-							},
-							hideIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3"
-							}
-						}}
-					/>
-					<label htmlFor="confirmPwd">Confirm Password</label>
-				</FloatLabel>
-				<Toast ref={toast} />
+					<FloatLabel className="mb-8">
+						<Password
+							inputId="confirmPwd"
+							value={confirmPassword}
+							onChange={e => setConfirmPassword(e.target.value)}
+							feedback={false}
+							className="w-full"
+							inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
+							toggleMask
+							pt={{
+								showIcon: {
+									className:
+										"-translate-y-1/4 -translate-x-2/3"
+								},
+								hideIcon: {
+									className:
+										"-translate-y-1/4 -translate-x-2/3"
+								}
+							}}
+						/>
+						<label htmlFor="confirmPwd">Confirm Password</label>
+					</FloatLabel>
 
-				<motion.div whileHover={{ scale: 1.02 }}>
-					<Button
-						label="Send Activation Email"
-						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
-					/>
-				</motion.div>
+					<Toast ref={toast} />
 
-				<motion.p
-					initial={{ opacity: 0, y: 10 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.4, delay: 0.2 }}
-					className="text-sm text-center text-[var(--text-color-secondary)] pt-6"
-				>
-					Already have an account?{" "}
-					<Link
-						to="/signin/student"
-						className="text-[var(--primary-color)] font-medium"
+					<motion.div whileHover={{ scale: 1.02 }}>
+						<Button
+							type="submit"
+							label="Send Activation Email"
+							className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
+						/>
+					</motion.div>
+
+					<motion.p
+						initial={{ opacity: 0, y: 10 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.4, delay: 0.2 }}
+						className="text-sm text-center text-[var(--text-color-secondary)] pt-6"
 					>
-						Login
-					</Link>
-				</motion.p>
+						Already have an account?{" "}
+						<Link
+							to="/signin/student"
+							className="text-[var(--primary-color)] font-medium"
+						>
+							Login
+						</Link>
+					</motion.p>
+				</form>
 			</motion.div>
-		</form>
+		</div>
 	);
 }

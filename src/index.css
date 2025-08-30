@@ -191,3 +191,7 @@ body {
 .property-dropdown .p-dropdown-trigger {
   color: white;
 }
+
+.p-divider .p-divider-content {
+	background: #0f0f24;
+}

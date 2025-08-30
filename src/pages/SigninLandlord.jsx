@@ -16,7 +16,7 @@ export default function SignInLandlord() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	const {login} = useContext(UserContext);
+	const { login } = useContext(UserContext);
 
 	const toast = useRef(null);
 
@@ -43,7 +43,7 @@ export default function SignInLandlord() {
 	};
 
 	const validateEmail = () => {
-		const regex =/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 		if (!email.trim()) {
 			showError("Email is required.");
@@ -51,9 +51,7 @@ export default function SignInLandlord() {
 		}
 
 		if (!regex.test(email)) {
-			showError(
-				"Please a valid email address."
-			);
+			showError("Please a valid email address.");
 			return false;
 		}
 
@@ -70,7 +68,7 @@ export default function SignInLandlord() {
 	};
 
 	return (
-<form
+		<form
 			onSubmit={handleSubmit}
 			className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4"
 		>
@@ -113,7 +111,7 @@ export default function SignInLandlord() {
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
-				className="z-10 w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
+				className="z-10 w-full max-w-md  rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
 			>
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Welcome Back, Landlord
@@ -161,8 +159,12 @@ export default function SignInLandlord() {
 					/>
 				</motion.div>
 
-				<Divider layout="horizontal">
-					<span className="text-sm text-[var(--text-color-secondary)]">
+				<Divider layout="horizontal" pt={{
+					content: {
+						className: "bg-[var(--primary-color)]"
+					}
+				}}>
+					<span className="text-sm text-white">
 						or sign up with
 					</span>
 				</Divider>

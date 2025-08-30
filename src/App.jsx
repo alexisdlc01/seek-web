@@ -23,6 +23,7 @@ import Footer from "./components/Footer.jsx";
 import { Button } from "primereact/button";
 import Dashboard from "./pages/Dashboard.jsx";
 import { AnimatePresence, motion } from "framer-motion";
+import Download from "./pages/Download.jsx";
 
 const NotFound = () => {
 	const navigate = useNavigate();
@@ -59,6 +60,7 @@ function App() {
 					>
 						<Routes location={location}>
 							<Route path="/" element={<Home />} />
+							<Route path="/download" element={<Download />} />
 							<Route path="/terms" element={<Terms />} />
 							<Route path="/privacy" element={<Privacy />} />
 							<Route path="/contact" element={<ContactPage />} />

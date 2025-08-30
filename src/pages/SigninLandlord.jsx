@@ -77,8 +77,8 @@ export default function SignInLandlord() {
 				transition={{ duration: 0.5 }}
 				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
 			>
-				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
-					Welcome Back, Landlord
+				<h1 className="text-center text-2xl font-bold">
+					Welcome Back, <span className="text-[var(--primary-color)]">Landlord</span>
 				</h1>
 
 				<FloatLabel className="mt-5">

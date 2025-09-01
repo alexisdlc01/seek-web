@@ -13,10 +13,7 @@ export default function Listings() {
 	return (
 		<div
 			className="min-h-screen bg-white px-4 py-6 sm:px-6 lg:px-8"
-			style={{ background: "#0f0f23",
-				margin: "0 auto",
-				width: "80%"
-			}}
+			style={{ background: "#0f0f23", margin: "0 auto", width: "80%" }}
 		>
 			{/* Header with Add New Property Button */}
 			<motion.div
@@ -104,8 +101,11 @@ export default function Listings() {
 								/>
 								<Tag
 									value="3 New Messages"
-									severity="secondary"
+									severity="info"
 									className="text-xs font-medium px-3 py-1 rounded-full"
+									style={{
+										background: "#23b7c5"
+									}}
 								/>
 							</div>
 						</div>
@@ -121,9 +121,6 @@ export default function Listings() {
 									severity="primary"
 									outlined
 									className="w-full sm:w-auto "
-									style={{
-										background: "white"
-									}}
 									onClick={() => navigate("/applicants")}
 								/>
 							</motion.div>
@@ -137,9 +134,6 @@ export default function Listings() {
 									severity="primary"
 									outlined
 									className="w-full sm:w-auto"
-									style={{
-										background: "white"
-									}}
 								/>
 							</motion.div>
 
@@ -152,9 +146,6 @@ export default function Listings() {
 									outlined
 									aria-label="More options"
 									className="w-full sm:w-auto"
-									style={{
-										background: "white"
-									}}
 								/>
 							</motion.div>
 						</div>

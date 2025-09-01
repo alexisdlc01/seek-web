@@ -163,9 +163,9 @@ export default function SignInStudent() {
 				<motion.div whileHover={{ scale: 1.02 }}>
 					<Button
 						label="Sign in"
-						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
+						className="w-full font-medium"
 						style={{
-							backgroundColor: "var(--primary-color-text)",
+							backgroundColor: "var(--surface-300)",
 							color: "white",
 							border: "none"
 						}}

@@ -1,14 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
 import DownloadCTA from "../components/DownloadCTA.jsx";
 import { motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
-import {
-	AnimatePresence,
-	useScroll,
-	useMotionValueEvent
-} from "framer-motion";
+import { AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import { useEdges } from "reactflow";
 
 const PhonePlaceholder = ({
 	className = "",
@@ -41,7 +38,7 @@ function CoreDiscovery() {
 	return (
 		<section
 			id="core-discovery"
-			className="text-slate-100 pt-8 md:pt-30 pb-16"
+			className="text-slate-100 pt-20 md:pt-60 pb-16"
 		>
 			<div className="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
 				{/* Left: image placeholders (now positioned, not stacked) */}
@@ -263,11 +260,14 @@ function CommunicationSecurity() {
 }
 
 const FloatingDownload = () => {
-	const { scrollY } = useScroll();
-	const [visible, setVisible] = useState(false);
-	useMotionValueEvent(scrollY, "change", v => {
-		if (!visible && v > 10) setVisible(true);
-	});
+	const [visible, setVisible] = useState(true);
+	useEffect(() => {
+		setVisible(true);
+
+		return () => {
+			setVisible(false);
+		};
+	}, []);
 
 	return (
 		<AnimatePresence>

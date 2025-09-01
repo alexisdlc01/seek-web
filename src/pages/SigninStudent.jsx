@@ -55,12 +55,11 @@ export default function SignInStudent() {
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
-				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
+				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 bg-white space-y-6 border border-[var(--surface-border)]"
 				onSubmit={handleSubmit}
 			>
-				<h1 className="text-center text-2xl font-bold mb-8">
-					Welcome Back,{" "}
-					<span style={{ color: "#23b7c5" }}>Student</span>
+				<h1 className="text-center text-2xl font-bold mb-8"  style={{ color: "#23b7c5" }}>
+					Welcome Back, Student
 				</h1>
 
 				{/* Desktop */}
@@ -123,7 +122,12 @@ export default function SignInStudent() {
 				<motion.div whileHover={{ scale: 1.02 }}>
 					<Button
 						label="Sign in"
-						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
+						className="w-full font-medium"
+						style={{
+							backgroundColor: "var(--surface-300)",
+							color: "white",
+							border: "none"
+						}}
 					/>
 				</motion.div>
 
@@ -136,7 +140,7 @@ export default function SignInStudent() {
 					Don't have an account?{" "}
 					<Link
 						to="/signup/student"
-						className="text-[var(--primary-color)] font-medium"
+						className="text-[var(--primary-color-text)] font-medium"
 					>
 						Signup
 					</Link>
@@ -151,7 +155,7 @@ export default function SignInStudent() {
 					Forgot your password?{" "}
 					<Link
 						to="/resetpassword"
-						className="text-[var(--primary-color)] font-medium"
+						className="text-[var(--primary-color-text)] font-medium"
 					>
 						Reset Password
 					</Link>

@@ -93,7 +93,7 @@ export default function SignUpStudent() {
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
-				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 border border-[var(--surface-border)]"
+				className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-md p-8 border border-[var(--surface-border)]"
 			>
 				<form onSubmit={handleSubmit} className="space-y-6">
 					<h1 className="text-center text-2xl font-bold text-[var(--primary-color)] mb-8">
@@ -200,7 +200,12 @@ export default function SignUpStudent() {
 						<Button
 							type="submit"
 							label="Send Activation Email"
-							className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
+							className="w-full font-medium"
+							style={{
+								backgroundColor: "var(--surface-300)",
+								color: "white",
+								border: "none"
+							}}
 						/>
 					</motion.div>
 
@@ -213,7 +218,7 @@ export default function SignUpStudent() {
 						Already have an account?{" "}
 						<Link
 							to="/signin/student"
-							className="text-[var(--primary-color)] font-medium"
+							className="text-[var(--primary-color-text)] font-medium"
 						>
 							Login
 						</Link>

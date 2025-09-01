@@ -448,6 +448,7 @@ export default function Dashboard() {
 									onChange={e => setSelectedProperty(e.value)}
 									options={properties}
 									className="mr-auto w-full md:w-96 property-dropdown !rounded-lg"
+									placeholder="Select a property"
 								/>
 							</div>
 
@@ -466,38 +467,41 @@ export default function Dashboard() {
 								<div className="md:col-span-5 flex flex-col gap-4">
 									<div className="grid grid-cols-2 gap-4">
 										<div className="metric-tile">
-											<div className="metric-label">
-												<i className="pi pi-file mr-2" />
+											<div className="metric-label text-lg md:text-xl font-semibold">
+												<i className="pi pi-file mr-2 text-lg md:text-xl" />
 												Total Applications
 											</div>
-											<div className="metric-value">
+											<div className="metric-value text-2xl md:text-3xl font-semibold">
 												15
 											</div>
 										</div>
+
 										<div className="metric-tile">
-											<div className="metric-label">
-												<i className="pi pi-bookmark mr-2" />
+											<div className="metric-label text-lg md:text-xl font-semibold">
+												<i className="pi pi-bookmark mr-2 text-lg md:text-xl" />
 												Saves
 											</div>
-											<div className="metric-value">
+											<div className="metric-value text-2xl md:text-3xl font-semibold">
 												50
 											</div>
 										</div>
+
 										<div className="metric-tile">
-											<div className="metric-label">
-												<i className="pi pi-share-alt mr-2" />
+											<div className="metric-label text-lg md:text-xl font-semibold">
+												<i className="pi pi-share-alt mr-2 text-lg md:text-xl" />
 												Shares
 											</div>
-											<div className="metric-value">
+											<div className="metric-value text-2xl md:text-3xl font-semibold">
 												8
 											</div>
 										</div>
+
 										<div className="metric-tile">
-											<div className="metric-label">
-												<i className="pi pi-bolt mr-2" />
-												Engagement Rate (%)
+											<div className="metric-label text-lg md:text-xl font-semibold">
+												<i className="pi pi-bolt mr-2 text-lg md:text-xl" />
+												Interaction Rate (%)
 											</div>
-											<div className="metric-value">
+											<div className="metric-value text-2xl md:text-3xl font-semibold">
 												43
 											</div>
 										</div>

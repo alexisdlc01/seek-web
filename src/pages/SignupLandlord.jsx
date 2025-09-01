@@ -76,7 +76,7 @@ export default function SignUpLandlord() {
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
-				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
+				className="relative bg-white z-10 w-full max-w-md rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
 			>
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Create Landlord Account
@@ -142,11 +142,16 @@ export default function SignUpLandlord() {
 						type="submit"
 						label="Create Account"
 						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
+						style={{
+							backgroundColor: "var(--surface-300)",
+							color: "white",
+							border: "none"
+						}}
 					/>
 				</motion.div>
 
 				<Divider layout="horizontal">
-					<span className="text-sm text-[var(--text-color-secondary)]">or sign up with</span>
+					<span className="text-sm text-[var(--primary-color-text)]">or sign up with</span>
 				</Divider>
 
 				<div className="flex flex-col gap-2">
@@ -155,6 +160,11 @@ export default function SignUpLandlord() {
 							label="Sign up with Google"
 							icon="pi pi-google"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
+							style={{
+								backgroundColor: "var(--surface-300)",
+								color: "white",
+								border: "none"
+							}}
 							type="button"
 							onClick={() => { window.location.href = `${BASE_URL}/auth/google`; }}
 						/>
@@ -164,6 +174,11 @@ export default function SignUpLandlord() {
 							label="Sign up with Apple"
 							icon="pi pi-apple"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
+							style={{
+								backgroundColor: "var(--surface-300)",
+								color: "white",
+								border: "none"
+							}}
 							type="button"
 						/>
 					</motion.div>
@@ -176,7 +191,7 @@ export default function SignUpLandlord() {
 					className="text-sm text-center text-[var(--text-color-secondary)]"
 				>
 					Already have an account?{" "}
-					<Link to="/signin/landlord" className="text-[var(--primary-color)] font-medium">
+					<Link to="/signin/landlord" className="text-[var(--primary-color-text)] font-medium">
 						Login
 					</Link>
 				</motion.p>

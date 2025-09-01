@@ -164,6 +164,11 @@ export default function SignInStudent() {
 					<Button
 						label="Sign in"
 						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
+						style={{
+							backgroundColor: "var(--primary-color-text)",
+							color: "white",
+							border: "none"
+						}}
 					/>
 				</motion.div>
 
@@ -176,7 +181,7 @@ export default function SignInStudent() {
 					Don't have an account?{" "}
 					<Link
 						to="/signup/student"
-						className="text-[var(--primary-color)] font-medium"
+						className="text-[var(--primary-color-text)] font-medium"
 					>
 						Signup
 					</Link>
@@ -191,7 +196,7 @@ export default function SignInStudent() {
 					Forgot your password?{" "}
 					<Link
 						to="/resetpassword"
-						className="text-[var(--primary-color)] font-medium"
+						className="text-[var(--primary-color-text)] font-medium"
 					>
 						Reset Password
 					</Link>

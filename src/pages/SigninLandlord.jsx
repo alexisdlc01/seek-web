@@ -16,7 +16,7 @@ export default function SignInLandlord() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	const {login} = useContext(UserContext);
+	const { login } = useContext(UserContext);
 
 	const toast = useRef(null);
 
@@ -43,7 +43,7 @@ export default function SignInLandlord() {
 	};
 
 	const validateEmail = () => {
-		const regex =/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 		if (!email.trim()) {
 			showError("Email is required.");
@@ -51,9 +51,7 @@ export default function SignInLandlord() {
 		}
 
 		if (!regex.test(email)) {
-			showError(
-				"Please a valid email address."
-			);
+			showError("Please a valid email address.");
 			return false;
 		}
 
@@ -70,7 +68,7 @@ export default function SignInLandlord() {
 	};
 
 	return (
-<form
+		<form
 			onSubmit={handleSubmit}
 			className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4"
 		>
@@ -158,6 +156,11 @@ export default function SignInLandlord() {
 					<Button
 						label="Sign in"
 						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
+						style={{
+							backgroundColor: "var(--primary-color-text)",
+							color: "white",
+							border: "none"
+						}}
 					/>
 				</motion.div>
 
@@ -177,6 +180,11 @@ export default function SignInLandlord() {
 							onClick={() => {
 								window.location.href = `${BASE_URL}/auth/google`;
 							}}
+							style={{
+								backgroundColor: "var(--primary-color-text)",
+								color: "white",
+								border: "none"
+							}}
 						/>
 					</motion.div>
 					<motion.div whileHover={{ scale: 1.02 }}>
@@ -185,6 +193,11 @@ export default function SignInLandlord() {
 							icon="pi pi-apple"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
 							type="button"
+							style={{
+								backgroundColor: "var(--primary-color-text)",
+								color: "white",
+								border: "none"
+							}}
 						/>
 					</motion.div>
 				</div>
@@ -198,9 +211,10 @@ export default function SignInLandlord() {
 					Don't have an account?{" "}
 					<Link
 						to="/signup/landlord"
-						className="text-[var(--primary-color)] font-medium"
+						className="text-[var(--primary-color-text)] font-medium"
 					>
 						Signup
+						
 					</Link>
 				</motion.p>
 
@@ -213,7 +227,7 @@ export default function SignInLandlord() {
 					Forgot your password?{" "}
 					<Link
 						to="/resetpassword"
-						className="text-[var(--primary-color)] font-medium"
+						className="text-[var(--primary-color-text)] font-medium"
 					>
 						Reset Password
 					</Link>

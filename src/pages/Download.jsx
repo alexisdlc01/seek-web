@@ -147,9 +147,9 @@ function ApplicationManagement() {
 
 				{/* Right: image placeholders */}
 				<div className="relative mx-auto w-full max-w-md h-[320px] sm:h-[380px]">
-<PhonePlaceholder className="absolute -left-6 md:-left-10 top-6" />
-<PhonePlaceholder className="absolute -right-6 md:-right-10 top-0" />
-<PhonePlaceholder className="absolute left-1/2 -translate-x-1/2 bottom-0" />
+					<PhonePlaceholder className="absolute -left-6 md:-left-10 top-6" />
+					<PhonePlaceholder className="absolute -right-6 md:-right-10 top-0" />
+					<PhonePlaceholder className="absolute left-1/2 -translate-x-1/2 bottom-0" />
 				</div>
 			</div>
 		</section>
@@ -162,9 +162,9 @@ function CommunicationSecurity() {
 			<div className="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
 				{/* Left: image placeholders */}
 				<div className="relative mx-auto w-full max-w-md h-[320px] sm:h-[380px]">
-<PhonePlaceholder className="absolute -left-6 md:-left-10 top-6" />
-<PhonePlaceholder className="absolute -right-6 md:-right-10 top-0" />
-<PhonePlaceholder className="absolute left-1/2 -translate-x-1/2 bottom-0" />
+					<PhonePlaceholder className="absolute -left-6 md:-left-10 top-6" />
+					<PhonePlaceholder className="absolute -right-6 md:-right-10 top-0" />
+					<PhonePlaceholder className="absolute left-1/2 -translate-x-1/2 bottom-0" />
 				</div>
 
 				{/* Right: copy */}

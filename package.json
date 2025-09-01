@@ -14,7 +14,7 @@
     "axios": "^1.10.0",
     "chart.js": "^4.5.0",
     "chartjs": "^0.3.24",
-    "framer-motion": "^12.23.6",
+    "framer-motion": "^12.23.12",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.6",
     "react": "^19.1.0",

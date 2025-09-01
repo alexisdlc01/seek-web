@@ -2,19 +2,26 @@ import React from "react";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
 import DownloadCTA from "../components/DownloadCTA.jsx";
+import { motion, useReducedMotion } from "framer-motion";
 
-const PhonePlaceholder = ({ className = "" }) => (
-	<div
-		className={`w-28 sm:w-36 md:w-40 h-48 sm:h-60 md:h-64 rounded-2xl border-2 border-dashed border-slate-500/40 bg-white/5 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] grid place-items-center text-center text-[11px] sm:text-xs text-slate-300 px-3 ${className}`}
-	>
-		Picture of
-		<br />
-		phone with
-		<br />
-		app page
-	</div>
-);
-
+const PhonePlaceholder = ({
+  className = "",
+  range = 8,         // px to float up/down
+  duration = 2.4,    // seconds per cycle
+  delay = 0          // start offset to desync
+}) => {
+  const reduce = useReducedMotion();
+  return (
+    <motion.div
+      className={`w-28 sm:w-36 md:w-40 h-48 sm:h-60 md:h-64 rounded-2xl border-2 border-dashed border-slate-500/40 bg-white/5 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] grid place-items-center text-center text-[11px] sm:text-xs text-slate-300 px-3 ${className}`}
+      style={{ willChange: "transform" }}
+      animate={reduce ? { y: 0 } : { y: [0, -range, 0] }}
+      transition={{ duration, ease: "easeInOut", repeat: Infinity, delay }}
+    >
+      Picture of<br />phone with<br />app page
+    </motion.div>
+  );
+};
 function CoreDiscovery() {
 	return (
 		<section
@@ -24,9 +31,9 @@ function CoreDiscovery() {
 			<div className="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
 				{/* Left: image placeholders (now positioned, not stacked) */}
 				<div className="relative mx-auto w-full max-w-md h-[320px] sm:h-[380px]">
-					<PhonePlaceholder className="absolute -left-6 md:-left-10 top-6" />
-					<PhonePlaceholder className="absolute -right-6 md:-right-10 top-0" />
-					<PhonePlaceholder className="absolute left-1/2 -translate-x-1/2 bottom-0" />
+					<PhonePlaceholder className="absolute -left-6 md:-left-10 top-0"  delay={0.0} />
+					<PhonePlaceholder className="absolute -right-6 md:-right-10 top-0" delay={0.0} />
+					<PhonePlaceholder className="absolute left-1/2 -translate-x-1/2 bottom-0" delay={1.2} />
 				</div>
 
 				{/* Right: copy */}
@@ -147,9 +154,9 @@ function ApplicationManagement() {
 
 				{/* Right: image placeholders */}
 				<div className="relative mx-auto w-full max-w-md h-[320px] sm:h-[380px]">
-					<PhonePlaceholder className="absolute -left-6 md:-left-10 top-6" />
+					<PhonePlaceholder className="absolute -left-6 md:-left-10 top-0" />
 					<PhonePlaceholder className="absolute -right-6 md:-right-10 top-0" />
-					<PhonePlaceholder className="absolute left-1/2 -translate-x-1/2 bottom-0" />
+					<PhonePlaceholder className="absolute left-1/2 -translate-x-1/2 bottom-0" delay={1.2} />
 				</div>
 			</div>
 		</section>
@@ -162,9 +169,9 @@ function CommunicationSecurity() {
 			<div className="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
 				{/* Left: image placeholders */}
 				<div className="relative mx-auto w-full max-w-md h-[320px] sm:h-[380px]">
-					<PhonePlaceholder className="absolute -left-6 md:-left-10 top-6" />
+					<PhonePlaceholder className="absolute -left-6 md:-left-10 top-0" />
 					<PhonePlaceholder className="absolute -right-6 md:-right-10 top-0" />
-					<PhonePlaceholder className="absolute left-1/2 -translate-x-1/2 bottom-0" />
+					<PhonePlaceholder className="absolute left-1/2 -translate-x-1/2 bottom-0" delay={1.2} />
 				</div>
 
 				{/* Right: copy */}

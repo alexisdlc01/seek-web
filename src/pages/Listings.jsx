@@ -10,6 +10,7 @@ import { Badge } from "primereact/badge";
 export default function Listings() {
 	const navigate = useNavigate();
 
+	
 	return (
 		<div
 			className="min-h-screen bg-white px-4 py-6 sm:px-6 lg:px-8"

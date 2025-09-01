@@ -448,6 +448,7 @@ export default function Dashboard() {
 									onChange={e => setSelectedProperty(e.value)}
 									options={properties}
 									className="mr-auto w-full md:w-96 property-dropdown !rounded-lg"
+									placeholder="Select a property"
 								/>
 							</div>
 

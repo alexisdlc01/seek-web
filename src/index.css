@@ -3,7 +3,6 @@
 @import "primereact/resources/primereact.min.css";
 @import "primeicons/primeicons.css";
 
-
 .p-password {
 	display: inline;
 }
@@ -90,7 +89,6 @@ body {
 	border-color: white !important;
 }
 
-
 .p-stepper .p-stepper-panels {
 	background: #0f0f23;
 }
@@ -113,81 +111,45 @@ body {
 	text-align: center;
 }
 
-/* PrimeReact Dropdown — dark theme match */
-.p-dropdown{
-  background: var(--surface-card) !important;
-  border: 1px solid var(--surface-border) !important;
-  color: var(--text-color) !important;
-}
-.p-dropdown .p-dropdown-label{ color: var(--text-color) !important; }
-.p-dropdown .p-placeholder{ color: var(--text-secondary-color) !important; }
-.p-dropdown .p-dropdown-trigger{ color: var(--text-secondary-color) !important; }
-
-/* hover / focus */
-.p-dropdown:not(.p-disabled):hover{
-  border-color: var(--primary-color) !important;
-}
-.p-dropdown:not(.p-disabled).p-focus,
-.p-inputwrapper-focus > .p-dropdown{
-  border-color: var(--primary-color) !important;
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--primary-color) 30%, transparent) !important;
-}
-
-/* panel + items */
-.p-dropdown-panel{
-  background: var(--surface-card) !important;
-  border: 1px solid var(--surface-border) !important;
-  color: var(--text-color) !important;
-}
-.p-dropdown-item{ color: var(--text-color) !important; }
-.p-dropdown-item:not(.p-highlight):hover{
-  background: color-mix(in oklab, var(--primary-color) 12%, transparent) !important;
-}
-.p-dropdown-item.p-highlight{
-  background: color-mix(in oklab, var(--primary-color) 20%, transparent) !important;
-  color: var(--text-color) !important;
-}
-
-
 .review-btn {
-  background-color: var(--primary-color-text) !important;
-  border-color: var(--primary-color-text) !important;
-  color: white !important;
+	background-color: var(--primary-color-text) !important;
+	border-color: var(--primary-color-text) !important;
+	color: white !important;
 }
-
 
 .metric-tile {
-  background: var(--primary-color-text);
-  border-radius: 12px;
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+	background: var(--primary-color-text);
+	border-radius: 12px;
+	padding: 12px 14px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
 /* small, muted label; bright value */
 .metric-label {
-  color: rgba(230, 231, 239, 0.85);
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
+	color: rgba(230, 231, 239, 0.85);
+	font-size: 0.9rem;
+	display: flex;
+	align-items: center;
 }
 
 .metric-value {
-  color: white;
-  font-weight: 700;
-  font-size: 1.75rem;
-  line-height: 1;
+	color: white;
+	font-weight: 700;
+	font-size: 1.75rem;
+	line-height: 1;
 }
 
-/* make the dropdown look like the header chip */
-.property-dropdown .p-dropdown {
-  background: var(--primary-color-text);
-  border: none;
-  color: white;
-  border-radius: 10px;
+
+.p-dropdown{
+  background: var(--primary-color) !important;
+  border: 0px solid var(--surface-border) !important;
+  color: var(--primary-color-text) !important;
 }
-.property-dropdown .p-dropdown-label,
-.property-dropdown .p-dropdown-trigger {
-  color: white;
-}
+
+/* selected value (closed dropdown) */
+.p-dropdown .p-dropdown-label { color: var(--primary-color-text) !important; }
+
+/* placeholder (only when value is null/undefined) */
+.p-dropdown .p-dropdown-label.p-placeholder { color: var(--primary-color-text) !important; opacity: 1 !important; }

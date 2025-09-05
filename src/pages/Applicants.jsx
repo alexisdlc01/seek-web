@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "primereact/button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { text } from "framer-motion/client";
 
 const newApplicants = [
 	{
@@ -67,19 +68,27 @@ export default function Applicants() {
 
 			{/* Action Buttons */}
 			<div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-				{buttons.map((btn, idx) => (
-					<motion.div whileHover={{ scale: 1.02 }} key={idx}>
-						<Button
-							label={btn.label}
-							icon={btn.icon}
-							severity={btn.severity}
-							outlined
-							size="small"
-							className="w-full sm:w-auto"
-							onClick={btn.onClick}
-						/>
-					</motion.div>
-				))}
+				<Button
+					label="View Profile"
+					severity="primary"
+					outlined
+					size="small"
+					className="w-full sm:w-auto"
+					onClick={() => navigate("/application")}
+					style={{
+						color: "white",
+					}}
+				/>
+
+				<Button
+					label="Approve"
+					severity="primary"
+					size="small"
+					className="w-full sm:w-auto"
+					style={{
+						color: "white",
+					}}
+				/>
 			</div>
 		</motion.div>
 	);

@@ -101,7 +101,7 @@ export default function Applicants() {
 					onClick={() => setActiveTab("new")}
 					className={`px-4 py-2 cursor-pointer ${
 						activeTab === "new"
-							? "text-blue-600 border-b-2 border-blue-600"
+							? "text-[var(--primary-color)] border-b-2 border-[var(--primary-color)]"
 							: "text-gray-500"
 					}`}
 				>
@@ -111,7 +111,7 @@ export default function Applicants() {
 					onClick={() => setActiveTab("approved")}
 					className={`px-4 py-2 cursor-pointer ml-4 ${
 						activeTab === "approved"
-							? "text-blue-600 border-b-2 border-blue-600"
+							? "text-[var(--primary-color)] border-b-2 border-[var(--primary-color)]"
 							: "text-gray-500"
 					}`}
 				>

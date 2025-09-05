@@ -44,7 +44,7 @@ export default function Applicants() {
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.3 }}
-			className="flex flex-col md:flex-row items-center justify-between bg-white border border-[var(--surface-border)] rounded-xl px-4 py-5 shadow-sm gap-4"
+			className="flex flex-col md:flex-row items-center justify-between border border-[var(--surface-border)] rounded-xl px-4 py-5 shadow-sm gap-4"
 		>
 			{/* Avatar and Info */}
 			<div className="flex items-start gap-4 w-full md:w-auto">
@@ -82,7 +82,7 @@ export default function Applicants() {
 	);
 
 	return (
-		<div className="min-h-screen bg-white px-4 py-6 sm:px-6 lg:px-8">
+		<div className="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
 			{/* Header */}
 			<motion.div
 				initial={{ opacity: 0, y: -20 }}

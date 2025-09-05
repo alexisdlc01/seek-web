@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "primereact/button";
 import { Chip } from "primereact/chip";
 
@@ -10,7 +10,6 @@ const conversations = Array.from({ length: 20 }, (_, i) => {
 				? `Message ${j + 1} from User ${i + 1}`
 				: `You replied to message ${j + 1}`
 	}));
-
 	return {
 		id: i + 1,
 		name: `User ${i + 1}`,
@@ -20,13 +19,6 @@ const conversations = Array.from({ length: 20 }, (_, i) => {
 });
 
 export default function ChatPage() {
-	useEffect(() => {
-		document.body.style.overflow = "hidden";
-		return () => {
-			document.body.style.overflow = "";
-		};
-	}, []);
-
 	const [selectedId, setSelectedId] = useState(conversations[0].id);
 	const [input, setInput] = useState("");
 	const selectedChat = conversations.find(c => c.id === selectedId);
@@ -38,10 +30,9 @@ export default function ChatPage() {
 	};
 
 	return (
-		<div className="flex h-screen bg-gray-50 border-t-2 border-gray-200">
+		<div className="fixed inset-x-0 bottom-0 top-16 flex overflow-hidden bg-gray-50">
 			{/* Sidebar */}
-			<div className="w-1/3 bg-blue-50 border-r border-gray-200 flex flex-col">
-
+			<div className="w-1/3 bg-blue-50 border-r border-gray-200 flex flex-col min-h-0">
 				<div className="flex-1 overflow-y-auto divide-y divide-blue-100">
 					{conversations.map(c => (
 						<div
@@ -54,7 +45,6 @@ export default function ChatPage() {
 							}`}
 						>
 							<div className="flex items-center gap-3 overflow-hidden">
-
 								<div className="overflow-hidden">
 									<p className="font-medium text-base text-blue-900 truncate">
 										{c.name}
@@ -67,7 +57,6 @@ export default function ChatPage() {
 									</p>
 								</div>
 							</div>
-
 							<div className="flex flex-col items-end shrink-0 min-w-[50px]">
 								<div className="flex items-center gap-1">
 									<p className="text-sm text-gray-400">
@@ -84,7 +73,7 @@ export default function ChatPage() {
 			</div>
 
 			{/* Chat Panel */}
-			<div className="w-2/3 flex flex-col border-l border-gray-200 bg-white">
+			<div className="w-2/3 flex flex-col border-l border-gray-200 bg-white min-h-0">
 				{/* Header */}
 				<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
 					<h2 className="text-lg font-semibold text-gray-800">
@@ -107,7 +96,7 @@ export default function ChatPage() {
 				</div>
 
 				{/* Messages and Input */}
-				<div className="flex flex-col flex-1 overflow-hidden">
+				<div className="flex flex-col flex-1 overflow-hidden min-h-0">
 					{/* Messages */}
 					<div className="flex-1 px-6 py-4 overflow-y-auto space-y-3 bg-gray-50">
 						{selectedChat.messages.map((msg, i) => (
@@ -122,6 +111,16 @@ export default function ChatPage() {
 								{msg.text}
 							</div>
 						))}
+					</div>
+
+					<div className="border-t border-gray-200 p-4">
+						<input
+							value={input}
+							onChange={e => setInput(e.target.value)}
+							onKeyDown={e => e.key === "Enter" && sendMessage()}
+							className="w-full border rounded-lg px-3 py-2 text-sm"
+							placeholder="Type a message..."
+						/>
 					</div>
 				</div>
 			</div>

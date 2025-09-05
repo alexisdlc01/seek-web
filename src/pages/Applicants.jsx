@@ -45,6 +45,9 @@ export default function Applicants() {
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.3 }}
 			className="flex flex-col md:flex-row items-center justify-between border border-[var(--surface-border)] rounded-xl px-4 py-5 shadow-sm gap-4"
+			style={{
+				background: "var(--gray-62)"
+			}}
 		>
 			{/* Avatar and Info */}
 			<div className="flex items-start gap-4 w-full md:w-auto">
@@ -55,7 +58,7 @@ export default function Applicants() {
 					<h2 className="font-semibold text-[var(--text-color)]">
 						{applicant.names}
 					</h2>
-					<p className="text-sm text-gray-500">
+					<p className="text-sm text-white">
 						{applicant.genders} • {applicant.degrees} •{" "}
 						{applicant.years}
 					</p>

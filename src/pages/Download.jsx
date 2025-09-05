@@ -330,7 +330,10 @@ const Download = () => {
 				<CoreDiscovery />
 				<ApplicationManagement />
 				<CommunicationSecurity />
-				<FloatingDownload />
+				<>
+					<div className="h-32 md:h-40" />
+					<FloatingDownload />
+				</>
 			</div>
 		</div>
 	);

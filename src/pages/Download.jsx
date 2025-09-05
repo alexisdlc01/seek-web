@@ -5,18 +5,18 @@ import DownloadCTA from "../components/DownloadCTA.jsx";
 import { motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
 import { AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { useEdges } from "reactflow";
+import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
 
 const PhonePlaceholder = ({
-	                          className = "",
-	                          range = 8, // px to float up/down
-	                          duration = 2.4, // seconds per cycle
-	                          delay = 0 // start offset to desync
-                          }) => {
+	className = "",
+	range = 8, // px to float up/down
+	duration = 2.4, // seconds per cycle
+	delay = 0 // start offset to desync
+}) => {
 	const reduce = useReducedMotion();
 	return (
 		<motion.div
-			className={`w-28 sm:w-36 md:w-40 h-48 sm:h-60 md:h-64 rounded-2xl border-2 border-dashed border-slate-500/40 bg-white/5 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] grid place-items-center text-center text-[11px] sm:text-xs text-slate-300 px-3 ${className}`}
+			className={`z-20 w-28 sm:w-36 md:w-40 h-48 sm:h-60 md:h-64 rounded-2xl border-2 border-dashed border-slate-500/40 bg-white shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] grid place-items-center text-center text-[11px] sm:text-xs text-slate-300 px-3 ${className}`}
 			style={{ willChange: "transform" }}
 			animate={reduce ? { y: 0 } : { y: [0, -range, 0] }}
 			transition={{
@@ -291,8 +291,10 @@ const FloatingDownload = () => {
 
 const Download = () => {
 	return (
-		<div className="scroll-smooth">
-			<section className="text-slate-100 px-4 pt-14 md:pt-20 pb-6">
+		<div className="relative overflow-hidden scroll-smooth min-h-screen bg-[var(--surface-a)]">
+			<BackgroundBubbles count={20} />
+
+			<section className="relative z-20 text-slate-100 px-4 pt-14 md:pt-20 pb-6">
 				<div className="max-w-2xl mx-auto text-center pt-14 md:pt-2">
 					<h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold leading-tight tracking-tight">
 						Find your home on the
@@ -324,10 +326,12 @@ const Download = () => {
 				</div>
 			</section>
 
-			<CoreDiscovery />
-			<ApplicationManagement />
-			<CommunicationSecurity />
-			<FloatingDownload />
+			<div className="relative z-20">
+				<CoreDiscovery />
+				<ApplicationManagement />
+				<CommunicationSecurity />
+				<FloatingDownload />
+			</div>
 		</div>
 	);
 };

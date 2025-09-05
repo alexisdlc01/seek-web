@@ -29,7 +29,7 @@ const BackgroundBubbles = React.memo(function BackgroundBubbles({
 			style={{
 				position: "absolute",
 				inset: 0,
-				zIndex: 1,
+				zIndex: 0,
 				pointerEvents: "none"
 			}}
 		>

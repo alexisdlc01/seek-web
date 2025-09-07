@@ -113,13 +113,19 @@ export default function ChatPage() {
 						))}
 					</div>
 
-					<div className="border-t border-gray-200 p-4">
+					<div className="border-t border-gray-200 p-4 flex gap-3">
 						<input
 							value={input}
 							onChange={e => setInput(e.target.value)}
 							onKeyDown={e => e.key === "Enter" && sendMessage()}
 							className="w-full border rounded-lg px-3 py-2 text-sm"
 							placeholder="Type a message..."
+						/>
+
+						<Button
+							label="Send"
+							className="px-4 py-1 border border-blue-600 text-blue-600 bg-transparent rounded-full text-sm"
+							outlined
 						/>
 					</div>
 				</div>

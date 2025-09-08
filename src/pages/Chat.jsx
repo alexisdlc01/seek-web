@@ -1,21 +1,30 @@
 import React, { useState } from "react";
 import { Button } from "primereact/button";
 
-const conversations = Array.from({ length: 20 }, (_, i) => {
-	const messages = Array.from({ length: 50 }, (_, j) => ({
-		from: j % 2 === 0 ? "them" : "me",
-		text:
-			j % 2 === 0
-				? `Message ${j + 1} from User ${i + 1}`
-				: `You replied to message ${j + 1}`
-	}));
-	return {
-		id: i + 1,
-		name: `User ${i + 1}`,
-		initials: `U${i + 1}`,
-		messages
-	};
-});
+const conversations = [
+  {
+    "id": 1,
+    "name": "User 1",
+    "initials": "U1",
+    "messages": [
+      { "from": "them", "text": "Message 1 from User 1" },
+      { "from": "me", "text": "You replied to message 2" },
+      { "from": "them", "text": "Message 3 from User 1" },
+      { "from": "me", "text": "You replied to message 4" }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "User 2",
+    "initials": "U2",
+    "messages": [
+      { "from": "them", "text": "Message 1 from User 2" },
+      { "from": "me", "text": "You replied to message 2" },
+      { "from": "them", "text": "Message 3 from User 2" },
+      { "from": "me", "text": "You replied to message 4" }
+    ]
+  }
+]
 
 export default function ChatPage() {
 	const [selectedId, setSelectedId] = useState(conversations[0].id);

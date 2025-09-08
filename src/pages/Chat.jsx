@@ -82,7 +82,7 @@ export default function ChatPage() {
 			{/* Chat Panel */}
 			<div className="w-2/3 flex flex-col bg-[var(--surface-a)] min-h-0">
 				{/* Header */}
-				<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+				<div className="flex items-center justify-between px-6 py-4 border-b-1 border-[var(--gray-900)]">
 					<h2 className="text-lg font-semibold text-[var(--primary-color)]">
 						{selectedChat.name}
 					</h2>
@@ -113,7 +113,7 @@ export default function ChatPage() {
 						))}
 					</div>
 
-					<div className="border-t border-gray-200 p-4 flex gap-3">
+					<div className="border-t-1 border-[var(--gray-900)] p-4 flex gap-3">
 						<input
 							value={input}
 							onChange={e => setInput(e.target.value)}

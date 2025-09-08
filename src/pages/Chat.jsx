@@ -80,16 +80,9 @@ export default function ChatPage() {
 					</h2>
 					<div className="flex gap-2">
 						<Button
-							label="Approve"
-							icon="pi pi-check"
-							className="px-4 py-1 border border-green-600 text-green-600 bg-transparent rounded-full text-sm"
-							outlined
-						/>
-						<Button
-							label="Reject"
-							icon="pi pi-times"
-							className="px-4 py-1 border border-red-600 text-red-600 bg-transparent rounded-full text-sm"
-							outlined
+							label="View Status"
+							className="px-4 py-1 border border-red-600 rounded-full text-sm"
+							style={{ color: "white" }}
 						/>
 					</div>
 				</div>

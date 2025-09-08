@@ -94,7 +94,7 @@ export default function ChatPage() {
 						{selectedChat.messages.map((msg, i) => (
 							<div
 								key={i}
-								className={`max-w-[75%] px-4 py-3 text-sm rounded-xl shadow ${
+								className={`max-w-[55%] px-4 py-3 text-sm rounded-xl shadow ${
 									msg.from === "me"
 										? "ml-auto bg-[var(--primary-color)] text-white"
 										: "bg-[var(--gray-62)] text-white"

@@ -13,7 +13,27 @@ const conversations = [
 		]
 	},
 	{
-		id: 2,
+		id: 23,
+		name: "User 2",
+		messages: [
+			{ from: "them", text: "Message 1 from User 2" },
+			{ from: "me", text: "You replied to message 2" },
+			{ from: "them", text: "Message 3 from User 2" },
+			{ from: "me", text: "You replied to message 4" }
+		]
+	},
+	{
+		id: 42,
+		name: "User 2",
+		messages: [
+			{ from: "them", text: "Message 1 from User 2" },
+			{ from: "me", text: "You replied to message 2" },
+			{ from: "them", text: "Message 3 from User 2" },
+			{ from: "me", text: "You replied to message 4" }
+		]
+	},
+	{
+		id: 24,
 		name: "User 2",
 		messages: [
 			{ from: "them", text: "Message 1 from User 2" },

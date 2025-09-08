@@ -97,7 +97,7 @@ export default function ChatPage() {
 				{/* Messages and Input */}
 				<div className="flex flex-col flex-1 overflow-hidden min-h-0">
 					{/* Messages */}
-					<div className="flex-1 px-6 py-4 overflow-y-auto space-y-5 bg-[var(--surface-a)]">
+					<div className="flex-1 px-6 py-4 overflow-y-auto space-y-4 bg-[var(--surface-a)]">
 						{selectedChat.messages.map((msg, i) => (
 							<div
 								key={i}

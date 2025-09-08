@@ -97,11 +97,11 @@ export default function ChatPage() {
 				{/* Messages and Input */}
 				<div className="flex flex-col flex-1 overflow-hidden min-h-0">
 					{/* Messages */}
-					<div className="flex-1 px-6 py-4 overflow-y-auto space-y-3 bg-[var(--surface-a)]">
+					<div className="flex-1 px-6 py-4 overflow-y-auto space-y-5 bg-[var(--surface-a)]">
 						{selectedChat.messages.map((msg, i) => (
 							<div
 								key={i}
-								className={`max-w-[75%] px-4 py-2 text-sm rounded-xl shadow ${
+								className={`max-w-[75%] px-4 py-3 text-sm rounded-xl shadow ${
 									msg.from === "me"
 										? "ml-auto bg-[var(--primary-color)] text-white"
 										: "bg-[var(--gray-62)] text-white"

@@ -5,7 +5,6 @@ const conversations = [
   {
     "id": 1,
     "name": "User 1",
-    "initials": "U1",
     "messages": [
       { "from": "them", "text": "Message 1 from User 1" },
       { "from": "me", "text": "You replied to message 2" },
@@ -16,7 +15,6 @@ const conversations = [
   {
     "id": 2,
     "name": "User 2",
-    "initials": "U2",
     "messages": [
       { "from": "them", "text": "Message 1 from User 2" },
       { "from": "me", "text": "You replied to message 2" },

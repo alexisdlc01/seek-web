@@ -145,7 +145,7 @@ export default function ChatPage() {
 						<Button
 							label="Send"
 							className="px-4 py-1 border border-blue-600 text-blue-600 bg-transparent rounded-full text-sm"
-							outlined
+							style={{ color: "white" }}
 						/>
 					</div>
 				</div>

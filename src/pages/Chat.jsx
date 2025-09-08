@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button } from "primereact/button";
-import { Chip } from "primereact/chip";
 
 const conversations = Array.from({ length: 20 }, (_, i) => {
 	const messages = Array.from({ length: 50 }, (_, j) => ({
@@ -32,7 +31,7 @@ export default function ChatPage() {
 	return (
 		<div className="fixed inset-x-0 bottom-0 top-16 flex overflow-hidden bg-gray-50">
 			{/* Sidebar */}
-			<div className="w-1/3 bg-blue-50 border-r border-gray-200 flex flex-col min-h-0">
+			<div className="w-1/3  bg-[var(--surface-a)] border-r border-gray-200 flex flex-col min-h-0">
 				<div className="flex-1 overflow-y-auto divide-y divide-blue-100">
 					{conversations.map(c => (
 						<div
@@ -40,8 +39,8 @@ export default function ChatPage() {
 							onClick={() => setSelectedId(c.id)}
 							className={`flex items-center justify-between gap-4 p-4 px-5 cursor-pointer transition ${
 								selectedId === c.id
-									? "bg-white shadow-sm"
-									: "hover:bg-white"
+									? "bg-[var(--gray-62)]"
+									: "hover:bg-[var(--gray-62)]"
 							}`}
 						>
 							<div className="flex items-center gap-3 overflow-hidden">
@@ -73,7 +72,7 @@ export default function ChatPage() {
 			</div>
 
 			{/* Chat Panel */}
-			<div className="w-2/3 flex flex-col border-l border-gray-200 bg-white min-h-0">
+			<div className="w-2/3 flex flex-col border-l border-gray-200 bg-[var(--surface-a)] min-h-0">
 				{/* Header */}
 				<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
 					<h2 className="text-lg font-semibold text-gray-800">
@@ -98,7 +97,7 @@ export default function ChatPage() {
 				{/* Messages and Input */}
 				<div className="flex flex-col flex-1 overflow-hidden min-h-0">
 					{/* Messages */}
-					<div className="flex-1 px-6 py-4 overflow-y-auto space-y-3 bg-gray-50">
+					<div className="flex-1 px-6 py-4 overflow-y-auto space-y-3 bg-[var(--surface-a)]">
 						{selectedChat.messages.map((msg, i) => (
 							<div
 								key={i}

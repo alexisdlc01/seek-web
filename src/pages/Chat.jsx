@@ -138,12 +138,10 @@ export default function ChatPage() {
 							value={input}
 							onChange={e => setInput(e.target.value)}
 							onKeyDown={e => e.key === "Enter" && sendMessage()}
-							className="w-full rounded-lg px-3 py-2 text-sm"
+							className="w-full rounded-lg px-3 py-2 text-sm text-white placeholder:!text-white"
 							placeholder="Type a message..."
-
 							style={{
-								backgroundColor: "var(--gray-62)",
-								color: "white",
+								backgroundColor: "var(--gray-62)"
 							}}
 						/>
 

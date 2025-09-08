@@ -4,7 +4,8 @@ import { Button } from "primereact/button";
 const conversations = [
 	{
 		id: 1,
-		name: "User 1",
+		name: "43 North Street",
+		members: "4",
 		messages: [
 			{ from: "them", text: "Message 1 from User 1" },
 			{ from: "me", text: "You replied to message 2" },
@@ -124,9 +125,15 @@ export default function ChatPage() {
 				<div className="w-2/3 flex flex-col bg-[var(--surface-a)] min-h-0">
 					{/* Header */}
 					<div className="flex items-center justify-between px-6 py-4 border-b-1 border-[var(--gray-900)]">
-						<h2 className="text-lg font-semibold text-[var(--primary-color)]">
-							{selectedChat.name}
-						</h2>
+						<div className="flex-col items-center gap-3">
+							<h2 className="text-lg font-semibold text-[var(--primary-color)]">
+								{selectedChat.name}
+							</h2>
+							<p className="text-sm text-gray-400">
+								Members: {selectedChat.members}
+							</p>
+						</div>
+
 						<div className="flex gap-2">
 							<Button
 								label="View Status"
@@ -246,9 +253,14 @@ export default function ChatPage() {
 							>
 								←
 							</button>
-							<h2 className="text-lg font-semibold text-[var(--primary-color)]">
-								{selectedChat.name}
-							</h2>
+							<div className="flex-col items-center gap-3">
+								<h2 className="text-lg font-semibold text-[var(--primary-color)]">
+									{selectedChat.name}
+								</h2>
+								<p className="text-sm text-gray-400">
+									Members: {selectedChat.members}
+								</p>
+							</div>
 						</div>
 						<div className="flex gap-2">
 							<Button

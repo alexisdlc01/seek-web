@@ -70,10 +70,7 @@ export default function ChatPage() {
 							<div className="flex flex-col items-end shrink-0 min-w-[50px]">
 								<div className="flex items-center gap-1">
 									<p className="text-sm text-gray-400">
-										{new Date().toLocaleTimeString([], {
-											hour: "2-digit",
-											minute: "2-digit"
-										})}
+										Yesterday
 									</p>
 								</div>
 							</div>

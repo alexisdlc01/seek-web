@@ -59,7 +59,7 @@ export default function ChatPage() {
 		<div className="fixed inset-x-0 bottom-0 top-16 flex overflow-hidden bg-gray-50">
 			{/* Sidebar */}
 			<div className="w-1/3  bg-[var(--surface-a)] border-r-1 border-[var(--gray-900)] flex flex-col min-h-0">
-				<div className="flex-1 overflow-y-auto divide-y divide-blue-100">
+				<div className="flex-1 overflow-y-auto divide-y divide-[var(--gray-900)]">
 					{conversations.map(c => (
 						<div
 							key={c.id}

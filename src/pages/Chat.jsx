@@ -28,6 +28,8 @@ const conversations = [
 	{
 		id: 23,
 		name: "User 2",
+		members: "4",
+
 		messages: [
 			{ from: "them", text: "Message 1 from User 2" },
 			{ from: "me", text: "You replied to message 2" },
@@ -37,6 +39,8 @@ const conversations = [
 	},
 	{
 		id: 42,
+		members: "4",
+
 		name: "User 2",
 		messages: [
 			{ from: "them", text: "Message 1 from User 2" },
@@ -48,6 +52,8 @@ const conversations = [
 	{
 		id: 24,
 		name: "User 2",
+		members: "4",
+
 		messages: [
 			{ from: "them", text: "Message 1 from User 2" },
 			{ from: "me", text: "You replied to message 2" },

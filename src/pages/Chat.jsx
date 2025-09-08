@@ -2,27 +2,27 @@ import React, { useState } from "react";
 import { Button } from "primereact/button";
 
 const conversations = [
-  {
-    "id": 1,
-    "name": "User 1",
-    "messages": [
-      { "from": "them", "text": "Message 1 from User 1" },
-      { "from": "me", "text": "You replied to message 2" },
-      { "from": "them", "text": "Message 3 from User 1" },
-      { "from": "me", "text": "You replied to message 4" }
-    ]
-  },
-  {
-    "id": 2,
-    "name": "User 2",
-    "messages": [
-      { "from": "them", "text": "Message 1 from User 2" },
-      { "from": "me", "text": "You replied to message 2" },
-      { "from": "them", "text": "Message 3 from User 2" },
-      { "from": "me", "text": "You replied to message 4" }
-    ]
-  }
-]
+	{
+		id: 1,
+		name: "User 1",
+		messages: [
+			{ from: "them", text: "Message 1 from User 1" },
+			{ from: "me", text: "You replied to message 2" },
+			{ from: "them", text: "Message 3 from User 1" },
+			{ from: "me", text: "You replied to message 4" }
+		]
+	},
+	{
+		id: 2,
+		name: "User 2",
+		messages: [
+			{ from: "them", text: "Message 1 from User 2" },
+			{ from: "me", text: "You replied to message 2" },
+			{ from: "them", text: "Message 3 from User 2" },
+			{ from: "me", text: "You replied to message 4" }
+		]
+	}
+];
 
 export default function ChatPage() {
 	const [selectedId, setSelectedId] = useState(conversations[0].id);
@@ -52,14 +52,18 @@ export default function ChatPage() {
 						>
 							<div className="flex items-center gap-3 overflow-hidden">
 								<div className="overflow-hidden">
-									<p className="font-medium text-base text-blue-900 truncate">
+									<p className="font-medium text-base text-[var(--primary-color)] truncate">
 										{c.name}
 									</p>
-									<p className="text-sm text-gray-500 truncate">
-										{c.messages.at(-1)?.from === "me"
-											? "You: "
-											: ""}
-										{c.messages.at(-1)?.text}
+									<p className="text-sm truncate">
+										{c.messages.at(-1)?.from === "me" && (
+											<span className="text-[var(--primary-color)]">
+												You:{" "}
+											</span>
+										)}
+										<span className="text-white">
+											{c.messages.at(-1)?.text}
+										</span>
 									</p>
 								</div>
 							</div>
@@ -82,7 +86,7 @@ export default function ChatPage() {
 			<div className="w-2/3 flex flex-col border-l border-gray-200 bg-[var(--surface-a)] min-h-0">
 				{/* Header */}
 				<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-					<h2 className="text-lg font-semibold text-gray-800">
+					<h2 className="text-lg font-semibold text-[var(--primary-color)]">
 						{selectedChat.name}
 					</h2>
 					<div className="flex gap-2">

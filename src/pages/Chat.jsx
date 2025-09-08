@@ -38,7 +38,7 @@ export default function ChatPage() {
 	return (
 		<div className="fixed inset-x-0 bottom-0 top-16 flex overflow-hidden bg-gray-50">
 			{/* Sidebar */}
-			<div className="w-1/3  bg-[var(--surface-a)] border-r border-gray-200 flex flex-col min-h-0">
+			<div className="w-1/3  bg-[var(--surface-a)] border-r-1 border-[var(--gray-900)] flex flex-col min-h-0">
 				<div className="flex-1 overflow-y-auto divide-y divide-blue-100">
 					{conversations.map(c => (
 						<div
@@ -80,7 +80,7 @@ export default function ChatPage() {
 			</div>
 
 			{/* Chat Panel */}
-			<div className="w-2/3 flex flex-col border-l border-gray-200 bg-[var(--surface-a)] min-h-0">
+			<div className="w-2/3 flex flex-col bg-[var(--surface-a)] min-h-0">
 				{/* Header */}
 				<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
 					<h2 className="text-lg font-semibold text-[var(--primary-color)]">

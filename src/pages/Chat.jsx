@@ -164,7 +164,6 @@ export default function ChatPage() {
 									i === 0 ||
 									selectedChat.messages[i - 1].from !==
 										msg.from;
-								const label = isMe ? "Landlord" : "Tenant"; // or selectedChat.name
 								return (
 									<div
 										key={i}
@@ -181,7 +180,7 @@ export default function ChatPage() {
 														isMe ? "text-right" : ""
 													} text-gray-300`}
 												>
-													{label}
+													{msg.from}
 												</div>
 											)}
 											<div
@@ -319,7 +318,6 @@ export default function ChatPage() {
 									i === 0 ||
 									selectedChat.messages[i - 1].from !==
 										msg.from;
-								const label = isMe ? "Landlord" : "Tenant"; // or selectedChat.name
 								return (
 									<div
 										key={i}
@@ -336,7 +334,7 @@ export default function ChatPage() {
 														isMe ? "text-right" : ""
 													} text-gray-300`}
 												>
-													{label}
+													{msg.from}
 												</div>
 											)}
 											<div

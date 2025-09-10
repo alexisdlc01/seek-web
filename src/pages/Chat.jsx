@@ -8,20 +8,26 @@ const conversations = [
 		members: "4",
 		messages: [
 			{ from: "them", text: "Message 1 from User 1" },
-			{ from: "me", text: "You replied to message 2" },
-			{ from: "them", text: "Message 3 from User 1" },
-			{ from: "me", text: "You replied to message 4" },
 			{ from: "them", text: "Message 1 from User 1" },
-			{ from: "me", text: "You replied to message 2" },
-			{ from: "them", text: "Message 3 from User 1" },
-			{ from: "me", text: "You replied to message 4" },
 			{ from: "them", text: "Message 1 from User 1" },
+
 			{ from: "me", text: "You replied to message 2" },
-			{ from: "them", text: "Message 3 from User 1" },
+			{ from: "me", text: "You replied to message 2" },
+			{ from: "me", text: "You replied to message 2" },
+
+			{ from: "g", text: "Message 3 from User 1" },
 			{ from: "me", text: "You replied to message 4" },
-			{ from: "them", text: "Message 1 from User 1" },
+			{ from: "g", text: "Message 1 from User 1" },
 			{ from: "me", text: "You replied to message 2" },
-			{ from: "them", text: "Message 3 from User 1" },
+			{ from: "b", text: "Message 3 from User 1" },
+			{ from: "me", text: "You replied to message 4" },
+			{ from: "bob", text: "Message 1 from User 1" },
+			{ from: "me", text: "You replied to message 2" },
+			{ from: "bob", text: "Message 3 from User 1" },
+			{ from: "me", text: "You replied to message 4" },
+			{ from: "bob", text: "Message 1 from User 1" },
+			{ from: "me", text: "You replied to message 2" },
+			{ from: "bob", text: "Message 3 from User 1" },
 			{ from: "me", text: "You replied to message 4" }
 		]
 	},
@@ -31,9 +37,9 @@ const conversations = [
 		members: "4",
 
 		messages: [
-			{ from: "them", text: "Message 1 from User 2" },
+			{ from: "jeff", text: "Message 1 from User 2" },
 			{ from: "me", text: "You replied to message 2" },
-			{ from: "them", text: "Message 3 from User 2" },
+			{ from: "jeff", text: "Message 3 from User 2" },
 			{ from: "me", text: "You replied to message 4" }
 		]
 	},
@@ -43,9 +49,9 @@ const conversations = [
 
 		name: "User 2",
 		messages: [
-			{ from: "them", text: "Message 1 from User 2" },
+			{ from: "james", text: "Message 1 from User 2" },
 			{ from: "me", text: "You replied to message 2" },
-			{ from: "them", text: "Message 3 from User 2" },
+			{ from: "james", text: "Message 3 from User 2" },
 			{ from: "me", text: "You replied to message 4" }
 		]
 	},
@@ -151,19 +157,46 @@ export default function ChatPage() {
 
 					{/* Messages + Input */}
 					<div className="flex flex-col flex-1 overflow-hidden min-h-0">
-						<div className="flex-1 px-6 py-4 overflow-y-auto space-y-4 bg-[var(--surface-a)]">
-							{selectedChat.messages.map((msg, i) => (
-								<div
-									key={i}
-									className={`max-w-[55%] px-4 py-3 text-sm rounded-xl shadow ${
-										msg.from === "me"
-											? "ml-auto bg-[var(--primary-color)] text-white"
-											: "bg-[var(--gray-62)] text-white"
-									}`}
-								>
-									{msg.text}
-								</div>
-							))}
+						<div className="flex-1 px-4 py-4 overflow-y-auto space-y-3 bg-[var(--surface-a)]">
+							{selectedChat.messages.map((msg, i) => {
+								const isMe = msg.from === "me";
+								const showLabel =
+									i === 0 ||
+									selectedChat.messages[i - 1].from !==
+										msg.from;
+								const label = isMe ? "Landlord" : "Tenant"; // or selectedChat.name
+								return (
+									<div
+										key={i}
+										className={`flex ${
+											isMe
+												? "justify-end"
+												: "justify-start"
+										}`}
+									>
+										<div className="max-w-[55%]">
+											{showLabel && (
+												<div
+													className={`text-xs mb-1 ${
+														isMe ? "text-right" : ""
+													} text-gray-300`}
+												>
+													{label}
+												</div>
+											)}
+											<div
+												className={`px-4 py-3 text-sm rounded-xl shadow ${
+													isMe
+														? "bg-[var(--primary-color)] text-white"
+														: "bg-[var(--gray-62)] text-white"
+												}`}
+											>
+												{msg.text}
+											</div>
+										</div>
+									</div>
+								);
+							})}
 						</div>
 
 						<div className="border-t-1 border-[var(--gray-900)] p-4 flex gap-3">
@@ -280,18 +313,45 @@ export default function ChatPage() {
 					{/* Messages + Input */}
 					<div className="flex flex-col flex-1 overflow-hidden min-h-0">
 						<div className="flex-1 px-4 py-4 overflow-y-auto space-y-3 bg-[var(--surface-a)]">
-							{selectedChat.messages.map((msg, i) => (
-								<div
-									key={i}
-									className={`max-w-[80%] px-4 py-3 text-sm rounded-xl shadow ${
-										msg.from === "me"
-											? "ml-auto bg-[var(--primary-color)] text-white"
-											: "bg-[var(--gray-62)] text-white"
-									}`}
-								>
-									{msg.text}
-								</div>
-							))}
+							{selectedChat.messages.map((msg, i) => {
+								const isMe = msg.from === "me";
+								const showLabel =
+									i === 0 ||
+									selectedChat.messages[i - 1].from !==
+										msg.from;
+								const label = isMe ? "Landlord" : "Tenant"; // or selectedChat.name
+								return (
+									<div
+										key={i}
+										className={`flex ${
+											isMe
+												? "justify-end"
+												: "justify-start"
+										}`}
+									>
+										<div className="max-w-[80%]">
+											{showLabel && (
+												<div
+													className={`text-xs mb-1 ${
+														isMe ? "text-right" : ""
+													} text-gray-300`}
+												>
+													{label}
+												</div>
+											)}
+											<div
+												className={`px-4 py-3 text-sm rounded-xl shadow ${
+													isMe
+														? "bg-[var(--primary-color)] text-white"
+														: "bg-[var(--gray-62)] text-white"
+												}`}
+											>
+												{msg.text}
+											</div>
+										</div>
+									</div>
+								);
+							})}
 						</div>
 
 						<div className="border-t-1 border-[var(--gray-900)] p-3 flex gap-2">

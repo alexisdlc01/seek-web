@@ -73,7 +73,6 @@ const AddListing = () => {
 		{ label: "Quarter", value: "Quarter" },
 		{ label: "Flexible", value: "Flexible" }
 	];
-	const [leaseDuration, setLeaseDuration] = useState(null);
 
 	// Step 3 state
 	const furnishingOptions = [
@@ -107,13 +106,26 @@ const AddListing = () => {
 		}
 	}, [propertyType]);
 
+	useEffect(() => {
+		console.log("On step:", step);
+		switch (step) {
+			case 0:
+				console.log("Basics");
+				break;
+			case 1:
+				console.log("Location");
+				break;
+		}
+	}, [step]);
+
 	const next = () => {
 		stepperRef.current.nextCallback();
-	};
+		setStep(prev => Math.min(prev + 1, 4));}
 
 	const back = () => {
 		stepperRef.current.prevCallback();
-	};
+		setStep(prev => Math.max(prev - 1, 0));
+	}
 
 	const publish = () => {
 		toast.current.show({
@@ -192,11 +204,7 @@ const AddListing = () => {
 					Add New Property
 				</h1>
 
-				<Stepper
-					ref={stepperRef}
-					activeIndex={step}
-					onStepChange={e => setStep(e.index)}
-				>
+				<Stepper ref={stepperRef} activeIndex={step} linear>
 					<StepperPanel header="Basics">
 						<BasicInfoStep
 							title={title}

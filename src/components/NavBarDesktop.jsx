@@ -121,15 +121,30 @@ export default function NavbarDesktop({ user, logout, logo }) {
 					<div ref={avatarWrapRef} className="relative">
 						<div
 							className="flex items-center gap-2 bg-[#186273] rounded-lg px-3 py-1.5 cursor-pointer hover:bg-[#186273] transition"
-							onClick={(e) => menuRef.current.toggle(e)}
+							onClick={e => menuRef.current.toggle(e)}
 						>
-							<Avatar
-								label={user.name.split(" ").map(n => n[0]).join("").toUpperCase()}
-								className="bg-[#3182ce] text-white font-bold"
-								style={{ backgroundColor: "#3182ce" }}
-								shape="circle"
-							/>
-							<span className="text-white font-medium">{user.name}</span>
+							{user.profilePicUrl ? (
+								<Avatar
+									image={user.profilePicUrl}
+									className="bg-[#3182ce] text-white font-bold"
+									shape="circle"
+								/>
+							) : (
+								<Avatar
+									label={user.name
+										.split(" ")
+										.map(n => n[0])
+										.join("")
+										.toUpperCase()}
+									className="bg-[#3182ce] text-white font-bold"
+									style={{ backgroundColor: "#3182ce" }}
+									shape="circle"
+								/>
+							)}
+
+							<span className="text-white font-medium">
+								{user.name}
+							</span>
 							<i className="pi pi-chevron-down text-white text-sm" />
 						</div>
 
@@ -141,7 +156,6 @@ export default function NavbarDesktop({ user, logout, logo }) {
 							className="rounded-xl shadow-lg border bg-white p-1 min-w-0"
 						/>
 					</div>
-
 
 					{/* Old Menu component as popup */}
 					<Menu

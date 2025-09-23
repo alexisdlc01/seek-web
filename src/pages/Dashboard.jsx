@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { Badge } from "primereact/badge";
 import { Dropdown } from "primereact/dropdown";
 import { Tag } from "primereact/tag";
 import { Chart } from "primereact/chart";
 import "chart.js/auto";
+import UserContext from "../context/UserContext.jsx";
 
 /* -------------------- Marketing Section -------------------- */
 
@@ -224,6 +225,7 @@ export default function Dashboard() {
 	const [selectedProperty, setSelectedProperty] = useState(
 		"123 North Street, St Andrews, KY16 9AL"
 	);
+	const { user } = useContext(UserContext);
 
 	const ranges = ["7 days", "30 days", "All time"].map(r => ({
 		label: r,
@@ -314,6 +316,10 @@ export default function Dashboard() {
 		}
 	};
 
+	useEffect(() => {
+		console.log("the user", user);
+	}, [user]);
+
 	return (
 		<div
 			className="min-h-screen"
@@ -325,7 +331,7 @@ export default function Dashboard() {
 					{/* Header */}
 					<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 						<h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-color)]">
-							Welcome back, Graham!
+							Welcome back, Kshitij Verma!
 						</h1>
 						<div className="flex gap-3">
 							<div className="relative">

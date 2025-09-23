@@ -158,3 +158,30 @@ body {
   color: var(--primary-color-text) !important;
   opacity: 1 !important;
 }
+
+/* overlay panel */
+.user-menu.p-tieredmenu.p-tieredmenu-overlay {
+	background: #186273 !important;
+	border: 0 !important;
+	padding: 6px !important;
+	border-radius: 12px !important;
+	box-shadow: 0 10px 18px rgba(0,0,0,.2) !important;
+}
+
+/* keep sub lists transparent */
+.user-menu .p-submenu-list { background: transparent !important; }
+
+/* menu items */
+.user-menu .p-menuitem-link {
+	background: transparent !important;
+	color: #fff !important;
+	justify-content: center;      /* centers text */
+	border-radius: 8px;
+	padding: 10px 14px;
+}
+.user-menu .p-menuitem-link:hover { background: #147083 !important; }
+
+/* ensure all text/icons are white */
+.user-menu .p-menuitem-text,
+.user-menu .p-menuitem-icon,
+.user-menu .p-submenu-icon { color: #fff !important; }

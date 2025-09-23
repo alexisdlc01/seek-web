@@ -1,11 +1,9 @@
-import React, { useRef, useEffect, useState, useContext } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
 import { useNavigate } from "react-router-dom";
 import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
-import UserContext from "../context/UserContext.jsx";
-import { TieredMenu } from "primereact/tieredmenu";
 import { Avatar } from "primereact/avatar";
 
 export default function NavbarDesktop({ user, logout, logo }) {
@@ -41,6 +39,8 @@ export default function NavbarDesktop({ user, logout, logo }) {
 	const iconColorClass = theme === "dark" ? "!text-white" : "!text-[#0F0F23]";
 
 	const menuRef = useRef(null);
+	const avatarWrapRef = useRef(null);
+
 	const loginItems = [
 		{
 			label: <span style={{ color: "#0F0F23" }}>As Student</span>,
@@ -70,16 +70,17 @@ export default function NavbarDesktop({ user, logout, logo }) {
 			label: "Logout",
 			command: async () => await logout(),
 			template: (item, options) => (
-				<div
+				<Button
+					label={
+						<span style={{ color: "#0F0F23" }}>{item.label}</span>
+					}
+					text
+					className={`${logoutStyle} w-full text-left !py-2 !px-3`}
 					onClick={options.onClick}
-					className="px-4 py-2 text-center text-white font-semibold cursor-pointer hover:bg-blue-700 rounded-md"
-				>
-					{item.label}
-				</div>
-			),
-		},
+				/>
+			)
+		}
 	];
-
 
 	const end = (
 		<div className="flex items-center gap-5 mr-6">
@@ -115,32 +116,40 @@ export default function NavbarDesktop({ user, logout, logo }) {
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/messages")}
 					/>
-					<div
-						className="flex items-center gap-2 bg-[#186273] px-3 py-1.5 rounded-full cursor-pointer hover:bg-[#186273] transition"
-						onClick={e => menuRef.current.toggle(e)}
-					>
-						<Avatar
-							label={user.name
-								.split(" ")
-								.map(n => n[0])
-								.join("")
-								.toUpperCase()}
-							className="bg-white text-[#21b8c4] font-bold"
-							shape="circle"
+
+					{/* Avatar trigger stays the same */}
+					<div ref={avatarWrapRef} className="relative">
+						<div
+							className="flex items-center gap-2 bg-[#186273] rounded-lg px-3 py-1.5 cursor-pointer hover:bg-[#186273] transition"
+							onClick={(e) => menuRef.current.toggle(e)}
+						>
+							<Avatar
+								label={user.name.split(" ").map(n => n[0]).join("").toUpperCase()}
+								className="bg-[#3182ce] text-white font-bold"
+								style={{ backgroundColor: "#3182ce" }}
+								shape="circle"
+							/>
+							<span className="text-white font-medium">{user.name}</span>
+							<i className="pi pi-chevron-down text-white text-sm" />
+						</div>
+
+						<Menu
+							model={userMenuItems}
+							popup
+							ref={menuRef}
+							appendTo={avatarWrapRef.current}
+							className="rounded-xl shadow-lg border bg-white p-1 min-w-0"
 						/>
-						<span className="text-white font-medium">
-							{user.name}
-						</span>
-						<i className="pi pi-chevron-down text-white text-sm" />
 					</div>
 
-					<TieredMenu
+
+					{/* Old Menu component as popup */}
+					<Menu
 						model={userMenuItems}
 						popup
 						ref={menuRef}
-						className="rounded-lg shadow-lg border-0 bg-blue-600"
+						className="rounded-xl shadow-lg border bg-white p-1 min-w-0"
 					/>
-
 				</>
 			) : (
 				<>
@@ -193,10 +202,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 						{loginOpen && (
 							<div
 								className="absolute right-0 top-[calc(100%+8px)] z-50"
-								style={{
-									width: "30%",
-									right: "155%"
-								}}
+								style={{ width: "30%", right: "155%" }}
 							>
 								<Menu
 									model={loginItems.map(item => ({
@@ -234,7 +240,11 @@ export default function NavbarDesktop({ user, logout, logo }) {
 					button: { className: "hidden" }
 				}}
 				style={{ background: backgroundTheme }}
-				className={`transition-colors duration-500 ease-in-out ${theme === "dark" ? "bg-black text-white" : "bg-white text-black"}`}
+				className={`transition-colors duration-500 ease-in-out ${
+					theme === "dark"
+						? "bg-black text-white"
+						: "bg-white text-black"
+				}`}
 			/>
 		</div>
 	);

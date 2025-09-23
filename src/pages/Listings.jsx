@@ -13,8 +13,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function Listings() {
 	const navigate = useNavigate();
-	const { listings, setCurrentListing } =
-		useContext(ListingsContext);
+	const { listings, setCurrentListing } = useContext(ListingsContext);
 
 	return (
 		<div
@@ -72,7 +71,7 @@ export default function Listings() {
 
 			{/* Listings */}
 			<div className="space-y-6">
-				{listings.map((prop, i) => (
+				{properties.map((prop, i) => (
 					<motion.div
 						key={prop._id}
 						initial={{ opacity: 0, y: 20 }}
@@ -147,6 +146,9 @@ export default function Listings() {
 										outlined
 										className="w-full sm:w-auto "
 										onClick={() => navigate("/applicants")}
+										style={{
+											color: "white"
+										}}
 									/>
 								</motion.div>
 							)}
@@ -163,7 +165,10 @@ export default function Listings() {
 										className="w-full sm:w-auto"
 										onClick={() => {
 											setCurrentListing(prop);
-											navigate("/add-listing")
+											navigate("/add-listing");
+										}}
+										style={{
+											color: "white"
 										}}
 									/>
 								</motion.div>
@@ -175,9 +180,11 @@ export default function Listings() {
 									icon="pi pi-ellipsis-h"
 									size="small"
 									severity="primary"
-									outlined
 									aria-label="More options"
 									className="w-full sm:w-auto"
+									style={{
+										color: "white"
+									}}
 								/>
 							</motion.div>
 						</div>

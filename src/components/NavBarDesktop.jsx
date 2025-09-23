@@ -1,9 +1,12 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
 import { useNavigate } from "react-router-dom";
 import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
+import UserContext from "../context/UserContext.jsx";
+import { TieredMenu } from "primereact/tieredmenu";
+import { Avatar } from "primereact/avatar";
 
 export default function NavbarDesktop({ user, logout, logo }) {
 	const navigate = useNavigate();
@@ -37,6 +40,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 	const oppositeBackgroundTheme = theme !== "dark" ? "#0F0F23" : "white";
 	const iconColorClass = theme === "dark" ? "!text-white" : "!text-[#0F0F23]";
 
+	const menuRef = useRef(null);
 	const loginItems = [
 		{
 			label: <span style={{ color: "#0F0F23" }}>As Student</span>,
@@ -60,6 +64,22 @@ export default function NavbarDesktop({ user, logout, logo }) {
 		"navbar-buttons text-base font-semibold text-red-600 relative hover:bg-transparent focus:ring-0 focus:outline-none active:bg-transparent after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:w-0 after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full";
 
 	const start = <div className="ml-4">{logo}</div>;
+
+	const userMenuItems = [
+		{
+			label: "Logout",
+			command: async () => await logout(),
+			template: (item, options) => (
+				<div
+					onClick={options.onClick}
+					className="px-4 py-2 text-center text-white font-semibold cursor-pointer hover:bg-blue-700 rounded-md"
+				>
+					{item.label}
+				</div>
+			),
+		},
+	];
+
 
 	const end = (
 		<div className="flex items-center gap-5 mr-6">
@@ -95,26 +115,32 @@ export default function NavbarDesktop({ user, logout, logo }) {
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/messages")}
 					/>
-					<Button
-						label={
-							<span style={{ color: oppositeBackgroundTheme }}>
-								Settings
-							</span>
-						}
-						text
-						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
-						onClick={() => navigate("/settings")}
+					<div
+						className="flex items-center gap-2 bg-[#186273] px-3 py-1.5 rounded-full cursor-pointer hover:bg-[#186273] transition"
+						onClick={e => menuRef.current.toggle(e)}
+					>
+						<Avatar
+							label={user.name
+								.split(" ")
+								.map(n => n[0])
+								.join("")
+								.toUpperCase()}
+							className="bg-white text-[#21b8c4] font-bold"
+							shape="circle"
+						/>
+						<span className="text-white font-medium">
+							{user.name}
+						</span>
+						<i className="pi pi-chevron-down text-white text-sm" />
+					</div>
+
+					<TieredMenu
+						model={userMenuItems}
+						popup
+						ref={menuRef}
+						className="rounded-lg shadow-lg border-0 bg-blue-600"
 					/>
-					<Button
-						label={
-							<span style={{ color: oppositeBackgroundTheme }}>
-								Logout
-							</span>
-						}
-						text
-						className={logoutStyle}
-						onClick={async () => await logout()}
-					/>
+
 				</>
 			) : (
 				<>

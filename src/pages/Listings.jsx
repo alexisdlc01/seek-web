@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
 import properties from "../dummyData/DummyListings";
@@ -6,10 +6,15 @@ import houseImage from "../assets/house.jpg";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Badge } from "primereact/badge";
+import axios from "axios";
+import ListingsContext from "../context/ListingsContext.jsx";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function Listings() {
 	const navigate = useNavigate();
-
+	const { listings, setCurrentListing } =
+		useContext(ListingsContext);
 
 	return (
 		<div
@@ -57,7 +62,9 @@ export default function Listings() {
 							style={{
 								background: "#23b7c5"
 							}}
-							onClick={() => navigate("/add-listing")}
+							onClick={async () => {
+								navigate("/add-listing");
+							}}
 						/>
 					</motion.div>
 				</div>
@@ -65,9 +72,9 @@ export default function Listings() {
 
 			{/* Listings */}
 			<div className="space-y-6">
-				{properties.map((prop, i) => (
+				{listings.map((prop, i) => (
 					<motion.div
-						key={prop.id}
+						key={prop._id}
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.4, delay: i * 0.1 }}
@@ -88,55 +95,79 @@ export default function Listings() {
 						{/* Info + Tags */}
 						<div className="flex-1 w-full">
 							<h2 className="font-semibold text-[var(--text-color)] text-base mt-2 md:mt-0">
-								{prop.address}
+								{prop.streetAddress}
 							</h2>
-							<p className="text-sm text-white">{prop.city}</p>
+							<p className="text-sm text-white">
+								{prop.cityTown}, {prop.postcodeZIP}
+							</p>
 							<div className="flex flex-wrap gap-2 mt-2">
-								<Tag
-									value="2 New Applicants"
-									severity="info"
-									className="text-xs font-medium px-3 py-1 rounded-full"
-									style={{
-										background: "#23b7c5"
-									}}
-								/>
-								<Tag
-									value="3 New Messages"
-									severity="info"
-									className="text-xs font-medium px-3 py-1 rounded-full"
-									style={{
-										background: "#23b7c5"
-									}}
-								/>
+								{prop.isDraft && (
+									<Tag
+										value="Draft"
+										severity="warning"
+										className="text-xs font-medium px-3 py-1 rounded-full"
+									/>
+								)}
+								{!prop.isVerified && (
+									<Tag
+										value="Not verified"
+										severity="danger"
+										className="text-xs font-medium px-3 py-1 rounded-full"
+									/>
+								)}
+								{/*<Tag*/}
+								{/*	value="2 New Applicants"*/}
+								{/*	severity="info"*/}
+								{/*	className="text-xs font-medium px-3 py-1 rounded-full"*/}
+								{/*	style={{*/}
+								{/*		background: "#23b7c5"*/}
+								{/*	}}*/}
+								{/*/>*/}
+								{/*<Tag*/}
+								{/*	value="3 New Messages"*/}
+								{/*	severity="info"*/}
+								{/*	className="text-xs font-medium px-3 py-1 rounded-full"*/}
+								{/*	style={{*/}
+								{/*		background: "#23b7c5"*/}
+								{/*	}}*/}
+								{/*/>*/}
 							</div>
 						</div>
 
 						{/* Buttons */}
 						<div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
 							{/* View Applicants */}
-							<motion.div whileHover={{ scale: 1.01 }}>
-								<Button
-									label="View Applicants"
-									icon="pi pi-users"
-									size="small"
-									severity="primary"
-									outlined
-									className="w-full sm:w-auto "
-									onClick={() => navigate("/applicants")}
-								/>
-							</motion.div>
+							{!prop.isDraft && (
+								<motion.div whileHover={{ scale: 1.01 }}>
+									<Button
+										label="View Applicants"
+										icon="pi pi-users"
+										size="small"
+										severity="primary"
+										outlined
+										className="w-full sm:w-auto "
+										onClick={() => navigate("/applicants")}
+									/>
+								</motion.div>
+							)}
 
 							{/* Edit Listing */}
-							<motion.div whileHover={{ scale: 1.01 }}>
-								<Button
-									label="Edit Listing"
-									icon="pi pi-pencil"
-									size="small"
-									severity="primary"
-									outlined
-									className="w-full sm:w-auto"
-								/>
-							</motion.div>
+							{prop.isDraft && (
+								<motion.div whileHover={{ scale: 1.01 }}>
+									<Button
+										label="Continue Editing"
+										icon="pi pi-pencil"
+										size="small"
+										severity="primary"
+										outlined
+										className="w-full sm:w-auto"
+										onClick={() => {
+											setCurrentListing(prop);
+											navigate("/add-listing")
+										}}
+									/>
+								</motion.div>
+							)}
 
 							{/* More Options */}
 							<motion.div whileHover={{ scale: 1.02 }}>

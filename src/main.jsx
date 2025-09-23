@@ -7,6 +7,7 @@ import { PrimeReactProvider } from "primereact/api";
 import { UserProvider } from "./context/UserContext.jsx";
 import { NavbarThemeProvider } from "./context/NavBarThemeContext.jsx";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { ListingsProvider } from "./context/ListingsContext.jsx";
 
 const LoadingScreen = () => (
 	<div className="min-h-screen flex items-center justify-center bg-white">
@@ -20,7 +21,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 			<BrowserRouter>
 				<UserProvider>
 					<NavbarThemeProvider>
-						<App />
+						<ListingsProvider>
+							<App />
+						</ListingsProvider>
 					</NavbarThemeProvider>
 				</UserProvider>
 			</BrowserRouter>

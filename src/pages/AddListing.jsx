@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Stepper } from "primereact/stepper";
 import { StepperPanel } from "primereact/stepperpanel";
 import { Toast } from "primereact/toast";
@@ -7,12 +7,18 @@ import LocationAvailabilityStep from "../components/addPropertySteps/LocationAva
 import FeaturesStep from "../components/addPropertySteps/FeaturesStep";
 import PhotosMediaStep from "../components/addPropertySteps/PhotosMediaStep";
 import ReviewPublishStep from "../components/addPropertySteps/ReviewPublishStep";
+import ListingsContext from "../context/ListingsContext.jsx";
+import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const AddListing = () => {
 	const toast = useRef(null);
 	const stepperRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const floorPlanInputRef = useRef(null);
+	const { currentListing, setCurrentListing, setListings } =
+		useContext(ListingsContext);
 	const [step, setStep] = useState(0);
 
 	// Step 1 state
@@ -107,25 +113,133 @@ const AddListing = () => {
 	}, [propertyType]);
 
 	useEffect(() => {
-		console.log("On step:", step);
-		switch (step) {
-			case 0:
-				console.log("Basics");
-				break;
-			case 1:
-				console.log("Location");
-				break;
-		}
+		(async () => {
+			console.log("On step:", step);
+			switch (step) {
+				case 0:
+					console.log("Basics");
+					break;
+				case 1:
+					console.log("Location");
+					break;
+				case 2:
+					if (!currentListing) {
+						const baseDraft = await axios.post(
+							`${BASE_URL}/listings/draft`,
+							{},
+							{
+								withCredentials: true
+							}
+						);
+						setCurrentListing(baseDraft.data);
+					}
+					const step2SavedDraft = await axios.patch(
+						`${BASE_URL}/listings/${currentListing._id}/createStep2`,
+						{
+							propertyTitle: title,
+							sizeSqMeters: sizeSqM,
+							propertyType: propertyType,
+							bedroomsCount: regularBedrooms,
+							ensuiteBedroomCount: ensuiteBedrooms,
+							propertyDesc: description,
+							amenities: amenities,
+							streetAddress: street,
+							cityTown: city,
+							postcodeZIP: postcode,
+							country: country,
+							monthlyRent: rent,
+							securityDeposit: deposit,
+							availableFrom: availabilityDate,
+							availableUntil: endAvailabilityDate
+						},
+						{
+							withCredentials: true
+						}
+					);
+					setListings(prevState => [
+						...prevState,
+						step2SavedDraft.data
+					]);
+					break;
+				case 3:
+					await axios.patch(
+						`${BASE_URL}/listings/${currentListing._id}/createStep3`,
+						{
+							// propertyTitle: title,
+							// sizeSqMeters: sizeSqM,
+							// propertyType: propertyType,
+							// bedroomsCount: regularBedrooms,
+							// ensuiteBedroomCount: ensuiteBedrooms,
+							// propertyDesc: description,
+							// amenities: amenities,
+							// streetAddress: street,
+							// cityTown: city,
+							// postcodeZIP: postcode,
+							// country: country,
+							// monthlyRent: rent,
+							// securityDeposit: deposit,
+							// availableFrom: availabilityDate,
+							// availableUntil: endAvailabilityDate,
+							furnishingStatus: furnishingStatus,
+							epcRating: epcRating
+						},
+						{
+							withCredentials: true
+						}
+					);
+					break;
+			}
+		})();
 	}, [step]);
+
+	useEffect(() => {
+		(async () => {
+			if (currentListing) {
+				const res = await axios.get(
+					`${BASE_URL}/listings/mine/${currentListing._id}`,
+					{
+						withCredentials: true
+					}
+				);
+				console.log("data back", res.data);
+				res.data.propertyTitle ? setTitle(res.data.propertyTitle) : {};
+				res.data.sizeSqMeters ? setSizeSqM(res.data.sizeSqMeters) : {};
+				res.data.propertyType ? setPropertyType(res.data.propertyType) : {};
+				res.data.bedroomsCount
+					? setRegularBedrooms(res.data.bedroomsCount)
+					: {};
+				res.data.ensuiteBedroomCount
+					? setEnsuiteBedrooms(res.data.ensuiteBedroomCount)
+					: {};
+				res.data.propertyDesc ? setDescription(res.data.propertyDesc) : {};
+				res.data.amenities ? setAmenities(res.data.amenities) : {};
+				res.data.streetAddress ? setStreet(res.data.streetAddress) : {};
+				res.data.cityTown ? setCity(res.data.cityTown) : {};
+				res.data.postcodeZIP ? setPostcode(res.data.postcodeZIP) : {};
+				res.data.country ? setCountry(res.data.country) : {};
+				res.data.monthlyRent ? setRent(res.data.monthlyRent) : {};
+				res.data.securityDeposit
+					? setDeposit(res.data.securityDeposit)
+					: {};
+				res.data.availableFrom
+					? setAvailabilityDate(res.data.availableFrom)
+					: {};
+				res.data.availableUntil
+					? setEndAvailabilityDate(res.data.availableUntil)
+					: {};
+			}
+		})();
+	}, []);
 
 	const next = () => {
 		stepperRef.current.nextCallback();
-		setStep(prev => Math.min(prev + 1, 4));}
+		setStep(prev => Math.min(prev + 1, 4));
+	};
 
 	const back = () => {
 		stepperRef.current.prevCallback();
 		setStep(prev => Math.max(prev - 1, 0));
-	}
+	};
 
 	const publish = () => {
 		toast.current.show({

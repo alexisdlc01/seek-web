@@ -12,6 +12,9 @@ export default function NavbarDesktop({ user, logout, logo }) {
 	const { theme, setTheme } = useNavbarTheme();
 	const didInit = useRef(false);
 	const [loginOpen, setLoginOpen] = useState(false);
+	const [userMenuOpen, setUserMenuOpen] = useState(false);
+	const userWrapRef = useRef(null);
+
 	const loginWrapRef = useRef(null);
 
 	useEffect(() => {
@@ -20,6 +23,20 @@ export default function NavbarDesktop({ user, logout, logo }) {
 			setTheme("dark");
 		}
 	}, [setTheme]);
+
+	useEffect(() => {
+		const onDocClick = e => {
+			if (
+				loginWrapRef.current &&
+				!loginWrapRef.current.contains(e.target)
+			)
+				setLoginOpen(false);
+			if (userWrapRef.current && !userWrapRef.current.contains(e.target))
+				setUserMenuOpen(false);
+		};
+		document.addEventListener("click", onDocClick);
+		return () => document.removeEventListener("click", onDocClick);
+	}, []);
 
 	useEffect(() => {
 		const onDocClick = e => {
@@ -37,9 +54,6 @@ export default function NavbarDesktop({ user, logout, logo }) {
 	const backgroundTheme = theme === "dark" ? "#0F0F23" : "white";
 	const oppositeBackgroundTheme = theme !== "dark" ? "#0F0F23" : "white";
 	const iconColorClass = theme === "dark" ? "!text-white" : "!text-[#0F0F23]";
-
-	const menuRef = useRef(null);
-	const avatarWrapRef = useRef(null);
 
 	const loginItems = [
 		{
@@ -118,10 +132,10 @@ export default function NavbarDesktop({ user, logout, logo }) {
 					/>
 
 					{/* Avatar trigger stays the same */}
-					<div ref={avatarWrapRef} className="relative">
+					<div ref={userWrapRef} className="relative">
 						<div
 							className="flex items-center gap-2 bg-[#186273] rounded-lg px-3 py-1.5 cursor-pointer hover:bg-[#186273] transition"
-							onClick={e => menuRef.current.toggle(e)}
+							onClick={() => setUserMenuOpen(v => !v)}
 						>
 							{user.profilePicUrl ? (
 								<Avatar
@@ -141,29 +155,24 @@ export default function NavbarDesktop({ user, logout, logo }) {
 									shape="circle"
 								/>
 							)}
-
 							<span className="text-white font-medium">
 								{user.name}
 							</span>
 							<i className="pi pi-chevron-down text-white text-sm" />
 						</div>
 
-						<Menu
-							model={userMenuItems}
-							popup
-							ref={menuRef}
-							appendTo={avatarWrapRef.current}
-							className="rounded-xl shadow-lg border bg-white p-1 min-w-0"
-						/>
-					</div>
+						{userMenuOpen && (
+							<div className="absolute right-0 top-[calc(100%+8px)] z-50 w-full rounded-xl shadow-lg border bg-white p-1 overflow-hidden">
 
-					{/* Old Menu component as popup */}
-					<Menu
-						model={userMenuItems}
-						popup
-						ref={menuRef}
-						className="rounded-xl shadow-lg border bg-white p-1 min-w-0"
-					/>
+								<button
+									onClick={async () => { setUserMenuOpen(false); await logout(); }}
+									className="cursor-pointer w-full text-left px-3 py-2 text-[#3182c] font-semibold hover:bg-black/5 rounded-lg"
+								>
+									<i className="pi pi-sign-out"></i> Logout
+								</button>
+							</div>
+						)}
+					</div>
 				</>
 			) : (
 				<>

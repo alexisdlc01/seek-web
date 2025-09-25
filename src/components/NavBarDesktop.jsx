@@ -74,27 +74,8 @@ export default function NavbarDesktop({ user, logout, logo }) {
 
 	const baseStyle =
 		"navbar-buttons text-base font-semibold text-blue-900 relative hover:bg-transparent focus:ring-0 focus:outline-none active:bg-transparent after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:w-0 after:bg-blue-900 after:transition-all after:duration-300 hover:after:w-full";
-	const logoutStyle =
-		"navbar-buttons text-base font-semibold text-red-600 relative hover:bg-transparent focus:ring-0 focus:outline-none active:bg-transparent after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:w-0 after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full";
 
 	const start = <div className="ml-4">{logo}</div>;
-
-	const userMenuItems = [
-		{
-			label: "Logout",
-			command: async () => await logout(),
-			template: (item, options) => (
-				<Button
-					label={
-						<span style={{ color: "#0F0F23" }}>{item.label}</span>
-					}
-					text
-					className={`${logoutStyle} w-full text-left !py-2 !px-3`}
-					onClick={options.onClick}
-				/>
-			)
-		}
-	];
 
 	const end = (
 		<div className="flex items-center gap-5 mr-6">

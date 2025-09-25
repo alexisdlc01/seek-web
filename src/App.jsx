@@ -24,6 +24,7 @@ import { Button } from "primereact/button";
 import Dashboard from "./pages/Dashboard.jsx";
 import { AnimatePresence, motion } from "framer-motion";
 import Download from "./pages/Download.jsx";
+import ProtectedRoute from "./pages/ProtectedRoute.jsx";
 
 const NotFound = () => {
 	const navigate = useNavigate();
@@ -83,20 +84,56 @@ function App() {
 								element={<SignInStudent />}
 							/>
 
-							<Route path="/listings" element={<Listings />} />
+							<Route
+								path="/listings"
+								element={
+									<ProtectedRoute
+										allowedRoles={["LANDLORD_AGENCY"]}
+									>
+										<Listings />
+									</ProtectedRoute>
+								}
+							/>
 							<Route
 								path="/applicants"
-								element={<Applicants />}
+								element={
+									<ProtectedRoute
+										allowedRoles={["LANDLORD_AGENCY"]}
+									>
+										<Applicants />
+									</ProtectedRoute>
+								}
 							/>
 							<Route
 								path="/add-listing"
-								element={<AddListing />}
+								element={
+									<ProtectedRoute
+										allowedRoles={["LANDLORD_AGENCY"]}
+									>
+										<AddListing />
+									</ProtectedRoute>
+								}
 							/>
 							<Route
 								path="/application"
-								element={<Application />}
+								element={
+									<ProtectedRoute
+										allowedRoles={["LANDLORD_AGENCY"]}
+									>
+										<Application />
+									</ProtectedRoute>
+								}
 							/>
-							<Route path="/chat" element={<Chat />} />
+							<Route
+								path="/chat"
+								element={
+									<ProtectedRoute
+										allowedRoles={["LANDLORD_AGENCY"]}
+									>
+										<Chat />
+									</ProtectedRoute>
+								}
+							/>
 							<Route
 								path="/resetpassword"
 								element={<ResetPassword />}
@@ -105,7 +142,16 @@ function App() {
 								path="/activationSent"
 								element={<ActivationSent />}
 							/>
-							<Route path="/dashboard" element={<Dashboard />} />
+							<Route
+								path="/dashboard"
+								element={
+									<ProtectedRoute
+										allowedRoles={["LANDLORD_AGENCY"]}
+									>
+										<Dashboard />
+									</ProtectedRoute>
+								}
+							/>
 							<Route
 								path="/verify-email"
 								element={<VerifyingEmail />}

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
 import DownloadCTA from "../components/DownloadCTA.jsx";
+import JoinMailingList from "../components/JoinMailingList.jsx"
 import { motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
 import { AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
@@ -281,7 +282,7 @@ const FloatingDownload = () => {
 					style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
 				>
 					<div className="mx-auto pointer-events-auto">
-						<DownloadCTA />
+						<JoinMailingList/>
 					</div>
 				</motion.div>
 			)}

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
 import DownloadCTA from "../components/DownloadCTA.jsx";
-import JoinMailingList from "../components/JoinMailingList.jsx"
+import JoinMailingList from "../components/JoinMailingList.jsx";
 import { motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
 import { AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
@@ -282,7 +282,7 @@ const FloatingDownload = () => {
 					style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
 				>
 					<div className="mx-auto pointer-events-auto">
-						<JoinMailingList/>
+						<JoinMailingList />
 					</div>
 				</motion.div>
 			)}
@@ -321,6 +321,12 @@ const Download = () => {
 					<Button
 						className="mt-16 px-6 py-3 border-0 bg-[#23b7c5] text-white rounded-md hover:opacity-90 transition"
 						style={{ color: "white" }}
+						onClick={() =>
+							window.scrollTo({
+								top: 700,
+								behavior: "smooth"
+							})
+						}
 					>
 						Learn more ↓
 					</Button>

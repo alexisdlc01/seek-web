@@ -1,7 +1,28 @@
 // MailingCTA.tsx
-import React from "react";
+import React, { useState } from "react";
 
 export default function MailingCTA() {
+	const [email, setEmail] = useState("");
+
+	const handleSubmit = async e => {
+		e.preventDefault();
+
+		const formData = new FormData();
+		formData.append("entry.1674415312", email);
+
+		await fetch(
+			"https://docs.google.com/forms/d/e/1FAIpQLSd4wfud28ggpa0aKqOmG2omVx7t24a5wwqB7jmZueHwiBcs-w/formResponse",
+			{
+				method: "POST",
+				mode: "no-cors",
+				body: formData
+			}
+		);
+
+		setEmail("");
+		alert("Thanks for subscribing!");
+	};
+
 	return (
 		<section className="bg-[#49BBC4] text-[#0B0D17] py-8">
 			<div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-6">
@@ -16,10 +37,16 @@ export default function MailingCTA() {
 				</div>
 
 				{/* Right input + button */}
-				<form className="flex items-center w-full sm:w-auto bg-white rounded-full shadow overflow-hidden">
+				<form
+					onSubmit={handleSubmit}
+					className="flex items-center w-full sm:w-auto bg-white rounded-full shadow overflow-hidden"
+				>
 					<input
 						type="email"
+						value={email}
+						onChange={e => setEmail(e.target.value)}
 						placeholder="Enter your email"
+						required
 						className="flex-1 px-4 py-3 text-sm text-gray-700 placeholder-gray-500 focus:outline-none"
 					/>
 					<button

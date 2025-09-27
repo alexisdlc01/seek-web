@@ -32,30 +32,31 @@ export default function MailingCTA() {
 						Join Our Mailing List
 					</h3>
 					<p className="text-white/80 mt-1">
-						Stay updated with the latest news and features.
+						Stay updated when the app goes live.
 					</p>
 				</div>
 
 				{/* Right input + button */}
-				<form
-					onSubmit={handleSubmit}
-					className="flex items-center w-full sm:w-auto bg-white rounded-full shadow overflow-hidden"
-				>
-					<input
-						type="email"
-						value={email}
-						onChange={e => setEmail(e.target.value)}
-						placeholder="Enter your email"
-						required
-						className="flex-1 px-4 py-3 text-sm text-gray-700 placeholder-gray-500 focus:outline-none"
-					/>
-					<button
-						type="submit"
-						className="px-6 py-3 bg-[#0B0D17] text-white font-semibold hover:bg-[#22263a] transition"
-					>
-						Subscribe
-					</button>
-				</form>
+<form
+	onSubmit={handleSubmit}
+	className="flex items-center w-full sm:w-[400px] bg-white rounded-full shadow overflow-hidden"
+>
+	<input
+		type="email"
+		value={email}
+		onChange={e => setEmail(e.target.value)}
+		placeholder="Enter your email"
+		required
+		className="flex-1 px-4 py-3 text-sm text-gray-700 placeholder-gray-500 focus:outline-none"
+	/>
+	<button
+		type="submit"
+		className="px-6 py-3 bg-[#0B0D17] text-white font-semibold hover:bg-[#22263a] transition"
+	>
+		Subscribe
+	</button>
+</form>
+
 			</div>
 		</section>
 	);

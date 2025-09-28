@@ -19,7 +19,7 @@ export default function Navbar() {
 	}, []);
 
 	const logoSrc =
-		theme === "dark" ? "/SEEK_WHITE_FINAL.svg" : "/SEEK_BLUE_FINAL.svg";
+		theme === "dark" ? "/textLogos/seek_white_text.svg" : "/textLogos/seek_blue_text.svg";
 
 	const logo = (
 		<motion.img

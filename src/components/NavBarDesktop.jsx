@@ -185,7 +185,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 						}
 						text
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
-						onClick={() => navigate("/help")}
+						onClick={() => navigate("/contact")}
 					/>
 					<div ref={loginWrapRef} className="relative">
 						<Button

@@ -1,7 +1,6 @@
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
-import Help from "./pages/Help";
 import Privacy from "./pages/Privacy";
 import Security from "./pages/Security";
 import Terms from "./pages/Terms";
@@ -65,7 +64,6 @@ function App() {
 							<Route path="/terms" element={<Terms />} />
 							<Route path="/privacy" element={<Privacy />} />
 							<Route path="/contact" element={<ContactPage />} />
-							<Route path="/help" element={<Help />} />
 							<Route path="/about" element={<About />} />
 							<Route
 								path="/signup/landlord"

@@ -54,7 +54,7 @@ export default function NavbarMobile({ user, logout, logo }) {
 		: [
 				{ label: "Home", command: () => navigate("/") },
 				{ label: "About", command: () => navigate("/about") },
-				{ label: "Help", command: () => navigate("/help") }
+				{ label: "Help", command: () => navigate("/contact") }
 			];
 
 	return (

@@ -1,246 +1,160 @@
-import { useEffect, useRef } from "react";
-import {
-	motion,
-	useTransform,
-	useSpring,
-	useMotionTemplate,
-	useScroll, useInView
-} from "framer-motion";
-import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
+"use client";
+
+import { useState } from "react";
 
 export default function ContactPage() {
-	const { scrollY } = useScroll();
-	const videoRef = useRef(null);
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
+	const [message, setMessage] = useState("");
+	const [submitting, setSubmitting] = useState(false);
+	const [success, setSuccess] = useState(null);
+	const [error, setError] = useState(null);
 
-	const BLUR_START = 50;
-	const BLUR_END = 300;
-	const MAX_BLUR = 12;
-	const MAX_SCALE = 1.05;
-	const MIN_BRIGHTNESS = 0.5;
+	const emailOk = /^\S+@\S+\.\S+$/.test(email);
+	const isValid =
+		name.trim().length > 1 && emailOk && message.trim().length > 3;
 
-	const blurValue = useTransform(
-		scrollY,
-		[BLUR_START, BLUR_END],
-		[0, MAX_BLUR]
-	);
-	const scaleValue = useTransform(
-		scrollY,
-		[BLUR_START, BLUR_END],
-		[1, MAX_SCALE]
-	);
-	const brightnessValue = useTransform(
-		scrollY,
-		[BLUR_START, BLUR_END],
-		[1, MIN_BRIGHTNESS]
-	);
-
-	const blurSpring = useSpring(blurValue, { stiffness: 80, damping: 20 });
-	const scaleSpring = useSpring(scaleValue, { stiffness: 80, damping: 20 });
-	const brightnessSpring = useSpring(brightnessValue, {
-		stiffness: 80,
-		damping: 20
-	});
-
-	const filterStyle = useMotionTemplate`blur(${blurSpring}px) brightness(${brightnessSpring})`;
-
-	const section1Opacity = useTransform(scrollY, [0, 300], [1, 0]);
-	const section1Y = useTransform(scrollY, [0, 300], [0, -50]);
-
-	const blur1Opacity = useTransform(scrollY, [600, 900, 1400], [0, 1, 0]);
-	const blur1X = useTransform(scrollY, [600, 900], [-100, 0]);
-
-	const blur2Opacity = useTransform(scrollY, [1000, 1300, 1700], [0, 1, 0]);
-	const blur2X = useTransform(scrollY, [1000, 1300], [100, 0]);
-
-	const blur3Opacity = useTransform(scrollY, [1500, 1800, 2200], [0, 1, 0]);
-	const blur3X = useTransform(scrollY, [1500, 1800], [-100, 0]);
-
-	const greyOverlayOpacity = useTransform(
-		scrollY,
-		[BLUR_END, BLUR_END + 100],
-		[0, 1]
-	);
-
-	const cardRef = useRef(null);
-	const isInView = useInView(cardRef, { margin: "-20% 0px -20% 0px" });
-	const { setTheme } = useNavbarTheme();
-
-	useEffect(() => {
-		if (isInView) {
-			setTheme("dark");
-		} else {
-			setTheme("white");
+	async function onSubmit(e) {
+		e.preventDefault();
+		setError(null);
+		setSuccess(null);
+		if (!isValid) {
+			setError("Please complete all fields correctly.");
+			return;
 		}
-	}, [isInView, setTheme]);
+		try {
+			setSubmitting(true);
+			const res = await fetch(
+				`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contact/submitResponse`,
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ name, email, message })
+				}
+			);
+			if (!res.ok) throw new Error("Failed to send");
+			setSuccess("Message sent! We’ll get back to you soon.");
+			setName("");
+			setEmail("");
+			setMessage("");
+		} catch {
+			setError(
+				"Something went wrong. Please try again or email support@echolearn.org."
+			);
+		} finally {
+			setSubmitting(false);
+		}
+	}
 
 	return (
-		<div className="relative h-[400vh] overflow-x-hidden">
-			{/* Video Background */}
-			<div className="fixed inset-0 z-[-2] overflow-hidden">
-				<motion.video
-					ref={videoRef}
-					autoPlay
-					loop
-					muted
-					playsInline
-					className="w-full h-full object-cover"
-					style={{
-						filter: filterStyle,
-						scale: scaleSpring
-					}}
-				>
-					<source src="/dummy_background.mp4" type="video/mp4" />
-				</motion.video>
-			</div>
+		<div className="flex min-h-screen flex-col bg-[var(--surface-ground)] text-[var(--text-color)]">
+			<main className="flex-1 pt-5">
+				<section className="max-w-7xl mx-auto px-4 py-20 flex flex-col items-center">
+					<div className="text-center mb-16">
+						<h1 className="text-5xl font-bold tracking-tighter mb-4">
+							Contact{" "}
+							<span className="text-[var(--accent-color)]">
+								Seek
+							</span>
+						</h1>
+						<p className="text-[var(--text-color-secondary)]">
+							Please reach out with any questions, feedback, or
+							support needs.
+						</p>
+					</div>
 
-			{/* Grey Overlay */}
-			<motion.div
-				className="fixed inset-0 z-[-1] bg-[#0F0F23]"
-				style={{ opacity: greyOverlayOpacity }}
-			/>
-
-			{/* Tiny Floating Particles (appear over grey background) */}
-			<motion.div
-				className="fixed inset-0 z-[-1] pointer-events-none"
-				style={{ opacity: greyOverlayOpacity }}
-			>
-				{[...Array(30)].map((_, i) => (
-					<motion.div
-						key={i}
-						style={{
-							position: "absolute",
-							width: 8,
-							height: 8,
-							background: "#8B5CF6",
-							borderRadius: "50%",
-							left: `${Math.random() * 100}%`,
-							top: `${Math.random() * 100}%`
-						}}
-						animate={{
-							y: [0, -100, 0],
-							opacity: [0, 1, 0],
-							scale: [0.8, 1.2, 0.8]
-						}}
-						transition={{
-							duration: 3 + Math.random() * 2,
-							repeat: Infinity,
-							delay: Math.random() * 2
-						}}
-					/>
-				))}
-			</motion.div>
-
-			{/* Hero Section */}
-			<div className="sticky top-0 h-screen flex items-center justify-center" ref={cardRef}>
-				<motion.div
-					style={{ opacity: section1Opacity, y: section1Y }}
-					className="absolute text-white text-center max-w-xl px-4"
-				>
-					<motion.h1
-						initial={{ opacity: 0, y: 30 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.8, ease: "easeOut" }}
-						className="text-5xl font-bold mb-4 drop-shadow-lg"
+					<form
+						onSubmit={onSubmit}
+						className="bg-[var(--surface-200)] w-full max-w-2xl rounded-lg p-8 shadow-lg border border-[var(--surface-400)]"
+						noValidate
 					>
-						One Swipe Closer to Home
-					</motion.h1>
+						<div className="grid gap-6">
+							<div>
+								<label
+									htmlFor="name"
+									className="block text-sm font-medium mb-2 text-[var(--text-color)]"
+								>
+									Name
+								</label>
+								<input
+									id="name"
+									type="text"
+									value={name}
+									onChange={e => setName(e.target.value)}
+									autoComplete="name"
+									required
+									className="w-full rounded-md border border-[var(--surface-500)] bg-[var(--surface-100)] px-4 py-3 text-[var(--text-color)] placeholder-[var(--gray-400)] focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)] outline-none"
+									placeholder="Jane Doe"
+								/>
+							</div>
 
-					<motion.p
-						initial={{ opacity: 0, y: 30 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{
-							duration: 0.8,
-							ease: "easeOut",
-							delay: 0.1
-						}}
-						className="text-xl drop-shadow mb-8"
-					>
-						Connecting students with trusted landlords in St Andrews
-					</motion.p>
+							<div>
+								<label
+									htmlFor="email"
+									className="block text-sm font-medium mb-2 text-[var(--text-color)]"
+								>
+									Email
+								</label>
+								<input
+									id="email"
+									type="email"
+									value={email}
+									onChange={e => setEmail(e.target.value)}
+									autoComplete="email"
+									required
+									className="w-full rounded-md border border-[var(--surface-500)] bg-[var(--surface-100)] px-4 py-3 text-[var(--text-color)] placeholder-[var(--gray-400)] focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)] outline-none"
+									placeholder="you@example.com"
+								/>
+							</div>
 
-					<motion.button
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{
-							duration: 0.8,
-							ease: "easeOut",
-							delay: 0.2
-						}}
-						className="mt-4 px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
-						onClick={() =>
-							window.scrollTo({
-								top: 900,
-								behavior: "smooth"
-							})
-						}
-					>
-						↓ Scroll to Learn More
-					</motion.button>
-				</motion.div>
-			</div>
+							<div>
+								<label
+									htmlFor="message"
+									className="block text-sm font-medium mb-2 text-[var(--text-color)]"
+								>
+									Message
+								</label>
+								<textarea
+									id="message"
+									value={message}
+									onChange={e => setMessage(e.target.value)}
+									required
+									rows="6"
+									className="w-full rounded-md border border-[var(--surface-500)] bg-[var(--surface-100)] px-4 py-3 text-[var(--text-color)] placeholder-[var(--gray-400)] focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)] outline-none resize-y"
+									placeholder="How can we help?"
+								/>
+							</div>
 
-			{/* Blur Section 1 – Left */}
-			<div className="h-screen relative">
-				<motion.div
-					style={{
-						opacity: blur1Opacity,
-						x: blur1X,
-						transformOrigin: "left"
-					}}
-					className="fixed top-1/2 left-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
-				>
-					<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-						Ready to Move In?
-					</h1>
-					<p className="text-lg drop-shadow">
-						Start exploring listings today and secure your new home
-						with confidence. Every property is hand-checked, and
-						listings update in real-time as availability changes.
-					</p>
-				</motion.div>
-			</div>
+							{error && (
+								<p
+									className="rounded-md bg-red-900/50 text-red-300 px-4 py-3 text-sm"
+									role="alert"
+								>
+									{error}
+								</p>
+							)}
+							{success && (
+								<p
+									className="rounded-md bg-green-900/50 text-green-300 px-4 py-3 text-sm"
+									role="status"
+								>
+									{success}
+								</p>
+							)}
 
-			{/* Blur Section 2 – Right */}
-			<div className="h-screen relative">
-				<motion.div
-					style={{
-						opacity: blur2Opacity,
-						x: blur2X,
-						transformOrigin: "right"
-					}}
-					className="fixed top-1/2 right-[20%] -translate-y-1/2 text-white text-right max-w-md px-4 pointer-events-none"
-				>
-					<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-						Only Real Listings
-					</h1>
-					<p className="text-lg drop-shadow">
-						We eliminate scams and outdated posts, showing you only
-						what’s genuinely available. Our moderation team actively
-						reviews every listing so you don't waste time.
-					</p>
-				</motion.div>
-			</div>
-
-			{/* Blur Section 3 – Left */}
-			<div className="h-screen relative">
-				<motion.div
-					style={{
-						opacity: blur3Opacity,
-						x: blur3X,
-						transformOrigin: "left"
-					}}
-					className="fixed top-1/2 left-[20%] -translate-y-1/2 text-white text-left max-w-md px-4 pointer-events-none"
-				>
-					<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-						Instant Apply
-					</h1>
-					<p className="text-lg drop-shadow">
-						No more endless paperwork. Tap once to apply, attach
-						your details, and receive confirmation directly. It’s
-						that simple — moving in has never been faster.
-					</p>
-				</motion.div>
-			</div>
+							<div className="flex items-center justify-between gap-4">
+								<button
+									type="submit"
+									disabled={!isValid || submitting}
+									className="inline-flex items-center justify-center rounded-lg bg-[var(--accent-color)] px-6 py-3 font-semibold text-[var(--accent-color-text)] transition-colors hover:bg-[#1ed0dc] disabled:opacity-60"
+								>
+									{submitting ? "Sending..." : "Send Message"}
+								</button>
+							</div>
+						</div>
+					</form>
+				</section>
+			</main>
 		</div>
 	);
 }

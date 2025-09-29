@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
+
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function ContactPage() {
 	const [name, setName] = useState("");
@@ -24,22 +28,20 @@ export default function ContactPage() {
 		}
 		try {
 			setSubmitting(true);
-			const res = await fetch(
-				`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contact/submitResponse`,
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ name, email, message })
-				}
-			);
-			if (!res.ok) throw new Error("Failed to send");
+			try {
+				const res = await axios.post(`${BASE_URL}/contact`, {
+					name, email, message
+				});
+			} catch (err) {
+				throw new Error("Failed to send");
+			}
 			setSuccess("Message sent! We’ll get back to you soon.");
 			setName("");
 			setEmail("");
 			setMessage("");
 		} catch {
 			setError(
-				"Something went wrong. Please try again or email support@echolearn.org."
+				"Something went wrong. Please try again or email kshitijverma197@gmail.com"
 			);
 		} finally {
 			setSubmitting(false);

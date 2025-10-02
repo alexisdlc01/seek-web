@@ -8,6 +8,7 @@ const UserContext = createContext(undefined);
 export default UserContext;
 export const UserProvider = ({ children }) => {
 	const [user, setUser] = useState(null);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		(async () => {
@@ -16,6 +17,7 @@ export const UserProvider = ({ children }) => {
 			console.log(
 				`Logged in as ${currentUser ? currentUser.name : currentUser}`
 			);
+			setLoading(false);
 		})();
 	}, []);
 
@@ -35,7 +37,7 @@ export const UserProvider = ({ children }) => {
 							withCredentials: true
 						}
 					);
-					await getCurrentUser();
+					return await getCurrentUser();
 				} catch (err2) {
 					return null;
 				}
@@ -109,7 +111,7 @@ export const UserProvider = ({ children }) => {
 	};
 
 	return (
-		<UserContext.Provider value={{ user, setUser, login, logout, signup }}>
+		<UserContext.Provider value={{ user, setUser, login, logout, signup, loading }}>
 			{children}
 		</UserContext.Provider>
 	);

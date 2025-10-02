@@ -24,9 +24,27 @@ import Dashboard from "./pages/Dashboard.jsx";
 import { AnimatePresence, motion } from "framer-motion";
 import Download from "./pages/Download.jsx";
 import ProtectedRoute from "./pages/ProtectedRoute.jsx";
+import { useContext } from "react";
+import UserContext from "./context/UserContext.jsx";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 const NotFound = () => {
 	const navigate = useNavigate();
+	const { loading } = useContext(UserContext);
+
+	if (loading) {
+		// full-page spinner before any route renders
+		return (
+			<div className="flex items-center justify-center h-screen">
+				<ProgressSpinner
+					style={{ width: "50px", height: "50px" }}
+					strokeWidth="8"
+					fill="var(--surface-ground)"
+					animationDuration=".5s"
+				/>
+			</div>
+		);
+	}
 
 	return (
 		<div className="flex flex-col items-center justify-center h-screen text-center">

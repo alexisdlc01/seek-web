@@ -196,6 +196,50 @@ const BasicInfoStep = ({
 					)}
 				</div>
 
+				{/* Location stuff */}
+				<div className="flex flex-col">
+					<label htmlFor="street" className="font-medium mb-2">
+						Street Address
+					</label>
+					<InputText
+						id="street"
+						value={street}
+						onChange={e => setStreet(e.target.value)}
+					/>
+				</div>
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+					<div className="flex flex-col">
+						<label htmlFor="city" className="font-medium mb-2">
+							City / Town
+						</label>
+						<InputText
+							id="city"
+							value={city}
+							onChange={e => setCity(e.target.value)}
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label htmlFor="postcode" className="font-medium mb-2">
+							Postcode / ZIP
+						</label>
+						<InputText
+							id="postcode"
+							value={postcode}
+							onChange={e => setPostcode(e.target.value)}
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label htmlFor="country" className="font-medium mb-2">
+							Country
+						</label>
+						<InputText
+							id="country"
+							value={country}
+							onChange={e => setCountry(e.target.value)}
+						/>
+					</div>
+				</div>
+
 				{/* beds/baths */}
 				<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 					<div className="flex flex-col">

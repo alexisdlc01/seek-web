@@ -23,6 +23,10 @@ const AddListing = () => {
 
 	// Step 1 state
 	const [title, setTitle] = useState("");
+	const [street, setStreet] = useState("");
+	const [city, setCity] = useState("");
+	const [postcode, setPostcode] = useState("");
+	const [country, setCountry] = useState("");
 	const [sizeSqM, setSizeSqM] = useState(null);
 	const propertyTypes = [
 		"Flat/Apartment",
@@ -47,26 +51,9 @@ const AddListing = () => {
 	];
 	const [bathrooms, setBathrooms] = useState(null);
 	const [description, setDescription] = useState("");
-	const amenitiesList = [
-		"Wi-Fi",
-		"Washing Machine",
-		"Dryer",
-		"Dishwasher",
-		"Pets Allowed",
-		"Bike Storage",
-		"Parking",
-		"Garden",
-		"Smoke Alarm",
-		"Fireplace",
-		"Monoxide Alarm"
-	];
-	const [amenities, setAmenities] = useState([]);
+
 
 	// Step 2 state
-	const [street, setStreet] = useState("");
-	const [city, setCity] = useState("");
-	const [postcode, setPostcode] = useState("");
-	const [country, setCountry] = useState("");
 	const [rent, setRent] = useState(null);
 	const [deposit, setDeposit] = useState(null);
 	const [availabilityDate, setAvailabilityDate] = useState(null);
@@ -98,6 +85,20 @@ const AddListing = () => {
 		value: r
 	}));
 	const [epcRating, setEpcRating] = useState(null);
+	const amenitiesList = [
+		"Wi-Fi",
+		"Washing Machine",
+		"Dryer",
+		"Dishwasher",
+		"Pets Allowed",
+		"Bike Storage",
+		"Parking",
+		"Garden",
+		"Smoke Alarm",
+		"Fireplace",
+		"Monoxide Alarm"
+	];
+	const [amenities, setAmenities] = useState([]);
 
 	// Step 4 state
 	const [photos, setPhotos] = useState([]);
@@ -327,6 +328,14 @@ const AddListing = () => {
 							setSizeSqM={setSizeSqM}
 							propertyType={propertyType}
 							setPropertyType={setPropertyType}
+							street={street}
+							setStreet={setStreet}
+							city={city}
+							setCity={setCity}
+							postcode={postcode}
+							setPostcode={setPostcode}
+							country={country}
+							setCountry={setCountry}
 							propertyTypes={propertyTypes}
 							otherType={otherType}
 							setOtherType={setOtherType}
@@ -348,14 +357,6 @@ const AddListing = () => {
 					</StepperPanel>
 					<StepperPanel header="Location">
 						<LocationAvailabilityStep
-							street={street}
-							setStreet={setStreet}
-							city={city}
-							setCity={setCity}
-							postcode={postcode}
-							setPostcode={setPostcode}
-							country={country}
-							setCountry={setCountry}
 							rent={rent}
 							setRent={setRent}
 							deposit={deposit}

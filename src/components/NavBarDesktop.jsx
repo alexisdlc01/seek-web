@@ -104,12 +104,12 @@ export default function NavbarDesktop({ user, logout, logo }) {
 					<Button
 						label={
 							<span style={{ color: oppositeBackgroundTheme }}>
-								Messages
+								Chat
 							</span>
 						}
 						text
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
-						onClick={() => navigate("/messages")}
+						onClick={() => navigate("/chat")}
 					/>
 
 					{/* Avatar trigger stays the same */}
@@ -118,13 +118,13 @@ export default function NavbarDesktop({ user, logout, logo }) {
 							className="flex items-center gap-2 bg-[#186273] rounded-lg px-3 py-1.5 cursor-pointer hover:bg-[#186273] transition"
 							onClick={() => setUserMenuOpen(v => !v)}
 						>
-							{user.profilePicUrl ? (
-								<Avatar
-									image={user.profilePicUrl}
-									className="bg-[#3182ce] text-white font-bold"
-									shape="circle"
-								/>
-							) : (
+							{/*{user.profilePicUrl ? (*/}
+							{/*	<Avatar*/}
+							{/*		image={user.profilePicUrl}*/}
+							{/*		className="bg-[#3182ce] text-white font-bold"*/}
+							{/*		shape="circle"*/}
+							{/*	/>*/}
+							{/*) : (*/}
 								<Avatar
 									label={user.name
 										.split(" ")
@@ -135,7 +135,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 									style={{ backgroundColor: "#3182ce" }}
 									shape="circle"
 								/>
-							)}
+							{/* )}*/}
 							<span className="text-white font-medium">
 								{user.name}
 							</span>

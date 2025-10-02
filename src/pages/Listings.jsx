@@ -71,9 +71,9 @@ export default function Listings() {
 
 			{/* Listings */}
 			<div className="space-y-6">
-				{properties.map((prop, i) => (
+				{listings.map((prop, i) => (
 					<motion.div
-						key={prop._id}
+						key={i}
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.4, delay: i * 0.1 }}
@@ -85,6 +85,7 @@ export default function Listings() {
 						{/* Image */}
 						<div className="w-full md:w-32 h-40 md:h-20 flex-shrink-0 rounded-md overflow-hidden">
 							<img
+								// TODO: replace dummy image with one from AWS s3
 								src={houseImage}
 								alt="Property"
 								className="w-full h-full object-cover"

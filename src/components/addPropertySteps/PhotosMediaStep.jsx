@@ -1,5 +1,6 @@
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { useEffect } from "react";
 
 const PhotosMediaStep = ({
 	photos,
@@ -16,6 +17,10 @@ const PhotosMediaStep = ({
 	back,
 	next
 }) => {
+	useEffect(() => {
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	}, []);
+
 	return (
 		<>
 			<div className="space-y-6">
@@ -86,22 +91,15 @@ const PhotosMediaStep = ({
 					/>
 				</div>
 				<div className="flex flex-col">
-					<label
-						htmlFor="floorPlan"
-						className="font-medium mb-2"
-					>
+					<label htmlFor="floorPlan" className="font-medium mb-2">
 						Floor Plan Image
 					</label>
 					<Button
 						type="button"
-						label={
-							floorPlan ? floorPlan.name : "Choose File"
-						}
+						label={floorPlan ? floorPlan.name : "Choose File"}
 						icon="pi pi-upload"
 						outlined
-						onClick={() =>
-							floorPlanInputRef.current?.click()
-						}
+						onClick={() => floorPlanInputRef.current?.click()}
 						className="w-max"
 					/>
 					<input

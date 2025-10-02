@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Dropdown } from "primereact/dropdown";
@@ -6,12 +6,30 @@ import { Checkbox } from "primereact/checkbox";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
+import { Calendar } from "primereact/calendar";
+
+// street={street}
+// setStreet={setStreet}
+// city={city}
+// setCity={setCity}
+// postcode={postcode}
+// setPostcode={setPostcode}
+// country={country}
+// setCountry={setCountry}
 
 const BasicInfoStep = ({
 	title,
 	setTitle,
 	sizeSqM,
 	setSizeSqM,
+	street,
+	setStreet,
+	city,
+	setCity,
+	postcode,
+	setPostcode,
+	country,
+	setCountry,
 	propertyType,
 	setPropertyType,
 	propertyTypes,
@@ -27,109 +45,19 @@ const BasicInfoStep = ({
 	bathroomOptions,
 	description,
 	setDescription,
-	amenities,
-	onAmenityChange,
-	amenitiesList,
+	rent,
+	setRent,
+	deposit,
+	setDeposit,
+	availabilityDate,
+	endAvailabilityDate,
+	setEndAvailabilityDate,
+	setAvailabilityDate,
 	next
 }) => {
-	// --- custom amenities state ---
-	const [customAmenities, setCustomAmenities] = useState([]);
-	const [customInput, setCustomInput] = useState("");
-	const [editing, setEditing] = useState(null);
-	const [editValue, setEditValue] = useState("");
-
-	const allAmenities = useMemo(
-		() => [...amenitiesList, ...customAmenities],
-		[amenitiesList, customAmenities]
-	);
-
-	const normalize = s => s.trim().replace(/\s+/g, " ");
-
-	const addCustomAmenity = () => {
-		const val = normalize(customInput);
-		if (!val) return;
-		const exists = allAmenities.some(
-			a => a.toLowerCase() === val.toLowerCase()
-		);
-		if (exists) {
-			setCustomInput("");
-			// if it already exists but not checked, check it
-			if (!amenities.includes(val)) {
-				onAmenityChange({ value: val, checked: true });
-			}
-			return;
-		}
-		setCustomAmenities(prev => [...prev, val]);
-		// auto-check newly added amenity
-		onAmenityChange({ value: val, checked: true });
-		setCustomInput("");
-	};
-
-	const removeCustomAmenity = name => {
-		setCustomAmenities(prev => prev.filter(a => a !== name));
-		if (amenities.includes(name)) {
-			onAmenityChange({ value: name, checked: false });
-		}
-		if (editing === name) {
-			setEditing(null);
-			setEditValue("");
-		}
-	};
-
-	const startEdit = name => {
-		setEditing(name);
-		setEditValue(name);
-	};
-
-	const saveEdit = () => {
-		const oldName = editing;
-		const newName = normalize(editValue);
-		if (!oldName) return;
-
-		// empty -> cancel
-		if (!newName) {
-			setEditing(null);
-			setEditValue("");
-			return;
-		}
-		// no-change
-		if (newName === oldName) {
-			setEditing(null);
-			setEditValue("");
-			return;
-		}
-		// prevent duplicates
-		const exists = allAmenities
-			.filter(a => a !== oldName)
-			.some(a => a.toLowerCase() === newName.toLowerCase());
-		if (exists) {
-			setEditing(null);
-			setEditValue("");
-			return;
-		}
-
-		// update list
-		setCustomAmenities(prev =>
-			prev.map(a => (a === oldName ? newName : a))
-		);
-
-		// keep selection: uncheck old, check new (if old was selected)
-		if (amenities.includes(oldName)) {
-			onAmenityChange({ value: oldName, checked: false });
-			onAmenityChange({ value: newName, checked: true });
-		}
-
-		setEditing(null);
-		setEditValue("");
-	};
-
-	const handleEditKey = e => {
-		if (e.key === "Enter") saveEdit();
-		if (e.key === "Escape") {
-			setEditing(null);
-			setEditValue("");
-		}
-	};
+	useEffect(() => {
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	}, []);
 
 	return (
 		<div style={{ background: "#0f0f23", color: "white" }}>
@@ -299,89 +227,65 @@ const BasicInfoStep = ({
 						autoResize
 					/>
 				</div>
+			</div>
 
-				{/* amenities */}
-				<div>
-					<label className="font-medium">Amenities</label>
-
-					{/* add custom amenity */}
-					<div className="mt-3 flex gap-2">
-						<InputText
-							value={customInput}
-							onChange={e => setCustomInput(e.target.value)}
-							onKeyDown={e =>
-								e.key === "Enter" && addCustomAmenity()
-							}
-							placeholder="Type a custom amenity"
-							className="flex-1"
-						/>
-						<Button
-							label="Add"
-							icon="pi pi-plus"
-							onClick={addCustomAmenity}
+			<div className="space-y-4 mt-3">
+				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<div className="flex flex-col">
+						<label htmlFor="rent" className="font-medium mb-2">
+							Monthly Rent (£)
+						</label>
+						<InputNumber
+							id="rent"
+							value={rent}
+							onValueChange={e => setRent(e.value)}
+							mode="currency"
+							currency="GBP"
+							locale="en-GB"
 						/>
 					</div>
-
-					{/* list */}
-					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-3">
-						{allAmenities.map(name => {
-							const isCustom = customAmenities.includes(name);
-							const isEditing = editing === name;
-
-							return (
-								<div key={name} className="flex items-center">
-									<Checkbox
-										inputId={name}
-										value={name}
-										onChange={onAmenityChange}
-										checked={amenities.includes(name)}
-									/>
-									<label
-										htmlFor={name}
-										className="ml-2 mr-2 flex-1"
-									>
-										{isEditing ? (
-											<InputText
-												value={editValue}
-												onChange={e =>
-													setEditValue(e.target.value)
-												}
-												onBlur={saveEdit}
-												onKeyDown={handleEditKey}
-												autoFocus
-												className="w-full"
-											/>
-										) : (
-											name
-										)}
-									</label>
-
-									{/* edit/remove only for customs */}
-									{isCustom && !isEditing && (
-										<div className="flex items-center gap-2">
-											<Button
-												icon="pi pi-pencil"
-												rounded
-												text
-												severity="secondary"
-												onClick={() => startEdit(name)}
-												aria-label="Edit amenity"
-											/>
-											<Button
-												icon="pi pi-trash"
-												rounded
-												text
-												severity="danger"
-												onClick={() =>
-													removeCustomAmenity(name)
-												}
-												aria-label="Remove amenity"
-											/>
-										</div>
-									)}
-								</div>
-							);
-						})}
+					<div className="flex flex-col">
+						<label htmlFor="deposit" className="font-medium mb-2">
+							Security Deposit (£)
+						</label>
+						<InputNumber
+							id="deposit"
+							value={deposit}
+							onValueChange={e => setDeposit(e.value)}
+							mode="currency"
+							currency="GBP"
+							locale="en-GB"
+						/>
+					</div>
+				</div>
+				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<div className="flex flex-col">
+						<label
+							htmlFor="availabilityDate"
+							className="font-medium mb-2"
+						>
+							Available From
+						</label>
+						<Calendar
+							id="availabilityDate"
+							value={availabilityDate}
+							onChange={e => setAvailabilityDate(e.value)}
+							showIcon
+						/>
+					</div>
+					<div className="flex flex-col">
+						<label
+							htmlFor="availabilityDate"
+							className="font-medium mb-2"
+						>
+							Available Untill
+						</label>
+						<Calendar
+							id="availabilityDate"
+							value={endAvailabilityDate}
+							onChange={e => setEndAvailabilityDate(e.value)}
+							showIcon
+						/>
 					</div>
 				</div>
 			</div>

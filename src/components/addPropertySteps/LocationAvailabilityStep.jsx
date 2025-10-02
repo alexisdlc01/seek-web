@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StepperPanel } from "primereact/stepperpanel";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
@@ -7,14 +7,6 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 
 const LocationAvailabilityStep = ({
-	street,
-	setStreet,
-	city,
-	setCity,
-	postcode,
-	setPostcode,
-	country,
-	setCountry,
 	rent,
 	setRent,
 	deposit,
@@ -23,12 +15,13 @@ const LocationAvailabilityStep = ({
 	endAvailabilityDate,
 	setEndAvailabilityDate,
 	setAvailabilityDate,
-	leaseDuration,
-	setLeaseDuration,
-	leaseOptions,
 	back,
 	next
 }) => {
+	useEffect(() => {
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	}, []);
+
 	return (
 		<div
 			style={{

@@ -15,14 +15,15 @@ export const ListingsProvider = ({ children }) => {
 			const res = await axios.get(`${BASE_URL}/listings/mine`, {
 				withCredentials: true
 			});
-			console.log("here", res.data);
 			setListings(res.data);
-		})()
-	}, [])
+		})();
+	}, []);
 
 	return (
-		<ListingsContext.Provider value={{ listings, setListings, currentListing, setCurrentListing }}>
+		<ListingsContext.Provider
+			value={{ listings, setListings, currentListing, setCurrentListing }}
+		>
 			{children}
 		</ListingsContext.Provider>
 	);
-}
+};

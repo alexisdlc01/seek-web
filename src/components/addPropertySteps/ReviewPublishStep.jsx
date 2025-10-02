@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StepperPanel } from "primereact/stepperpanel";
 import { Button } from "primereact/button";
 
 const ReviewPublishStep = ({ back, publish }) => {
+	useEffect(() => {
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	}, []);
+
 	return (
 		<>
 			<div className="flex flex-col h-24">

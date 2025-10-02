@@ -17,6 +17,7 @@ const AddListing = () => {
 	const stepperRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const floorPlanInputRef = useRef(null);
+	const registerOfTitleRef = useRef(null);
 	const { currentListing, setCurrentListing, setListings } =
 		useContext(ListingsContext);
 	const [step, setStep] = useState(1);
@@ -51,6 +52,7 @@ const AddListing = () => {
 	];
 	const [bathrooms, setBathrooms] = useState(null);
 	const [description, setDescription] = useState("");
+	const [registerOfTitle, setRegisterOfTitle] = useState(null);
 
 	// Step 2 state
 	const [rent, setRent] = useState(null);
@@ -358,7 +360,9 @@ const AddListing = () => {
 							endAvailabilityDate={endAvailabilityDate}
 							setEndAvailabilityDate={setEndAvailabilityDate}
 							leaseOptions={leaseOptions}
-
+							registerOfTitleRef={registerOfTitleRef}
+							registerOfTitle={registerOfTitle}
+							setRegisterOfTitle={setRegisterOfTitle}
 							next={next}
 						/>
 					</StepperPanel>

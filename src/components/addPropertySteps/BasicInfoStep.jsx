@@ -53,6 +53,9 @@ const BasicInfoStep = ({
 	endAvailabilityDate,
 	setEndAvailabilityDate,
 	setAvailabilityDate,
+	registerOfTitle,
+	setRegisterOfTitle,
+	registerOfTitleRef,
 	next
 }) => {
 	useEffect(() => {
@@ -288,6 +291,47 @@ const BasicInfoStep = ({
 						/>
 					</div>
 				</div>
+			</div>
+
+			<div className="flex flex-col mt-4">
+				<label htmlFor="floorPlan" className="font-medium mb-3">
+					Register of Title (PDF only)
+				</label>
+				<Button
+					type="button"
+					label={registerOfTitle ? registerOfTitle.name : "Choose File"}
+					icon="pi pi-upload"
+					outlined
+					onClick={() => registerOfTitleRef.current?.click()}
+					className="w-max"
+				/>
+				<input
+					type="file"
+					ref={registerOfTitleRef}
+					accept=".pdf"
+					className="hidden"
+					onChange={e => {
+						const file = e.target.files[0];
+						if (file && file.type !== "application/pdf") {
+							alert("Please upload a PDF file");
+							return;
+						}
+						setRegisterOfTitle(file);
+					}}
+				/>
+				{registerOfTitle && (
+					<div className="mt-2 text-sm text-gray-600 flex items-center">
+						{registerOfTitle.name}
+						<Button
+							icon="pi pi-times"
+							text
+							rounded
+							size="small"
+							className="ml-2"
+							onClick={() => setRegisterOfTitle(null)}
+						/>
+					</div>
+				)}
 			</div>
 
 			<div className="flex pt-8 justify-end">

@@ -22,6 +22,7 @@ const AddListing = () => {
 	const registerOfTitleRef = useRef(null);
 	const { setListings } = useContext(ListingsContext);
 	const [step, setStep] = useState(1);
+	const [currentListing, setCurrentListing] = useState({});
 
 	// Step 1 state
 	const [title, setTitle] = useState("");
@@ -44,6 +45,13 @@ const AddListing = () => {
 		STUDIO: "Studio",
 		OTHER: "Other (please specify)"
 	};
+	const propertyTypeMapInverse = {
+		"Flat/Apartment": "FLAT_APARTMENT",
+		"House": "HOUSE",
+		"Room in Shared House": "ROOM_IN_SHARED_HOUSE",
+		"Studio": "STUDIO",
+		"Other (please specify)": "OTHER"
+	}
 	const [propertyType, setPropertyType] = useState(null);
 	const [otherType, setOtherType] = useState("");
 	const bedroomOptions = [...Array(10).keys()].map(i => ({
@@ -106,6 +114,20 @@ const AddListing = () => {
 		"Monoxide Alarm"
 	];
 	const [amenities, setAmenities] = useState([]);
+	const amenityMap = {
+		"Wi-Fi": "WiFi",
+		"Washing Machine": "Washing_Machine",
+		"Dryer": "Dryer",
+		"Dishwasher": "Dishwasher",
+		"Pets Allowed": "Pets_Allowed",
+		"Bike Storage": "Bike_Storage",
+		"Parking": "Parking",
+		"Garden": "Garden",
+		"Smoke Alarm": "Smoke_Alarm",
+		"Fireplace": "Fireplace",
+		"Monoxide Alarm": "Monoxide_Alarm"
+	};
+
 
 	// Step 3 state
 	const [photos, setPhotos] = useState([]);
@@ -119,86 +141,6 @@ const AddListing = () => {
 			setEnsuiteBedrooms(1);
 		}
 	}, [propertyType]);
-
-	useEffect(() => {
-		(async () => {
-			console.log("On step:", step);
-			// switch (step) {
-			// 	case 0:
-			// 		console.log("Basics");
-			// 		break;
-			// 	case 1:
-			// 		console.log("Location");
-			// 		break;
-			// 	case 2:
-			// 		if (!currentListing) {
-			// 			const baseDraft = await axios.post(
-			// 				`${BASE_URL}/listings/draft`,
-			// 				{},
-			// 				{
-			// 					withCredentials: true
-			// 				}
-			// 			);
-			// 			setCurrentListing(baseDraft.data);
-			// 		}
-			// 		const step2SavedDraft = await axios.patch(
-			// 			`${BASE_URL}/listings/${currentListing._id}/createStep2`,
-			// 			{
-			// 				propertyTitle: title,
-			// 				sizeSqMeters: sizeSqM,
-			// 				propertyType: propertyType,
-			// 				bedroomsCount: regularBedrooms,
-			// 				ensuiteBedroomCount: ensuiteBedrooms,
-			// 				propertyDesc: description,
-			// 				amenities: amenities,
-			// 				streetAddress: street,
-			// 				cityTown: city,
-			// 				postcodeZIP: postcode,
-			// 				country: country,
-			// 				monthlyRent: rent,
-			// 				securityDeposit: deposit,
-			// 				availableFrom: availabilityDate,
-			// 				availableUntil: endAvailabilityDate
-			// 			},
-			// 			{
-			// 				withCredentials: true
-			// 			}
-			// 		);
-			// 		setListings(prevState => [
-			// 			...prevState,
-			// 			step2SavedDraft.data
-			// 		]);
-			// 		break;
-			// 	case 3:
-			// 		await axios.patch(
-			// 			`${BASE_URL}/listings/${currentListing._id}/createStep3`,
-			// 			{
-			// 				// propertyTitle: title,
-			// 				// sizeSqMeters: sizeSqM,
-			// 				// propertyType: propertyType,
-			// 				// bedroomsCount: regularBedrooms,
-			// 				// ensuiteBedroomCount: ensuiteBedrooms,
-			// 				// propertyDesc: description,
-			// 				// amenities: amenities,
-			// 				// streetAddress: street,
-			// 				// cityTown: city,
-			// 				// postcodeZIP: postcode,
-			// 				// country: country,
-			// 				// monthlyRent: rent,
-			// 				// securityDeposit: deposit,
-			// 				// availableFrom: availabilityDate,
-			// 				// availableUntil: endAvailabilityDate,
-			// 				furnishingStatus: furnishingStatus,
-			// 				epcRating: epcRating
-			// 			},
-			// 			{
-			// 				withCredentials: true
-			// 			}
-			// 		);
-			// 		break;
-			// }
-		})();
-	}, [step]);
 
 	const next = () => {
 		stepperRef.current.nextCallback();
@@ -300,6 +242,7 @@ const AddListing = () => {
 					withCredentials: true
 				});
 				console.log("data back", res.data);
+				setCurrentListing(res.data);
 				res.data.propertyTitle ? setTitle(res.data.propertyTitle) : {};
 				res.data.sizeSqMeters ? setSizeSqM(res.data.sizeSqMeters) : {};
 				res.data.propertyType
@@ -317,7 +260,14 @@ const AddListing = () => {
 				res.data.propertyDesc
 					? setDescription(res.data.propertyDesc)
 					: {};
-				res.data.amenities ? setAmenities(res.data.amenities) : {};
+
+				if (res.data.amenities) {
+					const reverseAmenityMap = Object.fromEntries(
+						Object.entries(amenityMap).map(([k, v]) => [v, k])
+					);
+					setAmenities(res.data.amenities.map(a => reverseAmenityMap[a]));
+				}
+
 				res.data.streetAddress ? setStreet(res.data.streetAddress) : {};
 				res.data.cityTown ? setCity(res.data.cityTown) : {};
 				res.data.postcodeZIP ? setPostcode(res.data.postcodeZIP) : {};
@@ -345,6 +295,78 @@ const AddListing = () => {
 			}
 		})();
 	}, [id, navigate]);
+
+	useEffect(() => {
+		(async () => {
+			console.log("On step:", step);
+			switch (step) {
+				case 2:
+					const step2SavedDraft = await axios.patch(
+						`${BASE_URL}/listings/${currentListing._id}/createStep1`,
+						{
+							propertyTitle: title,
+							sizeSqMeters: sizeSqM,
+							propertyType: propertyTypeMapInverse[propertyType],
+							bedroomsCount: regularBedrooms,
+							enSuiteBedroomCount: parseInt(ensuiteBedrooms),
+							bathrooms: bathrooms,
+							propertyDesc: description,
+							streetAddress: street,
+							cityTown: city,
+							postcodeZIP: postcode,
+							country: country,
+							monthlyRent: rent,
+							securityDeposit: deposit,
+							availableFrom: availabilityDate,
+							availableUntil: endAvailabilityDate,
+							// TODO: change to AWS URL
+							registerOfTitleUrl: "coolUrl"
+						},
+						{
+							withCredentials: true
+						}
+					);
+					setListings(prevState => [
+						...prevState,
+						step2SavedDraft.data
+					]);
+					break;
+				case 3:
+					await axios.patch(
+						`${BASE_URL}/listings/${currentListing._id}/createStep2`,
+						{
+							propertyTitle: title,
+							sizeSqMeters: sizeSqM,
+							propertyType: propertyTypeMapInverse[propertyType],
+							bedroomsCount: regularBedrooms,
+							enSuiteBedroomCount: parseInt(ensuiteBedrooms),
+							bathrooms: bathrooms,
+							propertyDesc: description,
+							streetAddress: street,
+							cityTown: city,
+							postcodeZIP: postcode,
+							country: country,
+							monthlyRent: rent,
+							securityDeposit: deposit,
+							availableFrom: availabilityDate,
+							availableUntil: endAvailabilityDate,
+							// TODO: change to AWS URL
+							registerOfTitleUrl: "coolUrl",
+							furnishingStatus: furnishingStatus.charAt(0).toLowerCase() + furnishingStatus.slice(1),
+							epcRating: epcRating,
+							amenities: amenities.map(a => amenityMap[a])
+						},
+						{
+							withCredentials: true
+						}
+					);
+					break;
+				case 4:
+
+					break;
+			}
+		})();
+	}, [step]);
 
 	if (loading) {
 		return (

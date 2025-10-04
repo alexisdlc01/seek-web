@@ -29,6 +29,10 @@ const FeaturesStep = ({
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	}, []);
 
+	useEffect(() => {
+		console.log("new amenities", amenities);
+	}, [amenities]);
+
 	const allAmenities = useMemo(
 		() => [...amenitiesList, ...customAmenities],
 		[amenitiesList, customAmenities]

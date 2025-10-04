@@ -62,7 +62,15 @@ export default function Listings() {
 								background: "#23b7c5"
 							}}
 							onClick={async () => {
-								navigate("/add-listing");
+								const res = await axios.post(
+									`${BASE_URL}/listings/draft`,
+									{},
+									{
+										withCredentials: true
+									}
+								);
+								const id = res.data;
+								navigate(`/${id}/add-listing`);
 							}}
 						/>
 					</motion.div>
@@ -166,7 +174,7 @@ export default function Listings() {
 										className="w-full sm:w-auto"
 										onClick={() => {
 											setCurrentListing(prop);
-											navigate("/add-listing");
+											navigate(`/${prop._id}/add-listing`);
 										}}
 										style={{
 											color: "white"

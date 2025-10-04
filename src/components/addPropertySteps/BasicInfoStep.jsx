@@ -1,21 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Dropdown } from "primereact/dropdown";
-import { Checkbox } from "primereact/checkbox";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
 import { Calendar } from "primereact/calendar";
-
-// street={street}
-// setStreet={setStreet}
-// city={city}
-// setCity={setCity}
-// postcode={postcode}
-// setPostcode={setPostcode}
-// country={country}
-// setCountry={setCountry}
 
 const BasicInfoStep = ({
 	title,
@@ -272,7 +262,10 @@ const BasicInfoStep = ({
 						<Calendar
 							id="availabilityDate"
 							value={availabilityDate}
-							onChange={e => setAvailabilityDate(e.value)}
+							onChange={e => {
+								console.log("new data", e.value);
+								setAvailabilityDate(e.value);
+							}}
 							showIcon
 						/>
 					</div>
@@ -299,7 +292,9 @@ const BasicInfoStep = ({
 				</label>
 				<Button
 					type="button"
-					label={registerOfTitle ? registerOfTitle.name : "Choose File"}
+					label={
+						registerOfTitle ? registerOfTitle.name : "Choose File"
+					}
 					icon="pi pi-upload"
 					outlined
 					onClick={() => registerOfTitleRef.current?.click()}

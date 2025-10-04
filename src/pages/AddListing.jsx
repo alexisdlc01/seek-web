@@ -20,8 +20,7 @@ const AddListing = () => {
 	const fileInputRef = useRef(null);
 	const floorPlanInputRef = useRef(null);
 	const registerOfTitleRef = useRef(null);
-	const { currentListing, setCurrentListing, setListings } =
-		useContext(ListingsContext);
+	const { setListings } = useContext(ListingsContext);
 	const [step, setStep] = useState(1);
 
 	// Step 1 state
@@ -38,6 +37,13 @@ const AddListing = () => {
 		"Studio",
 		"Other (please specify)"
 	];
+	const propertyTypeMap = {
+		FLAT_APARTMENT: "Flat/Apartment",
+		HOUSE: "House",
+		ROOM_IN_SHARED_HOUSE: "Room in Shared House",
+		STUDIO: "Studio",
+		OTHER: "Other (please specify)"
+	};
 	const [propertyType, setPropertyType] = useState(null);
 	const [otherType, setOtherType] = useState("");
 	const bedroomOptions = [...Array(10).keys()].map(i => ({
@@ -55,8 +61,6 @@ const AddListing = () => {
 	const [bathrooms, setBathrooms] = useState(null);
 	const [description, setDescription] = useState("");
 	const [registerOfTitle, setRegisterOfTitle] = useState(null);
-
-	// Step 2 state
 	const [rent, setRent] = useState(null);
 	const [deposit, setDeposit] = useState(null);
 	const [availabilityDate, setAvailabilityDate] = useState(null);
@@ -70,7 +74,7 @@ const AddListing = () => {
 		{ label: "Flexible", value: "Flexible" }
 	];
 
-	// Step 3 state
+	// Step 2 state
 	const furnishingOptions = [
 		{
 			label: "Furnished (incl. beds, sofas, wardrobes, kitchen appliances)",
@@ -103,7 +107,7 @@ const AddListing = () => {
 	];
 	const [amenities, setAmenities] = useState([]);
 
-	// Step 4 state
+	// Step 3 state
 	const [photos, setPhotos] = useState([]);
 	const [dragOverIndex, setDragOverIndex] = useState(null);
 	const [videoLink, setVideoLink] = useState("");
@@ -196,45 +200,6 @@ const AddListing = () => {
 		})();
 	}, [step]);
 
-	// useEffect(() => {
-	// 	(async () => {
-	// 		if (currentListing) {
-	// 			const res = await axios.get(
-	// 				`${BASE_URL}/listings/mine/${currentListing._id}`,
-	// 				{
-	// 					withCredentials: true
-	// 				}
-	// 			);
-	// 			console.log("data back", res.data);
-	// 			res.data.propertyTitle ? setTitle(res.data.propertyTitle) : {};
-	// 			res.data.sizeSqMeters ? setSizeSqM(res.data.sizeSqMeters) : {};
-	// 			res.data.propertyType ? setPropertyType(res.data.propertyType) : {};
-	// 			res.data.bedroomsCount
-	// 				? setRegularBedrooms(res.data.bedroomsCount)
-	// 				: {};
-	// 			res.data.ensuiteBedroomCount
-	// 				? setEnsuiteBedrooms(res.data.ensuiteBedroomCount)
-	// 				: {};
-	// 			res.data.propertyDesc ? setDescription(res.data.propertyDesc) : {};
-	// 			res.data.amenities ? setAmenities(res.data.amenities) : {};
-	// 			res.data.streetAddress ? setStreet(res.data.streetAddress) : {};
-	// 			res.data.cityTown ? setCity(res.data.cityTown) : {};
-	// 			res.data.postcodeZIP ? setPostcode(res.data.postcodeZIP) : {};
-	// 			res.data.country ? setCountry(res.data.country) : {};
-	// 			res.data.monthlyRent ? setRent(res.data.monthlyRent) : {};
-	// 			res.data.securityDeposit
-	// 				? setDeposit(res.data.securityDeposit)
-	// 				: {};
-	// 			res.data.availableFrom
-	// 				? setAvailabilityDate(res.data.availableFrom)
-	// 				: {};
-	// 			res.data.availableUntil
-	// 				? setEndAvailabilityDate(res.data.availableUntil)
-	// 				: {};
-	// 		}
-	// 	})();
-	// }, []);
-
 	const next = () => {
 		stepperRef.current.nextCallback();
 		setStep(prev => Math.min(prev + 1, 4));
@@ -311,7 +276,6 @@ const AddListing = () => {
 
 	const removePhoto = id => setPhotos(photos.filter(p => p.id !== id));
 
-
 	// Page protection
 	const { id } = useParams();
 	const navigate = useNavigate();
@@ -319,20 +283,68 @@ const AddListing = () => {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		// simulate backend verification
-		const timer = setTimeout(() => {
-			// simulate valid ID
-			if (id && id.length > 0) {
-				setValidListing(true);
-			} else {
+		(async () => {
+			try {
+				const res = await axios.get(`${BASE_URL}/listings/mine/${id}`, {
+					withCredentials: true
+				});
+				if (res.data) setValidListing(true);
+				else navigate("/not-authorized");
+			} catch (err) {
+				console.error("Verification failed:", err);
 				navigate("/not-authorized");
+			} finally {
+				setLoading(false);
+
+				const res = await axios.get(`${BASE_URL}/listings/mine/${id}`, {
+					withCredentials: true
+				});
+				console.log("data back", res.data);
+				res.data.propertyTitle ? setTitle(res.data.propertyTitle) : {};
+				res.data.sizeSqMeters ? setSizeSqM(res.data.sizeSqMeters) : {};
+				res.data.propertyType
+					? setPropertyType(
+							propertyTypeMap[res.data.propertyType] || null
+						)
+					: {};
+				res.data.bedroomsCount
+					? setRegularBedrooms(res.data.bedroomsCount)
+					: {};
+				res.data.enSuiteBedroomCount
+					? setEnsuiteBedrooms(res.data.enSuiteBedroomCount)
+					: {};
+				res.data.bathrooms ? setBathrooms(res.data.bathrooms) : {};
+				res.data.propertyDesc
+					? setDescription(res.data.propertyDesc)
+					: {};
+				res.data.amenities ? setAmenities(res.data.amenities) : {};
+				res.data.streetAddress ? setStreet(res.data.streetAddress) : {};
+				res.data.cityTown ? setCity(res.data.cityTown) : {};
+				res.data.postcodeZIP ? setPostcode(res.data.postcodeZIP) : {};
+				res.data.country ? setCountry(res.data.country) : {};
+				res.data.monthlyRent ? setRent(res.data.monthlyRent) : {};
+				res.data.securityDeposit
+					? setDeposit(res.data.securityDeposit)
+					: {};
+				res.data.availableFrom
+					? setAvailabilityDate(new Date(res.data.availableFrom))
+					: {};
+				res.data.availableUntil
+					? setEndAvailabilityDate(new Date(res.data.availableUntil))
+					: {};
+
+				res.data.furnishingStatus
+					? setFurnishingStatus(
+							res.data.furnishingStatus.charAt(0).toUpperCase() +
+								res.data.furnishingStatus.slice(1)
+						)
+					: {};
+				res.data.epcRating
+					? setEpcRating(res.data.epcRating)
+					: {}
 			}
-			setLoading(false);
-		}, 1000);
-
-		return () => clearTimeout(timer);
+		})();
 	}, [id, navigate]);
-
 
 	if (loading) {
 		return (

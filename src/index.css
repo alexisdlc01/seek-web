@@ -2,6 +2,31 @@
 @import "primereact/resources/primereact.min.css";
 @import "primeicons/primeicons.css";
 
+/* Smooth, thin, minimal scrollbar styling */
+::-webkit-scrollbar {
+	width: 6px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: rgba(120, 120, 120, 0.5);
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(160, 160, 160, 0.7);
+}
+
+/* For Firefox */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(120, 120, 120, 0.5) transparent;
+}
+
+
 .p-password {
 	display: inline;
 }

@@ -121,7 +121,7 @@ function App() {
 								}
 							/>
 							<Route
-								path="/add-listing"
+								path="/:id/add-listing"
 								element={
 									<ProtectedRoute
 										allowedRoles={["LANDLORD_AGENCY"]}

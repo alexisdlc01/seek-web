@@ -9,6 +9,8 @@ import PhotosMediaStep from "../components/addPropertySteps/PhotosMediaStep";
 import ReviewPublishStep from "../components/addPropertySteps/ReviewPublishStep";
 import ListingsContext from "../context/ListingsContext.jsx";
 import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -309,6 +311,39 @@ const AddListing = () => {
 
 	const removePhoto = id => setPhotos(photos.filter(p => p.id !== id));
 
+
+	// Page protection
+	const { id } = useParams();
+	const navigate = useNavigate();
+	const [validListing, setValidListing] = useState(false);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		// simulate backend verification
+		const timer = setTimeout(() => {
+			// simulate valid ID
+			if (id && id.length > 0) {
+				setValidListing(true);
+			} else {
+				navigate("/not-authorized");
+			}
+			setLoading(false);
+		}, 1000);
+
+		return () => clearTimeout(timer);
+	}, [id, navigate]);
+
+
+	if (loading) {
+		return (
+			<div className="flex items-center justify-center h-screen">
+				<ProgressSpinner style={{ width: "50px", height: "50px" }} />
+			</div>
+		);
+	}
+
+	if (!validListing) return null;
+
 	return (
 		<div
 			className="min-h-screen py-6 px-2 md:px-4"
@@ -350,7 +385,6 @@ const AddListing = () => {
 							bathroomOptions={bathroomOptions}
 							description={description}
 							setDescription={setDescription}
-
 							rent={rent}
 							setRent={setRent}
 							deposit={deposit}

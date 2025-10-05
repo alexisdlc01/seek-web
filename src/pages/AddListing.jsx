@@ -20,7 +20,6 @@ const AddListing = () => {
 	const fileInputRef = useRef(null);
 	const floorPlanInputRef = useRef(null);
 	const registerOfTitleRef = useRef(null);
-	const { setListings } = useContext(ListingsContext);
 	const [step, setStep] = useState(1);
 	const [currentListing, setCurrentListing] = useState({});
 
@@ -73,6 +72,7 @@ const AddListing = () => {
 	const [deposit, setDeposit] = useState(null);
 	const [availabilityDate, setAvailabilityDate] = useState(null);
 	const [endAvailabilityDate, setEndAvailabilityDate] = useState(null);
+	const [registerOfTitleKeyFromBackend, setRegisterOfTitleKeyFromBackend] = useState("");
 
 	const leaseOptions = [
 		{ label: "12 Months", value: "12 Months" },
@@ -292,6 +292,12 @@ const AddListing = () => {
 				res.data.epcRating
 					? setEpcRating(res.data.epcRating)
 					: {}
+				if (res.data.registerOfTitleKey) {
+					setRegisterOfTitleKeyFromBackend(res.data.registerOfTitleKey);
+					const key = res.data.registerOfTitleKey;
+					const fakeFileName = key.split("/").pop().split("-").slice(1).join("-");
+					setRegisterOfTitle({ name: fakeFileName });
+				}
 			}
 		})();
 	}, [id, navigate]);
@@ -301,7 +307,7 @@ const AddListing = () => {
 			console.log("On step:", step);
 			switch (step) {
 				case 2:
-					const step2SavedDraft = await axios.patch(
+					await axios.patch(
 						`${BASE_URL}/listings/${currentListing._id}/createStep1`,
 						{
 							propertyTitle: title,
@@ -320,16 +326,12 @@ const AddListing = () => {
 							availableFrom: availabilityDate,
 							availableUntil: endAvailabilityDate,
 							// TODO: change to AWS URL
-							registerOfTitleUrl: "coolUrl"
+							registerOfTitleKey: registerOfTitleKeyFromBackend
 						},
 						{
 							withCredentials: true
 						}
 					);
-					setListings(prevState => [
-						...prevState,
-						step2SavedDraft.data
-					]);
 					break;
 				case 3:
 					await axios.patch(
@@ -431,6 +433,8 @@ const AddListing = () => {
 							registerOfTitleRef={registerOfTitleRef}
 							registerOfTitle={registerOfTitle}
 							setRegisterOfTitle={setRegisterOfTitle}
+							registerOfTitleKeyFromBackend={registerOfTitleKeyFromBackend}
+							setRegisterOfTitleKeyFromBackend={setRegisterOfTitleKeyFromBackend}
 							next={next}
 						/>
 					</StepperPanel>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Dropdown } from "primereact/dropdown";
@@ -6,6 +6,9 @@ import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
 import { Calendar } from "primereact/calendar";
+import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const BasicInfoStep = ({
 	title,
@@ -46,6 +49,8 @@ const BasicInfoStep = ({
 	registerOfTitle,
 	setRegisterOfTitle,
 	registerOfTitleRef,
+	registerOfTitleKeyFromBackend,
+	setRegisterOfTitleKeyFromBackend,
 	next
 }) => {
 	useEffect(() => {
@@ -305,18 +310,51 @@ const BasicInfoStep = ({
 					ref={registerOfTitleRef}
 					accept=".pdf"
 					className="hidden"
-					onChange={e => {
+					onChange={async e => {
 						const file = e.target.files[0];
 						if (file && file.type !== "application/pdf") {
 							alert("Please upload a PDF file");
 							return;
 						}
+						const res = await axios.get(
+							`${BASE_URL}/upload/presign`,
+							{
+								params: {
+									filename: file.name,
+									fileType: file.type,
+									folder: "private"
+								},
+								withCredentials: true
+							}
+						);
+
+						const { uploadUrl, fileUrl, key } = res.data;
+
+						await axios.put(uploadUrl, file, {
+							headers: { "Content-Type": file.type }
+						});
+
+						setRegisterOfTitleKeyFromBackend(key);
 						setRegisterOfTitle(file);
 					}}
 				/>
 				{registerOfTitle && (
-					<div className="mt-2 text-sm text-gray-600 flex items-center">
-						{registerOfTitle.name}
+					<div className="mt-2 text-sm text-[#1ba4ae] flex items-center">
+						<span
+							className={"cursor-pointer underline text-blue"}
+							onClick={async e => {
+								const res = await axios.get(
+									`${BASE_URL}/upload/access`,
+									{
+										params: { key: registerOfTitleKeyFromBackend },
+										withCredentials: true
+									}
+								);
+								window.open(res.data, "_blank");
+							}}
+						>
+							{registerOfTitle.name}
+						</span>
 						<Button
 							icon="pi pi-times"
 							text

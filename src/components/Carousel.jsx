@@ -13,11 +13,31 @@ function wrap(min, max, v) {
 
 export default function QuotesCarouselSection() {
 	const quotes = [
-		"Housing should be as easy as scrolling TikTok.",
-		"Only verified landlords. Only serious applications.",
-		"Agree & secure your space in days, not months.",
-		"SEEK is free for students and landlords.",
-		"Complete transparency and control for everyone."
+		{
+			text: "Housing should be as easy as scrolling TikTok.",
+			name: "Sarah Thompson",
+			role: "Student"
+		},
+		{
+			text: "Only verified landlords. Only serious applications.",
+			name: "Alexis de La Chapelle",
+			role: "Landlord"
+		},
+		{
+			text: "Agree & secure your space in days, not months.",
+			name: "James Liu",
+			role: "Tenant"
+		},
+		{
+			text: "SEEK is free for students and landlords.",
+			name: "Emily Carter",
+			role: "Landlord"
+		},
+		{
+			text: "Complete transparency and control for everyone.",
+			name: "Michael O’Neill",
+			role: "Student"
+		}
 	];
 
 	const base = useMotionValue(0);
@@ -59,15 +79,15 @@ export default function QuotesCarouselSection() {
 										className="shrink-0 w-[18rem] md:w-[20rem] whitespace-normal"
 									>
 										<blockquote className="text-lg md:text-xl leading-relaxed">
-											“{q}”
+											“{q.text}”
 										</blockquote>
 										<figcaption className="mt-3 flex justify-end items-center">
 											<div className="text-right">
 												<div className="text-sm md:text-base font-semibold">
-													Kshitij Verma
+													{q.name}
 												</div>
 												<div className="text-xs md:text-sm opacity-70">
-													Seek User
+													{q.role}
 												</div>
 											</div>
 											<div className="h-6 md:h-8 w-px bg-sky-500/80 ml-2" />

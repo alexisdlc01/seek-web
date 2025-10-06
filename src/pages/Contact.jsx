@@ -61,11 +61,15 @@ export default function ContactPage() {
 								Seek
 							</span>
 						</h1>
-						<p className="text-[var(--text-color-secondary)]">
-							Please reach out with any questions, feedback, or
-							support needs.
-						</p>
 					</div>
+
+					<h1 className="text-3xl font-bold mb-2 text-center md:text-left">
+						Get in touch with our cofounders
+					</h1>
+					<p className="text-[var(--text-color-secondary)] mb-10 text-center md:text-left">
+						We’re always happy to help with questions, listen to
+						feedback, or assist with any issues.
+					</p>
 
 					{/* Contact info cards */}
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl mx-auto mb-14 text-center md:text-left">
@@ -109,6 +113,13 @@ export default function ContactPage() {
 							</a>
 						</div>
 					</div>
+
+					<h1 className="text-3xl font-bold mb-2 text-center md:text-left">
+						Fill out the form below
+					</h1>
+					<p className="text-[var(--text-color-secondary)] mb-8 text-center md:text-left">
+						We’ll get back to you as soon as possible.
+					</p>
 
 					<form
 						onSubmit={onSubmit}

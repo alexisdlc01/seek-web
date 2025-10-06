@@ -18,12 +18,30 @@ export default function SignUpStudent() {
 	const navigate = useNavigate();
 	const toast = useRef(null);
 
-	const showError = detail => {
-		toast.current.show({
+	const showError = (detail) => {
+		toast.current?.show({
 			severity: "error",
-			summary: "Error",
-			detail,
-			life: 3000
+			summary: "Sign-Up Failed",
+			detail: {detail},
+			life: 4000,
+			style: {
+				background: "#1E1E2F",
+				color: "#fff",
+				borderLeft: "5px solid #EF4444", // red accent
+				borderRadius: "8px",
+				boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+			},
+			content: (
+				<div className="flex items-center space-x-3">
+					<i className="pi pi-times-circle text-red-400 text-xl"></i>
+					<div>
+						<p className="font-semibold">Sign-Up Failed</p>
+						<p className="text-sm text-gray-200">
+							{detail}
+						</p>
+					</div>
+				</div>
+			)
 		});
 	};
 
@@ -41,7 +59,7 @@ export default function SignUpStudent() {
 	const validateEmail = () => {
 		const regex = /^[a-zA-Z0-9._-]+$/;
 		if (!email.trim()) {
-			showError("Email is required.");
+			showError("A valid St Andrews email prefix is required.");
 			return false;
 		}
 		if (!regex.test(email)) {
@@ -59,7 +77,7 @@ export default function SignUpStudent() {
 			return false;
 		}
 		if (password !== confirmPassword) {
-			showError("Passwords do not match.");
+			showError("The passwords inputted do not match.");
 			return false;
 		}
 		const strongPasswordRegex =
@@ -86,7 +104,7 @@ export default function SignUpStudent() {
 		<div className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
 			{/* same bubbles as sign in */}
 
-			<Toast ref={toast} />
+			<Toast ref={toast} position="bottom-right" />
 			<BackgroundBubbles count={20} color="#8B5CF6" />
 
 			<motion.div

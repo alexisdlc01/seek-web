@@ -42,20 +42,56 @@ function CoreDiscovery() {
 			className="text-slate-100 pt-20 md:pt-60 pb-16"
 		>
 			<div className="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
-				{/* Left: image placeholders (now positioned, not stacked) */}
 				<div className="relative mx-auto w-full max-w-md h-[320px] sm:h-[380px]">
-					<PhonePlaceholder
+					<motion.div
 						className="absolute -left-2 sm:-left-6 md:-left-10 top-0"
-						delay={0.0}
-					/>
-					<PhonePlaceholder
+						animate={{ y: [0, -8, 0] }}
+						transition={{
+							duration: 2.4,
+							ease: "easeInOut",
+							repeat: Infinity
+						}}
+					>
+						<img
+							src="/1.png"
+							alt="App screen"
+							className="rounded-3xl border border-slate-600 shadow-2xl w-28 sm:w-36 md:w-40 h-auto"
+						/>
+					</motion.div>
+
+					<motion.div
 						className="absolute -right-2 sm:-right-6 md:-right-10 top-0"
-						delay={0.0}
-					/>
-					<PhonePlaceholder
+						animate={{ y: [0, -8, 0] }}
+						transition={{
+							duration: 2.4,
+							ease: "easeInOut",
+							repeat: Infinity,
+							delay: 0.4
+						}}
+					>
+						<img
+							src="/2.png"
+							alt="App screen"
+							className="rounded-3xl border border-slate-600 shadow-2xl w-28 sm:w-36 md:w-40 h-auto"
+						/>
+					</motion.div>
+
+					<motion.div
 						className="absolute left-1/2 -translate-x-1/2 bottom-0"
-						delay={1.2}
-					/>
+						animate={{ y: [0, -8, 0] }}
+						transition={{
+							duration: 2.4,
+							ease: "easeInOut",
+							repeat: Infinity,
+							delay: 0.8
+						}}
+					>
+						<img
+							src="/3.png"
+							alt="App screen"
+							className="rounded-3xl border border-slate-600 shadow-2xl w-28 sm:w-36 md:w-40 h-auto"
+						/>
+					</motion.div>
 				</div>
 
 				{/* Right: copy */}
@@ -174,14 +210,56 @@ function ApplicationManagement() {
 					</ul>
 				</div>
 
-				{/* Right: image placeholders */}
 				<div className="relative mx-auto w-full max-w-md h-[320px] sm:h-[380px]">
-					<PhonePlaceholder className="absolute -left-2 sm:-left-6 md:-left-10 top-0" />
-					<PhonePlaceholder className="absolute -right-2 sm:-right-6 md:-right-10 top-0" />
-					<PhonePlaceholder
+					<motion.div
+						className="absolute -left-2 sm:-left-6 md:-left-10 top-0"
+						animate={{ y: [0, -8, 0] }}
+						transition={{
+							duration: 2.4,
+							ease: "easeInOut",
+							repeat: Infinity
+						}}
+					>
+						<img
+							src="/4.png"
+							alt="App screen"
+							className="rounded-3xl border border-slate-600 shadow-2xl w-28 sm:w-36 md:w-40 h-auto"
+						/>
+					</motion.div>
+
+					<motion.div
+						className="absolute -right-2 sm:-right-6 md:-right-10 top-0"
+						animate={{ y: [0, -8, 0] }}
+						transition={{
+							duration: 2.4,
+							ease: "easeInOut",
+							repeat: Infinity,
+							delay: 0.4
+						}}
+					>
+						<img
+							src="/5.png"
+							alt="App screen"
+							className="rounded-3xl border border-slate-600 shadow-2xl w-28 sm:w-36 md:w-40 h-auto"
+						/>
+					</motion.div>
+
+					<motion.div
 						className="absolute left-1/2 -translate-x-1/2 bottom-0"
-						delay={1.2}
-					/>
+						animate={{ y: [0, -8, 0] }}
+						transition={{
+							duration: 2.4,
+							ease: "easeInOut",
+							repeat: Infinity,
+							delay: 0.8
+						}}
+					>
+						<img
+							src="/6.png"
+							alt="App screen"
+							className="rounded-3xl border border-slate-600 shadow-2xl w-28 sm:w-36 md:w-40 h-auto"
+						/>
+					</motion.div>
 				</div>
 			</div>
 		</section>
@@ -192,14 +270,56 @@ function CommunicationSecurity() {
 	return (
 		<section className="text-slate-100 pt-10 pb-16">
 			<div className="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
-				{/* Left: image placeholders */}
 				<div className="relative mx-auto w-full max-w-md h-[320px] sm:h-[380px]">
-					<PhonePlaceholder className="absolute -left-2 sm:-left-6 md:-left-10 top-0" />
-					<PhonePlaceholder className="absolute -right-2 sm:-right-6 md:-right-10 top-0" />
-					<PhonePlaceholder
+					<motion.div
+						className="absolute -left-2 sm:-left-6 md:-left-10 top-0"
+						animate={{ y: [0, -8, 0] }}
+						transition={{
+							duration: 2.4,
+							ease: "easeInOut",
+							repeat: Infinity
+						}}
+					>
+						<img
+							src="/7.png"
+							alt="App screen"
+							className="rounded-3xl border border-slate-600 shadow-2xl w-28 sm:w-36 md:w-40 h-auto"
+						/>
+					</motion.div>
+
+					<motion.div
+						className="absolute -right-2 sm:-right-6 md:-right-10 top-0"
+						animate={{ y: [0, -8, 0] }}
+						transition={{
+							duration: 2.4,
+							ease: "easeInOut",
+							repeat: Infinity,
+							delay: 0.4
+						}}
+					>
+						<img
+							src="/8.png"
+							alt="App screen"
+							className="rounded-3xl border border-slate-600 shadow-2xl w-28 sm:w-36 md:w-40 h-auto"
+						/>
+					</motion.div>
+
+					<motion.div
 						className="absolute left-1/2 -translate-x-1/2 bottom-0"
-						delay={1.2}
-					/>
+						animate={{ y: [0, -8, 0] }}
+						transition={{
+							duration: 2.4,
+							ease: "easeInOut",
+							repeat: Infinity,
+							delay: 0.8
+						}}
+					>
+						<img
+							src="/9.png"
+							alt="App screen"
+							className="rounded-3xl border border-slate-600 shadow-2xl w-28 sm:w-36 md:w-40 h-auto"
+						/>
+					</motion.div>
 				</div>
 
 				{/* Right: copy */}

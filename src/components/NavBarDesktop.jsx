@@ -81,38 +81,52 @@ export default function NavbarDesktop({ user, logout, logo }) {
 		<div className="flex items-center gap-5 mr-6">
 			{loggedIn ? (
 				<>
-					<Button
-						label={
-							<span style={{ color: oppositeBackgroundTheme }}>
-								Dashboard
-							</span>
-						}
-						text
-						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
-						onClick={() => navigate("/dashboard")}
-					/>
-					<Button
-						label={
-							<span style={{ color: oppositeBackgroundTheme }}>
-								Listings
-							</span>
-						}
-						text
-						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
-						onClick={() => navigate("/listings")}
-					/>
-					<Button
-						label={
-							<span style={{ color: oppositeBackgroundTheme }}>
-								Chat
-							</span>
-						}
-						text
-						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
-						onClick={() => navigate("/chat")}
-					/>
+					{/* Role-based main buttons */}
+					{user.role === "LANDLORD_AGENCY" ? (
+						<>
+							<Button
+								label={<span style={{ color: oppositeBackgroundTheme }}>Dashboard</span>}
+								text
+								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
+								onClick={() => navigate("/dashboard")}
+							/>
+							<Button
+								label={<span style={{ color: oppositeBackgroundTheme }}>Listings</span>}
+								text
+								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
+								onClick={() => navigate("/listings")}
+							/>
+							<Button
+								label={<span style={{ color: oppositeBackgroundTheme }}>Chat</span>}
+								text
+								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
+								onClick={() => navigate("/chat")}
+							/>
+						</>
+					) : (
+						<>
+							<Button
+								label={<span style={{ color: oppositeBackgroundTheme }}>Home</span>}
+								text
+								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
+								onClick={() => navigate("/")}
+							/>
+							<Button
+								label={<span style={{ color: oppositeBackgroundTheme }}>About</span>}
+								text
+								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
+								onClick={() => navigate("/about")}
+							/>
+							<Button
+								label={<span style={{ color: oppositeBackgroundTheme }}>Help</span>}
+								text
+								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
+								onClick={() => navigate("/contact")}
+							/>
+						</>
+					)}
 
-					{/* Avatar trigger stays the same */}
+					{/* Account dropdown (always shown when logged in) */}
 					<div ref={userWrapRef} className="relative">
 						<div
 							className="flex items-center gap-2 bg-[#186273] rounded-lg px-3 py-1.5 cursor-pointer hover:bg-[#186273] transition"
@@ -125,31 +139,27 @@ export default function NavbarDesktop({ user, logout, logo }) {
 									shape="circle"
 								/>
 							) : (
-							<Avatar
-								label={user.name
-									.split(" ")
-									.map(n => n[0])
-									.join("")
-									.toUpperCase()}
-								className="bg-[#3182ce] text-white font-bold"
-								style={{ backgroundColor: "#3182ce" }}
-								shape="circle"
-							/>
+								<Avatar
+									label={user.name
+										.split(" ")
+										.map(n => n[0])
+										.join("")
+										.toUpperCase()}
+									className="bg-[#3182ce] text-white font-bold"
+									shape="circle"
+								/>
 							)}
-							<span className="text-white font-medium">
-								{user.name}
-							</span>
+							<span className="text-white font-medium">{user.name}</span>
 							<i className="pi pi-chevron-down text-white text-sm" />
 						</div>
 
 						{userMenuOpen && (
 							<div className="absolute right-0 top-[calc(100%+8px)] z-50 w-full rounded-xl shadow-lg border bg-white p-1 overflow-hidden">
 								<button
-									onClick={async () => { navigate("/edit-profile")}}
+									onClick={() => navigate("/edit-profile")}
 									className="cursor-pointer w-full text-left px-3 py-2 text-[#3182c] font-semibold hover:bg-black/5 rounded-lg"
 								>
-									<i className="pi pi-user-edit px-0.5"></i> Edit
-									Profile
+									<i className="pi pi-user-edit px-0.5"></i> Edit Profile
 								</button>
 								<button
 									onClick={async () => {
@@ -165,46 +175,31 @@ export default function NavbarDesktop({ user, logout, logo }) {
 					</div>
 				</>
 			) : (
+				// not logged in (keep your login dropdown as before)
 				<>
 					<Button
-						label={
-							<span style={{ color: oppositeBackgroundTheme }}>
-								Home
-							</span>
-						}
+						label={<span style={{ color: oppositeBackgroundTheme }}>Home</span>}
 						text
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/")}
 					/>
 					<Button
-						label={
-							<span style={{ color: oppositeBackgroundTheme }}>
-								About
-							</span>
-						}
+						label={<span style={{ color: oppositeBackgroundTheme }}>About</span>}
 						text
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/about")}
 					/>
 					<Button
-						label={
-							<span style={{ color: oppositeBackgroundTheme }}>
-								Help
-							</span>
-						}
+						label={<span style={{ color: oppositeBackgroundTheme }}>Help</span>}
 						text
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/contact")}
 					/>
+
+					{/* Existing login dropdown */}
 					<div ref={loginWrapRef} className="relative">
 						<Button
-							label={
-								<span
-									style={{ color: oppositeBackgroundTheme }}
-								>
-									Login
-								</span>
-							}
+							label={<span style={{ color: oppositeBackgroundTheme }}>Login</span>}
 							icon="pi pi-chevron-down"
 							iconPos="right"
 							text

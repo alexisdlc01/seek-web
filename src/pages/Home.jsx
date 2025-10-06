@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import {
 	motion,
 	useTransform,
@@ -11,12 +11,31 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import CountUp from "react-countup";
 import Carousel from "../components/Carousel.jsx";
+import UserContext from "../context/UserContext.jsx";
 
 export default function LandingPage() {
 	const { scrollY, scrollYProgress } = useScroll();
 	const videoRef = useRef(null);
 	const { setTheme } = useNavbarTheme();
 	const navigate = useNavigate();
+	const { user, logout } = useContext(UserContext);
+	const [isLandlord, setIsLandlord] = useState(false);
+	const [isStudent, setIsStudent] = useState(false);
+
+	useEffect(() => {
+		console.log("User state changed:", user);
+		if (user?.role === "LANDLORD_AGENCY") {
+			setIsLandlord(true);
+		} else {
+			setIsLandlord(false);
+
+			if (user?.role === "STUDENT") {
+				setIsStudent(true);
+			} else {
+				setIsStudent(false);
+			}
+		}
+	}, [user]);
 
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -541,7 +560,12 @@ export default function LandingPage() {
 							</p>
 							<p className="mt-6 text-lg text-white/90">
 								Victor Trinel and Alexis de La Chapelle,{" "}
-								<span style={{ color: "#21b9c4", display: "block" }}>
+								<span
+									style={{
+										color: "#21b9c4",
+										display: "block"
+									}}
+								>
 									Co-founders
 								</span>
 							</p>

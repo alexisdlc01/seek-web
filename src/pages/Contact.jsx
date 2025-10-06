@@ -80,17 +80,28 @@ export default function ContactPage() {
 							<p className="text-[var(--text-color-secondary)] mb-4">
 								Co-founder
 							</p>
-							<a
-								href="https://wa.me/33659997800"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="flex items-center justify-center sm:justify-start gap-2 text-[var(--text-color)] hover:text-[var(--accent-color)] transition"
-							>
-								<i className="pi pi-whatsapp text-green-500 text-lg"></i>
-								<span className="font-medium">
-									+33 659 997 800
-								</span>
-							</a>
+							<div className="flex flex-col gap-2 text-[var(--text-color)]">
+								<a
+									href="https://wa.me/33659997800"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="flex items-center justify-center sm:justify-start gap-2 hover:text-[var(--accent-color)] transition"
+								>
+									<i className="pi pi-whatsapp text-green-500 text-lg"></i>
+									<span className="font-medium">
+										+33 659 997 800
+									</span>
+								</a>
+								<a
+									href="mailto:adelachapelle@seekapp.uk"
+									className="flex items-center justify-center sm:justify-start gap-2 hover:text-[var(--accent-color)] transition"
+								>
+									<i className="pi pi-envelope text-blue-400 text-lg"></i>
+									<span className="font-medium">
+										adelachapelle@seekapp.uk
+									</span>
+								</a>
+							</div>
 						</div>
 
 						<div className="bg-[var(--surface-200)] border border-[var(--surface-400)] rounded-xl p-5 shadow-md hover:shadow-lg transition">
@@ -100,17 +111,28 @@ export default function ContactPage() {
 							<p className="text-[var(--text-color-secondary)] mb-4">
 								Co-founder
 							</p>
-							<a
-								href="https://wa.me/33651111503"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="flex items-center justify-center sm:justify-start gap-2 text-[var(--text-color)] hover:text-[var(--accent-color)] transition"
-							>
-								<i className="pi pi-whatsapp text-green-500 text-lg"></i>
-								<span className="font-medium">
-									+33 651 111 503
-								</span>
-							</a>
+							<div className="flex flex-col gap-2 text-[var(--text-color)]">
+								<a
+									href="https://wa.me/33651111503"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="flex items-center justify-center sm:justify-start gap-2 hover:text-[var(--accent-color)] transition"
+								>
+									<i className="pi pi-whatsapp text-green-500 text-lg"></i>
+									<span className="font-medium">
+										+33 651 111 503
+									</span>
+								</a>
+								<a
+									href="mailto:⁠vtrinel@seekapp.uk"
+									className="flex items-center justify-center sm:justify-start gap-2 hover:text-[var(--accent-color)] transition"
+								>
+									<i className="pi pi-envelope text-blue-400 text-lg"></i>
+									<span className="font-medium">
+										⁠vtrinel@seekapp.uk
+									</span>
+								</a>
+							</div>
 						</div>
 					</div>
 

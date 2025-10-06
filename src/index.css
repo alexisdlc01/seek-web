@@ -210,3 +210,8 @@ body {
 .user-menu .p-menuitem-text,
 .user-menu .p-menuitem-icon,
 .user-menu .p-submenu-icon { color: #fff !important; }
+
+
+.p-toast-message .p-toast-icon-close {
+	display: none !important;
+}

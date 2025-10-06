@@ -21,10 +21,32 @@ export default function SignUpLandlord() {
 	const { signup } = useContext(UserContext);
 	const toast = useRef(null);
 
-	const showError = detail => {
-		toast.current.show({ severity: "error", summary: "Error", detail, life: 3000 });
+	const showError = (detail) => {
+		toast.current?.show({
+			severity: "error",
+			summary: "Sign-Up Failed",
+			detail: {detail},
+			life: 4000,
+			style: {
+				background: "#1E1E2F",
+				color: "#fff",
+				borderLeft: "5px solid #EF4444", // red accent
+				borderRadius: "8px",
+				boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+			},
+			content: (
+				<div className="flex items-center space-x-3">
+					<i className="pi pi-times-circle text-red-400 text-xl"></i>
+					<div>
+						<p className="font-semibold">Sign-Up Failed</p>
+						<p className="text-sm text-gray-200">
+							{detail}
+						</p>
+					</div>
+				</div>
+			)
+		});
 	};
-
 	const validateName = () => {
 		const nameParts = name.trim().split(/\s+/);
 		if (nameParts.length !== 2) {
@@ -36,14 +58,14 @@ export default function SignUpLandlord() {
 
 	const validateEmail = () => {
 		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!email.trim()) { showError("Email is required."); return false; }
+		if (!email.trim()) { showError("A valid email address is required."); return false; }
 		if (!regex.test(email)) { showError("Please enter a valid email address."); return false; }
 		return true;
 	};
 
 	const validatePasswords = () => {
 		if (!password || !confirmPassword) { showError("Please enter both password fields."); return false; }
-		if (password !== confirmPassword) { showError("Passwords do not match."); return false; }
+		if (password !== confirmPassword) { showError("Passwords do not match one another."); return false; }
 		const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 		if (!strongPasswordRegex.test(password)) {
 			showError("Password must be at least 8 characters, with uppercase, lowercase, number, and symbol.");
@@ -70,7 +92,7 @@ export default function SignUpLandlord() {
 			<BackgroundBubbles count={20} color="#8B5CF6" />
 
 
-			<Toast ref={toast} />
+			<Toast ref={toast} position="bottom-right" />
 
 			<motion.div
 				initial={{ opacity: 0, y: 30 }}

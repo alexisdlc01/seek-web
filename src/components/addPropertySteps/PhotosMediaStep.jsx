@@ -34,7 +34,7 @@ const PhotosMediaStep = ({
 		<>
 			<div className="space-y-6">
 				<div>
-					<label className="font-medium">Photos</label>
+					<label className="font-medium text-white">Photos</label>
 					<div
 						className="border-2 border-dashed p-8 rounded text-center cursor-pointer mt-2"
 						onClick={() => fileInputRef.current?.click()}
@@ -84,7 +84,7 @@ const PhotosMediaStep = ({
 					</div>
 				</div>
 				<div className="flex flex-col">
-					<label htmlFor="videoLink" className="font-medium mb-2">
+					<label htmlFor="videoLink" className="font-medium mb-2 text-white">
 						Video Tour Link
 					</label>
 					<InputText
@@ -95,7 +95,7 @@ const PhotosMediaStep = ({
 					/>
 				</div>
 				<div className="flex flex-col">
-					<label htmlFor="floorPlan" className="font-medium mb-2">
+					<label htmlFor="floorPlan" className="font-medium mb-2 text-white">
 						Floor Plan Image (PDF Only)
 					</label>
 					<Button

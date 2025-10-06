@@ -459,7 +459,7 @@ export default function LandingPage() {
 							{startCounts ? (
 								<CountUp
 									start={0}
-									end={50}
+									end={100}
 									duration={1.4}
 									separator=","
 								/>
@@ -469,7 +469,7 @@ export default function LandingPage() {
 							+
 						</div>
 						<p className="mt-2 opacity-90 text-lg md:text-xl">
-							Landlords already on Seek
+							Users on Seek
 						</p>
 					</div>
 
@@ -478,7 +478,7 @@ export default function LandingPage() {
 							{startCounts ? (
 								<CountUp
 									start={0}
-									end={1000}
+									end={300}
 									duration={1.6}
 									separator=","
 								/>
@@ -488,7 +488,7 @@ export default function LandingPage() {
 							+
 						</div>
 						<p className="mt-2 opacity-90 text-lg md:text-xl">
-							New Properties Listed Weekly
+							Properties Listed
 						</p>
 					</div>
 
@@ -497,17 +497,17 @@ export default function LandingPage() {
 							{startCounts ? (
 								<CountUp
 									start={0}
-									end={500}
+									end={35}
 									duration={1.5}
 									separator=","
 								/>
 							) : (
 								0
 							)}
-							+
+							
 						</div>
 						<p className="mt-2 opacity-90 text-lg md:text-xl">
-							Downloads of the Seek App
+							Days untill app launch
 						</p>
 					</div>
 				</motion.div>

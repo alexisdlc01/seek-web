@@ -172,7 +172,6 @@ function App() {
 								path="/verify-email"
 								element={<VerifyingEmail />}
 							/>
-							<Route path="/security" element={<Security />} />
 							<Route path="*" element={<NotFound />} />
 						</Routes>
 					</motion.div>

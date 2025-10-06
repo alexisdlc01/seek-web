@@ -14,18 +14,27 @@ const ReviewPublishStep = ({ back, publish }) => {
 					Please review all information before publishing.
 				</div>
 			</div>
-			<div className="flex pt-8 justify-between">
+			<div className="flex pt-8 justify-between items-center">
 				<Button
 					label="Back"
 					severity="secondary"
 					icon="pi pi-arrow-left"
 					onClick={back}
 				/>
-				<Button
-					label="Publish Listing"
-					icon="pi pi-check"
-					onClick={publish}
-				/>
+
+				<div className="flex gap-3">
+					<Button
+						label="Save Draft"
+						icon="pi pi-save"
+						className="p-button-secondary"
+						onClick={publish}
+					/>
+					<Button
+						label="Publish Listing"
+						icon="pi pi-check"
+						onClick={publish}
+					/>
+				</div>
 			</div>
 		</>
 	);

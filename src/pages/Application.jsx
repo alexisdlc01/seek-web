@@ -23,31 +23,32 @@ export default function ApplicationPage() {
 	const toast = useRef(null);
 
 	const accept = () => {
-		toast.current.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected the application', life: 3000 });
+		toast.current.show({
+			severity: "warn",
+			summary: "Rejected",
+			detail: "You have rejected the application",
+			life: 3000
+		});
 	};
 
-	const reject = () => {
-		
-	};
+	const reject = () => {};
 
-
-	const confirm2 = (event) => {
+	const confirm2 = event => {
 		confirmPopup({
 			target: event.currentTarget,
-			message: 'Are you sure you want to reject the application?',
-			icon: 'pi pi-info-circle',
-			defaultFocus: 'reject',
-			acceptClassName: 'p-button-danger',
+			message: "Are you sure you want to reject the application?",
+			icon: "pi pi-info-circle",
+			defaultFocus: "reject",
+			acceptClassName: "p-button-danger",
 			accept,
 			reject
 		});
 	};
 
-
 	const { initials, names, genders, degrees, years, letters } = applicant;
 
 	return (
-		<div className="min-h-screen bg-white px-4 py-8 sm:px-6 lg:px-12">
+		<div className="min-h-screen px-4 py-8 sm:px-6 lg:px-12">
 			<Toast ref={toast} />
 			<ConfirmPopup />
 			<h1 className="text-3xl font-bold text-[var(--text-color)] mb-6">
@@ -55,14 +56,16 @@ export default function ApplicationPage() {
 			</h1>
 
 			{/* Profile Card */}
-			<div className="bg-white border border-[var(--surface-border)] rounded-xl p-6 shadow-sm mb-10">
+			<div
+				className=" border border-[var(--surface-border)] rounded-xl p-6 shadow-sm mb-10"
+				style={{
+					background: "var(--gray-62)"
+				}}
+			>
 				<div className="flex items-center gap-4 mb-4">
-					<div className="w-14 h-14 rounded-full bg-gray-200 text-[var(--text-color)] flex items-center justify-center font-bold text-base">
-						{initials}
-					</div>
 					<div>
 						<h2 className="text-xl font-semibold">{names}</h2>
-						<p className="text-gray-600 text-sm">
+						<p className="text-gray-200 text-sm">
 							{genders} • {degrees} • {years}
 						</p>
 					</div>
@@ -73,7 +76,7 @@ export default function ApplicationPage() {
 					<h3 className="font-semibold text-[var(--text-color)] mb-2">
 						Letters of Recommendation
 					</h3>
-					<ul className="list-disc list-inside text-sm text-blue-600 space-y-1">
+					<ul className="list-disc list-inside text-sm  space-y-1">
 						{letters.map((letter, index) => (
 							<li key={index}>
 								<a

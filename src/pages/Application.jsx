@@ -30,21 +30,11 @@ export default function ApplicationPage() {
 		
 	};
 
-	const confirm1 = (event) => {
-		confirmPopup({
-			target: event.currentTarget,
-			message: 'Are you sure you want to approve?',
-			icon: 'pi pi-exclamation-triangle',
-			defaultFocus: 'accept',
-			accept,
-			reject
-		});
-	};
 
 	const confirm2 = (event) => {
 		confirmPopup({
 			target: event.currentTarget,
-			message: 'Are you sure you want to reject?',
+			message: 'Are you sure you want to reject the application?',
 			icon: 'pi pi-info-circle',
 			defaultFocus: 'reject',
 			acceptClassName: 'p-button-danger',
@@ -106,7 +96,6 @@ export default function ApplicationPage() {
 					icon="pi pi-check"
 					className="border border-green-600 text-green-600 bg-transparent px-4 py-2 rounded-lg hover:bg-green-50 transition"
 					outlined
-					onClick={confirm1}
 				/>
 				<Button
 					label="Ignore for Now"

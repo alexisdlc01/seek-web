@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
 import { Calendar } from "primereact/calendar";
 import axios from "axios";
+import { Tooltip } from "primereact/tooltip";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -88,7 +89,11 @@ const BasicInfoStep = ({
 
 				{/* property type */}
 				<div
-					className={`grid grid-cols-1 ${propertyType === "Other (please specify)" ? "md:grid-cols-2" : ""} gap-4`}
+					className={`grid grid-cols-1 ${
+						propertyType === "Other (please specify)"
+							? "md:grid-cols-2"
+							: ""
+					} gap-4`}
 				>
 					<div className="flex flex-col">
 						<label
@@ -208,7 +213,10 @@ const BasicInfoStep = ({
 							options={bathroomOptions}
 							onChange={e => setBathrooms(e.value)}
 							placeholder="Select"
+							data-pr-tooltip="Half bathrooms (0.5) mean toilets without a shower or bath."
+							data-pr-position="bottom"
 						/>
+						<Tooltip target="#bathrooms" />
 					</div>
 				</div>
 
@@ -346,7 +354,9 @@ const BasicInfoStep = ({
 								const res = await axios.get(
 									`${BASE_URL}/upload/access`,
 									{
-										params: { key: registerOfTitleKeyFromBackend },
+										params: {
+											key: registerOfTitleKeyFromBackend
+										},
 										withCredentials: true
 									}
 								);

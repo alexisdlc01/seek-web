@@ -7,112 +7,218 @@ export default function Terms() {
 					Terms & Conditions
 				</h1>
 				<p className="text-[var(--text-color-secondary)]">
-					Last updated: January 2024
+					Effective Date: October 6, 2025
+					<br />
+					Seek IT Ltd, incorporated in Scotland, United Kingdom
 				</p>
 
 				{/* Sections */}
 				<div className="space-y-6">
 					<div>
 						<h2 className="font-semibold text-[var(--text-color)]">
-							1. Acceptance of Terms
+							Introduction & Acceptance
 						</h2>
 						<p className="text-[var(--text-color-secondary)]">
-							By accessing and using Seek St Andrews ("the
-							Service"), you accept and agree to be bound by the
-							terms and provision of this agreement. If you do not
-							agree to abide by the above, please do not use this
-							service.
+							These Terms & Conditions (“Terms”) govern your use
+							of the Seek mobile application and website (the
+							“Platform”). By creating an account or using Seek,
+							you agree to be bound by these Terms. Seek IT Ltd
+							(“Seek,” “we,” “us,” “our”) provides a platform to
+							help students discover and connect with private
+							housing options. Seek does not process rental
+							payments, manage contracts, or act as a landlord or
+							tenant. These Terms apply to all users of the
+							Platform, including students, landlords, and agents.
+							If you do not agree with these Terms, you must not
+							use Seek.
 						</p>
 					</div>
 
 					<div>
 						<h2 className="font-semibold text-[var(--text-color)]">
-							2. Use of the Service
+							Scope & Governing Law
 						</h2>
 						<p className="text-[var(--text-color-secondary)]">
-							The Service is intended for use by students seeking
-							accommodation and landlords offering properties in
-							St Andrews. You must be at least 18 years old to use
-							this Service. You are responsible for maintaining
-							the confidentiality of your account information.
+							Seek is currently available only within the United
+							Kingdom. These Terms are governed by the laws of
+							Scotland. Any disputes will fall under the exclusive
+							jurisdiction of the Scottish courts.
 						</p>
 					</div>
 
 					<div>
 						<h2 className="font-semibold text-[var(--text-color)]">
-							3. User Conduct
+							User Accounts
 						</h2>
 						<p className="text-[var(--text-color-secondary)]">
-							Users agree to use the Service only for lawful
-							purposes. You agree not to post any content that is
-							false, misleading, defamatory, or infringes on the
-							rights of others. Seek reserves the right to remove
-							any content that violates these terms.
+							<ul className="list-disc pl-6 space-y-2">
+								<li>
+									Accounts are available only to students who
+									register using a valid university email
+									address.
+								</li>
+								<li>
+									You must provide accurate and truthful
+									information when creating and maintaining
+									your account.
+								</li>
+								<li>
+									You are responsible for all activity carried
+									out under your account.
+								</li>
+								<li>
+									You may not impersonate another person or
+									misrepresent your status as a student.
+								</li>
+							</ul>
 						</p>
 					</div>
 
 					<div>
 						<h2 className="font-semibold text-[var(--text-color)]">
-							4. Property Listings
+							Landlords & Agents
 						</h2>
 						<p className="text-[var(--text-color-secondary)]">
-							Landlords are responsible for ensuring that all
-							information provided about their properties is
-							accurate and up-to-date. Seek does not guarantee the
-							accuracy of listings and encourages users to verify
-							all information independently.
+							<ul className="list-disc pl-6 space-y-2">
+								<li>
+									Landlords and letting agents may publish
+									listings on Seek free of charge.
+								</li>
+								<li>
+									All listing information (rent, features,
+									availability, photos) must be accurate and
+									not misleading.
+								</li>
+								<li>
+									Content that is discriminatory, offensive,
+									unlawful, or otherwise inappropriate is
+									strictly prohibited.
+								</li>
+							</ul>
 						</p>
 					</div>
 
 					<div>
 						<h2 className="font-semibold text-[var(--text-color)]">
-							5. Privacy
+							Limitation of Liability
 						</h2>
 						<p className="text-[var(--text-color-secondary)]">
-							Your use of our Service is also governed by our
-							Privacy Policy. Please review our Privacy Policy,
-							which also governs the Site and informs users of our
-							data collection practices.
+							<ul className="list-disc pl-6 space-y-2">
+								<li>
+									Seek is a discovery and connection tool
+									only. We are not a party to any lease,
+									tenancy, or rental agreement between
+									students and landlords.
+								</li>
+								<li>
+									Seek does not guarantee the quality, safety,
+									legality, availability, or suitability of
+									any property listed.
+								</li>
+								<li>
+									Seek is not liable for disputes, damages,
+									losses, or costs arising out of interactions
+									between students and landlords.
+								</li>
+							</ul>
 						</p>
 					</div>
 
 					<div>
 						<h2 className="font-semibold text-[var(--text-color)]">
-							6. Limitation of Liability
+							Content & Moderation
 						</h2>
 						<p className="text-[var(--text-color-secondary)]">
-							Seek St Andrews provides the Service on an "as is"
-							basis and makes no warranties regarding the Service.
-							We are not liable for any damages arising from your
-							use of the Service.
+							<ul className="list-disc pl-6 space-y-2">
+								<li>
+									Prohibited content includes (but is not
+									limited to): false or misleading
+									information, discriminatory remarks, illegal
+									material, offensive language, and
+									inappropriate images.
+								</li>
+								<li>
+									Users may report content or accounts that
+									violate these Terms.
+								</li>
+								<li>
+									Seek reserves the right to remove any
+									content or suspend accounts at its
+									discretion.
+								</li>
+							</ul>
 						</p>
 					</div>
 
 					<div>
 						<h2 className="font-semibold text-[var(--text-color)]">
-							7. Modifications
+							Suspension & Termination
 						</h2>
 						<p className="text-[var(--text-color-secondary)]">
-							We reserve the right to modify these terms at any
-							time. We will notify users of any changes by posting
-							the new Terms & Conditions on this page.
+							<ul className="list-disc pl-6 space-y-2">
+								<li>
+									We may suspend or terminate any account at
+									any time if a user violates these Terms or
+									misuses the Platform.
+								</li>
+								<li>
+									Suspension or termination may occur without
+									prior notice.
+								</li>
+							</ul>
 						</p>
 					</div>
 
 					<div>
 						<h2 className="font-semibold text-[var(--text-color)]">
-							8. Contact Information
+							Intellectual Property
 						</h2>
 						<p className="text-[var(--text-color-secondary)]">
-							If you have any questions about these Terms &
-							Conditions, please contact us at{" "}
-							<a
-								href="mailto:legal@seekstandrews.com"
-								className="text-[var(--primary-color)] underline"
-							>
-								legal@seekstandrews.com
-							</a>
-							.
+							<ul className="list-disc pl-6 space-y-2">
+								<li>
+									Seek owns all rights to the Platform,
+									including its design, codebase, branding,
+									and trademarks.
+								</li>
+								<li>
+									Users are granted a limited,
+									non-transferable, non-exclusive licence to
+									use the Platform for personal purposes.
+								</li>
+								<li>
+									Content uploaded by landlords and agents
+									(such as property descriptions and photos)
+									remains their property, but by uploading it
+									they grant Seek the right to use, display,
+									and promote such content within the Platform
+									and in related marketing.
+								</li>
+							</ul>
+						</p>
+					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Data & Privacy
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							<ul className="list-disc pl-6 space-y-2">
+								<li>
+									By using Seek, you consent to the collection
+									and analysis of your data for the purposes
+									of improving the Platform and generating
+									internal insights.
+								</li>
+								<li>
+									Seek will not sell or share your personal
+									data with third parties without your
+									consent.
+								</li>
+								<li>
+									Data may be anonymised and used for
+									statistical or operational purposes.
+								</li>
+							</ul>
 						</p>
 					</div>
 				</div>

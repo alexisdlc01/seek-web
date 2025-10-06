@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "primereact/button";
 import { motion } from "framer-motion";
+import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
+import { Toast } from "primereact/toast";
 
 export default function ApplicationPage() {
 	const navigate = useNavigate();
@@ -18,11 +20,46 @@ export default function ApplicationPage() {
 			{ name: "Letter from Prof. J. Brown", url: "/files/letter2.pdf" }
 		]
 	};
+	const toast = useRef(null);
+
+	const accept = () => {
+		toast.current.show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+	};
+
+	const reject = () => {
+		toast.current.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+	};
+
+	const confirm1 = (event) => {
+		confirmPopup({
+			target: event.currentTarget,
+			message: 'Are you sure you want to approve?',
+			icon: 'pi pi-exclamation-triangle',
+			defaultFocus: 'accept',
+			accept,
+			reject
+		});
+	};
+
+	const confirm2 = (event) => {
+		confirmPopup({
+			target: event.currentTarget,
+			message: 'Are you sure you want to reject?',
+			icon: 'pi pi-info-circle',
+			defaultFocus: 'reject',
+			acceptClassName: 'p-button-danger',
+			accept,
+			reject
+		});
+	};
+
 
 	const { initials, names, genders, degrees, years, letters } = applicant;
 
 	return (
 		<div className="min-h-screen bg-white px-4 py-8 sm:px-6 lg:px-12">
+			<Toast ref={toast} />
+			<ConfirmPopup />
 			<h1 className="text-3xl font-bold text-[var(--text-color)] mb-6">
 				Application Details
 			</h1>
@@ -69,7 +106,7 @@ export default function ApplicationPage() {
 					icon="pi pi-check"
 					className="border border-green-600 text-green-600 bg-transparent px-4 py-2 rounded-lg hover:bg-green-50 transition"
 					outlined
-					onClick={() => navigate("/applicants")}
+					onClick={confirm1}
 				/>
 				<Button
 					label="Ignore for Now"
@@ -83,7 +120,7 @@ export default function ApplicationPage() {
 					icon="pi pi-times"
 					className="border border-red-600 text-red-600 bg-transparent px-4 py-2 rounded-lg hover:bg-red-50 transition"
 					outlined
-					onClick={() => navigate("/applicants")}
+					onClick={confirm2}
 				/>
 				<Button
 					label="Report"

@@ -26,6 +26,7 @@ import ProtectedRoute from "./pages/ProtectedRoute.jsx";
 import { useContext } from "react";
 import UserContext from "./context/UserContext.jsx";
 import { ProgressSpinner } from "primereact/progressspinner";
+import EditProfile from "./pages/EditProfile.jsx";
 
 const NotFound = () => {
 	const navigate = useNavigate();
@@ -156,6 +157,10 @@ function App() {
 							<Route
 								path="/activationSent"
 								element={<ActivationSent />}
+							/>
+							<Route
+								path="/edit-profile"
+								element={<EditProfile />}
 							/>
 							<Route
 								path="/dashboard"

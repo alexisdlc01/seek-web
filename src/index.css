@@ -26,6 +26,9 @@
 	scrollbar-color: rgba(120, 120, 120, 0.5) transparent;
 }
 
+/* e.g., in src/index.css */
+.p-calendar .p-datepicker-trigger { border-radius: 0 !important; }
+
 
 .p-password {
 	display: inline;

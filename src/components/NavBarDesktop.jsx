@@ -118,24 +118,24 @@ export default function NavbarDesktop({ user, logout, logo }) {
 							className="flex items-center gap-2 bg-[#186273] rounded-lg px-3 py-1.5 cursor-pointer hover:bg-[#186273] transition"
 							onClick={() => setUserMenuOpen(v => !v)}
 						>
-							{/*{user.profilePicUrl ? (*/}
-							{/*	<Avatar*/}
-							{/*		image={user.profilePicUrl}*/}
-							{/*		className="bg-[#3182ce] text-white font-bold"*/}
-							{/*		shape="circle"*/}
-							{/*	/>*/}
-							{/*) : (*/}
+							{user.profilePicUrl ? (
 								<Avatar
-									label={user.name
-										.split(" ")
-										.map(n => n[0])
-										.join("")
-										.toUpperCase()}
+									image={user.profilePicUrl}
 									className="bg-[#3182ce] text-white font-bold"
-									style={{ backgroundColor: "#3182ce" }}
 									shape="circle"
 								/>
-							 {/*)}*/}
+							) : (
+							<Avatar
+								label={user.name
+									.split(" ")
+									.map(n => n[0])
+									.join("")
+									.toUpperCase()}
+								className="bg-[#3182ce] text-white font-bold"
+								style={{ backgroundColor: "#3182ce" }}
+								shape="circle"
+							/>
+							)}
 							<span className="text-white font-medium">
 								{user.name}
 							</span>
@@ -144,12 +144,21 @@ export default function NavbarDesktop({ user, logout, logo }) {
 
 						{userMenuOpen && (
 							<div className="absolute right-0 top-[calc(100%+8px)] z-50 w-full rounded-xl shadow-lg border bg-white p-1 overflow-hidden">
-
 								<button
-									onClick={async () => { setUserMenuOpen(false); await logout(); }}
+									onClick={async () => { navigate("/edit-profile")}}
 									className="cursor-pointer w-full text-left px-3 py-2 text-[#3182c] font-semibold hover:bg-black/5 rounded-lg"
 								>
-									<i className="pi pi-sign-out"></i> Logout
+									<i className="pi pi-user-edit px-0.5"></i> Edit
+									Profile
+								</button>
+								<button
+									onClick={async () => {
+										setUserMenuOpen(false);
+										await logout();
+									}}
+									className="cursor-pointer w-full text-left px-3 py-2 text-[#3182c] font-semibold hover:bg-black/5 rounded-lg"
+								>
+									<i className="pi pi-sign-out px-0.5"></i> Logout
 								</button>
 							</div>
 						)}

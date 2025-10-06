@@ -218,3 +218,31 @@ body {
 .p-toast-message .p-toast-icon-close {
 	display: none !important;
 }
+
+.p-dialog {
+	background: var(--surface-100) !important;
+	color: var(--text-color) !important;
+	border: 1px solid var(--surface-border);
+	border-radius: 0.75rem;
+}
+.p-dialog .p-dialog-header,
+.p-dialog .p-dialog-content,
+.p-dialog .p-dialog-footer {
+	background: transparent !important;
+	color: inherit !important;
+}
+
+
+/* Remove dialog section dividers */
+.p-dialog .p-dialog-header,
+.p-dialog .p-dialog-content,
+.p-dialog .p-dialog-footer {
+	border: none !important;
+	box-shadow: none !important;
+}
+
+/* Optional: smooth background consistency */
+.p-dialog {
+	background: var(--surface-100) !important;
+	color: var(--text-color) !important;
+}

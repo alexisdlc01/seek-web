@@ -27,7 +27,7 @@ export default function EditProfile() {
 			if (!loading) {
 				try {
 					setDisplayName(user.name);
-					setAvatarUrl(user.profilePicUrl)
+					setAvatarUrl(user.profilePicUrl);
 				} finally {
 					setLoading2(false);
 				}
@@ -119,8 +119,12 @@ export default function EditProfile() {
 							<Button
 								label="Change Photo"
 								icon="pi pi-image"
-								className="equal-btn student"
 								onClick={pickFile}
+								style={{
+									background: "#2563eb",
+									border: "none",
+									color: "white"
+								}}
 							/>
 							{avatarUrl ? (
 								<Button
@@ -131,6 +135,10 @@ export default function EditProfile() {
 									onClick={() => {
 										setAvatarUrl("");
 										setAvatarKey("");
+									}}
+									style={{
+										borderColor: "#ef4444",
+										color: "#ef4444"
 									}}
 								/>
 							) : null}
@@ -158,12 +166,16 @@ export default function EditProfile() {
 					<div className="mt-6 flex flex-col sm:flex-row gap-3 justify-end">
 						<Button
 							label={saving ? "Saving..." : "Save Changes"}
-							className="equal-btn student"
 							icon={
 								saving ? "pi pi-spin pi-spinner" : "pi pi-check"
 							}
 							disabled={!canSave}
 							onClick={save}
+							style={{
+								background: "#22c55e",
+								border: "none",
+								color: "white"
+							}}
 						/>
 					</div>
 				</div>

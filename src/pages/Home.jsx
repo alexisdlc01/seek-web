@@ -220,25 +220,31 @@ export default function LandingPage() {
 							Andrews
 						</motion.p>
 
-						<div className="flex justify-center gap-4 flex-wrap pb-15">
-							<motion.div whileHover={{ scale: 1.05 }}>
-								<Button
-									size="small"
-									label="I'm a Student"
-									className="equal-btn student"
-									onClick={() => navigate("/signup/student")}
-								/>
-							</motion.div>
+						{!user && (
+							<div className="flex justify-center gap-4 flex-wrap pb-15">
+								<motion.div whileHover={{ scale: 1.05 }}>
+									<Button
+										size="small"
+										label="I'm a Student"
+										className="equal-btn student"
+										onClick={() =>
+											navigate("/signup/student")
+										}
+									/>
+								</motion.div>
 
-							<motion.div whileHover={{ scale: 1.05 }}>
-								<Button
-									size="small"
-									label="I'm a Landlord"
-									className="equal-btn landlord"
-									onClick={() => navigate("/signup/landlord")}
-								/>
-							</motion.div>
-						</div>
+								<motion.div whileHover={{ scale: 1.05 }}>
+									<Button
+										size="small"
+										label="I'm a Landlord"
+										className="equal-btn landlord"
+										onClick={() =>
+											navigate("/signup/landlord")
+										}
+									/>
+								</motion.div>
+							</div>
+						)}
 
 						{/* Centered Arrow */}
 						<motion.button
@@ -600,19 +606,44 @@ export default function LandingPage() {
 					transition={{ delay: 0.1, duration: 0.6 }}
 					className="text-lg md:text-xl opacity-80 drop-shadow mb-12 max-w-3xl mx-auto"
 				>
-					Join thousands of students and landlords already using Seek
+					{isLandlord
+						? "Add a listing to get started today."
+						: isStudent
+						? "Join our mailing list today."
+						: "Join thousands of students and landlords already using Seek."}
 				</motion.p>
 
 				<div className="flex justify-center">
-					<motion.div whileHover={{ scale: 1.05 }}>
-						<Button
-							label="Sign Up Today"
-							className="equal-btn student"
-							onClick={() =>
-								window.scrollTo({ top: 0, behavior: "smooth" })
-							}
-						/>
-					</motion.div>
+					{!user ? (
+						<motion.div whileHover={{ scale: 1.05 }}>
+							<Button
+								label="Sign Up Today"
+								className="equal-btn student"
+								onClick={() =>
+									window.scrollTo({
+										top: 0,
+										behavior: "smooth"
+									})
+								}
+							/>
+						</motion.div>
+					) : isStudent ? (
+						<motion.div whileHover={{ scale: 1.05 }}>
+							<Button
+								label="Go to Download"
+								className="equal-btn student"
+								onClick={() => navigate("/download")}
+							/>
+						</motion.div>
+					) : isLandlord ? (
+						<motion.div whileHover={{ scale: 1.05 }}>
+							<Button
+								label="Go to Dashboard"
+								className="equal-btn landlord"
+								onClick={() => navigate("/dashboard")}
+							/>
+						</motion.div>
+					) : null}
 				</div>
 			</section>
 

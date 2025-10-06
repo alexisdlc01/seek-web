@@ -221,6 +221,37 @@ export default function Terms() {
 							</ul>
 						</p>
 					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Dispute Resolution
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							<ul className="list-disc pl-6 space-y-2">
+								<li>
+									These Terms are governed by the laws of
+									Scotland.
+								</li>
+								<li>
+									The courts of Scotland shall have exclusive
+									jurisdiction over any dispute arising from
+									or in connection with these Terms.
+								</li>
+							</ul>
+						</p>
+					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Changes to Terms
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							Seek reserves the right to update these Terms at any
+							time. Users will be notified of significant changes.
+							Continued use of the Platform after changes are made
+							constitutes acceptance of the revised Terms.
+						</p>
+					</div>
 				</div>
 			</div>
 		</div>

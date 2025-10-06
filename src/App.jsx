@@ -2,7 +2,6 @@ import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
-import Security from "./pages/Security";
 import Terms from "./pages/Terms";
 import SignUpLandlord from "./pages/SignupLandlord";
 import SignInLandlord from "./pages/SigninLandlord";

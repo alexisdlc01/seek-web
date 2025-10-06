@@ -20,11 +20,29 @@ export default function SignInLandlord() {
 	const toast = useRef(null);
 
 	const showError = detail => {
-		toast.current.show({
+		toast.current?.show({
 			severity: "error",
-			summary: "Error",
-			detail,
-			life: 3000
+			summary: "Sign-In Failed",
+			detail: "Your email or password didn’t match our records. Please try again.",
+			life: 4000,
+			style: {
+				background: "#1E1E2F",
+				color: "#fff",
+				borderLeft: "5px solid #EF4444", // red accent
+				borderRadius: "8px",
+				boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+			},
+			content: (
+				<div className="flex items-center space-x-3">
+					<i className="pi pi-times-circle text-red-400 text-xl"></i>
+					<div>
+						<p className="font-semibold">Sign-In Failed</p>
+						<p className="text-sm text-gray-200">
+							{detail}
+						</p>
+					</div>
+				</div>
+			)
 		});
 	};
 
@@ -43,11 +61,11 @@ export default function SignInLandlord() {
 	const validateEmail = () => {
 		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!email.trim()) {
-			showError("Email is required.");
+			showError("An Email account is required to sign into Seek.");
 			return false;
 		}
 		if (!regex.test(email)) {
-			showError("Please enter a valid email address.");
+			showError("Please enter a valid email address. The format should be example@domain.com");
 			return false;
 		}
 		return true;
@@ -69,7 +87,7 @@ export default function SignInLandlord() {
 			{/* same frozen bubbles */}
 			<BackgroundBubbles count={20} color="#8B5CF6" />
 
-			<Toast ref={toast} />
+			<Toast ref={toast} position="bottom-right" />
 
 			<motion.div
 				initial={{ opacity: 0, y: 30 }}

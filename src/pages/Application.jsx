@@ -23,11 +23,11 @@ export default function ApplicationPage() {
 	const toast = useRef(null);
 
 	const accept = () => {
-		toast.current.show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+		toast.current.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected the application', life: 3000 });
 	};
 
 	const reject = () => {
-		toast.current.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+		
 	};
 
 	const confirm1 = (event) => {

@@ -84,6 +84,9 @@ export default function Listings() {
 						{/* Info + Tags */}
 						<div className="flex-1 w-full">
 							<h2 className="font-semibold text-[var(--text-color)] text-base mt-2 md:mt-0">
+								{prop.propertyTitle}
+							</h2>
+							<h2 className="font-semibold text-[var(--text-color)] text-base mt-2 md:mt-0">
 								{prop.streetAddress}
 							</h2>
 							<p className="text-sm text-white">

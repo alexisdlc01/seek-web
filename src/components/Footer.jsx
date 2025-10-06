@@ -13,7 +13,7 @@ export default function Footer() {
 				<Link to="/contact">Contact</Link>
 			</div>
 			<br />
-			<p>© 2025 Seek St Andrews. All rights reserved.</p>
+			<p>© 2025 Seek It Ltd. All rights reserved.</p>
 		</footer>
 	);
 }

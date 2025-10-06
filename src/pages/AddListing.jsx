@@ -46,11 +46,11 @@ const AddListing = () => {
 	};
 	const propertyTypeMapInverse = {
 		"Flat/Apartment": "FLAT_APARTMENT",
-		"House": "HOUSE",
+		House: "HOUSE",
 		"Room in Shared House": "ROOM_IN_SHARED_HOUSE",
-		"Studio": "STUDIO",
+		Studio: "STUDIO",
 		"Other (please specify)": "OTHER"
-	}
+	};
 	const [propertyType, setPropertyType] = useState(null);
 	const [otherType, setOtherType] = useState("");
 	const bedroomOptions = [...Array(10).keys()].map(i => ({
@@ -60,6 +60,7 @@ const AddListing = () => {
 	const [regularBedrooms, setRegularBedrooms] = useState(null);
 	const [ensuiteBedrooms, setEnsuiteBedrooms] = useState(null);
 	const bathroomOptions = [
+		{ label: "0.5", value: 0.5 },
 		{ label: "1", value: 1 },
 		{ label: "1.5", value: 1.5 },
 		{ label: "2", value: 2 },
@@ -72,7 +73,8 @@ const AddListing = () => {
 	const [deposit, setDeposit] = useState(null);
 	const [availabilityDate, setAvailabilityDate] = useState(null);
 	const [endAvailabilityDate, setEndAvailabilityDate] = useState(null);
-	const [registerOfTitleKeyFromBackend, setRegisterOfTitleKeyFromBackend] = useState("");
+	const [registerOfTitleKeyFromBackend, setRegisterOfTitleKeyFromBackend] =
+		useState("");
 
 	const leaseOptions = [
 		{ label: "12 Months", value: "12 Months" },
@@ -117,23 +119,23 @@ const AddListing = () => {
 	const amenityMap = {
 		"Wi-Fi": "WiFi",
 		"Washing Machine": "Washing_Machine",
-		"Dryer": "Dryer",
-		"Dishwasher": "Dishwasher",
+		Dryer: "Dryer",
+		Dishwasher: "Dishwasher",
 		"Pets Allowed": "Pets_Allowed",
 		"Bike Storage": "Bike_Storage",
-		"Parking": "Parking",
-		"Garden": "Garden",
+		Parking: "Parking",
+		Garden: "Garden",
 		"Smoke Alarm": "Smoke_Alarm",
-		"Fireplace": "Fireplace",
+		Fireplace: "Fireplace",
 		"Monoxide Alarm": "Monoxide_Alarm"
 	};
-
 
 	// Step 3 state
 	const [photos, setPhotos] = useState([]);
 	const [dragOverIndex, setDragOverIndex] = useState(null);
 	const [videoLink, setVideoLink] = useState("");
 	const [floorPlan, setFloorPlan] = useState(null);
+	const [floorPlanUrl, setFloorPlanUrl] = useState("");
 
 	useEffect(() => {
 		if (propertyType === "Studio") {
@@ -265,7 +267,9 @@ const AddListing = () => {
 					const reverseAmenityMap = Object.fromEntries(
 						Object.entries(amenityMap).map(([k, v]) => [v, k])
 					);
-					setAmenities(res.data.amenities.map(a => reverseAmenityMap[a]));
+					setAmenities(
+						res.data.amenities.map(a => reverseAmenityMap[a])
+					);
 				}
 
 				res.data.streetAddress ? setStreet(res.data.streetAddress) : {};
@@ -289,14 +293,41 @@ const AddListing = () => {
 								res.data.furnishingStatus.slice(1)
 						)
 					: {};
-				res.data.epcRating
-					? setEpcRating(res.data.epcRating)
-					: {}
+				res.data.epcRating ? setEpcRating(res.data.epcRating) : {};
+				res.data.videoTourLink ? setVideoLink(res.data.videoTourLink) : {};
+
 				if (res.data.registerOfTitleKey) {
-					setRegisterOfTitleKeyFromBackend(res.data.registerOfTitleKey);
+					setRegisterOfTitleKeyFromBackend(
+						res.data.registerOfTitleKey
+					);
 					const key = res.data.registerOfTitleKey;
-					const fakeFileName = key.split("/").pop().split("-").slice(1).join("-");
+					const fakeFileName = key
+						.split("/")
+						.pop()
+						.split("-")
+						.slice(1)
+						.join("-");
 					setRegisterOfTitle({ name: fakeFileName });
+				}
+
+				if (res.data.floorPlanImage) {
+					setFloorPlanUrl(res.data.floorPlanImage);
+					const fakeFileName = res.data.floorPlanImage
+						.split("/")
+						.pop()
+						.split("-")
+						.slice(1)
+						.join("-");
+					setFloorPlan({ name: fakeFileName });
+				}
+
+				if (res.data.photos && res.data.photos.length > 0) {
+					const loadedPhotos = res.data.photos.map(url => ({
+						id: Date.now() + Math.random(),
+						file: null,
+						url
+					}));
+					setPhotos(loadedPhotos);
 				}
 			}
 		})();
@@ -325,7 +356,6 @@ const AddListing = () => {
 							securityDeposit: deposit,
 							availableFrom: availabilityDate,
 							availableUntil: endAvailabilityDate,
-							// TODO: change to AWS URL
 							registerOfTitleKey: registerOfTitleKeyFromBackend
 						},
 						{
@@ -352,10 +382,12 @@ const AddListing = () => {
 							securityDeposit: deposit,
 							availableFrom: availabilityDate,
 							availableUntil: endAvailabilityDate,
-							// TODO: change to AWS URL
-							registerOfTitleUrl: "coolUrl",
-							furnishingStatus: furnishingStatus.charAt(0).toLowerCase() + furnishingStatus.slice(1),
+							registerOfTitleKey: registerOfTitleKeyFromBackend,
+							furnishingStatus:
+								furnishingStatus.charAt(0).toLowerCase() +
+								furnishingStatus.slice(1),
 							epcRating: epcRating,
+							// TODO: get custom amenities to work.
 							amenities: amenities.map(a => amenityMap[a])
 						},
 						{
@@ -365,6 +397,68 @@ const AddListing = () => {
 					break;
 				case 4:
 
+					const existingUrls = photos
+						.filter(p => p.url.startsWith("https://"))
+						.map(p => p.url);
+
+					const newFiles = photos.filter(p => p.file);
+
+					// Upload new photos
+					const uploadedUrls = await Promise.all(
+						newFiles.map(async p => {
+							const res = await axios.get(`${BASE_URL}/upload/presign`, {
+								params: {
+									filename: p.file.name,
+									fileType: p.file.type,
+									folder: "public",
+								},
+								withCredentials: true,
+							});
+							const { uploadUrl, fileUrl } = res.data;
+							await axios.put(uploadUrl, p.file, {
+								headers: { "Content-Type": p.file.type },
+							});
+							return fileUrl;
+						})
+					);
+
+					// Combine old + new
+					const allPhotoUrls = [...existingUrls, ...uploadedUrls];
+
+					await axios.patch(
+						`${BASE_URL}/listings/${currentListing._id}/createStep3`,
+						{
+							propertyTitle: title,
+							sizeSqMeters: sizeSqM,
+							propertyType: propertyTypeMapInverse[propertyType],
+							bedroomsCount: regularBedrooms,
+							enSuiteBedroomCount: parseInt(ensuiteBedrooms),
+							bathrooms: bathrooms,
+							propertyDesc: description,
+							streetAddress: street,
+							cityTown: city,
+							postcodeZIP: postcode,
+							country: country,
+							monthlyRent: rent,
+							securityDeposit: deposit,
+							availableFrom: availabilityDate,
+							availableUntil: endAvailabilityDate,
+							registerOfTitleKey: registerOfTitleKeyFromBackend,
+							furnishingStatus:
+								furnishingStatus.charAt(0).toLowerCase() +
+								furnishingStatus.slice(1),
+							epcRating: epcRating,
+							// TODO: get custom amenities to work.
+							amenities: amenities.map(a => amenityMap[a]),
+
+							photos: allPhotoUrls,
+							videoTourLink: videoLink,
+							floorPlanImage: floorPlanUrl
+						},
+						{
+							withCredentials: true
+						}
+					);
 					break;
 			}
 		})();
@@ -433,8 +527,12 @@ const AddListing = () => {
 							registerOfTitleRef={registerOfTitleRef}
 							registerOfTitle={registerOfTitle}
 							setRegisterOfTitle={setRegisterOfTitle}
-							registerOfTitleKeyFromBackend={registerOfTitleKeyFromBackend}
-							setRegisterOfTitleKeyFromBackend={setRegisterOfTitleKeyFromBackend}
+							registerOfTitleKeyFromBackend={
+								registerOfTitleKeyFromBackend
+							}
+							setRegisterOfTitleKeyFromBackend={
+								setRegisterOfTitleKeyFromBackend
+							}
 							next={next}
 						/>
 					</StepperPanel>
@@ -481,6 +579,8 @@ const AddListing = () => {
 							onDragStart={onDragStart}
 							onDrop={onDrop}
 							removePhoto={removePhoto}
+							floorPlanUrl={floorPlanUrl}
+							setFloorPlanUrl={setFloorPlanUrl}
 							back={back}
 							next={next}
 						/>

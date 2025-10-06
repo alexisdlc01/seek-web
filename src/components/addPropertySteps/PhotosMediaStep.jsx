@@ -1,6 +1,9 @@
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
+import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const PhotosMediaStep = ({
 	photos,
@@ -14,12 +17,18 @@ const PhotosMediaStep = ({
 	onDragStart,
 	onDrop,
 	removePhoto,
+	floorPlanUrl,
+	setFloorPlanUrl,
 	back,
 	next
 }) => {
 	useEffect(() => {
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	}, []);
+
+	useEffect(() => {
+		console.log("here", photos);
+	}, [photos]);
 
 	return (
 		<>
@@ -65,16 +74,11 @@ const PhotosMediaStep = ({
 								<Button
 									type="button"
 									icon="pi pi-times"
-									className="absolute top-1 right-1 !p-1 !min-w-0 w-6 h-6"
+									className="absolute right-1 !p-1 !min-w-0 w-6 h-6"
 									rounded
 									severity="danger"
 									onClick={() => removePhoto(p.id)}
 								/>
-								{idx === 0 && (
-									<span className="absolute bottom-1 left-1 bg-black bg-opacity-50 text-white text-xs py-0.5 px-1 rounded">
-										Primary
-									</span>
-								)}
 							</div>
 						))}
 					</div>
@@ -92,7 +96,7 @@ const PhotosMediaStep = ({
 				</div>
 				<div className="flex flex-col">
 					<label htmlFor="floorPlan" className="font-medium mb-2">
-						Floor Plan Image
+						Floor Plan Image (PDF Only)
 					</label>
 					<Button
 						type="button"
@@ -105,13 +109,45 @@ const PhotosMediaStep = ({
 					<input
 						type="file"
 						ref={floorPlanInputRef}
-						accept="image/png,image/jpeg"
+						accept=".pdf"
 						className="hidden"
-						onChange={e => setFloorPlan(e.target.files[0])}
+						onChange={async e => {
+							const file = e.target.files[0];
+							if (file && file.type !== "application/pdf") {
+								alert("Please upload a PDF file");
+								return;
+							}
+							const res = await axios.get(
+								`${BASE_URL}/upload/presign`,
+								{
+									params: {
+										filename: file.name,
+										fileType: file.type,
+										folder: "public"
+									},
+									withCredentials: true
+								}
+							);
+
+							const { uploadUrl, fileUrl } = res.data;
+
+							await axios.put(uploadUrl, file, {
+								headers: { "Content-Type": file.type }
+							});
+							setFloorPlan(file);
+							setFloorPlanUrl(fileUrl);
+						}}
 					/>
 					{floorPlan && (
-						<div className="mt-2 text-sm text-gray-600 flex items-center">
+						<div className="mt-2 text-sm text-[#1ba4ae] flex items-center">
+							<span
+								className={"cursor-pointer underline text-blue"}
+								onClick={e => {
+									window.open(floorPlanUrl, "_blank");
+								}}
+							>
 							{floorPlan.name}
+						</span>
 							<Button
 								icon="pi pi-times"
 								text

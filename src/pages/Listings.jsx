@@ -31,26 +31,6 @@ export default function Listings() {
 					My Listings
 				</h1>
 				<div className="flex gap-3 ml-auto">
-					<motion.div
-						whileHover={{ scale: 1.01 }}
-						className="relative inline-block"
-					>
-						<Button
-							label="View Listings Pending Approval"
-							icon="pi pi-eye"
-							severity="primary"
-							size="small"
-							className="w-full sm:w-auto"
-							style={{
-								background: "#23b7c5"
-							}}
-						/>
-						<Badge
-							value="1"
-							severity="danger"
-							className="absolute -top-2 -right-2"
-						/>
-					</motion.div>
 					<motion.div whileHover={{ scale: 1.01 }}>
 						<Button
 							label="Add New Listing"
@@ -92,12 +72,13 @@ export default function Listings() {
 					>
 						{/* Image */}
 						<div className="w-full md:w-32 h-40 md:h-20 flex-shrink-0 rounded-md overflow-hidden">
-							<img
-								// TODO: replace dummy image with one from AWS s3
-								src={houseImage}
-								alt="Property"
-								className="w-full h-full object-cover"
-							/>
+							{prop.photos[0] && (
+								<img
+									src={prop.photos[0]}
+									alt="Property"
+									className="w-full h-full object-cover"
+								/>
+							)}
 						</div>
 
 						{/* Info + Tags */}
@@ -156,7 +137,9 @@ export default function Listings() {
 										className="w-full sm:w-auto "
 										onClick={() => navigate("/applicants")}
 										style={{
-											color: "white"
+											color: "white",
+											backgroundColor: "#21b8c4",
+											border: "none"
 										}}
 									/>
 								</motion.div>
@@ -177,25 +160,36 @@ export default function Listings() {
 											navigate(`/${prop._id}/add-listing`);
 										}}
 										style={{
-											color: "white"
+											color: "white",
+											backgroundColor: "#21b8c4",
+											border: "none"
 										}}
 									/>
 								</motion.div>
 							)}
 
-							{/* More Options */}
-							<motion.div whileHover={{ scale: 1.02 }}>
-								<Button
-									icon="pi pi-ellipsis-h"
-									size="small"
-									severity="primary"
-									aria-label="More options"
-									className="w-full sm:w-auto"
-									style={{
-										color: "white"
-									}}
-								/>
-							</motion.div>
+							{!prop.isDraft && (
+								<motion.div whileHover={{ scale: 1.01 }}>
+									<Button
+										label="View Listing"
+										icon="pi pi-pencil"
+										size="small"
+										severity="primary"
+										outlined
+										className="w-full sm:w-auto"
+										onClick={() => {
+											setCurrentListing(prop);
+											navigate(`/${prop._id}/add-listing`);
+										}}
+										style={{
+											color: "white",
+											backgroundColor: "#21b8c4",
+											border: "none"
+										}}
+									/>
+								</motion.div>
+							)}
+
 						</div>
 					</motion.div>
 				))}

@@ -135,7 +135,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 									style={{ backgroundColor: "#3182ce" }}
 									shape="circle"
 								/>
-							{/* )}*/}
+							 {/*)}*/}
 							<span className="text-white font-medium">
 								{user.name}
 							</span>

@@ -19,9 +19,27 @@ export default function SignInStudent() {
 	const showError = () => {
 		toast.current?.show({
 			severity: "error",
-			summary: "Error",
-			detail: "Invalid email or password",
-			life: 3000
+			summary: "Sign-In Failed",
+			detail: "Your email or password didn’t match our records. Please try again.",
+			life: 4000,
+			style: {
+				background: "#1E1E2F",
+				color: "#fff",
+				borderLeft: "5px solid #EF4444", // red accent
+				borderRadius: "8px",
+				boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+			},
+			content: (
+				<div className="flex items-center space-x-3">
+					<i className="pi pi-times-circle text-red-400 text-xl"></i>
+					<div>
+						<p className="font-semibold">Sign-In Failed</p>
+						<p className="text-sm text-gray-200">
+							Your email or password didn’t match our records.
+						</p>
+					</div>
+				</div>
+			)
 		});
 	};
 
@@ -32,9 +50,30 @@ export default function SignInStudent() {
 		if (!validateEmailPrefix(email) || email.includes("@")) {
 			toast.current?.show({
 				severity: "error",
-				summary: "Invalid Email",
-				detail: "Please enter only your email prefix (before @st-andrews.ac.uk)",
-				life: 3000
+				summary: "Sign-In Failed",
+				detail: "Your email or password didn’t match our records. Please try again.",
+				life: 4000,
+				style: {
+					background: "#1E1E2F",
+					color: "#fff",
+					borderLeft: "5px solid #EF4444", // red accent
+					borderRadius: "8px",
+					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+				},
+				content: (
+					<div className="flex items-center space-x-3">
+						<i className="pi pi-times-circle text-red-400 text-xl"></i>
+						<div>
+							<p className="font-semibold">
+								Invalid Email Format
+							</p>
+							<p className="text-sm text-gray-200">
+								"Please enter only your email prefix (before
+								@st-andrews.ac.uk)".
+							</p>
+						</div>
+					</div>
+				)
 			});
 			return;
 		}
@@ -47,8 +86,7 @@ export default function SignInStudent() {
 
 	return (
 		<div className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
-
-			<Toast ref={toast} />
+			<Toast ref={toast} position="bottom-right" />
 			<BackgroundBubbles count={20} />
 
 			<motion.form
@@ -58,7 +96,10 @@ export default function SignInStudent() {
 				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 bg-white space-y-6 border border-[var(--surface-border)]"
 				onSubmit={handleSubmit}
 			>
-				<h1 className="text-center text-2xl font-bold mb-8"  style={{ color: "#23b7c5" }}>
+				<h1
+					className="text-center text-2xl font-bold mb-8"
+					style={{ color: "#23b7c5" }}
+				>
 					Welcome Back, Student
 				</h1>
 

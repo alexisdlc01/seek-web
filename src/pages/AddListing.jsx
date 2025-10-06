@@ -145,9 +145,55 @@ const AddListing = () => {
 	}, [propertyType]);
 
 	const next = () => {
+		let missing = [];
+
+		// Step 1 required fields
+		if (step === 1) {
+			if (!title?.trim()) missing.push("Property title");
+			if (!sizeSqM) missing.push("Size (sq m)");
+			if (!propertyType) missing.push("Property type");
+			if (propertyType === "Other (please specify)" && !otherType?.trim()) missing.push("Custom property type");
+			if (!street?.trim()) missing.push("Street");
+			if (!city?.trim()) missing.push("City");
+			if (!postcode?.trim()) missing.push("Postcode");
+			if (!country?.trim()) missing.push("Country");
+			if (regularBedrooms == null) missing.push("Bedrooms");
+			if (ensuiteBedrooms == null) missing.push("En-suite bedrooms");
+			if (bathrooms == null) missing.push("Bathrooms");
+			if (!description?.trim()) missing.push("Description");
+			if (!rent) missing.push("Monthly rent");
+			if (!deposit) missing.push("Security deposit");
+			if (!availabilityDate) missing.push("Available from");
+			if (!endAvailabilityDate) missing.push("Available until");
+			if (!registerOfTitle) missing.push("Register of Title (PDF)");
+		}
+
+		// Step 2 required fields
+		if (step === 2) {
+			if (!furnishingStatus) missing.push("Furnishing status");
+			if (amenities.length === 0) missing.push("At least one amenity");
+			// epcRating is optional
+		}
+
+		// Step 3 required fields
+		if (step === 3) {
+			if (photos.length === 0) missing.push("At least one photo");
+			// videoLink and floorPlan are optional
+		}
+
+		if (missing.length > 0) {
+			toast.current.show({
+				severity: "warn",
+				summary: "Missing Required Fields",
+				detail: `Please fill in: ${missing.join(", ")}`
+			});
+			return;
+		}
+
 		stepperRef.current.nextCallback();
 		setStep(prev => Math.min(prev + 1, 4));
 	};
+
 
 	const back = () => {
 		stepperRef.current.prevCallback();

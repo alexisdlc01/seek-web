@@ -75,40 +75,40 @@ export default function ContactPage() {
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl mx-auto mb-14 text-center md:text-left">
 						<div className="bg-[var(--surface-200)] border border-[var(--surface-400)] rounded-xl p-5 shadow-md hover:shadow-lg transition">
 							<h2 className="text-lg font-semibold mb-2 text-[var(--accent-color)]">
-								Sarah Thompson
+								Alexis de La Chapelle
 							</h2>
 							<p className="text-[var(--text-color-secondary)] mb-4">
-								Customer Support Specialist
+								Co-founder
 							</p>
 							<a
-								href="https://wa.me/442071234567"
+								href="https://wa.me/33659997800"
 								target="_blank"
 								rel="noopener noreferrer"
 								className="flex items-center justify-center sm:justify-start gap-2 text-[var(--text-color)] hover:text-[var(--accent-color)] transition"
 							>
 								<i className="pi pi-whatsapp text-green-500 text-lg"></i>
 								<span className="font-medium">
-									+44 20 7123 4567
+									+33 659 997 800
 								</span>
 							</a>
 						</div>
 
 						<div className="bg-[var(--surface-200)] border border-[var(--surface-400)] rounded-xl p-5 shadow-md hover:shadow-lg transition">
 							<h2 className="text-lg font-semibold mb-2 text-[var(--accent-color)]">
-								Daniel Lee
+								Victor Trinel
 							</h2>
 							<p className="text-[var(--text-color-secondary)] mb-4">
-								Technical Support Representative
+								Co-founder
 							</p>
 							<a
-								href="https://wa.me/442079876543"
+								href="https://wa.me/33651111503"
 								target="_blank"
 								rel="noopener noreferrer"
 								className="flex items-center justify-center sm:justify-start gap-2 text-[var(--text-color)] hover:text-[var(--accent-color)] transition"
 							>
 								<i className="pi pi-whatsapp text-green-500 text-lg"></i>
 								<span className="font-medium">
-									+44 20 7987 6543
+									+33 651 111 503
 								</span>
 							</a>
 						</div>

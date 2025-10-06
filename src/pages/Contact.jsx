@@ -3,7 +3,6 @@
 import { useState } from "react";
 import axios from "axios";
 
-
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function ContactPage() {
@@ -30,7 +29,9 @@ export default function ContactPage() {
 			setSubmitting(true);
 			try {
 				const res = await axios.post(`${BASE_URL}/contact`, {
-					name, email, message
+					name,
+					email,
+					message
 				});
 			} catch (err) {
 				throw new Error("Failed to send");
@@ -52,7 +53,8 @@ export default function ContactPage() {
 		<div className="flex min-h-screen flex-col bg-[var(--surface-ground)] text-[var(--text-color)]">
 			<main className="flex-1 pt-5">
 				<section className="max-w-7xl mx-auto px-4 py-20 flex flex-col items-center">
-					<div className="text-center mb-16">
+					{/* Heading */}
+					<div className="text-center mb-12">
 						<h1 className="text-5xl font-bold tracking-tighter mb-4">
 							Contact{" "}
 							<span className="text-[var(--accent-color)]">
@@ -63,6 +65,43 @@ export default function ContactPage() {
 							Please reach out with any questions, feedback, or
 							support needs.
 						</p>
+					</div>
+
+					{/* Contact info cards */}
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full max-w-4xl mb-16 text-center md:text-left">
+						<div className="bg-[var(--surface-200)] border border-[var(--surface-400)] rounded-lg p-6 shadow-lg hover:shadow-xl transition">
+							<h2 className="text-xl font-semibold mb-2 text-[var(--accent-color)]">
+								Sarah Thompson
+							</h2>
+							<p className="text-[var(--text-color-secondary)] mb-3">
+								Customer Support Specialist
+							</p>
+							<p className="text-[var(--text-color)]">
+								<span className="font-medium">📞</span> +44 20
+								7123 4567
+							</p>
+							<p className="text-[var(--text-color)]">
+								<span className="font-medium">✉️</span>{" "}
+								sarah.thompson@seekhomes.co.uk
+							</p>
+						</div>
+
+						<div className="bg-[var(--surface-200)] border border-[var(--surface-400)] rounded-lg p-6 shadow-lg hover:shadow-xl transition">
+							<h2 className="text-xl font-semibold mb-2 text-[var(--accent-color)]">
+								Daniel Lee
+							</h2>
+							<p className="text-[var(--text-color-secondary)] mb-3">
+								Technical Support Representative
+							</p>
+							<p className="text-[var(--text-color)]">
+								<span className="font-medium">📞</span> +44 20
+								7987 6543
+							</p>
+							<p className="text-[var(--text-color)]">
+								<span className="font-medium">✉️</span>{" "}
+								daniel.lee@seekhomes.co.uk
+							</p>
+						</div>
 					</div>
 
 					<form

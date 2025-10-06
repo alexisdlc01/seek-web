@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
 import { StepperPanel } from "primereact/stepperpanel";
 import { Button } from "primereact/button";
+import { useNavigate } from "react-router-dom";
 
 const ReviewPublishStep = ({ back, publish }) => {
 	useEffect(() => {
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	}, []);
+
+	const navigate = useNavigate();
 
 	return (
 		<>
@@ -27,7 +30,7 @@ const ReviewPublishStep = ({ back, publish }) => {
 						label="Save Draft"
 						icon="pi pi-save"
 						className="p-button-secondary"
-						onClick={publish}
+						onClick={() => navigate("/listings")}
 					/>
 					<Button
 						label="Publish Listing"

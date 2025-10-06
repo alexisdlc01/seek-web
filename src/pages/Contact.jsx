@@ -61,48 +61,65 @@ export default function ContactPage() {
 								Seek
 							</span>
 						</h1>
-						<p className="text-[var(--text-color-secondary)]">
-							Please reach out with any questions, feedback, or
-							support needs.
-						</p>
 					</div>
+
+					<h1 className="text-3xl font-bold mb-2 text-center md:text-left">
+						Get in touch with our cofounders
+					</h1>
+					<p className="text-[var(--text-color-secondary)] mb-10 text-center md:text-left">
+						We’re always happy to help with questions, listen to
+						feedback, or assist with any issues.
+					</p>
 
 					{/* Contact info cards */}
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full max-w-4xl mb-16 text-center md:text-left">
-						<div className="bg-[var(--surface-200)] border border-[var(--surface-400)] rounded-lg p-6 shadow-lg hover:shadow-xl transition">
-							<h2 className="text-xl font-semibold mb-2 text-[var(--accent-color)]">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl mx-auto mb-14 text-center md:text-left">
+						<div className="bg-[var(--surface-200)] border border-[var(--surface-400)] rounded-xl p-5 shadow-md hover:shadow-lg transition">
+							<h2 className="text-lg font-semibold mb-2 text-[var(--accent-color)]">
 								Sarah Thompson
 							</h2>
-							<p className="text-[var(--text-color-secondary)] mb-3">
+							<p className="text-[var(--text-color-secondary)] mb-4">
 								Customer Support Specialist
 							</p>
-							<p className="text-[var(--text-color)]">
-								<span className="font-medium">📞</span> +44 20
-								7123 4567
-							</p>
-							<p className="text-[var(--text-color)]">
-								<span className="font-medium">✉️</span>{" "}
-								sarah.thompson@seekhomes.co.uk
-							</p>
+							<a
+								href="https://wa.me/442071234567"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="flex items-center justify-center sm:justify-start gap-2 text-[var(--text-color)] hover:text-[var(--accent-color)] transition"
+							>
+								<i className="pi pi-whatsapp text-green-500 text-lg"></i>
+								<span className="font-medium">
+									+44 20 7123 4567
+								</span>
+							</a>
 						</div>
 
-						<div className="bg-[var(--surface-200)] border border-[var(--surface-400)] rounded-lg p-6 shadow-lg hover:shadow-xl transition">
-							<h2 className="text-xl font-semibold mb-2 text-[var(--accent-color)]">
+						<div className="bg-[var(--surface-200)] border border-[var(--surface-400)] rounded-xl p-5 shadow-md hover:shadow-lg transition">
+							<h2 className="text-lg font-semibold mb-2 text-[var(--accent-color)]">
 								Daniel Lee
 							</h2>
-							<p className="text-[var(--text-color-secondary)] mb-3">
+							<p className="text-[var(--text-color-secondary)] mb-4">
 								Technical Support Representative
 							</p>
-							<p className="text-[var(--text-color)]">
-								<span className="font-medium">📞</span> +44 20
-								7987 6543
-							</p>
-							<p className="text-[var(--text-color)]">
-								<span className="font-medium">✉️</span>{" "}
-								daniel.lee@seekhomes.co.uk
-							</p>
+							<a
+								href="https://wa.me/442079876543"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="flex items-center justify-center sm:justify-start gap-2 text-[var(--text-color)] hover:text-[var(--accent-color)] transition"
+							>
+								<i className="pi pi-whatsapp text-green-500 text-lg"></i>
+								<span className="font-medium">
+									+44 20 7987 6543
+								</span>
+							</a>
 						</div>
 					</div>
+
+					<h1 className="text-3xl font-bold mb-2 text-center md:text-left">
+						Fill out the form below
+					</h1>
+					<p className="text-[var(--text-color-secondary)] mb-8 text-center md:text-left">
+						We’ll get back to you as soon as possible.
+					</p>
 
 					<form
 						onSubmit={onSubmit}

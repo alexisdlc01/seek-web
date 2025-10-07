@@ -192,7 +192,26 @@ export default function Listings() {
 									/>
 								</motion.div>
 							)}
-
+							{prop.isDraft && (
+								<motion.div whileHover={{ scale: 1.01 }}>
+									<Button
+										icon="pi pi-trash"
+										size="small"
+										severity="primary"
+										outlined
+										className="w-full sm:w-auto"
+										onClick={() => {
+											// setCurrentListing(prop);
+											// navigate(`/${prop._id}/add-listing`);
+										}}
+										style={{
+											color: "white",
+											backgroundColor: "#f44336",
+											border: "none"
+										}}
+									/>
+								</motion.div>
+							)}
 						</div>
 					</motion.div>
 				))}

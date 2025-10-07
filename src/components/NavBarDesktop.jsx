@@ -147,6 +147,9 @@ export default function NavbarDesktop({ user, logout, logo }) {
 										.toUpperCase()}
 									className="bg-[#3182ce] text-white font-bold"
 									shape="circle"
+									style={{
+										backgroundColor: "#3182ce"
+									}}
 								/>
 							)}
 							<span className="text-white font-medium">{user.name}</span>

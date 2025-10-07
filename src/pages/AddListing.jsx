@@ -570,21 +570,6 @@ const AddListing = () => {
 							next={next}
 						/>
 					</StepperPanel>
-					{/*<StepperPanel header="Location">*/}
-					{/*	<LocationAvailabilityStep*/}
-					{/*		rent={rent}*/}
-					{/*		setRent={setRent}*/}
-					{/*		deposit={deposit}*/}
-					{/*		setDeposit={setDeposit}*/}
-					{/*		availabilityDate={availabilityDate}*/}
-					{/*		setAvailabilityDate={setAvailabilityDate}*/}
-					{/*		endAvailabilityDate={endAvailabilityDate}*/}
-					{/*		setEndAvailabilityDate={setEndAvailabilityDate}*/}
-					{/*		leaseOptions={leaseOptions}*/}
-					{/*		back={back}*/}
-					{/*		next={next}*/}
-					{/*	/>*/}
-					{/*</StepperPanel>*/}
 					<StepperPanel header="Features">
 						<FeaturesStep
 							furnishingStatus={furnishingStatus}

@@ -13,7 +13,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function Listings() {
 	const navigate = useNavigate();
-	const { listings, setCurrentListing } = useContext(ListingsContext);
+	const { listings, setListings, setCurrentListing } = useContext(ListingsContext);
 
 	return (
 		<div
@@ -160,7 +160,9 @@ export default function Listings() {
 										className="w-full sm:w-auto"
 										onClick={() => {
 											setCurrentListing(prop);
-											navigate(`/${prop._id}/add-listing`);
+											navigate(
+												`/${prop._id}/add-listing`
+											);
 										}}
 										style={{
 											color: "white",
@@ -182,7 +184,9 @@ export default function Listings() {
 										className="w-full sm:w-auto"
 										onClick={() => {
 											setCurrentListing(prop);
-											navigate(`/${prop._id}/add-listing`);
+											navigate(
+												`/${prop._id}/add-listing`
+											);
 										}}
 										style={{
 											color: "white",
@@ -200,9 +204,15 @@ export default function Listings() {
 										severity="primary"
 										outlined
 										className="w-full sm:w-auto"
-										onClick={() => {
-											// setCurrentListing(prop);
-											// navigate(`/${prop._id}/add-listing`);
+										onClick={async () => {
+											try {
+												await axios.delete(`${BASE_URL}/listings/${prop._id}`, {
+													withCredentials: true
+												});
+												setListings(prev => prev.filter(l => l._id !== prop._id));
+											} catch (err) {
+												console.error("Delete failed:", err);
+											}
 										}}
 										style={{
 											color: "white",

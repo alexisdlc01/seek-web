@@ -1,7 +1,50 @@
 import React, { useEffect } from "react";
 import { Button } from "primereact/button";
 
-const ReviewPublishStep = ({ back, publish }) => {
+function formatDate(date) {
+	const d = new Date(date);
+	const day = d.getDate();
+	const month = d.toLocaleString("default", { month: "long" });
+	const year = d.getFullYear();
+
+	const suffix =
+		day % 10 === 1 && day !== 11
+			? "st"
+			: day % 10 === 2 && day !== 12
+				? "nd"
+				: day % 10 === 3 && day !== 13
+					? "rd"
+					: "th";
+
+	return `${day}${suffix} ${month} ${year}`;
+}
+
+const ReviewPublishStep = ({
+	title,
+	back,
+	sizeSqM,
+	propertyType,
+	street,
+	city,
+	postcode,
+	country,
+	regularBedrooms,
+	ensuiteBedrooms,
+	bathrooms,
+	description,
+	rent,
+	deposit,
+	availabilityDate,
+	endAvailabilityDate,
+	registerOfTitle,
+	furnishingStatus,
+	epcRating,
+	amenities,
+	photos,
+	videoLink,
+	floorPlan,
+	publish
+}) => {
 	useEffect(() => {
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	}, []);
@@ -22,64 +65,109 @@ const ReviewPublishStep = ({ back, publish }) => {
 				Please review your listing details carefully before publishing.
 			</div>
 
-			<Section title="Property Details Summary">
+			<Section title="Basics  ">
 				<p>
 					<strong>Property Title:</strong>
-					<br /> Spacious 2-bed flat with garden
+					<br /> {title}
+				</p>
+				<p>
+					<strong>Size (square meters):</strong>
+					<br /> {sizeSqM}
 				</p>
 				<p>
 					<strong>Property Type:</strong>
-					<br /> Flat/Apartment
+					<br /> {propertyType}
+				</p>
+				<p>
+					<strong>Street Address:</strong>
+					<br /> {street}
+				</p>
+				<p>
+					<strong>City/Town:</strong>
+					<br /> {city}
+				</p>
+				<p>
+					<strong>Postcode/ZIP:</strong>
+					<br /> {postcode}
+				</p>
+				<p>
+					<strong>Country:</strong>
+					<br /> {country}
 				</p>
 				<p>
 					<strong>Bedrooms:</strong>
-					<br /> 2 Regular, 1 Ensuite
+					<br /> {regularBedrooms}
+				</p>
+				<p>
+					<strong>En-suite Bedrooms:</strong>
+					<br /> {ensuiteBedrooms}
 				</p>
 				<p>
 					<strong>Bathrooms:</strong>
-					<br /> 2
+					<br /> {bathrooms}
 				</p>
 				<p>
-					<strong>Property Size:</strong>
-					<br /> 850 sq ft / 79 m²
-				</p>
-				<p>
-					<strong>Furnishing:</strong>
-					<br /> Fully Furnished
-				</p>
-			</Section>
-
-			<Section title="Location & Pricing">
-				<p>
-					<strong>Full Address:</strong>
-					<br /> 123 North Street, St Andrews, KY16 9AL
+					<strong>Property Description:</strong>
+					<br /> {description}
 				</p>
 				<p>
 					<strong>Monthly Rent:</strong>
-					<br /> £3,000 pcm
+					<br /> {rent}
 				</p>
 				<p>
-					<strong>Deposit:</strong>
-					<br /> £1,200
+					<strong>Security Deposit:</strong>
+					<br /> {deposit}
 				</p>
 				<p>
 					<strong>Available From:</strong>
-					<br /> 1st September 2024
+					<br /> {formatDate(availabilityDate)}
 				</p>
 				<p>
-					<strong>Lease Duration:</strong>
-					<br /> 12 Months
+					<strong>Available Until:</strong>
+					<br /> {formatDate(endAvailabilityDate)}
 				</p>
 				<p>
-					<strong>EPC Rating:</strong>
-					<br /> B
+					<strong>Register of Title</strong>
+					<br /> {registerOfTitle ? "Included" : "Not included"}
 				</p>
 			</Section>
 
-			<Section title="Amenities">
+			<Section title="Features">
 				<p>
-					Wi-Fi, Washing Machine, Dryer, Dishwasher, Garden, Parking
+					<strong>Furnishing Status:</strong>
+					<br /> {furnishingStatus}
 				</p>
+				{epcRating && (
+					<p>
+						<strong>EPC Rating:</strong>
+						<br /> {epcRating}
+					</p>
+				)}
+				<p>
+					<strong>Amenities:</strong>
+					<br />{" "}
+					{amenities && amenities.length > 0
+						? amenities.join(", ")
+						: "None"}
+				</p>
+			</Section>
+			<Section title="Media">
+				<p>
+					<strong>Photos</strong>
+					<br /> {photos.length} photos included
+				</p>
+				{videoLink && (
+					<p>
+						<strong>Video Link</strong>
+						<br /> {videoLink}
+					</p>
+				)}
+				{floorPlan && (
+					<p>
+						<strong>Floor Plan</strong>
+						<br /> Included
+					</p>
+				)}
 			</Section>
 			<br />
 			<hr className="p-1" />

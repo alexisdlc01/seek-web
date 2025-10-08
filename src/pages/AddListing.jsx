@@ -605,7 +605,45 @@ const AddListing = () => {
 						/>
 					</StepperPanel>
 					<StepperPanel header="Review">
-						<ReviewPublishStep back={back} publish={publish} />
+						<ReviewPublishStep
+							title={title}
+							sizeSqM={sizeSqM}
+							propertyType={propertyType}
+							street={street}
+							city={city}
+							postcode={postcode}
+							country={country}
+							propertyTypes={propertyTypes}
+							otherType={otherType}
+							regularBedrooms={regularBedrooms}
+							ensuiteBedrooms={ensuiteBedrooms}
+							bedroomOptions={bedroomOptions}
+							bathrooms={bathrooms}
+							bathroomOptions={bathroomOptions}
+							description={description}
+							rent={rent}
+							deposit={deposit}
+							availabilityDate={availabilityDate}
+							endAvailabilityDate={endAvailabilityDate}
+							leaseOptions={leaseOptions}
+							registerOfTitleRef={registerOfTitleRef}
+							registerOfTitle={registerOfTitle}
+							registerOfTitleKeyFromBackend={
+								registerOfTitleKeyFromBackend
+							}
+							furnishingStatus={furnishingStatus}
+							furnishingOptions={furnishingOptions}
+							epcRating={epcRating}
+							epcOptions={epcOptions}
+							amenities={amenities}
+							photos={photos}
+							videoLink={videoLink}
+							floorPlan={floorPlan}
+							fileInputRef={fileInputRef}
+							floorPlanInputRef={floorPlanInputRef}
+							onPhotoSelect={onPhotoSelect}
+							floorPlanUrl={floorPlanUrl}
+							back={back} publish={publish} />
 					</StepperPanel>
 				</Stepper>
 			</div>

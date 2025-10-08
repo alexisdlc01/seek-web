@@ -89,7 +89,7 @@ export default function ContactPage() {
 								>
 									<i className="pi pi-whatsapp text-green-500 text-lg"></i>
 									<span className="font-medium">
-										+33 659 997 800
+										+33 6 59 99 78 00
 									</span>
 								</a>
 								<a
@@ -120,7 +120,7 @@ export default function ContactPage() {
 								>
 									<i className="pi pi-whatsapp text-green-500 text-lg"></i>
 									<span className="font-medium">
-										+33 651 111 503
+										+33 6 51 11 15 03
 									</span>
 								</a>
 								<a

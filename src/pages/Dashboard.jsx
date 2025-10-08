@@ -842,7 +842,7 @@ export default function Dashboard() {
 							color: "var(white)"
 						}}
 					>
-						Learn more
+						Coming Soon
 					</button>
 				</div>
 			</div>

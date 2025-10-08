@@ -133,6 +133,7 @@ const AddListing = () => {
 
 	// Step 3 state
 	const [photos, setPhotos] = useState([]);
+	const [allPhotosUrls, setAllPhotosUrls] = useState([]);
 	const [dragOverIndex, setDragOverIndex] = useState(null);
 	const [videoLink, setVideoLink] = useState("");
 	const [floorPlan, setFloorPlan] = useState(null);
@@ -149,7 +150,7 @@ const AddListing = () => {
 		setStep(prev => Math.min(prev + 1, 4));
 	};
 
-	const publish = () => {
+	const publish = async () => {
 		let missing = [];
 
 		if (!title?.trim()) missing.push("Property title");
@@ -171,7 +172,6 @@ const AddListing = () => {
 		if (!endAvailabilityDate) missing.push("Available until");
 		if (!registerOfTitle) missing.push("Register of Title (PDF)");
 		if (!furnishingStatus) missing.push("Furnishing status");
-		if (amenities.length === 0) missing.push("At least one amenity");
 		if (photos.length === 0) missing.push("At least one photo");
 
 		if (missing.length > 0) {
@@ -183,11 +183,44 @@ const AddListing = () => {
 			return;
 		}
 
+		const finalData = cleanObject({
+			propertyTitle: title,
+			sizeSqMeters: sizeSqM,
+			propertyType: propertyTypeMapInverse[propertyType],
+			streetAddress: street,
+			cityTown: city,
+			postcodeZIP: postcode,
+			country: country,
+			bedroomsCount: regularBedrooms,
+			enSuiteBedroomCount: ensuiteBedrooms,
+			bathrooms: bathrooms,
+			propertyDesc: description,
+			monthlyRent: rent,
+			securityDeposit: deposit,
+			availableFrom: availabilityDate,
+			availableUntil: endAvailabilityDate,
+			registerOfTitleKey: registerOfTitleKeyFromBackend,
+			furnishingStatus: furnishingStatus
+				? furnishingStatus.charAt(0).toLowerCase() +
+				furnishingStatus.slice(1)
+				: null,
+			epcRating: epcRating,
+			amenities: amenities.map(a => amenityMap[a]),
+			photos: allPhotosUrls,
+			videoTourLink: videoLink,
+			floorPlanImage: floorPlanUrl
+		});
+
+		await axios.post(`${BASE_URL}/listings/${id}/publish`, finalData, {
+			withCredentials: true
+		});
+
 		toast.current.show({
 			severity: "success",
 			summary: "Published!",
 			detail: "Your property listing is now live."
 		});
+		navigate("/listings");
 		console.log("Submitting all data...");
 	};
 
@@ -424,9 +457,10 @@ const AddListing = () => {
 					break;
 				case 3:
 					const step2Data = cleanObject({
-						furnishingStatus:
-							furnishingStatus ? furnishingStatus.charAt(0).toLowerCase() +
-							furnishingStatus.slice(1) : null,
+						furnishingStatus: furnishingStatus
+							? furnishingStatus.charAt(0).toLowerCase() +
+								furnishingStatus.slice(1)
+							: null,
 						epcRating: epcRating,
 						// TODO: get custom amenities to work.
 						amenities: amenities.map(a => amenityMap[a])
@@ -474,10 +508,10 @@ const AddListing = () => {
 					);
 
 					// Combine old + new
-					const allPhotoUrls = [...existingUrls, ...uploadedUrls];
+					setAllPhotosUrls([...existingUrls, ...uploadedUrls])
 
 					const step3Data = cleanObject({
-						photos: allPhotoUrls,
+						photos: allPhotosUrls,
 						videoTourLink: videoLink,
 						floorPlanImage: floorPlanUrl
 					});
@@ -643,7 +677,9 @@ const AddListing = () => {
 							floorPlanInputRef={floorPlanInputRef}
 							onPhotoSelect={onPhotoSelect}
 							floorPlanUrl={floorPlanUrl}
-							back={back} publish={publish} />
+							back={back}
+							publish={publish}
+						/>
 					</StepperPanel>
 				</Stepper>
 			</div>

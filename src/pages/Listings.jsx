@@ -47,6 +47,7 @@ export default function Listings() {
 			acceptLabel: "Yes, Delete",
 			rejectLabel: "Cancel",
 			acceptClassName: "p-button-danger",
+			draggable: false,
 			accept: () => handleDelete(prop._id)
 		});
 	};

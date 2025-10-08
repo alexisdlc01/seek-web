@@ -160,7 +160,16 @@ function App() {
 							/>
 							<Route
 								path="/edit-profile"
-								element={<EditProfile />}
+								element={
+									<ProtectedRoute
+										allowedRoles={[
+											"STUDENT",
+											"LANDLORD_AGENCY"
+										]}
+									>
+										<EditProfile />
+									</ProtectedRoute>
+								}
 							/>
 							<Route
 								path="/dashboard"

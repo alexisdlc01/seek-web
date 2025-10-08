@@ -1,25 +1,64 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
-import properties from "../dummyData/DummyListings";
-import houseImage from "../assets/house.jpg";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Badge } from "primereact/badge";
 import axios from "axios";
 import ListingsContext from "../context/ListingsContext.jsx";
+import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
+import { Toast } from "primereact/toast";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function Listings() {
 	const navigate = useNavigate();
-	const { listings, setCurrentListing } = useContext(ListingsContext);
+	const { listings, setListings, setCurrentListing } =
+		useContext(ListingsContext);
+	const toast = useRef(null);
+
+	const handleDelete = async id => {
+		try {
+			await axios.delete(`${BASE_URL}/listings/${id}`, {
+				withCredentials: true
+			});
+			setListings(prev => prev.filter(l => l._id !== id));
+			toast.current.show({
+				severity: "success",
+				summary: "Deleted",
+				detail: "Listing successfully deleted",
+				life: 3000
+			});
+		} catch (err) {
+			console.error("Delete failed:", err);
+			toast.current.show({
+				severity: "error",
+				summary: "Error",
+				detail: "Failed to delete listing",
+				life: 3000
+			});
+		}
+	};
+
+	const confirmDelete = prop => {
+		confirmDialog({
+			message: `Are you sure you want to delete?`,
+			header: "Confirm Deletion",
+			icon: "pi pi-exclamation-triangle",
+			acceptLabel: "Yes, Delete",
+			rejectLabel: "Cancel",
+			acceptClassName: "p-button-danger",
+			draggable: false,
+			accept: () => handleDelete(prop._id)
+		});
+	};
 
 	return (
 		<div
 			className="min-h-screen bg-white px-4 py-6 sm:px-6 lg:px-8"
 			style={{ background: "#0f0f23", margin: "0 auto", width: "80%" }}
 		>
+			<Toast ref={toast} />
+			<ConfirmDialog />
 			{/* Header with Add New Property Button */}
 			<motion.div
 				initial={{ opacity: 0, y: -20 }}
@@ -71,26 +110,32 @@ export default function Listings() {
 						}}
 					>
 						{/* Image */}
-						<div className="w-full md:w-32 h-40 md:h-20 flex-shrink-0 rounded-md overflow-hidden">
-							{prop.photos[0] && (
-								<img
-									src={prop.photos[0]}
-									alt="Property"
-									className="w-full h-full object-cover"
-								/>
-							)}
-						</div>
+						{prop.photos[0] && (
+							<div className="w-full md:w-32 h-40 md:h-20 flex-shrink-0 rounded-md overflow-hidden">
+								{prop.photos[0] && (
+									<img
+										src={prop.photos[0]}
+										alt="Property"
+										className="w-full h-full object-cover"
+									/>
+								)}
+							</div>
+						)}
 
 						{/* Info + Tags */}
 						<div className="flex-1 w-full">
 							<h2 className="font-semibold text-[var(--text-color)] text-base mt-2 md:mt-0">
-								{prop.propertyTitle}
+								{prop.propertyTitle || <i>No listing title</i>}
 							</h2>
 							<h2 className="font-semibold text-[var(--text-color)] text-base mt-2 md:mt-0">
-								{prop.streetAddress}
+								{prop.streetAddress || <i>No Street Address</i>}
 							</h2>
 							<p className="text-sm text-white">
-								{prop.cityTown}, {prop.postcodeZIP}
+								{!prop.cityTown && !prop.postcodeZIP ? (
+									<i>No Postcode</i>
+								) : (
+									`${prop.cityTown}, ${prop.postcodeZIP}`
+								)}
 							</p>
 							<div className="flex flex-wrap gap-2 mt-2">
 								{prop.isDraft && (
@@ -107,22 +152,6 @@ export default function Listings() {
 										className="text-xs font-medium px-3 py-1 rounded-full"
 									/>
 								)}
-								{/*<Tag*/}
-								{/*	value="2 New Applicants"*/}
-								{/*	severity="info"*/}
-								{/*	className="text-xs font-medium px-3 py-1 rounded-full"*/}
-								{/*	style={{*/}
-								{/*		background: "#23b7c5"*/}
-								{/*	}}*/}
-								{/*/>*/}
-								{/*<Tag*/}
-								{/*	value="3 New Messages"*/}
-								{/*	severity="info"*/}
-								{/*	className="text-xs font-medium px-3 py-1 rounded-full"*/}
-								{/*	style={{*/}
-								{/*		background: "#23b7c5"*/}
-								{/*	}}*/}
-								{/*/>*/}
 							</div>
 						</div>
 
@@ -160,7 +189,9 @@ export default function Listings() {
 										className="w-full sm:w-auto"
 										onClick={() => {
 											setCurrentListing(prop);
-											navigate(`/${prop._id}/add-listing`);
+											navigate(
+												`/${prop._id}/add-listing`
+											);
 										}}
 										style={{
 											color: "white",
@@ -182,7 +213,9 @@ export default function Listings() {
 										className="w-full sm:w-auto"
 										onClick={() => {
 											setCurrentListing(prop);
-											navigate(`/${prop._id}/add-listing`);
+											navigate(
+												`/${prop._id}/add-listing`
+											);
 										}}
 										style={{
 											color: "white",
@@ -192,7 +225,22 @@ export default function Listings() {
 									/>
 								</motion.div>
 							)}
-
+							{prop.isDraft && (
+								<motion.div whileHover={{ scale: 1.01 }}>
+									<Button
+										icon="pi pi-trash"
+										size="small"
+										severity="danger"
+										className="w-full sm:w-auto"
+										onClick={() => confirmDelete(prop)}
+										style={{
+											color: "white",
+											backgroundColor: "#f44336",
+											border: "none"
+										}}
+									/>
+								</motion.div>
+							)}
 						</div>
 					</motion.div>
 				))}

@@ -225,7 +225,7 @@ export default function Dashboard() {
 	const [selectedProperty, setSelectedProperty] = useState(
 		"123 North Street, St Andrews, KY16 9AL"
 	);
-	const { user } = useContext(UserContext);
+	const { user, loading } = useContext(UserContext);
 
 	const ranges = ["7 days", "30 days", "All time"].map(r => ({
 		label: r,
@@ -331,7 +331,7 @@ export default function Dashboard() {
 					{/* Header */}
 					<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 						<h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-color)]">
-							Welcome back, Kshitij Verma!
+							Welcome back, {user.name}
 						</h1>
 						<div className="flex gap-3">
 							<div className="relative">

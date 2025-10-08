@@ -20,6 +20,7 @@ export default function EditProfile() {
 
 	const [initialName, setInitialName] = useState("");
 	const [initialKey, setInitialKey] = useState("");
+	const [removePicture, setRemovePicture] = useState(false);
 	const { loading, user, setUser } = useContext(UserContext);
 
 	useEffect(() => {
@@ -68,6 +69,14 @@ export default function EditProfile() {
 					{ withCredentials: true }
 				);
 			}
+			if (avatarUrl === "" && removePicture) {
+				console.log("hhsdkfsdhf");
+				await axios.put(
+					`${BASE_URL}/users/setProfilePic`,
+					{ url: avatarUrl },
+					{ withCredentials: true }
+				);
+			}
 			await axios.put(
 				`${BASE_URL}/users/setUsername`,
 				{ name: displayName },
@@ -109,11 +118,19 @@ export default function EditProfile() {
 							image={avatarUrl}
 							label={
 								!avatarUrl
-									? displayName?.[0]?.toUpperCase() || "?"
+									? user.name
+											.split(" ")
+											.map(n => n[0])
+											.join("")
+											.toUpperCase()
 									: undefined
 							}
 							size="xlarge"
 							shape="circle"
+							className="bg-[#3182ce] text-white font-bold"
+							style={{
+								backgroundColor: "#3182ce"
+							}}
 						/>
 						<div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
 							<Button
@@ -133,6 +150,7 @@ export default function EditProfile() {
 									severity="danger"
 									outlined
 									onClick={() => {
+										setRemovePicture(true);
 										setAvatarUrl("");
 										setAvatarKey("");
 									}}

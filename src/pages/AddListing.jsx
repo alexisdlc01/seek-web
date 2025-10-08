@@ -22,6 +22,7 @@ const AddListing = () => {
 	const registerOfTitleRef = useRef(null);
 	const [step, setStep] = useState(1);
 	const [currentListing, setCurrentListing] = useState({});
+	const originalListingRef = useRef(null);
 
 	// Step 1 state
 	const [title, setTitle] = useState("");
@@ -132,6 +133,7 @@ const AddListing = () => {
 
 	// Step 3 state
 	const [photos, setPhotos] = useState([]);
+	const [allPhotosUrls, setAllPhotosUrls] = useState([]);
 	const [dragOverIndex, setDragOverIndex] = useState(null);
 	const [videoLink, setVideoLink] = useState("");
 	const [floorPlan, setFloorPlan] = useState(null);
@@ -148,7 +150,7 @@ const AddListing = () => {
 		setStep(prev => Math.min(prev + 1, 4));
 	};
 
-	const publish = () => {
+	const publish = async () => {
 		let missing = [];
 
 		if (!title?.trim()) missing.push("Property title");
@@ -170,7 +172,6 @@ const AddListing = () => {
 		if (!endAvailabilityDate) missing.push("Available until");
 		if (!registerOfTitle) missing.push("Register of Title (PDF)");
 		if (!furnishingStatus) missing.push("Furnishing status");
-		if (amenities.length === 0) missing.push("At least one amenity");
 		if (photos.length === 0) missing.push("At least one photo");
 
 		if (missing.length > 0) {
@@ -182,11 +183,44 @@ const AddListing = () => {
 			return;
 		}
 
+		const finalData = cleanObject({
+			propertyTitle: title,
+			sizeSqMeters: sizeSqM,
+			propertyType: propertyTypeMapInverse[propertyType],
+			streetAddress: street,
+			cityTown: city,
+			postcodeZIP: postcode,
+			country: country,
+			bedroomsCount: regularBedrooms,
+			enSuiteBedroomCount: ensuiteBedrooms,
+			bathrooms: bathrooms,
+			propertyDesc: description,
+			monthlyRent: rent,
+			securityDeposit: deposit,
+			availableFrom: availabilityDate,
+			availableUntil: endAvailabilityDate,
+			registerOfTitleKey: registerOfTitleKeyFromBackend,
+			furnishingStatus: furnishingStatus
+				? furnishingStatus.charAt(0).toLowerCase() +
+				furnishingStatus.slice(1)
+				: null,
+			epcRating: epcRating,
+			amenities: amenities.map(a => amenityMap[a]),
+			photos: allPhotosUrls,
+			videoTourLink: videoLink,
+			floorPlanImage: floorPlanUrl
+		});
+
+		await axios.post(`${BASE_URL}/listings/${id}/publish`, finalData, {
+			withCredentials: true
+		});
+
 		toast.current.show({
 			severity: "success",
 			summary: "Published!",
 			detail: "Your property listing is now live."
 		});
+		navigate("/listings");
 		console.log("Submitting all data...");
 	};
 
@@ -257,6 +291,23 @@ const AddListing = () => {
 	const [validListing, setValidListing] = useState(false);
 	const [loading, setLoading] = useState(true);
 
+	const getChangedFields = (current, original) => {
+		const changed = {};
+		for (const key in current) {
+			if (current[key] !== original[key]) {
+				changed[key] = current[key];
+			}
+		}
+		return changed;
+	};
+
+	const cleanObject = obj =>
+		Object.fromEntries(
+			Object.entries(obj).filter(
+				([, v]) => v !== null && v !== undefined && !Number.isNaN(v)
+			)
+		);
+
 	useEffect(() => {
 		(async () => {
 			try {
@@ -276,6 +327,7 @@ const AddListing = () => {
 				});
 				console.log("data back", res.data);
 				setCurrentListing(res.data);
+				originalListingRef.current = res.data;
 				res.data.propertyTitle ? setTitle(res.data.propertyTitle) : {};
 				res.data.sizeSqMeters ? setSizeSqM(res.data.sizeSqMeters) : {};
 				res.data.propertyType
@@ -371,62 +423,60 @@ const AddListing = () => {
 			console.log("On step:", step);
 			switch (step) {
 				case 2:
-					await axios.patch(
-						`${BASE_URL}/listings/${currentListing._id}/createStep1`,
-						{
-							propertyTitle: title,
-							sizeSqMeters: sizeSqM,
-							propertyType: propertyTypeMapInverse[propertyType],
-							bedroomsCount: regularBedrooms,
-							enSuiteBedroomCount: parseInt(ensuiteBedrooms),
-							bathrooms: bathrooms,
-							propertyDesc: description,
-							streetAddress: street,
-							cityTown: city,
-							postcodeZIP: postcode,
-							country: country,
-							monthlyRent: rent,
-							securityDeposit: deposit,
-							availableFrom: availabilityDate,
-							availableUntil: endAvailabilityDate,
-							registerOfTitleKey: registerOfTitleKeyFromBackend
-						},
-						{
-							withCredentials: true
-						}
+					const step1Data = cleanObject({
+						propertyTitle: title,
+						sizeSqMeters: sizeSqM,
+						propertyType: propertyTypeMapInverse[propertyType],
+						bedroomsCount: regularBedrooms,
+						enSuiteBedroomCount: parseInt(ensuiteBedrooms),
+						bathrooms,
+						propertyDesc: description,
+						streetAddress: street,
+						cityTown: city,
+						postcodeZIP: postcode,
+						country,
+						monthlyRent: rent,
+						securityDeposit: deposit,
+						availableFrom: availabilityDate,
+						availableUntil: endAvailabilityDate,
+						registerOfTitleKey: registerOfTitleKeyFromBackend
+					});
+
+					const step1Changes = getChangedFields(
+						step1Data,
+						originalListingRef.current || {}
 					);
+					console.log("changes from step 1", step1Changes);
+					if (Object.keys(step1Changes).length > 0) {
+						await axios.patch(
+							`${BASE_URL}/listings/${currentListing._id}/createStep1`,
+							step1Changes,
+							{ withCredentials: true }
+						);
+					}
 					break;
 				case 3:
-					await axios.patch(
-						`${BASE_URL}/listings/${currentListing._id}/createStep2`,
-						{
-							propertyTitle: title,
-							sizeSqMeters: sizeSqM,
-							propertyType: propertyTypeMapInverse[propertyType],
-							bedroomsCount: regularBedrooms,
-							enSuiteBedroomCount: parseInt(ensuiteBedrooms),
-							bathrooms: bathrooms,
-							propertyDesc: description,
-							streetAddress: street,
-							cityTown: city,
-							postcodeZIP: postcode,
-							country: country,
-							monthlyRent: rent,
-							securityDeposit: deposit,
-							availableFrom: availabilityDate,
-							availableUntil: endAvailabilityDate,
-							registerOfTitleKey: registerOfTitleKeyFromBackend,
-							furnishingStatus:
-								furnishingStatus.charAt(0).toLowerCase() +
-								furnishingStatus.slice(1),
-							epcRating: epcRating,
-							// TODO: get custom amenities to work.
-							amenities: amenities.map(a => amenityMap[a])
-						},
-						{
-							withCredentials: true
-						}
+					const step2Data = cleanObject({
+						furnishingStatus: furnishingStatus
+							? furnishingStatus.charAt(0).toLowerCase() +
+								furnishingStatus.slice(1)
+							: null,
+						epcRating: epcRating,
+						// TODO: get custom amenities to work.
+						amenities: amenities.map(a => amenityMap[a])
+					});
+
+					const step2Changes = getChangedFields(
+						step2Data,
+						originalListingRef.current || {}
 					);
+					if (Object.keys(step2Changes).length > 0) {
+						await axios.patch(
+							`${BASE_URL}/listings/${currentListing._id}/createStep2`,
+							step2Changes,
+							{ withCredentials: true }
+						);
+					}
 					break;
 				case 4:
 					const existingUrls = photos
@@ -458,42 +508,25 @@ const AddListing = () => {
 					);
 
 					// Combine old + new
-					const allPhotoUrls = [...existingUrls, ...uploadedUrls];
+					setAllPhotosUrls([...existingUrls, ...uploadedUrls])
 
-					await axios.patch(
-						`${BASE_URL}/listings/${currentListing._id}/createStep3`,
-						{
-							propertyTitle: title,
-							sizeSqMeters: sizeSqM,
-							propertyType: propertyTypeMapInverse[propertyType],
-							bedroomsCount: regularBedrooms,
-							enSuiteBedroomCount: parseInt(ensuiteBedrooms),
-							bathrooms: bathrooms,
-							propertyDesc: description,
-							streetAddress: street,
-							cityTown: city,
-							postcodeZIP: postcode,
-							country: country,
-							monthlyRent: rent,
-							securityDeposit: deposit,
-							availableFrom: availabilityDate,
-							availableUntil: endAvailabilityDate,
-							registerOfTitleKey: registerOfTitleKeyFromBackend,
-							furnishingStatus:
-								furnishingStatus.charAt(0).toLowerCase() +
-								furnishingStatus.slice(1),
-							epcRating: epcRating,
-							// TODO: get custom amenities to work.
-							amenities: amenities.map(a => amenityMap[a]),
+					const step3Data = cleanObject({
+						photos: allPhotosUrls,
+						videoTourLink: videoLink,
+						floorPlanImage: floorPlanUrl
+					});
 
-							photos: allPhotoUrls,
-							videoTourLink: videoLink,
-							floorPlanImage: floorPlanUrl
-						},
-						{
-							withCredentials: true
-						}
+					const step3Changes = getChangedFields(
+						step3Data,
+						originalListingRef.current || {}
 					);
+					if (Object.keys(step3Changes).length > 0) {
+						await axios.patch(
+							`${BASE_URL}/listings/${currentListing._id}/createStep3`,
+							step3Changes,
+							{ withCredentials: true }
+						);
+					}
 					break;
 			}
 		})();
@@ -571,21 +604,6 @@ const AddListing = () => {
 							next={next}
 						/>
 					</StepperPanel>
-					{/*<StepperPanel header="Location">*/}
-					{/*	<LocationAvailabilityStep*/}
-					{/*		rent={rent}*/}
-					{/*		setRent={setRent}*/}
-					{/*		deposit={deposit}*/}
-					{/*		setDeposit={setDeposit}*/}
-					{/*		availabilityDate={availabilityDate}*/}
-					{/*		setAvailabilityDate={setAvailabilityDate}*/}
-					{/*		endAvailabilityDate={endAvailabilityDate}*/}
-					{/*		setEndAvailabilityDate={setEndAvailabilityDate}*/}
-					{/*		leaseOptions={leaseOptions}*/}
-					{/*		back={back}*/}
-					{/*		next={next}*/}
-					{/*	/>*/}
-					{/*</StepperPanel>*/}
 					<StepperPanel header="Features">
 						<FeaturesStep
 							furnishingStatus={furnishingStatus}
@@ -621,7 +639,47 @@ const AddListing = () => {
 						/>
 					</StepperPanel>
 					<StepperPanel header="Review">
-						<ReviewPublishStep back={back} publish={publish} />
+						<ReviewPublishStep
+							title={title}
+							sizeSqM={sizeSqM}
+							propertyType={propertyType}
+							street={street}
+							city={city}
+							postcode={postcode}
+							country={country}
+							propertyTypes={propertyTypes}
+							otherType={otherType}
+							regularBedrooms={regularBedrooms}
+							ensuiteBedrooms={ensuiteBedrooms}
+							bedroomOptions={bedroomOptions}
+							bathrooms={bathrooms}
+							bathroomOptions={bathroomOptions}
+							description={description}
+							rent={rent}
+							deposit={deposit}
+							availabilityDate={availabilityDate}
+							endAvailabilityDate={endAvailabilityDate}
+							leaseOptions={leaseOptions}
+							registerOfTitleRef={registerOfTitleRef}
+							registerOfTitle={registerOfTitle}
+							registerOfTitleKeyFromBackend={
+								registerOfTitleKeyFromBackend
+							}
+							furnishingStatus={furnishingStatus}
+							furnishingOptions={furnishingOptions}
+							epcRating={epcRating}
+							epcOptions={epcOptions}
+							amenities={amenities}
+							photos={photos}
+							videoLink={videoLink}
+							floorPlan={floorPlan}
+							fileInputRef={fileInputRef}
+							floorPlanInputRef={floorPlanInputRef}
+							onPhotoSelect={onPhotoSelect}
+							floorPlanUrl={floorPlanUrl}
+							back={back}
+							publish={publish}
+						/>
 					</StepperPanel>
 				</Stepper>
 			</div>

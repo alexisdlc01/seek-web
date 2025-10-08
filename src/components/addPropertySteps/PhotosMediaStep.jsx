@@ -85,7 +85,7 @@ const PhotosMediaStep = ({
 				</div>
 				<div className="flex flex-col">
 					<label htmlFor="videoLink" className="font-medium mb-2 text-white">
-						Video Tour Link
+						Video Tour Link (Optional)
 					</label>
 					<InputText
 						id="videoLink"
@@ -96,7 +96,7 @@ const PhotosMediaStep = ({
 				</div>
 				<div className="flex flex-col">
 					<label htmlFor="floorPlan" className="font-medium mb-2 text-white">
-						Floor Plan Image (PDF Only)
+						Floor Plan Image, PDF Only (Optional)
 					</label>
 					<Button
 						type="button"

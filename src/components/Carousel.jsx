@@ -14,28 +14,48 @@ function wrap(min, max, v) {
 export default function QuotesCarouselSection() {
 	const quotes = [
 		{
-			text: "Housing should be as easy as scrolling TikTok.",
-			name: "Sarah Thompson",
+			text: "I found my flat in two days -- faster than scrolling through Facebook.",
+			name: "Julien",
 			role: "Student"
 		},
 		{
-			text: "Only verified landlords. Only serious applications.",
-			name: "Alexis de La Chapelle",
-			role: "Landlord"
+			text: "Seek actually feels like an app made for students, not landlords.",
+			name: "Johanna",
+			role: "Student"
 		},
 		{
-			text: "Agree & secure your space in days, not months.",
-			name: "James Liu",
-			role: "Tenant"
+			text: "I love that I can swipe through listings like TikTok—it’s addictive.",
+			name: "Bernardo",
+			role: "Student"
 		},
 		{
-			text: "SEEK is free for students and landlords.",
-			name: "Emily Carter",
-			role: "Landlord"
+			text: "We found a group house together. No more ten tabs open at once.",
+			name: "Matteo",
+			role: "Student"
 		},
 		{
-			text: "Complete transparency and control for everyone.",
-			name: "Michael O’Neill",
+			text: "Finally, a housing app that doesn’t crash or look like it’s from 2008.",
+			name: "Sam",
+			role: "Student"
+		},
+		{
+			text: "Seek made finding accommodation feel way less stressful this year.",
+			name: "Maya",
+			role: "Student"
+		},
+		{
+			text: "Being able to compare flats in one place saved so much time.",
+			name: "Darius",
+			role: "Student"
+		},
+		{
+			text: "It’s the first time I actually enjoyed the housing hunt.",
+			name: "Richard",
+			role: "Student"
+		},
+		{
+			text: "Seek should exist in every uni town—St Andrews can’t keep it to itself.",
+			name: "Ines",
 			role: "Student"
 		}
 	];

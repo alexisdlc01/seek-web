@@ -145,10 +145,16 @@ export default function Listings() {
 										className="text-xs font-medium px-3 py-1 rounded-full"
 									/>
 								)}
-								{!prop.isVerified && (
+								{!prop.isVerified ? (
 									<Tag
 										value="Not verified"
 										severity="danger"
+										className="text-xs font-medium px-3 py-1 rounded-full"
+									/>
+								) : (
+									<Tag
+										value="Verified!"
+										severity="success"
 										className="text-xs font-medium px-3 py-1 rounded-full"
 									/>
 								)}

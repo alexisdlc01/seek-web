@@ -199,9 +199,7 @@ function App() {
 							/>
 							<Route
 								path="/superuser/login"
-								element={
-										<SigninSuperuser />
-								}
+								element={<SigninSuperuser />}
 							/>
 							<Route path="*" element={<NotFound />} />
 						</Routes>

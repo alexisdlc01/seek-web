@@ -89,7 +89,7 @@ export default function Listings() {
 									}
 								);
 								const id = res.data;
-								navigate(`/${id}/add-listing`);
+								navigate(`/add-listing/${id}`);
 							}}
 						/>
 					</motion.div>
@@ -196,7 +196,7 @@ export default function Listings() {
 										onClick={() => {
 											setCurrentListing(prop);
 											navigate(
-												`/${prop._id}/add-listing`
+												`/add-listing/${prop._id}`
 											);
 										}}
 										style={{

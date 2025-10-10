@@ -117,19 +117,6 @@ const AddListing = () => {
 		"Monoxide Alarm"
 	];
 	const [amenities, setAmenities] = useState([]);
-	const amenityMap = {
-		"Wi-Fi": "WiFi",
-		"Washing Machine": "Washing_Machine",
-		Dryer: "Dryer",
-		Dishwasher: "Dishwasher",
-		"Pets Allowed": "Pets_Allowed",
-		"Bike Storage": "Bike_Storage",
-		Parking: "Parking",
-		Garden: "Garden",
-		"Smoke Alarm": "Smoke_Alarm",
-		Fireplace: "Fireplace",
-		"Monoxide Alarm": "Monoxide_Alarm"
-	};
 
 	// Step 3 state
 	const [photos, setPhotos] = useState([]);
@@ -205,7 +192,7 @@ const AddListing = () => {
 				furnishingStatus.slice(1)
 				: null,
 			epcRating: epcRating,
-			amenities: amenities.map(a => amenityMap[a]),
+			amenities: amenities,
 			photos: allPhotosUrls,
 			videoTourLink: videoLink,
 			floorPlanImage: floorPlanUrl
@@ -346,15 +333,7 @@ const AddListing = () => {
 					? setDescription(res.data.propertyDesc)
 					: {};
 
-				if (res.data.amenities) {
-					const reverseAmenityMap = Object.fromEntries(
-						Object.entries(amenityMap).map(([k, v]) => [v, k])
-					);
-					setAmenities(
-						res.data.amenities.map(a => reverseAmenityMap[a])
-					);
-				}
-
+				res.data.amenities ? setAmenities(res.data.amenities) : {}
 				res.data.streetAddress ? setStreet(res.data.streetAddress) : {};
 				res.data.cityTown ? setCity(res.data.cityTown) : {};
 				res.data.postcodeZIP ? setPostcode(res.data.postcodeZIP) : {};
@@ -463,7 +442,7 @@ const AddListing = () => {
 							: null,
 						epcRating: epcRating,
 						// TODO: get custom amenities to work.
-						amenities: amenities.map(a => amenityMap[a])
+						amenities: amenities
 					});
 
 					const step2Changes = getChangedFields(

@@ -27,6 +27,8 @@ import { useContext } from "react";
 import UserContext from "./context/UserContext.jsx";
 import { ProgressSpinner } from "primereact/progressspinner";
 import EditProfile from "./pages/EditProfile.jsx";
+import SigninSuperuser from "./pages/SigninSuperuser.jsx";
+import SuperUserDashboard from "./pages/SuperUserDashboard.jsx";
 
 const NotFound = () => {
 	const navigate = useNavigate();
@@ -184,6 +186,22 @@ function App() {
 							<Route
 								path="/verify-email"
 								element={<VerifyingEmail />}
+							/>
+							<Route
+								path="/superuser"
+								element={
+									<ProtectedRoute
+										allowedRoles={["SUPERUSER"]}
+									>
+										<SuperUserDashboard />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/superuser/login"
+								element={
+										<SigninSuperuser />
+								}
 							/>
 							<Route path="*" element={<NotFound />} />
 						</Routes>

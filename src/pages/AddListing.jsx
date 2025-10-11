@@ -441,7 +441,6 @@ const AddListing = () => {
 								furnishingStatus.slice(1)
 							: null,
 						epcRating: epcRating,
-						// TODO: get custom amenities to work.
 						amenities: amenities
 					});
 

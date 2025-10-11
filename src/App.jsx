@@ -29,6 +29,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import EditProfile from "./pages/EditProfile.jsx";
 import SigninSuperuser from "./pages/SigninSuperuser.jsx";
 import SuperUserDashboard from "./pages/SuperUserDashboard.jsx";
+import ViewListing from "./components/ViewListing.jsx";
 
 const NotFound = () => {
 	const navigate = useNavigate();
@@ -129,6 +130,16 @@ function App() {
 										allowedRoles={["LANDLORD_AGENCY"]}
 									>
 										<AddListing />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/view-listing/:id"
+								element={
+									<ProtectedRoute
+										allowedRoles={["LANDLORD_AGENCY"]}
+									>
+										<ViewListing />
 									</ProtectedRoute>
 								}
 							/>

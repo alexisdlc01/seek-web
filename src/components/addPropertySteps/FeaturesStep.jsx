@@ -34,37 +34,22 @@ const FeaturesStep = ({
 	}, [amenities]);
 
 	const allAmenities = useMemo(() => {
-		return [...new Set([...amenitiesList, ...customAmenities, ...amenities])];
+		return [
+			...new Set([...amenitiesList, ...customAmenities, ...amenities])
+		];
 	}, [amenitiesList, customAmenities, amenities]);
-
 
 	const normalize = s => s.trim().replace(/\s+/g, " ");
 
 	const addCustomAmenity = () => {
 		const val = normalize(customInput);
 		if (!val) return;
-		// const exists = allAmenities.some(
-		// 	a => a.toLowerCase() === val.toLowerCase()
-		// );
-		// if (exists) {
-		// 	setCustomInput("");
-		// 	// if it already exists but not checked, check it
-		// 	if (!amenities.includes(val)) {
-		// 		onAmenityChange({ value: val, checked: true });
-		// 	}
-		// 	return;
-		// }
 		setCustomAmenities(prev => [...prev, val]);
-		// auto-check newly added amenity
-		// onAmenityChange({ value: val, checked: true });
 		setCustomInput("");
 	};
 
 	const removeCustomAmenity = name => {
 		setCustomAmenities(prev => prev.filter(a => a !== name));
-		if (amenities.includes(name)) {
-			// onAmenityChange({ value: name, checked: false });
-		}
 		if (editing === name) {
 			setEditing(null);
 			setEditValue("");
@@ -197,7 +182,12 @@ const FeaturesStep = ({
 								<Checkbox
 									inputId={name}
 									value={name}
-									onChange={e => onAmenityChange({ value: name, checked: e.checked })}
+									onChange={e =>
+										onAmenityChange({
+											value: name,
+											checked: e.checked
+										})
+									}
 									checked={amenities.includes(name)}
 								/>
 								<label

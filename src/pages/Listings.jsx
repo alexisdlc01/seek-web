@@ -220,7 +220,7 @@ export default function Listings() {
 										onClick={() => {
 											setCurrentListing(prop);
 											navigate(
-												`/${prop._id}/add-listing`
+												`/view-listing/${prop._id}`
 											);
 										}}
 										style={{

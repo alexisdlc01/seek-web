@@ -189,7 +189,7 @@ const AddListing = () => {
 			registerOfTitleKey: registerOfTitleKeyFromBackend,
 			furnishingStatus: furnishingStatus
 				? furnishingStatus.charAt(0).toLowerCase() +
-				furnishingStatus.slice(1)
+					furnishingStatus.slice(1)
 				: null,
 			epcRating: epcRating,
 			amenities: amenities,
@@ -333,7 +333,7 @@ const AddListing = () => {
 					? setDescription(res.data.propertyDesc)
 					: {};
 
-				res.data.amenities ? setAmenities(res.data.amenities) : {}
+				res.data.amenities ? setAmenities(res.data.amenities) : {};
 				res.data.streetAddress ? setStreet(res.data.streetAddress) : {};
 				res.data.cityTown ? setCity(res.data.cityTown) : {};
 				res.data.postcodeZIP ? setPostcode(res.data.postcodeZIP) : {};
@@ -487,7 +487,7 @@ const AddListing = () => {
 					);
 
 					// Combine old + new
-					setAllPhotosUrls([...existingUrls, ...uploadedUrls])
+					setAllPhotosUrls([...existingUrls, ...uploadedUrls]);
 
 					const step3Data = cleanObject({
 						photos: allPhotosUrls,

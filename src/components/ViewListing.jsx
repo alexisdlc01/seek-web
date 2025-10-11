@@ -189,12 +189,6 @@ const ViewListing = () => {
 						{new Date(listing.availableFrom).toLocaleDateString()} –{" "}
 						{new Date(listing.availableUntil).toLocaleDateString()}
 					</p>
-					<Button
-						label="Contact Landlord"
-						icon="pi pi-envelope"
-						className="w-full"
-						style={{ background: "#23b7c5", border: "none" }}
-					/>
 				</div>
 			</div>
 		</div>

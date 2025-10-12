@@ -1,266 +1,284 @@
-import { useEffect, useRef } from "react";
-import {
-	motion,
-	useTransform,
-	useSpring,
-	useMotionTemplate,
-	useScroll
-} from "framer-motion";
-import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
-import { Button } from "primereact/button";
-
-export default function LandingPage() {
-	const { scrollY } = useScroll();
-	const videoRef = useRef(null);
-	const { setTheme } = useNavbarTheme();
-
-	// —— Global video blur/scale settings ——
-	const BLUR_START = 50;
-	const BLUR_END = 300;
-	const MAX_BLUR = 12;
-	const MAX_SCALE = 1.05;
-	const MIN_BRIGHTNESS = 0.5;
-
-	// —— Hero section scroll threshold ——
-	const HERO_SCROLL_END = 300;
-
-	// …above your existing constants…
-	const FADE_IN_DURATION = 300;
-	const HOLD_DURATION = 400;
-	const GAP_BETWEEN = 200; // px of blank scroll between sections
-
-	// total time for one section (fade-in + hold + fade-out)
-	const SECTION_LENGTH =
-		FADE_IN_DURATION /*in*/ + HOLD_DURATION + FADE_IN_DURATION; /*out*/
-
-	const BLUR1_OFFSET = 500;
-	const BLUR2_OFFSET = BLUR1_OFFSET + SECTION_LENGTH + GAP_BETWEEN; // e.g. 500 + 300+400+300 + 200 = 1700
-	const BLUR3_OFFSET = BLUR2_OFFSET + SECTION_LENGTH + GAP_BETWEEN; // pushes section 3 further down
-
-	// springify the video filters
-	const blurValue = useTransform(
-		scrollY,
-		[BLUR_START, BLUR_END],
-		[0, MAX_BLUR]
-	);
-	const scaleValueVid = useTransform(
-		scrollY,
-		[BLUR_START, BLUR_END],
-		[1, MAX_SCALE]
-	);
-	const brightValue = useTransform(
-		scrollY,
-		[BLUR_START, BLUR_END],
-		[1, MIN_BRIGHTNESS]
-	);
-
-	const blurSpring = useSpring(blurValue, { stiffness: 80, damping: 20 });
-	const scaleSpringVid = useSpring(scaleValueVid, {
-		stiffness: 80,
-		damping: 20
-	});
-	const brightSpring = useSpring(brightValue, { stiffness: 80, damping: 20 });
-
-	const filterStyle = useMotionTemplate`
-    blur(${blurSpring}px) brightness(${brightSpring})
-  `;
-
-	useEffect(() => {
-		const unsub = scrollY.onChange(latest => {
-			if (!videoRef.current) return;
-			if (latest > BLUR_END) {
-				videoRef.current.pause();
-				setTheme("dark");
-			} else {
-				videoRef.current.play();
-				setTheme("white");
-			}
-		});
-		return () => unsub();
-	}, [scrollY]);
-
-	// Hero section transforms
-	const section1Opacity = useTransform(scrollY, [0, HERO_SCROLL_END], [1, 0]);
-	const section1Y = useTransform(scrollY, [0, HERO_SCROLL_END], [0, -50]);
-
-	// Utility to build each blur section’s timing + rotation + scale
-	const makeSection = (offset, xFrom, xTo) => {
-		const fadeInEnd = offset + FADE_IN_DURATION;
-		const holdEnd = fadeInEnd + HOLD_DURATION;
-		const fadeOutEnd = holdEnd + FADE_IN_DURATION;
-
-		const opacity = useTransform(
-			scrollY,
-			[offset, fadeInEnd, holdEnd, fadeOutEnd],
-			[0, 1, 1, 0]
-		);
-		const x = useTransform(scrollY, [offset, fadeInEnd], [xFrom, xTo]);
-		const rotate = useTransform(scrollY, [offset, fadeInEnd], [6, 0]);
-		const scale = useTransform(scrollY, [offset, fadeInEnd], [0.8, 1.2]);
-
-		return { opacity, x, rotate, scale };
-	};
-
-	const blur1 = makeSection(BLUR1_OFFSET, -100, -50);
-	const blur2 = makeSection(BLUR2_OFFSET, 100, 50);
-	const blur3 = makeSection(BLUR3_OFFSET, -100, -50);
-
+export default function PrivacyPolicy() {
 	return (
-		<div className="relative h-[800vh] overflow-x-hidden">
-			{/* Videix Background */}
-			<div className="fixed inset-0 z-[-1] overflow-hidden">
-				<motion.video
-					ref={videoRef}
-					autoPlay
-					loop
-					muted
-					playsInline
-					className="w-full h-full object-cover"
-					style={{ filter: filterStyle, scale: scaleSpringVid }}
-				>
-					<source src="/dummy_background.mp4" type="video/mp4" />
-				</motion.video>
-			</div>
+		<div className="min-h-screen bg-[var(--surface-a)] text-[var(--text-color)] px-4 py-16">
+			<div className="max-w-3xl mx-auto space-y-8">
+				<h1 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)]">
+					Privacy Policy
+				</h1>
+				<p className="text-[var(--text-color-secondary)]">
+					Effective Date: 09 October 2025
+					<br />
+					Seek IT Ltd, incorporated in Scotland, United Kingdom
+				</p>
 
-			{/* Hero Section */}
-			<div className="sticky top-0 h-screen flex items-center justify-center">
-				<motion.div
-					style={{ opacity: section1Opacity, y: section1Y }}
-					className="absolute text-white text-center max-w-xl px-4"
-				>
-					<motion.h1
-						initial={{ opacity: 0, y: 30 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.8, ease: "easeOut" }}
-						className="text-3xl md:text-3xl lg:text-5xl font-extrabold mb-6 tracking-tight drop-shadow-lg"
-					>
-						One Swipe Closer to Home
-					</motion.h1>
-
-					<motion.p
-						initial={{ opacity: 0, y: 30 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{
-							duration: 0.8,
-							ease: "easeOut",
-							delay: 0.1
-						}}
-						className="text-xl drop-shadow mb-4"
-					>
-						Connecting students with trusted landlords in St Andrews
-					</motion.p>
-					<div className="flex justify-center gap-4 flex-wrap mb-30">
-						<motion.div whileHover={{ scale: 1.05 }}>
-							<Button
-								label="I'm a Student"
-								className="bg-white text-[var(--primary-color)] font-bold px-5 py-3"
-								onClick={() => navigate("/signup/student")}
-							/>
-						</motion.div>
-						<motion.div whileHover={{ scale: 1.05 }}>
-							<Button
-								label="I'm a Landlord"
-								className="bg-white text-[var(--primary-color)] font-bold px-5 py-3"
-								onClick={() => navigate("/signup/landlord")}
-							/>
-						</motion.div>
+				<div className="space-y-6">
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Introduction
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							Seek IT Ltd (“Seek,” “we,” “us,” or “our”) respects
+							your privacy and is committed to protecting your
+							personal information. This Privacy Policy explains
+							how we collect, use, and safeguard your data when
+							you use the Seek mobile application or website (the
+							“Platform”). By using Seek, you agree to this
+							Privacy Policy.
+						</p>
 					</div>
 
-					<motion.button
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{
-							duration: 0.8,
-							ease: "easeOut",
-							delay: 0.2
-						}}
-						className="px-6 py-3 bg-white text-black font-semibold rounded-full shadow-lg hover:bg-gray-200 transition"
-						onClick={() =>
-							window.scrollTo({
-								top: BLUR1_OFFSET + 500,
-								behavior: "smooth"
-							})
-						}
-					>
-						↓ Scroll to Learn More
-					</motion.button>
-				</motion.div>
-			</div>
-
-			{/* Blur Section 1 – Left */}
-			<div className="h-screen relative">
-				<div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-					<motion.div
-						style={{
-							opacity: blur1.opacity,
-							x: blur1.x,
-							rotate: blur1.rotate,
-							scale: blur1.scale,
-							transformOrigin: "left center"
-						}}
-						className="text-white text-center max-w-md px-4"
-					>
-						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-							Ready to Move In?
-						</h1>
-						<p className="text-lg drop-shadow">
-							Start exploring listings today and secure your new
-							home with confidence. Every property is
-							hand-checked, and listings update in real-time as
-							availability changes.
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Information We Collect
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							<strong>a. Information You Provide</strong>
+							<ul className="list-disc pl-6 space-y-1 mt-2">
+								<li>Your name and university email address</li>
+								<li>
+									Your student status and university
+									affiliation
+								</li>
+								<li>
+									Property listings or descriptions (for
+									landlords and agents)
+								</li>
+								<li>
+									Communications with Seek (feedback, support
+									requests)
+								</li>
+							</ul>
 						</p>
-					</motion.div>
-				</div>
-			</div>
-
-			{/* Blur Section 2 – Right */}
-			<div className="h-screen relative">
-				<div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-					<motion.div
-						style={{
-							opacity: blur2.opacity,
-							x: blur2.x,
-							rotate: blur2.rotate,
-							scale: blur2.scale,
-							transformOrigin: "right center"
-						}}
-						className="text-white text-center max-w-md px-4"
-					>
-						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-							Only Real Listings
-						</h1>
-						<p className="text-lg drop-shadow">
-							We eliminate scams and outdated posts, showing you
-							only what’s genuinely available. Our moderation team
-							actively reviews every listing so you don't waste
-							time.
+						<p className="text-[var(--text-color-secondary)] mt-4">
+							<strong>
+								b. Automatically Collected Information
+							</strong>
+							<ul className="list-disc pl-6 space-y-1 mt-2">
+								<li>
+									Device information (model, OS version, IP
+									address)
+								</li>
+								<li>
+									Usage data (pages viewed, time spent,
+									interactions)
+								</li>
+								<li>
+									Log data (crash reports, technical
+									diagnostics)
+								</li>
+								<li>
+									Cookies and similar technologies for session
+									management
+								</li>
+							</ul>
 						</p>
-					</motion.div>
-				</div>
-			</div>
-
-			{/* Blur Section 3 – Left */}
-			<div className="h-screen relative">
-				<div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-					<motion.div
-						style={{
-							opacity: blur3.opacity,
-							x: blur3.x,
-							rotate: blur3.rotate,
-							scale: blur3.scale,
-							transformOrigin: "left center"
-						}}
-						className="text-white text-center max-w-md px-4"
-					>
-						<h1 className="text-xl font-semibold mb-4 drop-shadow-lg">
-							Instant Apply
-						</h1>
-						<p className="text-lg drop-shadow">
-							No more endless paperwork. Tap once to apply, attach
-							your details, and receive confirmation directly.
-							It’s that simple — moving in has never been faster.
+						<p className="text-[var(--text-color-secondary)] mt-4">
+							<strong>c. Optional Data</strong>
+							<ul className="list-disc pl-6 space-y-1 mt-2">
+								<li>Approximate or precise location data</li>
+								<li>
+									Group data (if you create or join a housing
+									group)
+								</li>
+							</ul>
 						</p>
-					</motion.div>
+					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							How We Use Your Information
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							<ul className="list-disc pl-6 space-y-2">
+								<li>Create and manage your account</li>
+								<li>
+									Display, personalise, and recommend housing
+									listings
+								</li>
+								<li>
+									Facilitate communication between students
+									and landlords
+								</li>
+								<li>
+									Improve Seek’s functionality, performance,
+									and reliability
+								</li>
+								<li>
+									Conduct internal analytics and generate
+									anonymised reports
+								</li>
+								<li>
+									Maintain the security and integrity of the
+									Platform
+								</li>
+							</ul>
+							<span className="block mt-4">
+								Seek does not sell, rent, or share your personal
+								information. However, Seek may sell aggregated
+								and anonymised analytical reports based on user
+								activity data. These reports never contain
+								identifiable personal information.
+							</span>
+						</p>
+					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Legal Basis for Processing (UK GDPR)
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							<ul className="list-disc pl-6 space-y-2">
+								<li>
+									Contractual necessity: to provide Seek’s
+									services.
+								</li>
+								<li>
+									Legitimate interests: to analyse usage data
+									and develop aggregated reports.
+								</li>
+								<li>
+									Consent: when you opt in to location sharing
+									or marketing communications.
+								</li>
+							</ul>
+						</p>
+					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Data Sharing
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							<ul className="list-disc pl-6 space-y-2">
+								<li>
+									Service providers that help us operate Seek
+									(hosting, analytics, crash reporting).
+								</li>
+								<li>
+									Business partners or research institutions
+									in the form of anonymised, aggregated
+									insights.
+								</li>
+								<li>
+									Regulators or authorities where required by
+									law.
+								</li>
+							</ul>
+							<span className="block mt-4">
+								Seek never provides partners with personally
+								identifiable information (PII) without your
+								explicit consent.
+							</span>
+						</p>
+					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Data Retention
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							<ul className="list-disc pl-6 space-y-2">
+								<li>
+									Account data is kept while your account
+									remains active.
+								</li>
+								<li>
+									Usage data used for analytics may be
+									anonymised and retained for long-term
+									insights.
+								</li>
+								<li>
+									You can request deletion of your data or
+									account at any time (see Section 9).
+								</li>
+							</ul>
+						</p>
+					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Data Security
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							We apply technical and organisational measures to
+							safeguard your data, including encryption, secure
+							servers, and restricted access. No system is
+							completely secure, but we continuously monitor and
+							improve our protections.
+						</p>
+					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Cookies & Analytics
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							Seek uses cookies and analytics tools (including
+							Firebase and similar services) to collect anonymised
+							usage data and improve app performance. You can
+							disable cookies in your device or browser settings,
+							but some features may stop working properly.
+						</p>
+					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Your Rights (UK & EU Users)
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							<ul className="list-disc pl-6 space-y-2">
+								<li>Access your personal data</li>
+								<li>
+									Correct or update inaccurate information
+								</li>
+								<li>
+									Request deletion (“right to be forgotten”)
+								</li>
+								<li>Restrict or object to data processing</li>
+								<li>Withdraw consent for optional features</li>
+							</ul>
+							<span className="block mt-4">
+								Requests can be made via privacy@seekapp.uk.
+							</span>
+						</p>
+					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Children’s Privacy
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							Seek is designed for university students. We do not
+							knowingly collect data from individuals under 16
+							years old.
+						</p>
+					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Changes to This Policy
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							We may update this Privacy Policy from time to time.
+							Users will be notified of any significant changes.
+							Continued use of Seek after changes are made means
+							you accept the updated version.
+						</p>
+					</div>
+
+					<div>
+						<h2 className="font-semibold text-[var(--text-color)]">
+							Contact Us
+						</h2>
+						<p className="text-[var(--text-color-secondary)]">
+							Seek IT Ltd
+							<br />
+							Email: privacy@seekapp.uk
+							<br />
+							Registered Office: 11 Crail’s Lane, KY16 9NR,
+							Scotland, United Kingdom
+						</p>
+					</div>
 				</div>
 			</div>
 		</div>

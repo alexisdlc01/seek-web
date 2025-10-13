@@ -109,7 +109,7 @@ export default function Listings() {
 						}}
 					>
 						{/* Image */}
-						{prop.photos[0] && (
+						{prop.photos[0] ? (
 							<div className="w-full md:w-32 h-40 md:h-20 flex-shrink-0 rounded-md overflow-hidden">
 								{prop.photos[0] && (
 									<img
@@ -119,7 +119,13 @@ export default function Listings() {
 									/>
 								)}
 							</div>
-						)}
+						) : <div className="w-full md:w-32 h-40 md:h-20 flex-shrink-0 rounded-md overflow-hidden">
+								<img
+									src="/placeholder.png"
+									alt="Property"
+									className="w-full h-full object-cover"
+								/>
+						</div>}
 
 						{/* Info + Tags */}
 						<div className="flex-1 w-full">

@@ -12,7 +12,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function Listings() {
 	const navigate = useNavigate();
-	const { listings, setListings, setCurrentListing } =
+	const { listings, setCurrentListing } =
 		useContext(ListingsContext);
 	const toast = useRef(null);
 
@@ -21,7 +21,6 @@ export default function Listings() {
 			await axios.delete(`${BASE_URL}/listings/${id}`, {
 				withCredentials: true
 			});
-			setListings(prev => prev.filter(l => l._id !== id));
 			toast.current.show({
 				severity: "success",
 				summary: "Deleted",

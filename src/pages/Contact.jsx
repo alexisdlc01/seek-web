@@ -64,7 +64,7 @@ export default function ContactPage() {
 					</div>
 
 					<h1 className="text-3xl font-bold mb-2 text-center md:text-left">
-						Get in touch with our cofounders
+						Get in touch with our Co-Founders
 					</h1>
 					<p className="text-[var(--text-color-secondary)] mb-10 text-center md:text-left">
 						We’re always happy to help with questions, listen to
@@ -78,7 +78,7 @@ export default function ContactPage() {
 								Alexis de La Chapelle
 							</h2>
 							<p className="text-[var(--text-color-secondary)] mb-4">
-								Co-founder
+								Co-Founder
 							</p>
 							<div className="flex flex-col gap-2 text-[var(--text-color)]">
 								<a
@@ -109,7 +109,7 @@ export default function ContactPage() {
 								Victor Trinel
 							</h2>
 							<p className="text-[var(--text-color-secondary)] mb-4">
-								Co-founder
+								Co-Founder
 							</p>
 							<div className="flex flex-col gap-2 text-[var(--text-color)]">
 								<a

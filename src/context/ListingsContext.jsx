@@ -27,7 +27,9 @@ export const ListingsProvider = ({ children }) => {
 		const handleListingUpdated = updatedListing => {
 			setListings(prev =>
 				prev.map(listing =>
-					listing._id === updatedListing._id ? updatedListing : listing
+					listing._id === updatedListing._id
+						? updatedListing
+						: listing
 				)
 			);
 		};
@@ -36,7 +38,12 @@ export const ListingsProvider = ({ children }) => {
 			setListings(prev => prev.filter(l => l._id !== deletedId));
 		};
 
+		const handleListingCreated = newListing => {
+			setListings(prev => [...prev, newListing]);
+		};
+
 		socketRef.current.on("listingUpdated", handleListingUpdated);
+		socketRef.current.on("listingCreated", handleListingCreated);
 		socketRef.current.on("listingDeleted", handleListingDeleted);
 
 		return () => {

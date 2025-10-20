@@ -12,8 +12,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function Listings() {
 	const navigate = useNavigate();
-	const { listings, setCurrentListing } =
-		useContext(ListingsContext);
+	const { listings, setCurrentListing } = useContext(ListingsContext);
 	const toast = useRef(null);
 
 	const handleDelete = async id => {
@@ -21,19 +20,55 @@ export default function Listings() {
 			await axios.delete(`${BASE_URL}/listings/${id}`, {
 				withCredentials: true
 			});
-			toast.current.show({
+			toast.current?.show({
 				severity: "success",
-				summary: "Deleted",
-				detail: "Listing successfully deleted",
-				life: 3000
+				summary: "Listing Deleted",
+				detail: "Your listing has been successfully removed.",
+				life: 4000,
+				style: {
+					background: "#1E1E2F",
+					color: "#fff",
+					borderLeft: "5px solid #22C55E", // green accent
+					borderRadius: "8px",
+					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+				},
+				content: (
+					<div className="flex items-center space-x-3">
+						<i className="pi pi-check-circle text-green-400 text-xl"></i>
+						<div>
+							<p className="font-semibold">Listing Deleted</p>
+							<p className="text-sm text-gray-200">
+								Your listing was successfully deleted.
+							</p>
+						</div>
+					</div>
+				)
 			});
 		} catch (err) {
 			console.error("Delete failed:", err);
-			toast.current.show({
+			toast.current?.show({
 				severity: "error",
-				summary: "Error",
-				detail: "Failed to delete listing",
-				life: 3000
+				summary: "Deletion Failed",
+				detail: "Unable to delete your listing. Please try again.",
+				life: 4000,
+				style: {
+					background: "#1E1E2F",
+					color: "#fff",
+					borderLeft: "5px solid #EF4444", // red accent
+					borderRadius: "8px",
+					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+				},
+				content: (
+					<div className="flex items-center space-x-3">
+						<i className="pi pi-times-circle text-red-400 text-xl"></i>
+						<div>
+							<p className="font-semibold">Deletion Failed</p>
+							<p className="text-sm text-gray-200">
+								Unable to delete your listing. Please try again.
+							</p>
+						</div>
+					</div>
+				)
 			});
 		}
 	};
@@ -119,13 +154,15 @@ export default function Listings() {
 									/>
 								)}
 							</div>
-						) : <div className="w-full md:w-32 h-40 md:h-20 flex-shrink-0 rounded-md overflow-hidden">
+						) : (
+							<div className="w-full md:w-32 h-40 md:h-20 flex-shrink-0 rounded-md overflow-hidden">
 								<img
 									src="/placeholder.png"
 									alt="Property"
 									className="w-full h-full object-cover"
 								/>
-						</div>}
+							</div>
+						)}
 
 						{/* Info + Tags */}
 						<div className="flex-1 w-full">
@@ -255,6 +292,7 @@ export default function Listings() {
 						</div>
 					</motion.div>
 				))}
+				<Toast ref={toast} position="bottom-right" />
 			</div>
 		</div>
 	);

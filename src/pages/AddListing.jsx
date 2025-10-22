@@ -531,20 +531,16 @@ const AddListing = () => {
 
 					const newFiles = photos.filter(p => p.file);
 
-					// Upload new photos
 					const uploadedUrls = await Promise.all(
 						newFiles.map(async p => {
-							const res = await axios.get(
-								`${BASE_URL}/upload/presign`,
-								{
-									params: {
-										filename: p.file.name,
-										fileType: p.file.type,
-										folder: "public"
-									},
-									withCredentials: true
-								}
-							);
+							const res = await axios.get(`${BASE_URL}/upload/presign`, {
+								params: {
+									filename: p.file.name,
+									fileType: p.file.type,
+									folder: "public"
+								},
+								withCredentials: true
+							});
 							const { uploadUrl, fileUrl } = res.data;
 							await axios.put(uploadUrl, p.file, {
 								headers: { "Content-Type": p.file.type }
@@ -553,11 +549,11 @@ const AddListing = () => {
 						})
 					);
 
-					// Combine old + new
-					setAllPhotosUrls([...existingUrls, ...uploadedUrls]);
+					const combinedUrls = [...existingUrls, ...uploadedUrls];
+					setAllPhotosUrls(combinedUrls);
 
 					const step3Data = cleanObject({
-						photos: allPhotosUrls,
+						photos: combinedUrls,
 						videoTourLink: videoLink,
 						floorPlanImage: floorPlanUrl
 					});
@@ -566,6 +562,7 @@ const AddListing = () => {
 						step3Data,
 						originalListingRef.current || {}
 					);
+
 					if (Object.keys(step3Changes).length > 0) {
 						await axios.patch(
 							`${BASE_URL}/listings/${currentListing._id}/createStep3`,
@@ -573,6 +570,11 @@ const AddListing = () => {
 							{ withCredentials: true }
 						);
 					}
+					originalListingRef.current = {
+						...originalListingRef.current,
+						...step3Data
+					};
+
 					break;
 			}
 		})();

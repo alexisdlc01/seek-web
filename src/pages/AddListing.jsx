@@ -162,10 +162,31 @@ const AddListing = () => {
 		if (photos.length === 0) missing.push("At least one photo");
 
 		if (missing.length > 0) {
-			toast.current.show({
+			toast.current?.show({
 				severity: "warn",
 				summary: "Missing Required Fields",
-				detail: `Please fill in: ${missing.join(", ")}`
+				detail: `Please fill in: ${missing.join(", ")}`,
+				life: 5000,
+				style: {
+					background: "#1E1E2F",
+					color: "#fff",
+					borderLeft: "5px solid #F59E0B", // amber accent
+					borderRadius: "8px",
+					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+				},
+				content: (
+					<div className="flex items-center space-x-3">
+						<i className="pi pi-exclamation-triangle text-yellow-400 text-xl"></i>
+						<div>
+							<p className="font-semibold">
+								Missing Required Fields
+							</p>
+							<p className="text-sm text-gray-200">
+								Please fill in: {missing.join(", ")}
+							</p>
+						</div>
+					</div>
+				)
 			});
 			return;
 		}
@@ -198,17 +219,64 @@ const AddListing = () => {
 			floorPlanImage: floorPlanUrl
 		});
 
-		await axios.post(`${BASE_URL}/listings/${id}/publish`, finalData, {
-			withCredentials: true
-		});
+		try {
+			await axios.post(`${BASE_URL}/listings/${id}/publish`, finalData, {
+				withCredentials: true
+			});
 
-		toast.current.show({
-			severity: "success",
-			summary: "Published!",
-			detail: "Your property listing is now live."
-		});
-		navigate("/listings");
-		console.log("Submitting all data...");
+			toast.current?.show({
+				severity: "success",
+				summary: "Listing Published!",
+				detail: "Your property listing is now live.",
+				life: 4000,
+				style: {
+					background: "#1E1E2F",
+					color: "#fff",
+					borderLeft: "5px solid #22C55E",
+					borderRadius: "8px",
+					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+				},
+				content: (
+					<div className="flex items-center space-x-3">
+						<i className="pi pi-check-circle text-green-400 text-xl"></i>
+						<div>
+							<p className="font-semibold">Listing Published!</p>
+							<p className="text-sm text-gray-200">
+								Your property listing is now live.
+							</p>
+						</div>
+					</div>
+				)
+			});
+
+			navigate("/listings");
+		} catch (error) {
+			console.error("Publishing failed:", error);
+			toast.current?.show({
+				severity: "error",
+				summary: "Publish Failed",
+				detail: "An error occurred while publishing your listing.",
+				life: 4000,
+				style: {
+					background: "#1E1E2F",
+					color: "#fff",
+					borderLeft: "5px solid #EF4444",
+					borderRadius: "8px",
+					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+				},
+				content: (
+					<div className="flex items-center space-x-3">
+						<i className="pi pi-times-circle text-red-400 text-xl"></i>
+						<div>
+							<p className="font-semibold">Publish Failed</p>
+							<p className="text-sm text-gray-200">
+								An error occurred while publishing your listing.
+							</p>
+						</div>
+					</div>
+				)
+			});
+		}
 	};
 
 	const back = () => {
@@ -525,7 +593,7 @@ const AddListing = () => {
 			className="min-h-screen py-6 px-2 md:px-4"
 			style={{ background: "#0f0f23" }}
 		>
-			<Toast ref={toast} />
+			<Toast ref={toast} position="bottom-right" />
 			<div className="w-[75%] max-w-screen-2xl mx-auto px-2 md:px-4">
 				<h1 className="text-2xl sm:text-3xl font-bold text-[var(--primary-color)] pb-6">
 					Add New Property

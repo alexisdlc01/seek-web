@@ -246,3 +246,9 @@ body {
 	background: var(--surface-100) !important;
 	color: var(--text-color) !important;
 }
+
+.text-gray-400:hover {
+	color: #fff;
+	transform: scale(1.1);
+}
+

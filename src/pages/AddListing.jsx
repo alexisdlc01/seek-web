@@ -185,6 +185,12 @@ const AddListing = () => {
 								Please fill in: {missing.join(", ")}
 							</p>
 						</div>
+						<button
+							onClick={() => toast.current.clear()}
+							className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+						>
+							<i className="pi pi-times text-sm"></i>
+						</button>
 					</div>
 				)
 			});
@@ -234,17 +240,24 @@ const AddListing = () => {
 					color: "#fff",
 					borderLeft: "5px solid #22C55E",
 					borderRadius: "8px",
-					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+					boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
+					position: "relative"
 				},
 				content: (
 					<div className="flex items-center space-x-3">
 						<i className="pi pi-check-circle text-green-400 text-xl"></i>
-						<div>
+						<div className="flex-1">
 							<p className="font-semibold">Listing Published!</p>
 							<p className="text-sm text-gray-200">
 								Your property listing is now live.
 							</p>
 						</div>
+						<button
+							onClick={() => toast.current.clear()}
+							className="text-gray-400 hover:text-white transition-colors"
+						>
+							<i className="pi pi-times text-sm"></i>
+						</button>
 					</div>
 				)
 			});
@@ -272,6 +285,12 @@ const AddListing = () => {
 							<p className="text-sm text-gray-200">
 								An error occurred while publishing your listing.
 							</p>
+							<button
+								onClick={() => toast.current.clear()}
+								className="text-gray-400 hover:text-white transition-colors"
+							>
+								<i className="pi pi-times text-sm"></i>
+							</button>
 						</div>
 					</div>
 				)
@@ -533,14 +552,17 @@ const AddListing = () => {
 
 					const uploadedUrls = await Promise.all(
 						newFiles.map(async p => {
-							const res = await axios.get(`${BASE_URL}/upload/presign`, {
-								params: {
-									filename: p.file.name,
-									fileType: p.file.type,
-									folder: "public"
-								},
-								withCredentials: true
-							});
+							const res = await axios.get(
+								`${BASE_URL}/upload/presign`,
+								{
+									params: {
+										filename: p.file.name,
+										fileType: p.file.type,
+										folder: "public"
+									},
+									withCredentials: true
+								}
+							);
 							const { uploadUrl, fileUrl } = res.data;
 							await axios.put(uploadUrl, p.file, {
 								headers: { "Content-Type": p.file.type }

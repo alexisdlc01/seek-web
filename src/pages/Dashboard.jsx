@@ -148,11 +148,11 @@ function StatusUpdatesCarousel({ items, onReview }) {
 	return (
 		<div className="space-y-2">
 			<p className="text-[var(--text-secondary-color)]">
-				Status Updates ({n}):
+				Status Updates ({0}):
 			</p>
 
 			{/* Desktop grid */}
-			<div className="hidden md:grid grid-cols-4 gap-4">
+			{/* <div className="hidden md:grid grid-cols-4 gap-4">
 				{items.map((s, i) => (
 					<div
 						key={i}
@@ -183,7 +183,6 @@ function StatusUpdatesCarousel({ items, onReview }) {
 				))}
 			</div>
 
-			{/* Mobile horizontal snap carousel */}
 			<div className="md:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory -mx-1 px-1 pb-1">
 				{items.map((s, i) => (
 					<div
@@ -213,7 +212,7 @@ function StatusUpdatesCarousel({ items, onReview }) {
 						</div>
 					</div>
 				))}
-			</div>
+			</div> */}
 		</div>
 	);
 }
@@ -223,7 +222,7 @@ function StatusUpdatesCarousel({ items, onReview }) {
 export default function Dashboard() {
 	const [range, setRange] = useState("All time");
 	const [selectedProperty, setSelectedProperty] = useState(
-		"123 North Street, St Andrews, KY16 9AL"
+		// "123 North Street, St Andrews, KY16 9AL"
 	);
 	const { user, loading } = useContext(UserContext);
 
@@ -232,9 +231,9 @@ export default function Dashboard() {
 		value: r
 	}));
 	const properties = [
-		"123 North Street, St Andrews",
-		"28 Market Street, St Andrews",
-		"12 Union St, Dundee, DD1 4BG"
+		// "123 North Street, St Andrews",
+		// "28 Market Street, St Andrews",
+		// "12 Union St, Dundee, DD1 4BG"
 	].map(p => ({ label: p, value: p }));
 
 	const lineData = {
@@ -258,8 +257,7 @@ export default function Dashboard() {
 			{
 				label: "Sessions",
 				data: [
-					220, 340, 530, 480, 610, 430, 720, 690, 540, 760, 810, 700,
-					620, 880
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 				],
 				borderColor: "#23b7c5",
 				backgroundColor: "rgba(35,183,197,0.16)",
@@ -370,31 +368,31 @@ export default function Dashboard() {
 					{/* Status updates */}
 					<StatusUpdatesCarousel
 						items={[
-							{
-								title: "123 North Street, St Andrews",
-								text: "Alexis has uploaded his proof of study and passport for the application."
-							},
-							{
-								title: "28 Market Street, St Andrews",
-								text: "New application received."
-							},
-							{
-								title: "123 North Street, St Andrews",
-								text: "Alexis has uploaded his proof of study and passport for the application."
-							},
-							{
-								title: "28 Market Street, St Andrews",
-								text: "New application received."
-							}
+							// {
+							// 	title: "123 North Street, St Andrews",
+							// 	text: "Alexis has uploaded his proof of study and passport for the application."
+							// },
+							// {
+							// 	title: "28 Market Street, St Andrews",
+							// 	text: "New application received."
+							// },
+							// {
+							// 	title: "123 North Street, St Andrews",
+							// 	text: "Alexis has uploaded his proof of study and passport for the application."
+							// },
+							// {
+							// 	title: "28 Market Street, St Andrews",
+							// 	text: "New application received."
+							// }
 						]}
 						onReview={s => console.log("Review", s)}
 					/>
 
 					{/* Active listings */}
 					<p className="mb-2 text-[var(--text-secondary-color)]">
-						You have 5 Active Listings:
+						You have 0 Active Listings:
 					</p>
-					<div
+					{/* <div
 						className="flex items-center justify-between rounded-xl border border-[var(--surface-border)] p-4"
 						style={{ background: "var(--gray-62)" }}
 					>
@@ -415,7 +413,7 @@ export default function Dashboard() {
 						<div className="flex items-center gap-3">
 							<Tag value="Active" rounded />
 						</div>
-					</div>
+					</div> */}
 
 					<div className="grid gap-6 md:grid-cols-12 items-stretch">
 						{/* Big chart */}
@@ -455,23 +453,23 @@ export default function Dashboard() {
 						<div className="md:col-span-4 space-y-6">
 							<Kpi
 								title="Total Applications"
-								value="24"
+								value="0"
 								icon="pi pi-file"
 							/>
 							<Kpi
-								title="Top Performing Property"
-								value="123 North Street, St Andrews, KY16 9AL"
+								title="None"
+								value="Null"
 								icon="pi pi-chart-bar"
 								small
 							/>
 							<Kpi
 								title="Average Time to Lease"
-								value="3 Days"
+								value="0 Days"
 								icon="pi pi-clock"
 							/>
 							<Kpi
 								title="Portfolio Occupancy Rate"
-								value="42%"
+								value="0%"
 								icon="pi pi-home"
 							/>
 						</div>
@@ -500,7 +498,7 @@ export default function Dashboard() {
 								</div>
 
 								<p className="mt-4 text-2xl font-semibold text-[var(--primary-color-text)]">
-									Spacious 2-bed flat with garden:
+									{/* Spacious 2-bed flat with garden: */}
 								</p>
 
 								<div className="mt-4 grid gap-5 md:grid-cols-12">
@@ -521,7 +519,7 @@ export default function Dashboard() {
 													Total Applications
 												</div>
 												<div className="metric-value text-2xl md:text-3xl font-semibold">
-													15
+													0
 												</div>
 											</div>
 											<div className="metric-tile">
@@ -530,7 +528,7 @@ export default function Dashboard() {
 													Saves
 												</div>
 												<div className="metric-value text-2xl md:text-3xl font-semibold">
-													50
+													0
 												</div>
 											</div>
 											<div className="metric-tile">
@@ -548,14 +546,14 @@ export default function Dashboard() {
 													Interaction Rate (%)
 												</div>
 												<div className="metric-value text-2xl md:text-3xl font-semibold">
-													43
+													0
 												</div>
 											</div>
 										</div>
 
 										<div className="self-start">
 											<span className="font-semibold text-[var(--primary-color-text)]">
-												Time on market: 24d
+												Time on market: 0d
 											</span>
 										</div>
 									</div>
@@ -642,22 +640,22 @@ export default function Dashboard() {
 				<div className="mt-5">
 					<StatusUpdatesCarousel
 						items={[
-							{
-								title: "123 North Street, St Andrews",
-								text: "Alexis has uploaded his proof of study and passport for the application."
-							},
-							{
-								title: "28 Market Street, St Andrews",
-								text: "New application received."
-							},
-							{
-								title: "123 North Street, St Andrews",
-								text: "Alexis has uploaded his proof of study and passport for the application."
-							},
-							{
-								title: "28 Market Street, St Andrews",
-								text: "New application received."
-							}
+							// {
+							// 	title: "123 North Street, St Andrews",
+							// 	text: "Alexis has uploaded his proof of study and passport for the application."
+							// },
+							// {
+							// 	title: "28 Market Street, St Andrews",
+							// 	text: "New application received."
+							// },
+							// {
+							// 	title: "123 North Street, St Andrews",
+							// 	text: "Alexis has uploaded his proof of study and passport for the application."
+							// },
+							// {
+							// 	title: "28 Market Street, St Andrews",
+							// 	text: "New application received."
+							// }
 						]}
 						onReview={s => console.log("Review", s)}
 					/>
@@ -665,7 +663,7 @@ export default function Dashboard() {
 
 				{/* Active listings */}
 				<p className="mt-6 mb-2 text-[var(--text-secondary-color)]">
-					You have 5 Active Listings:
+					You have 0 Active Listings:
 				</p>
 				<div
 					className="rounded-xl border border-[var(--surface-border)] p-4"
@@ -678,10 +676,10 @@ export default function Dashboard() {
 						/>
 						<div className="flex-1">
 							<p className="text-[var(--text-color)]">
-								You have 5 active listings
+								You have 0 active listings
 							</p>
 							<p className="text-xs text-[var(--text-secondary-color)]">
-								Last edited: 20/08/2025
+								{/* Last edited: 20/08/2025 */}
 							</p>
 						</div>
 						<Tag value="Active" rounded />
@@ -724,23 +722,23 @@ export default function Dashboard() {
 				<div className="mt-6 grid grid-cols-2 gap-4">
 					<Kpi
 						title="Total Applications"
-						value="24"
+						value="0"
 						icon="pi pi-file"
 					/>
 					<Kpi
-						title="Top Performing Property"
-						value="123 North Street, St Andrews, KY16 9AL"
+						title="Null"
+						// value="123 North Street, St Andrews, KY16 9AL"
 						icon="pi pi-chart-bar"
 						small
 					/>
 					<Kpi
 						title="Average Time to Lease"
-						value="3 Days"
+						value="0 Days"
 						icon="pi pi-clock"
 					/>
 					<Kpi
 						title="Portfolio Occupancy Rate"
-						value="42%"
+						value="0%"
 						icon="pi pi-home"
 					/>
 				</div>
@@ -763,7 +761,7 @@ export default function Dashboard() {
 					/>
 
 					<p className="mt-4 text-xl font-semibold text-[var(--primary-color-text)]">
-						Spacious 2-bed flat with garden:
+						{/* Spacious 2-bed flat with garden: */}
 					</p>
 
 					<div className="mt-4">
@@ -780,7 +778,7 @@ export default function Dashboard() {
 								Total Applications
 							</div>
 							<div className="metric-value text-2xl font-semibold">
-								15
+								0
 							</div>
 						</div>
 						<div className="metric-tile">
@@ -789,7 +787,7 @@ export default function Dashboard() {
 								Saves
 							</div>
 							<div className="metric-value text-2xl font-semibold">
-								50
+								0
 							</div>
 						</div>
 						<div className="metric-tile">
@@ -798,7 +796,7 @@ export default function Dashboard() {
 								Shares
 							</div>
 							<div className="metric-value text-2xl font-semibold">
-								8
+								0
 							</div>
 						</div>
 						<div className="metric-tile">
@@ -807,14 +805,14 @@ export default function Dashboard() {
 								Interaction Rate (%)
 							</div>
 							<div className="metric-value text-2xl font-semibold">
-								43
+								0
 							</div>
 						</div>
 					</div>
 
 					<div className="mt-3">
 						<span className="font-semibold text-[var(--primary-color-text)]">
-							Time on market: 24d
+							Time on market: 0d
 						</span>
 					</div>
 				</div>

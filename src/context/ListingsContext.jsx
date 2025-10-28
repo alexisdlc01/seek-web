@@ -1,6 +1,13 @@
-import React, { createContext, useState, useEffect, useRef } from "react";
+import React, {
+	createContext,
+	useState,
+	useEffect,
+	useRef,
+	useContext
+} from "react";
 import { io } from "socket.io-client";
 import axios from "axios";
+import UserContext from "./UserContext.jsx";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -11,18 +18,23 @@ export const ListingsProvider = ({ children }) => {
 	const [listings, setListings] = useState([]);
 	const [currentListing, setCurrentListing] = useState({});
 	const socketRef = useRef(null);
+	const { user } = useContext(UserContext);
 
 	useEffect(() => {
+		if (!user || user.role !== "LANDLORD_AGENCY") return;
 		(async () => {
 			const res = await axios.get(`${BASE_URL}/listings/mine`, {
 				withCredentials: true
 			});
 			setListings(res.data);
 		})();
-	}, []);
+	}, [user]);
 
 	useEffect(() => {
-		socketRef.current = io(BASE_URL, { withCredentials: true });
+		if (!user || user.role !== "LANDLORD_AGENCY") return;
+		socketRef.current = io(`${BASE_URL}/listings`, {
+			withCredentials: true
+		});
 
 		const handleListingUpdated = updatedListing => {
 			setListings(prev =>
@@ -49,11 +61,16 @@ export const ListingsProvider = ({ children }) => {
 		return () => {
 			socketRef.current.disconnect();
 		};
-	}, []);
+	}, [user]);
 
 	return (
 		<ListingsContext.Provider
-			value={{ listings, setListings, currentListing, setCurrentListing }}
+			value={{
+				listings,
+				setListings,
+				currentListing,
+				setCurrentListing
+			}}
 		>
 			{children}
 		</ListingsContext.Provider>

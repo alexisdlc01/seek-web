@@ -81,7 +81,7 @@ export default function SignInStudent() {
 		const res = await login(fullEmail, password);
 		if (res === "Credentials are not valid." || res === "Unauthorized")
 			showError();
-		else navigate("/");
+		else navigate("/download");
 	};
 
 	return (

@@ -109,6 +109,69 @@ export default function AboutPage() {
 							</div>
 						</li>
 					</ul>
+
+					<p className="mb-3 mt-3">
+						As a{" "}
+						<span className="text-[var(--primary-color)]">
+							landlord or agency:
+						</span>
+					</p>
+					<p className="mb-2">
+						Seek is committed to being your most effective and
+						affordable letting partner:
+					</p>
+
+					<ul className="list-disc list-inside space-y-2">
+						<li>
+							<span className="text-white font-bold">
+								100% Free to List:{" "}
+							</span>
+							<span>
+								Seek has no hidden fees. It if free
+								advertisement and tenant acquisition.
+							</span>
+						</li>
+						<li>
+							<span className="text-white font-bold">
+								Pre-Qualified Audience:{" "}
+							</span>
+							<span>
+								Access the exact student demographic you need.
+								All users are university-verified St Andrews
+								students actively seeking private accommodation.
+							</span>
+						</li>
+						<li>
+							<span className="text-white font-bold">
+								Collaborative Applications:{" "}
+							</span>
+							<span>
+								Create group profiles and submit applications
+								with your flatmates, streamlining the process.{" "}
+							</span>
+						</li>
+						<li>
+							<span className="text-white font-bold">
+								Centralised Control:{" "}
+							</span>
+							<span>
+								Manage all your listings, review all group
+								applications, and communicate directly with
+								prospective tenants from one powerful,
+								desktop-friendly dashboard.
+							</span>
+						</li>
+						<li>
+							<span className="text-white font-bold">
+								Reduced Vacancy Risk:{" "}
+							</span>
+							<span>
+								Our platform is designed for rapid discovery,
+								ensuring your properties are constantly in front
+								of a high-demand student audience.
+							</span>
+						</li>
+					</ul>
 				</div>
 				<div className="mt-12">
 					<h2 className="text-xl font-semibold text-[var(--text-color)] mb-6">

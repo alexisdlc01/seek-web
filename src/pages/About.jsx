@@ -1,178 +1,162 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "primereact/button";
+import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 export default function AboutPage() {
+	const [openSection, setOpenSection] = useState(null);
+
+	const toggleAccordion = section => {
+		setOpenSection(openSection === section ? null : section);
+	};
+
 	return (
 		<div className="min-h-screen bg-[var(--surface-a)] text-[var(--text-color)] px-4 py-16">
 			<div className="max-w-6xl mx-auto space-y-10">
+				{/* Title */}
 				<h1 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)]">
 					About Us
 				</h1>
+
+				{/* ✅ ACCORDION SECTION STARTS HERE */}
 				<div>
 					<h2 className="text-xl font-semibold text-[var(--text-color)] mb-4">
-						Our{" "}
-						<span className="text-[var(--primary-color)]">
-							Mission
-						</span>
-					</h2>
-					<p>
-						As students ourselves, we understand the reality of our
-						housing process. We face a fragmented, outdated, and
-						stressful market where, every year, over 10,000 students
-						lose themselves between a ridiculous amount of tabs,
-						overpriced properties, and unreliable leads. Our vision
-						is to reclaim the student housing experience and give
-						students the power of instant, intuitive discovery.
-						We’re Alexis and Victor, two friends from Paris who met
-						in St Andrews, and we decided to create Seek.
-						<br />
-						<br />
-						Our mission is to centralize every student property,
-						starting in St Andrews, from private landlords to major
-						agencies, and present them to students in an ergonomic,
-						scroll-based experience. Students benefit from the most
-						complete, user-friendly, and mobile-first discovery tool
-						while landlords are offered instant access to a verified
-						student audience, reducing irrelevant inquiries and
-						providing peace of mind about who your future tenants
-						will be.
-						<br />
-						<br />
-						We simply want to make the search for housing exciting.
-						We want to replace your luck with choice. Seek is
-						completely free and accessible to everyone. Our priority
-						is for all students and landlords to embark on our
-						journey to revolutionize student housing.
-					</p>
-				</div>
-				<div>
-					<h2 className="text-xl font-semibold text-[var(--text-color)] mb-2">
 						Why Seek works{" "}
 						<span className="text-[var(--primary-color)]">
 							for you
 						</span>
 					</h2>
-					<p className="mb-3">
-						As a{" "}
-						<span className="text-[var(--primary-color)]">
-							student:
-						</span>
-					</p>
-					<p className="mb-2">
-						The stress of searching is over. Seek gives you the edge
-						you need in a competitive market:
-					</p>
-					<ul className="list-disc list-inside space-y-2">
-						<li>
-							<span className="text-white font-bold">
-								Verified Community:{" "}
+
+					{/* ---- For Students Accordion ---- */}
+					<div className="border-b border-gray-600 py-4">
+						<button
+							onClick={() => toggleAccordion("students")}
+							className="w-full flex justify-between items-center text-left"
+						>
+							<span className="text-lg font-medium">
+								For Students
 							</span>
-							<span>
-								Connect only with verified property providers
-								and student tenants, building trust from the
-								start.{" "}
-							</span>
-						</li>
-						<li>
-							<span className="text-white font-bold">
-								Efficient Discovery:{" "}
-							</span>
-							<span>
-								Escape the chaos of word of mouth and unreliable
-								leads. See all available properties in one
-								engaging, mobile-first feed?{" "}
-							</span>
-						</li>
-						<li>
-							<span className="text-white font-bold">
-								Collaborative Applications:{" "}
-							</span>
-							<span>
-								Create group profiles and submit applications
-								with your flatmates, streamlining the process.{" "}
-							</span>
-						</li>
-						<li className="">
-							<div className="inline-block">
-								<span className="text-white font-bold">
-									Direct, Clear Communication & Tracking:{" "}
-								</span>
-								<span className="">
-									Say goodbye to chasing emails and wondering
-									about your application status.
-									<br />
-									Use our in-app messaging platform and live
-									progress marker to communicate with your
-									prospective landlord and track your
-									application.
-								</span>
+							{openSection === "students" ? (
+								<FiChevronUp />
+							) : (
+								<FiChevronDown />
+							)}
+						</button>
+
+						{openSection === "students" && (
+							<div className="mt-4 space-y-2 pl-2">
+								<p className="text-sm text-gray-300">
+									The stress of searching is over. Seek gives
+									you the edge you need in a competitive
+									market:
+								</p>
+								<ul className="list-disc pl-5 space-y-2 text-sm text-gray-300">
+									<li>
+										<span className="text-white font-bold">
+											Verified Community:{" "}
+										</span>
+										Connect only with verified property
+										providers and student tenants, building
+										trust from the start.
+									</li>
+									<li>
+										<span className="text-white font-bold">
+											Efficient Discovery:{" "}
+										</span>
+										Escape the chaos of word of mouth and
+										unreliable leads. See all available
+										properties in one engaging, mobile-first
+										feed.
+									</li>
+									<li>
+										<span className="text-white font-bold">
+											Collaborative Applications:{" "}
+										</span>
+										Create group profiles and submit
+										applications with your flatmates,
+										streamlining the process.
+									</li>
+									<li>
+										<span className="text-white font-bold">
+											Direct, Clear Communication &
+											Tracking:{" "}
+										</span>
+										Say goodbye to chasing emails and
+										wondering about your application status.
+										Use our in-app messaging platform and
+										live progress marker to communicate with
+										your prospective landlord and track your
+										application.
+									</li>
+								</ul>
 							</div>
-						</li>
-					</ul>
+						)}
+					</div>
 
-					<p className="mb-3 mt-3">
-						As a{" "}
-						<span className="text-[var(--primary-color)]">
-							landlord or agency:
-						</span>
-					</p>
-					<p className="mb-2">
-						Seek is committed to being your most effective and
-						affordable letting partner:
-					</p>
+					{/* ---- For Landlords Accordion ---- */}
+					<div className="border-b border-gray-600 py-4">
+						<button
+							onClick={() => toggleAccordion("landlords")}
+							className="w-full flex justify-between items-center text-left"
+						>
+							<span className="text-lg font-medium">
+								For Landlords & Agencies
+							</span>
+							{openSection === "landlords" ? (
+								<FiChevronUp />
+							) : (
+								<FiChevronDown />
+							)}
+						</button>
 
-					<ul className="list-disc list-inside space-y-2">
-						<li>
-							<span className="text-white font-bold">
-								100% Free to List:{" "}
-							</span>
-							<span>
-								Seek has no hidden fees. It if free
-								advertisement and tenant acquisition.
-							</span>
-						</li>
-						<li>
-							<span className="text-white font-bold">
-								Pre-Qualified Audience:{" "}
-							</span>
-							<span>
-								Access the exact student demographic you need.
-								All users are university-verified St Andrews
-								students actively seeking private accommodation.
-							</span>
-						</li>
-						<li>
-							<span className="text-white font-bold">
-								Collaborative Applications:{" "}
-							</span>
-							<span>
-								Create group profiles and submit applications
-								with your flatmates, streamlining the process.{" "}
-							</span>
-						</li>
-						<li>
-							<span className="text-white font-bold">
-								Centralised Control:{" "}
-							</span>
-							<span>
-								Manage all your listings, review all group
-								applications, and communicate directly with
-								prospective tenants from one powerful,
-								desktop-friendly dashboard.
-							</span>
-						</li>
-						<li>
-							<span className="text-white font-bold">
-								Reduced Vacancy Risk:{" "}
-							</span>
-							<span>
-								Our platform is designed for rapid discovery,
-								ensuring your properties are constantly in front
-								of a high-demand student audience.
-							</span>
-						</li>
-					</ul>
+						{openSection === "landlords" && (
+							<div className="mt-4 space-y-2 pl-2">
+								<p className="text-sm text-gray-300">
+									Seek is committed to being your most
+									effective and affordable letting partner:
+								</p>
+								<ul className="list-disc pl-5 space-y-2 text-sm text-gray-300">
+									<li>
+										<span className="text-white font-bold">
+											100% Free to List:{" "}
+										</span>
+										Seek has no hidden fees. It is free
+										advertisement and tenant acquisition.
+									</li>
+									<li>
+										<span className="text-white font-bold">
+											Pre-Qualified Audience:{" "}
+										</span>
+										Access the exact student demographic you
+										need. All users are university-verified
+										St Andrews students actively seeking
+										private accommodation.
+									</li>
+									<li>
+										<span className="text-white font-bold">
+											Centralised Control:{" "}
+										</span>
+										Manage all your listings, review all
+										group applications, and communicate
+										directly with prospective tenants from
+										one powerful, desktop-friendly
+										dashboard.
+									</li>
+									<li>
+										<span className="text-white font-bold">
+											Reduced Vacancy Risk:{" "}
+										</span>
+										Our platform is designed for rapid
+										discovery, ensuring your properties are
+										constantly in front of a high-demand
+										student audience.
+									</li>
+								</ul>
+							</div>
+						)}
+					</div>
 				</div>
+				{/* ✅ ACCORDION SECTION ENDS */}
+
 				<div className="mt-12">
 					<h2 className="text-xl font-semibold text-[var(--text-color)] mb-6">
 						Meet the{" "}

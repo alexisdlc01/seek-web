@@ -31,6 +31,7 @@ import SigninSuperuser from "./pages/SigninSuperuser.jsx";
 import SuperUserDashboard from "./pages/SuperUserDashboard.jsx";
 import ViewListing from "./components/ViewListing.jsx";
 import ResetPasswordPassword from "./pages/ConfirmResetPassword.jsx";
+import ApplicationRequirements from "./pages/ApplicationRequirements.jsx";
 
 const NotFound = () => {
 	const navigate = useNavigate();
@@ -216,6 +217,10 @@ function App() {
 							<Route
 								path="/superuser/login"
 								element={<SigninSuperuser />}
+							/>
+							<Route
+								path="/application-requirements"
+								element={<ApplicationRequirements />}
 							/>
 							<Route path="*" element={<NotFound />} />
 						</Routes>

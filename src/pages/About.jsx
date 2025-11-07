@@ -6,7 +6,7 @@ export default function AboutPage() {
 		<div className="min-h-screen bg-[var(--surface-a)] text-[var(--text-color)] px-4 py-16">
 			<div className="max-w-6xl mx-auto space-y-10">
 				<h1 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)]">
-					About Seek St Andrews
+					About Us
 				</h1>
 				<div>
 					<h2 className="text-xl font-semibold text-[var(--text-color)] mb-4">

@@ -1,14 +1,6 @@
-import React, { useState } from "react";
-import { InputText } from "primereact/inputtext";
-import { Password } from "primereact/password";
-import { FloatLabel } from "primereact/floatlabel";
-import { Button } from "primereact/button";
-import { Divider } from "primereact/divider";
-import { Link } from "react-router-dom";
+import React from "react";
 
 export default function ActivationSent() {
-    const [email, setEmail] = useState("");
-
     return (
         <div className="min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
             <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]">

@@ -504,7 +504,6 @@ export default function LandingPage() {
 							) : (
 								0
 							)}
-							
 						</div>
 						<p className="mt-2 opacity-90 text-lg md:text-xl">
 							Days untill app launch
@@ -521,34 +520,7 @@ export default function LandingPage() {
 				className="px-6 text-white"
 			>
 				<div className="max-w-6xl mx-auto">
-					<h2 className="text-2xl md:text-4xl font-bold mb-10">
-						Discover Seek in X minutes
-					</h2>
-
 					<div className="grid md:grid-cols-2 gap-10 items-stretch">
-						{/* Video column */}
-						<div className="w-full">
-							<div
-								className="
-								    relative w-full
-								    aspect-video md:aspect-auto md:h-full
-								    rounded-2xl bg-neutral-400/60 flex items-center justify-center
-								  "
-							>
-								<div className="w-16 h-16 rounded-full bg-white/80 flex items-center justify-center">
-									<svg
-										width="28"
-										height="28"
-										viewBox="0 0 24 24"
-										fill="currentColor"
-										className="text-black/80"
-									>
-										<path d="M8 5v14l11-7z" />
-									</svg>
-								</div>
-							</div>
-						</div>
-
 						{/* Quote */}
 						<div className="text-white max-w-3xl">
 							<div className="text-[#21b9c4] text-9xl font-bold leading-none mb-[-40px]">
@@ -609,8 +581,8 @@ export default function LandingPage() {
 					{isLandlord
 						? "Add a listing to get started today."
 						: isStudent
-						? "Join our mailing list today."
-						: "Join thousands of students and landlords already using Seek."}
+							? "Join our mailing list today."
+							: "Join thousands of students and landlords already using Seek."}
 				</motion.p>
 
 				<div className="flex justify-center">

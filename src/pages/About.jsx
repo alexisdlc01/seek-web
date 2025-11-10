@@ -17,7 +17,7 @@ export default function AboutPage() {
 					About Us
 				</h1>
 
-				{/* ✅ ACCORDION SECTION STARTS HERE */}
+				{/* ACCORDION SECTION STARTS HERE */}
 				<div>
 					<h2 className="text-xl font-semibold text-[var(--text-color)] mb-4">
 						Why Seek works{" "}
@@ -30,7 +30,7 @@ export default function AboutPage() {
 					<div className="border-b border-gray-600 py-4">
 						<button
 							onClick={() => toggleAccordion("students")}
-							className="w-full flex justify-between items-center text-left"
+							className="w-full flex justify-between items-center text-left cursor-pointer"
 						>
 							<span className="text-lg font-medium">
 								For Students
@@ -96,7 +96,7 @@ export default function AboutPage() {
 					<div className="border-b border-gray-600 py-4">
 						<button
 							onClick={() => toggleAccordion("landlords")}
-							className="w-full flex justify-between items-center text-left"
+							className="w-full flex justify-between items-center text-left cursor-pointer"
 						>
 							<span className="text-lg font-medium">
 								For Landlords & Agencies
@@ -155,7 +155,7 @@ export default function AboutPage() {
 						)}
 					</div>
 				</div>
-				{/* ✅ ACCORDION SECTION ENDS */}
+				{/* ACCORDION SECTION ENDS */}
 
 				<div className="mt-12">
 					<h2 className="text-xl font-semibold text-[var(--text-color)] mb-6">

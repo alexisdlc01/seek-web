@@ -520,7 +520,7 @@ export default function LandingPage() {
 				className="px-6 text-white"
 			>
 				<div className="max-w-6xl mx-auto">
-					<div className="grid md:grid-cols-2 gap-10 items-stretch">
+					<div className="max-w-6xl mx-auto flex justify-center items-center text-center px-6">
 						{/* Quote */}
 						<div className="text-white max-w-3xl">
 							<div className="text-[#21b9c4] text-9xl font-bold leading-none mb-[-40px]">
@@ -531,11 +531,13 @@ export default function LandingPage() {
 								Housing is the biggest stress students shouldn’t
 								have to carry. Our first priority is to lift it.
 							</p>
+
 							<p className="mt-6 text-4xl font-bold leading-snug">
 								At Seek, we replace luck with{" "}
 								<span style={{ color: "#21b9c4" }}>choice</span>
 								.”
 							</p>
+
 							<p className="mt-6 text-lg text-white/90">
 								Victor Trinel and Alexis de La Chapelle,{" "}
 								<span

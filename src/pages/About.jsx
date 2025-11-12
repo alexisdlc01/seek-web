@@ -44,12 +44,12 @@ export default function AboutPage() {
 
 						{openSection === "students" && (
 							<div className="mt-4 space-y-2 pl-2">
-								<p className="text-sm text-gray-300">
+								<p className="font-semibold text-lg text-gray-300">
 									The stress of searching is over. Seek gives
 									you the edge you need in a competitive
 									market:
 								</p>
-								<ul className="list-disc pl-5 space-y-2 text-sm text-gray-300">
+								<ul className="list-disc pl-5 space-y-2 font-semibold text-gray-300">
 									<li>
 										<span className="text-white font-bold">
 											Verified Community:{" "}
@@ -110,11 +110,11 @@ export default function AboutPage() {
 
 						{openSection === "landlords" && (
 							<div className="mt-4 space-y-2 pl-2">
-								<p className="text-sm text-gray-300">
+								<p className="font-semibold text-lg text-gray-300">
 									Seek is committed to being your most
 									effective and affordable letting partner:
 								</p>
-								<ul className="list-disc pl-5 space-y-2 text-sm text-gray-300">
+								<ul className="list-disc pl-5 space-y-2 font-semibold text-gray-300">
 									<li>
 										<span className="text-white font-bold">
 											100% Free to List:{" "}

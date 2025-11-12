@@ -176,11 +176,31 @@ export default function AboutPage() {
 						</div>
 
 						<div className="flex flex-col items-center">
-							<div className="w-28 h-28 bg-gray-300 rounded-full"></div>
+							<div className="w-28 h-28 bg-gray-300 rounded-full">
+								<img
+									src="/alexis.jpg"
+									className="rounded-full object-cover w-28 h-28"
+									alt=""
+								/>
+							</div>
 							<p className="mt-4 font-medium text-[var(--text-color)]">
 								Alexis de La Chapelle
 							</p>
 							<p className="text-sm text-gray-400">Co-Founder</p>
+						</div>
+
+						<div className="flex flex-col items-center">
+							<div className="w-28 h-28 bg-gray-300 rounded-full">
+								<img
+									src="/matthew.jpeg"
+									className="rounded-full"
+									alt=""
+								/>
+							</div>
+							<p className="mt-4 font-medium text-[var(--text-color)]">
+								Matthew Pancer
+							</p>
+							<p className="text-sm text-gray-400">Developer</p>
 						</div>
 
 						<div className="flex flex-col items-center">
@@ -192,15 +212,9 @@ export default function AboutPage() {
 						</div>
 
 						<div className="flex flex-col items-center">
-							<div className="w-28 h-28 bg-gray-300 rounded-full"></div>
-							<p className="mt-4 font-medium text-[var(--text-color)]">
-								Matthew Pancer
-							</p>
-							<p className="text-sm text-gray-400">Developer</p>
-						</div>
-
-						<div className="flex flex-col items-center">
-							<div className="w-28 h-28 bg-gray-300 rounded-full"></div>
+							<div className="w-28 h-28 bg-gray-300 rounded-full">
+								<img src="/graham.jpeg" className="rounded-full" alt=""/>
+							</div>
 							<p className="mt-4 font-medium text-[var(--text-color)]">
 								Graham Heathcote
 							</p>

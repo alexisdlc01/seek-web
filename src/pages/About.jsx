@@ -168,7 +168,13 @@ export default function AboutPage() {
 					<div className="grid grid-cols-2 sm:grid-cols-5 gap-8">
 						{/* Team Member */}
 						<div className="flex flex-col items-center">
-							<div className="w-28 h-28 bg-gray-300 rounded-full"></div>
+							<div className="w-28 h-28 bg-gray-300 rounded-full">
+								<img
+									src="/viktor.jpeg"
+									className="rounded-full"
+									alt=""
+								/>
+							</div>
 							<p className="mt-4 font-medium text-[var(--text-color)]">
 								Victor Trinel
 							</p>
@@ -213,7 +219,11 @@ export default function AboutPage() {
 
 						<div className="flex flex-col items-center">
 							<div className="w-28 h-28 bg-gray-300 rounded-full">
-								<img src="/graham.jpeg" className="rounded-full" alt=""/>
+								<img
+									src="/graham.jpeg"
+									className="rounded-full"
+									alt=""
+								/>
 							</div>
 							<p className="mt-4 font-medium text-[var(--text-color)]">
 								Graham Heathcote

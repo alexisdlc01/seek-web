@@ -14,49 +14,39 @@ function wrap(min, max, v) {
 export default function QuotesCarouselSection() {
 	const quotes = [
 		{
-			text: "I found my flat in two days -- faster than scrolling through Facebook.",
-			name: "Julien",
-			role: "Student"
+			text: "The old way of searching was a nightmare. Seek is the organized, professional alternative.",
+			name: "Hannah",
+			role: "3rd year student"
 		},
 		{
-			text: "Seek actually feels like an app made for students, not landlords.",
-			name: "Johanna",
-			role: "Student"
+			text: "I’m really looking forward finally having a stress-free house seeking process.",
+			name: "Anya",
+			role: "2nd student"
 		},
 		{
-			text: "I love that I can swipe through listings like TikTok—it’s addictive.",
-			name: "Bernardo",
-			role: "Student"
+			text: "This app will definitely save us, as students, a lot of time eliminating any stress we ever had.",
+			name: "Ethan",
+			role: "3rd year student"
 		},
 		{
-			text: "We found a group house together. No more ten tabs open at once.",
-			name: "Matteo",
-			role: "Student"
+			text: "Last year’s system was chaotic, so glad a solution has finally appeared",
+			name: "Ben",
+			role: "2nd year student"
 		},
 		{
-			text: "Finally, a housing app that doesn’t crash or look like it’s from 2008.",
-			name: "Sam",
-			role: "Student"
+			text: "I’m very annoyed that this is my last year and won’t be able to experience Seek",
+			name: "Sarah",
+			role: "4th year student"
 		},
 		{
-			text: "Seek made finding accommodation feel way less stressful this year.",
-			name: "Maya",
-			role: "Student"
+			text: "Very excited for this idea. Looks like finding housing will be quick and easy",
+			name: "Chloe",
+			role: "1st year student"
 		},
 		{
-			text: "Being able to compare flats in one place saved so much time.",
-			name: "Darius",
-			role: "Student"
-		},
-		{
-			text: "It’s the first time I actually enjoyed the housing hunt.",
-			name: "Richard",
-			role: "Student"
-		},
-		{
-			text: "Seek should exist in every uni town—St Andrews can’t keep it to itself.",
-			name: "Ines",
-			role: "Student"
+			text: "Having participated in Seek’s development, this app will be a great way for landlords to find reliable tenants in a quicker and frictionless manner",
+			name: "Alexandre",
+			role: "Landlord"
 		}
 	];
 

@@ -21,7 +21,7 @@ export default function QuotesCarouselSection() {
 		{
 			text: "I’m really looking forward finally having a stress-free house seeking process.",
 			name: "Anya",
-			role: "2nd student"
+			role: "2nd year student"
 		},
 		{
 			text: "This app will definitely save us, as students, a lot of time eliminating any stress we ever had.",
@@ -29,22 +29,22 @@ export default function QuotesCarouselSection() {
 			role: "3rd year student"
 		},
 		{
-			text: "Last year’s system was chaotic, so glad a solution has finally appeared",
+			text: "Last year’s system was chaotic, so glad a solution has finally appeared.",
 			name: "Ben",
 			role: "2nd year student"
 		},
 		{
-			text: "I’m very annoyed that this is my last year and won’t be able to experience Seek",
+			text: "I’m very annoyed that this is my last year and won’t be able to experience Seek.",
 			name: "Sarah",
 			role: "4th year student"
 		},
 		{
-			text: "Very excited for this idea. Looks like finding housing will be quick and easy",
+			text: "Very excited for this idea. Looks like finding housing will be quick and easy.",
 			name: "Chloe",
 			role: "1st year student"
 		},
 		{
-			text: "Having participated in Seek’s development, this app will be a great way for landlords to find reliable tenants in a quicker and frictionless manner",
+			text: "Having participated in Seek’s development, this will be a great way for landlords to find reliable tenants.",
 			name: "Alexandre",
 			role: "Landlord"
 		}
@@ -86,8 +86,8 @@ export default function QuotesCarouselSection() {
 								{quotes.map((q, i) => (
 									<figure
 										key={`${k}-${i}`}
-										className="shrink-0 w-[18rem] md:w-[20rem] whitespace-normal"
-									>
+										className="shrink-0 w-[18rem] md:w-[20rem] whitespace-normal
+             flex flex-col justify-between min-h-[128m]"									>
 										<blockquote className="text-lg md:text-xl leading-relaxed">
 											“{q.text}”
 										</blockquote>

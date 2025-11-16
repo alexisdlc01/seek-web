@@ -17,6 +17,44 @@ export default function AboutPage() {
 					About Us
 				</h1>
 
+				<div>
+					<h2 className="text-xl font-semibold text-[var(--text-color)] mb-4">
+						Our{" "}
+						<span className="text-[var(--primary-color)]">
+							Mission
+						</span>
+					</h2>
+					<p>
+						As students ourselves, we understand the reality of our
+						housing process. We face a fragmented, outdated, and
+						stressful market where, every year, over 10,000 students
+						lose themselves between a ridiculous amount of tabs,
+						overpriced properties, and unreliable leads. Our vision
+						is to reclaim the student housing experience and give
+						students the power of instant, intuitive discovery.
+						We’re Alexis and Victor, two friends from Paris who met
+						in St Andrews, and we decided to create Seek.
+						<br />
+						<br />
+						Our mission is to centralize every student property,
+						starting in St Andrews, from private landlords to major
+						agencies, and present them to students in an ergonomic,
+						scroll-based experience. Students benefit from the most
+						complete, user-friendly, and mobile-first discovery tool
+						while landlords are offered instant access to a verified
+						student audience, reducing irrelevant inquiries and
+						providing peace of mind about who your future tenants
+						will be.
+						<br />
+						<br />
+						We simply want to make the search for housing exciting.
+						We want to replace your luck with choice. Seek is
+						completely free and accessible to everyone. Our priority
+						is for all students and landlords to embark on our
+						journey to revolutionize student housing.
+					</p>
+				</div>
+
 				{/* ACCORDION SECTION STARTS HERE */}
 				<div>
 					<h2 className="text-xl font-semibold text-[var(--text-color)] mb-4">

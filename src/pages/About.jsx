@@ -210,7 +210,13 @@ export default function AboutPage() {
 						</div>
 
 						<div className="flex flex-col items-center">
-							<div className="w-28 h-28 bg-gray-300 rounded-full"></div>
+							<div className="w-28 h-28 bg-gray-300 rounded-full">
+								<img
+									src="/kshitij.jpeg"
+									className="rounded-full"
+									alt=""
+								/>
+							</div>
 							<p className="mt-4 font-medium text-[var(--text-color)]">
 								Kshitij Verma
 							</p>

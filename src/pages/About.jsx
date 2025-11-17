@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Button } from "primereact/button";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 export default function AboutPage() {
 	const [openSection, setOpenSection] = useState(null);
+	const navigate = useNavigate();
 
 	const toggleAccordion = section => {
 		setOpenSection(openSection === section ? null : section);
@@ -347,6 +349,7 @@ export default function AboutPage() {
 					<Button
 						label="Get Started"
 						className="bg-[var(--primary-color)] text-[var(--primary-color-text)] px-4 py-3"
+						onClick={() => navigate("/")}
 					/>
 				</div>
 			</div>

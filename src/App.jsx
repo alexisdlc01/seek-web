@@ -32,6 +32,7 @@ import SuperUserDashboard from "./pages/SuperUserDashboard.jsx";
 import ViewListing from "./components/ViewListing.jsx";
 import ResetPasswordPassword from "./pages/ConfirmResetPassword.jsx";
 import ApplicationRequirements from "./pages/ApplicationRequirements.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 const NotFound = () => {
 	const navigate = useNavigate();
@@ -81,6 +82,7 @@ function App() {
 						exit={{ opacity: 0, y: 5 }}
 						transition={{ duration: 0.2 }}
 					>
+						<ScrollToTop />
 						<Routes location={location}>
 							<Route path="/" element={<Home />} />
 							<Route path="/download" element={<Download />} />

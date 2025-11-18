@@ -53,7 +53,7 @@ function CoreDiscovery() {
 						}}
 					>
 						<img
-							src="/1.png"
+							src="/pic1.png"
 							alt="App screen"
 							className="rounded-3xl border border-slate-600 shadow-2xl w-28 sm:w-36 md:w-40 h-auto"
 						/>
@@ -70,7 +70,7 @@ function CoreDiscovery() {
 						}}
 					>
 						<img
-							src="/2.png"
+							src="/pic2.png"
 							alt="App screen"
 							className="rounded-3xl border border-slate-600 shadow-2xl w-28 sm:w-36 md:w-40 h-auto"
 						/>

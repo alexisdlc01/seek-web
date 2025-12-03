@@ -457,8 +457,8 @@ export default function Dashboard() {
 								icon="pi pi-file"
 							/>
 							<Kpi
-								title="None"
-								value="Null"
+								title="Top Performing Property"
+								value="..."
 								icon="pi pi-chart-bar"
 								small
 							/>

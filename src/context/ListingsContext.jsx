@@ -33,7 +33,8 @@ export const ListingsProvider = ({ children }) => {
 	useEffect(() => {
 		if (!user || user.role !== "LANDLORD_AGENCY") return;
 		socketRef.current = io(`${BASE_URL}/listings`, {
-			withCredentials: true
+			withCredentials: true,
+			transports: ["websocket"]
 		});
 
 		const handleListingUpdated = updatedListing => {

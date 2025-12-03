@@ -6,6 +6,7 @@ import { Tag } from "primereact/tag";
 import { Chart } from "primereact/chart";
 import "chart.js/auto";
 import UserContext from "../context/UserContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 /* -------------------- Marketing Section -------------------- */
 
@@ -221,10 +222,10 @@ function StatusUpdatesCarousel({ items, onReview }) {
 
 export default function Dashboard() {
 	const [range, setRange] = useState("All time");
-	const [selectedProperty, setSelectedProperty] = useState(
-		// "123 North Street, St Andrews, KY16 9AL"
-	);
+	const [selectedProperty, setSelectedProperty] = useState();
+	// "123 North Street, St Andrews, KY16 9AL"
 	const { user, loading } = useContext(UserContext);
+	const navigate = useNavigate();
 
 	const ranges = ["7 days", "30 days", "All time"].map(r => ({
 		label: r,
@@ -256,9 +257,7 @@ export default function Dashboard() {
 		datasets: [
 			{
 				label: "Sessions",
-				data: [
-					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-				],
+				data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 				borderColor: "#23b7c5",
 				backgroundColor: "rgba(35,183,197,0.16)",
 				borderWidth: 3,
@@ -337,6 +336,7 @@ export default function Dashboard() {
 									label="Applications"
 									icon="pi pi-inbox"
 									severity="primary"
+									onClick={() => navigate("/application")}
 								/>
 								<Badge
 									value="10"
@@ -349,6 +349,7 @@ export default function Dashboard() {
 									label="Messages"
 									icon="pi pi-comments"
 									severity="primary"
+									onClick={() => navigate("/chat")}
 								/>
 								<Badge
 									value="4"
@@ -367,24 +368,26 @@ export default function Dashboard() {
 
 					{/* Status updates */}
 					<StatusUpdatesCarousel
-						items={[
-							// {
-							// 	title: "123 North Street, St Andrews",
-							// 	text: "Alexis has uploaded his proof of study and passport for the application."
-							// },
-							// {
-							// 	title: "28 Market Street, St Andrews",
-							// 	text: "New application received."
-							// },
-							// {
-							// 	title: "123 North Street, St Andrews",
-							// 	text: "Alexis has uploaded his proof of study and passport for the application."
-							// },
-							// {
-							// 	title: "28 Market Street, St Andrews",
-							// 	text: "New application received."
-							// }
-						]}
+						items={
+							[
+								// {
+								// 	title: "123 North Street, St Andrews",
+								// 	text: "Alexis has uploaded his proof of study and passport for the application."
+								// },
+								// {
+								// 	title: "28 Market Street, St Andrews",
+								// 	text: "New application received."
+								// },
+								// {
+								// 	title: "123 North Street, St Andrews",
+								// 	text: "Alexis has uploaded his proof of study and passport for the application."
+								// },
+								// {
+								// 	title: "28 Market Street, St Andrews",
+								// 	text: "New application received."
+								// }
+							]
+						}
 						onReview={s => console.log("Review", s)}
 					/>
 
@@ -607,6 +610,7 @@ export default function Dashboard() {
 								icon="pi pi-inbox"
 								severity="primary"
 								className="w-full"
+								onClick={() => navigate("/application")}
 							/>
 							<Badge
 								value="10"
@@ -639,24 +643,26 @@ export default function Dashboard() {
 				{/* Status updates (mobile carousel inside component) */}
 				<div className="mt-5">
 					<StatusUpdatesCarousel
-						items={[
-							// {
-							// 	title: "123 North Street, St Andrews",
-							// 	text: "Alexis has uploaded his proof of study and passport for the application."
-							// },
-							// {
-							// 	title: "28 Market Street, St Andrews",
-							// 	text: "New application received."
-							// },
-							// {
-							// 	title: "123 North Street, St Andrews",
-							// 	text: "Alexis has uploaded his proof of study and passport for the application."
-							// },
-							// {
-							// 	title: "28 Market Street, St Andrews",
-							// 	text: "New application received."
-							// }
-						]}
+						items={
+							[
+								// {
+								// 	title: "123 North Street, St Andrews",
+								// 	text: "Alexis has uploaded his proof of study and passport for the application."
+								// },
+								// {
+								// 	title: "28 Market Street, St Andrews",
+								// 	text: "New application received."
+								// },
+								// {
+								// 	title: "123 North Street, St Andrews",
+								// 	text: "Alexis has uploaded his proof of study and passport for the application."
+								// },
+								// {
+								// 	title: "28 Market Street, St Andrews",
+								// 	text: "New application received."
+								// }
+							]
+						}
 						onReview={s => console.log("Review", s)}
 					/>
 				</div>

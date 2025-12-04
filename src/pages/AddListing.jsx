@@ -6,6 +6,7 @@ import BasicInfoStep from "../components/addPropertySteps/BasicInfoStep";
 import LocationAvailabilityStep from "../components/addPropertySteps/LocationAvailabilityStep";
 import FeaturesStep from "../components/addPropertySteps/FeaturesStep";
 import PhotosMediaStep from "../components/addPropertySteps/PhotosMediaStep";
+import ApplicationRequirements from "../components/addPropertySteps/ApplicationRequirementsStep.jsx";
 import ReviewPublishStep from "../components/addPropertySteps/ReviewPublishStep";
 import ListingsContext from "../context/ListingsContext.jsx";
 import axios from "axios";
@@ -118,6 +119,39 @@ const AddListing = () => {
 		"Monoxide Alarm"
 	];
 	const [amenities, setAmenities] = useState([]);
+
+	const [Apprequirements, setRequirements] = useState([
+		{
+			id: 1,
+			title: "Identification",
+			description: "National ID or Passport",
+			required: true,
+		},
+		{
+			id: 2,
+			title: "Proof of income or financial support",
+			description:
+				"A proof of student loan or scholarship, savings, financial support from parents/guardians",
+			required: true,
+		},
+		{
+			id: 3,
+			title: "Guarantor information",
+			description:
+				"Upload your guarantor agreement with a UK based guarantor",
+			required: true,
+		},
+		{
+			id: 4,
+			title: "Landlord reference",
+			description:
+				"Upload your previous landlord reference or University accommodation letter",
+			required: false,
+		},
+	]);
+
+
+
 
 	// Step 3 state
 	const [photos, setPhotos] = useState([]);
@@ -715,6 +749,15 @@ const AddListing = () => {
 							next={next}
 						/>
 					</StepperPanel>
+					
+					<StepperPanel header="Requirements">
+					<ApplicationRequirements
+							back={back}
+							next={next}
+							App2requirements={Apprequirements}
+					/>
+					</StepperPanel>
+					
 					<StepperPanel header="Review">
 						<ReviewPublishStep
 							title={title}

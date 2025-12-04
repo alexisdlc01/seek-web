@@ -31,7 +31,7 @@ import SigninSuperuser from "./pages/SigninSuperuser.jsx";
 import SuperUserDashboard from "./pages/SuperUserDashboard.jsx";
 import ViewListing from "./components/ViewListing.jsx";
 import ResetPasswordPassword from "./pages/ConfirmResetPassword.jsx";
-import ApplicationRequirements from "./pages/ApplicationRequirements.jsx";
+import ApplicationRequirements from "./components/addPropertySteps/ApplicationRequirementsStep.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 
 const NotFound = () => {

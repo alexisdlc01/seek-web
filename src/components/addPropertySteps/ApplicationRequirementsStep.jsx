@@ -1,36 +1,13 @@
 import React, { useState } from "react";
 import { FiMinus, FiPlus } from "react-icons/fi";
+import { Button } from "primereact/button";
 
-const ApplicationRequirements = () => {
-	const [requirements, setRequirements] = useState([
-		{
-			id: 1,
-			title: "Identification",
-			description: "National ID or Passport",
-			required: true,
-		},
-		{
-			id: 2,
-			title: "Proof of income or financial support",
-			description:
-				"A proof of student loan or scholarship, savings, financial support from parents/guardians",
-			required: true,
-		},
-		{
-			id: 3,
-			title: "Guarantor information",
-			description:
-				"Upload your guarantor agreement with a UK based guarantor",
-			required: true,
-		},
-		{
-			id: 4,
-			title: "Landlord reference",
-			description:
-				"Upload your previous landlord reference or University accommodation letter",
-			required: false,
-		},
-	]);
+const ApplicationRequirements = ({
+	back,
+	next,
+	App2requirements
+}) => {
+	const [requirements, setRequirements] = useState(App2requirements);
 
 	// Remove Requirement
 	const removeRequirement = (id) => {
@@ -156,6 +133,20 @@ const ApplicationRequirements = () => {
 				>
 					<FiPlus /> Add requirement
 				</button>
+			</div>
+						<div className="flex pt-8 justify-between">
+				<Button
+					label="Back"
+					severity="secondary"
+					icon="pi pi-arrow-left"
+					onClick={back}
+				/>
+				<Button
+					label="Next"
+					icon="pi pi-arrow-right"
+					iconPos="right"
+					onClick={next}
+				/>
 			</div>
 		</div>
 	);

@@ -43,6 +43,7 @@ const ReviewPublishStep = ({
 	photos,
 	videoLink,
 	floorPlan,
+	appRequirements,
 	publish
 }) => {
 	useEffect(() => {
@@ -168,6 +169,16 @@ const ReviewPublishStep = ({
 						<br /> Included
 					</p>
 				)}
+			</Section>
+			<Section title="Requirements">
+				{appRequirements.map(req => (
+					<>
+						<p>
+							<strong>{req.name}</strong>
+						</p>
+						<p>{req.desc}</p>
+					</>
+				))}
 			</Section>
 			<br />
 			<hr className="p-1" />

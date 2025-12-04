@@ -809,6 +809,7 @@ const AddListing = () => {
 							amenities={amenities}
 							photos={photos}
 							videoLink={videoLink}
+							appRequirements={Apprequirements}
 							floorPlan={floorPlan}
 							fileInputRef={fileInputRef}
 							floorPlanInputRef={floorPlanInputRef}

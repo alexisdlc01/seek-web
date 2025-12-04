@@ -123,28 +123,28 @@ const AddListing = () => {
 	const [Apprequirements, setRequirements] = useState([
 		{
 			id: 1,
-			title: "Identification",
-			description: "National ID or Passport",
+			name: "Identification",
+			desc: "National ID or Passport",
 			required: true,
 		},
 		{
 			id: 2,
-			title: "Proof of income or financial support",
-			description:
+			name: "Proof of income or financial support",
+			desc:
 				"A proof of student loan or scholarship, savings, financial support from parents/guardians",
 			required: true,
 		},
 		{
 			id: 3,
-			title: "Guarantor information",
-			description:
+			name: "Guarantor information",
+			desc:
 				"Upload your guarantor agreement with a UK based guarantor",
 			required: true,
 		},
 		{
 			id: 4,
-			title: "Landlord reference",
-			description:
+			name: "Landlord reference",
+			desc:
 				"Upload your previous landlord reference or University accommodation letter",
 			required: false,
 		},
@@ -169,7 +169,7 @@ const AddListing = () => {
 	}, [propertyType]);
 	const next = () => {
 		stepperRef.current.nextCallback();
-		setStep(prev => Math.min(prev + 1, 4));
+		setStep(prev => Math.min(prev + 1, 5));
 	};
 
 	const publish = async () => {
@@ -196,6 +196,7 @@ const AddListing = () => {
 		if (!registerOfTitle) missing.push("Register of Title (PDF)");
 		if (!furnishingStatus) missing.push("Furnishing status");
 		if (photos.length === 0) missing.push("At least one photo");
+		if (Apprequirements.length === 0) missing.push("At least one requirement");
 
 		if (missing.length > 0) {
 			toast.current?.show({
@@ -259,7 +260,8 @@ const AddListing = () => {
 			amenities: amenities,
 			photos: allPhotosUrls,
 			videoTourLink: videoLink,
-			floorPlanImage: floorPlanUrl
+			floorPlanImage: floorPlanUrl,
+			requirements: Apprequirements
 		});
 
 		try {
@@ -485,6 +487,8 @@ const AddListing = () => {
 					? setVideoLink(res.data.videoTourLink)
 					: {};
 
+				res.data.requirements.length !== 0 ? setRequirements(res.data.requirements) : {};
+
 				if (res.data.registerOfTitleKey) {
 					setRegisterOfTitleKeyFromBackend(
 						res.data.registerOfTitleKey
@@ -613,31 +617,43 @@ const AddListing = () => {
 					const combinedUrls = [...existingUrls, ...uploadedUrls];
 					setAllPhotosUrls(combinedUrls);
 
-					const step3Data = cleanObject({
+					const step4Data = cleanObject({
 						photos: combinedUrls,
 						videoTourLink: videoLink,
 						floorPlanImage: floorPlanUrl
 					});
 
-					const step3Changes = getChangedFields(
-						step3Data,
+					const step4Changes = getChangedFields(
+						step4Data,
 						originalListingRef.current || {}
 					);
 
-					if (Object.keys(step3Changes).length > 0) {
+					if (Object.keys(step4Changes).length > 0) {
 						await axios.patch(
 							`${BASE_URL}/listings/${currentListing._id}/createStep3`,
-							step3Changes,
+							step4Changes,
 							{ withCredentials: true }
 						);
 					}
 					originalListingRef.current = {
 						...originalListingRef.current,
-						...step3Data
+						...step4Data
 					};
 
 					break;
+				case 5:
+					console.log("Actually at the requirements now");
+					console.log(Apprequirements);
+					await axios.patch(
+						`${BASE_URL}/listings/${currentListing._id}/createStep4`,
+						{
+							requirements: Apprequirements
+						},
+						{ withCredentials: true }
+					);
+					break;
 			}
+
 		})();
 	}, [step]);
 
@@ -755,6 +771,7 @@ const AddListing = () => {
 							back={back}
 							next={next}
 							App2requirements={Apprequirements}
+							setRequirements={setRequirements}
 					/>
 					</StepperPanel>
 					

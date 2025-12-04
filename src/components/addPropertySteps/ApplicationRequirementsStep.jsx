@@ -5,23 +5,22 @@ import { Button } from "primereact/button";
 const ApplicationRequirements = ({
 	back,
 	next,
-	App2requirements
+	App2requirements,
+    setRequirements
 }) => {
-	const [requirements, setRequirements] = useState(App2requirements);
-
 	// Remove Requirement
 	const removeRequirement = (id) => {
-		setRequirements(requirements.filter((item) => item.id !== id));
+		setRequirements(App2requirements.filter((item) => item.id !== id));
 	};
 
 	// Add New Editable Requirement
 	const addRequirement = () => {
 		setRequirements([
-			...requirements,
+			...App2requirements,
 			{
 				id: Date.now(),
-				title: "",
-				description: "",
+				name: "",
+				desc: "",
 				required: false,
 				isEditing: true,
 			},
@@ -60,7 +59,7 @@ const ApplicationRequirements = ({
 
 				{/* Requirements List */}
 				<div className="space-y-6">
-					{requirements.map((req) => (
+					{App2requirements.map((req) => (
 						<div key={req.id} className="grid grid-cols-12 items-center gap-2">
 							{/* Title + Description */}
 							<div className="col-span-6">
@@ -68,7 +67,7 @@ const ApplicationRequirements = ({
 									<div className="space-y-2">
 										<input
 											type="text"
-											value={req.title}
+											value={req.name}
 											onChange={(e) =>
 												updateRequirement(req.id, "title", e.target.value)
 											}
@@ -76,7 +75,7 @@ const ApplicationRequirements = ({
 											className="w-full bg-transparent border-b border-gray-500 focus:outline-none"
 										/>
 										<textarea
-											value={req.description}
+											value={req.desc}
 											onChange={(e) =>
 												updateRequirement(req.id, "description", e.target.value)
 											}
@@ -86,9 +85,9 @@ const ApplicationRequirements = ({
 									</div>
 								) : (
 									<>
-										<p className="font-medium">{req.title}</p>
+										<p className="font-medium">{req.name}</p>
 										<p className="text-sm text-gray-400 cursor-default">
-											{req.description}
+											{req.desc}
 										</p>
 									</>
 								)}

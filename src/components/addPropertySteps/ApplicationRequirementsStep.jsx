@@ -47,17 +47,12 @@ const ApplicationRequirements = ({
 	};
 
 	return (
-		<div className="min-h-screen bg-[var(--surface-a)] text-[var(--text-color)] px-6 py-12">
+		<div className="min-h-screen bg-[var(--surface-a)] text-[var(--text-color)] px-6 py-5">
 			<div className="max-w-5xl mx-auto">
-				<h1 className="text-2xl font-semibold mb-8">
-					Application{" "}
-					<span className="text-[var(--primary-color)]">
-						requirements
-					</span>
-				</h1>
+					<label className="font-medium text-white">Application Requirements</label>
 
-				{/* Table Header */}
-				<div className="grid grid-cols-12 text-sm font-semibold border-b border-gray-600 pb-2 mb-4">
+
+				<div className="grid grid-cols-12 text-sm font-semibold border-b border-gray-600 pb-2 mb-4 mt-4">
 					<div className="col-span-6">Requirement</div>
 					<div className="col-span-2 text-center">Required</div>
 					<div className="col-span-2"></div>

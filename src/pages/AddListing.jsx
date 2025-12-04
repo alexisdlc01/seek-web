@@ -254,7 +254,7 @@ const AddListing = () => {
 			registerOfTitleKey: registerOfTitleKeyFromBackend,
 			furnishingStatus: furnishingStatus
 				? furnishingStatus.charAt(0).toLowerCase() +
-					furnishingStatus.slice(1)
+				furnishingStatus.slice(1)
 				: null,
 			epcRating: epcRating,
 			amenities: amenities,
@@ -446,8 +446,8 @@ const AddListing = () => {
 				res.data.sizeSqMeters ? setSizeSqM(res.data.sizeSqMeters) : {};
 				res.data.propertyType
 					? setPropertyType(
-							propertyTypeMap[res.data.propertyType] || null
-						)
+						propertyTypeMap[res.data.propertyType] || null
+					)
 					: {};
 				res.data.bedroomsCount
 					? setRegularBedrooms(res.data.bedroomsCount)
@@ -478,9 +478,9 @@ const AddListing = () => {
 
 				res.data.furnishingStatus
 					? setFurnishingStatus(
-							res.data.furnishingStatus.charAt(0).toUpperCase() +
-								res.data.furnishingStatus.slice(1)
-						)
+						res.data.furnishingStatus.charAt(0).toUpperCase() +
+						res.data.furnishingStatus.slice(1)
+					)
 					: {};
 				res.data.epcRating ? setEpcRating(res.data.epcRating) : {};
 				res.data.videoTourLink
@@ -568,7 +568,7 @@ const AddListing = () => {
 					const step2Data = cleanObject({
 						furnishingStatus: furnishingStatus
 							? furnishingStatus.charAt(0).toLowerCase() +
-								furnishingStatus.slice(1)
+							furnishingStatus.slice(1)
 							: null,
 						epcRating: epcRating,
 						amenities: amenities
@@ -765,16 +765,16 @@ const AddListing = () => {
 							next={next}
 						/>
 					</StepperPanel>
-					
+
 					<StepperPanel header="Requirements">
-					<ApplicationRequirements
+						<ApplicationRequirements
 							back={back}
 							next={next}
 							App2requirements={Apprequirements}
 							setRequirements={setRequirements}
-					/>
+						/>
 					</StepperPanel>
-					
+
 					<StepperPanel header="Review">
 						<ReviewPublishStep
 							title={title}

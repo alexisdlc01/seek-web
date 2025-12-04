@@ -173,9 +173,14 @@ const ReviewPublishStep = ({
 			<Section title="Requirements">
 				{appRequirements.map(req => (
 					<>
-						<p>
-							<strong>{req.name}</strong>
-						</p>
+						<div>
+							<p>
+								<strong>{req.name}</strong>
+							</p>
+							<p>
+								{req.required ? "requried" : "optional"}
+							</p>
+						</div>
 						<p>{req.desc}</p>
 					</>
 				))}

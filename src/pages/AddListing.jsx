@@ -31,6 +31,7 @@ const AddListing = () => {
 	const [postcode, setPostcode] = useState("");
 	const [country, setCountry] = useState("");
 	const [sizeSqM, setSizeSqM] = useState(null);
+	const [numOfPeople, setNumOfPeople] = useState(0);
 	const propertyTypes = [
 		"Flat/Apartment",
 		"House",
@@ -145,6 +146,7 @@ const AddListing = () => {
 		if (!propertyType) missing.push("Property type");
 		if (propertyType === "Other (please specify)" && !otherType?.trim())
 			missing.push("Custom property type");
+		if (numOfPeople === 0) missing.push("Number of People");
 		if (!street?.trim()) missing.push("Street");
 		if (!city?.trim()) missing.push("City");
 		if (!postcode?.trim()) missing.push("Postcode");
@@ -200,6 +202,7 @@ const AddListing = () => {
 		const finalData = cleanObject({
 			propertyTitle: title,
 			sizeSqMeters: sizeSqM,
+			numOfPeople: numOfPeople,
 			propertyType: propertyTypeMapInverse[propertyType],
 			streetAddress: street,
 			cityTown: city,
@@ -403,6 +406,7 @@ const AddListing = () => {
 				setCurrentListing(res.data);
 				originalListingRef.current = res.data;
 				res.data.propertyTitle ? setTitle(res.data.propertyTitle) : {};
+				res.data.numOfPeople ? setNumOfPeople(res.data.numOfPeople) : {};
 				res.data.sizeSqMeters ? setSizeSqM(res.data.sizeSqMeters) : {};
 				res.data.propertyType
 					? setPropertyType(
@@ -491,6 +495,7 @@ const AddListing = () => {
 				case 2:
 					const step1Data = cleanObject({
 						propertyTitle: title,
+						numOfPeople: parseInt(numOfPeople),
 						sizeSqMeters: sizeSqM,
 						propertyType: propertyTypeMapInverse[propertyType],
 						bedroomsCount: regularBedrooms,
@@ -671,6 +676,8 @@ const AddListing = () => {
 							setRegisterOfTitleKeyFromBackend={
 								setRegisterOfTitleKeyFromBackend
 							}
+							numOfPeople={numOfPeople}
+							setNumOfPeople={setNumOfPeople}
 							next={next}
 						/>
 					</StepperPanel>

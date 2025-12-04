@@ -52,6 +52,8 @@ const BasicInfoStep = ({
 	registerOfTitleRef,
 	registerOfTitleKeyFromBackend,
 	setRegisterOfTitleKeyFromBackend,
+	numOfPeople,
+	setNumOfPeople,
 	next
 }) => {
 	useEffect(() => {
@@ -126,7 +128,17 @@ const BasicInfoStep = ({
 						</div>
 					)}
 				</div>
-
+				<div className="flex flex-col">
+					<label htmlFor="street" className="font-medium mb-2">
+						Number of people
+					</label>
+					<InputText
+						id="street"
+						value={numOfPeople}
+						type={"number"}
+						onChange={e => setNumOfPeople(e.target.value)}
+					/>
+				</div>
 				{/* Location stuff */}
 				<div className="flex flex-col">
 					<label htmlFor="street" className="font-medium mb-2">

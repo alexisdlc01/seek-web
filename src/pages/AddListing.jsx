@@ -122,27 +122,27 @@ const AddListing = () => {
 
 	const [Apprequirements, setRequirements] = useState([
 		{
-			_id: 1,
+			id: 1,
 			name: "Identification",
 			desc: "National ID or Passport",
 			required: true,
 		},
 		{
-			_id: 2,
+			id: 2,
 			name: "Proof of income or financial support",
 			desc:
 				"A proof of student loan or scholarship, savings, financial support from parents/guardians",
 			required: true,
 		},
 		{
-			_id: 3,
+			id: 3,
 			name: "Guarantor information",
 			desc:
 				"Upload your guarantor agreement with a UK based guarantor",
 			required: true,
 		},
 		{
-			_id: 4,
+			id: 4,
 			name: "Landlord reference",
 			desc:
 				"Upload your previous landlord reference or University accommodation letter",

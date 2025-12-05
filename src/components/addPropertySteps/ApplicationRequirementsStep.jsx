@@ -14,7 +14,7 @@ const ApplicationRequirements = ({
 		if (id == null) {
 			throw new Error("null id in remove requirment");
 		}
-		setRequirements(App2requirements.filter((item) => item._id !== id));
+		setRequirements(App2requirements.filter((item) => item.id !== id));
 	};
 
 	// Add New Editable Requirement
@@ -22,7 +22,7 @@ const ApplicationRequirements = ({
 		setRequirements([
 			...App2requirements,
 			{
-				_id: Date.now(),
+				id: Date.now(),
 				name: "",
 				desc: "",
 				required: false,
@@ -39,7 +39,7 @@ const ApplicationRequirements = ({
 		}
 		setRequirements((prev) =>
 			prev.map((req) =>
-				req._id === id ? { ...req, [field]: value } : req
+				req.id === id ? { ...req, [field]: value } : req
 			)
 		);
 	};
@@ -52,7 +52,7 @@ const ApplicationRequirements = ({
 		}
 		setRequirements((prev) =>
 			prev.map((req) =>
-				req._id === id ? { ...req, required: !req.required } : req
+				req.id === id ? { ...req, required: !req.required } : req
 			)
 		);
 	};
@@ -72,7 +72,7 @@ const ApplicationRequirements = ({
 				{/* Requirements List */}
 				<div className="space-y-6">
 					{App2requirements.map((req) => (
-						<div key={req._id} className="grid grid-cols-12 items-center gap-2">
+						<div key={req.id} className="grid grid-cols-12 items-center gap-2">
 							{/* Title + Description */}
 							<div className="col-span-6">
 								{req.isEditing ? (
@@ -81,7 +81,7 @@ const ApplicationRequirements = ({
 											type="text"
 											value={req.name}
 											onChange={(e) =>
-												updateRequirement(req._id, "name", e.target.value)
+												updateRequirement(req.id, "name", e.target.value)
 											}
 											placeholder="Enter requirement title..."
 											className="w-full bg-transparent border-b border-gray-500 focus:outline-none"
@@ -89,7 +89,7 @@ const ApplicationRequirements = ({
 										<textarea
 											value={req.desc}
 											onChange={(e) =>
-												updateRequirement(req._id, "desc", e.target.value)
+												updateRequirement(req.id, "desc", e.target.value)
 											}
 											placeholder="Enter requirement description..."
 											className="w-full bg-transparent border-b border-gray-500 focus:outline-none"
@@ -108,7 +108,7 @@ const ApplicationRequirements = ({
 							{/* Required Toggle */}
 							<div className="col-span-2 text-center">
 								<button
-									onClick={() => toggleRequired(req._id)}
+									onClick={() => toggleRequired(req.id)}
 									className={`px-3 py-1 rounded-full text-sm ${req.required
 											? "bg-[var(--primary-color)] text-white"
 											: "bg-gray-700 text-gray-300"
@@ -121,7 +121,7 @@ const ApplicationRequirements = ({
 							{/* Remove */}
 							<div className="col-span-2 flex items-center gap-2">
 								<button
-									onClick={() => removeRequirement(req._id)}
+									onClick={() => removeRequirement(req.id)}
 									className="flex items-center gap-1 text-red-400 hover:text-red-500"
 								>
 									<FiMinus /> Remove

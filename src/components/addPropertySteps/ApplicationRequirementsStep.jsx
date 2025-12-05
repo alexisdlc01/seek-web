@@ -46,6 +46,10 @@ const ApplicationRequirements = ({
 
 	// Toggle required/optional
 	const toggleRequired = (id) => {
+		console.log("toggle name", "id:", id);
+		if (id == null) {
+			throw new Error("null id in update requirment");
+		}
 		setRequirements((prev) =>
 			prev.map((req) =>
 				req._id === id ? { ...req, required: !req.required } : req

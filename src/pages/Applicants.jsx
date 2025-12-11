@@ -67,7 +67,7 @@ export default function Applicants() {
 			</div>
 
 			{/* Action Buttons */}
-			<div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+			<div className="grid sm:grid-cols-3 gap-2 w-full md:w-auto">
 				<Button
 					label="View Profile"
 					severity="primary"
@@ -83,6 +83,15 @@ export default function Applicants() {
 				<Button
 					label="Approve"
 					severity="primary"
+					size="small"
+					className="w-full sm:w-auto"
+					style={{
+						color: "white",
+					}}
+				/>
+				<Button
+					label="Reject"
+					severity="danger"
 					size="small"
 					className="w-full sm:w-auto"
 					style={{

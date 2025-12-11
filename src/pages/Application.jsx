@@ -45,6 +45,17 @@ export default function ApplicationPage() {
 		});
 	};
 
+	const confirm3 = event => {
+		confirmPopup({
+			target: event.currentTarget,
+			message: "Are you sure you want to accept the application?",
+			icon: "pi pi-info-circle",
+			defaultFocus: "accept",
+			acceptClassName: "p-button-danger",
+			accept
+		});
+	};
+
 	const submitReport = () => {
 		toast.current.show({
 			severity: "info",
@@ -106,6 +117,7 @@ export default function ApplicationPage() {
 					icon="pi pi-check"
 					className="border border-green-600 text-green-600 bg-transparent px-4 py-2 rounded-lg hover:bg-green-50 transition"
 					outlined
+					onClick={confirm3}
 				/>
 				<Button
 					label="Reject"

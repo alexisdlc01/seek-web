@@ -478,7 +478,7 @@ export default function LandingPage() {
 							{startCounts ? (
 								<CountUp
 									start={0}
-									end={300}
+									end={650}
 									duration={1.6}
 									separator=","
 								/>

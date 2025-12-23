@@ -8,6 +8,12 @@ import { UserProvider } from "./context/UserContext.jsx";
 import { NavbarThemeProvider } from "./context/NavBarThemeContext.jsx";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { ListingsProvider } from "./context/ListingsContext.jsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { client } from "./client/client.gen.ts";
+
+client.setConfig({
+	baseUrl: "/api"
+});
 
 const LoadingScreen = () => (
 	<div className="min-h-screen flex items-center justify-center bg-white">
@@ -15,18 +21,32 @@ const LoadingScreen = () => (
 	</div>
 );
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-	<PrimeReactProvider value={{ ripple: true }}>
-		<Suspense fallback={<LoadingScreen />}>
-			<BrowserRouter>
-				<UserProvider>
-					<NavbarThemeProvider>
-						<ListingsProvider>
-							<App />
-						</ListingsProvider>
-					</NavbarThemeProvider>
-				</UserProvider>
-			</BrowserRouter>
-		</Suspense>
-	</PrimeReactProvider>
-);
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: 1000 * 60 * 5 // default 5 mins
+		}
+	}
+});
+
+const RootComponent = () => {
+	return (
+		<PrimeReactProvider value={{ ripple: true }}>
+			<QueryClientProvider client={queryClient}>
+				<Suspense fallback={<LoadingScreen />}>
+					<BrowserRouter>
+						<UserProvider>
+							<NavbarThemeProvider>
+								<ListingsProvider>
+									<App />
+								</ListingsProvider>
+							</NavbarThemeProvider>
+						</UserProvider>
+					</BrowserRouter>
+				</Suspense>
+			</QueryClientProvider>
+		</PrimeReactProvider>
+	);
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(RootComponent());

@@ -1,17 +1,16 @@
-import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { MouseEventHandler, useRef, useState } from "react";
 import { Button } from "primereact/button";
-import { motion } from "framer-motion";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { Toast } from "primereact/toast";
 import { Dialog } from "primereact/dialog";
 import { InputTextarea } from "primereact/inputtextarea";
+import {} from "../client/types.gen.ts";
+import { Alternative } from "../components/Alternative";
+import React from "react";
+import { FiHome } from "react-icons/fi";
 
 export default function ApplicationPage() {
-	const navigate = useNavigate();
 	const toast = useRef(null);
-	const [visible, setVisible] = useState(false);
-	const [reportMsg, setReportMsg] = useState("");
 
 	const applicant = {
 		initials: "ES",
@@ -25,49 +24,50 @@ export default function ApplicationPage() {
 		]
 	};
 
-	const accept = () => {
-		toast.current.show({
-			severity: "warn",
-			summary: "Rejected",
-			detail: "You have rejected the application",
-			life: 3000
-		});
-	};
-
-	const confirm2 = event => {
+	const reject: MouseEventHandler<HTMLButtonElement> = event => {
 		confirmPopup({
 			target: event.currentTarget,
 			message: "Are you sure you want to reject the application?",
 			icon: "pi pi-info-circle",
 			defaultFocus: "reject",
 			acceptClassName: "p-button-danger",
-			accept
+			accept: () => {
+				toast.current.show({
+					severity: "warn",
+					summary: "Rejected",
+					detail: "You have rejected the application",
+					life: 3000
+				});
+			}
 		});
 	};
 
-	const confirm3 = event => {
+	const accept: MouseEventHandler<HTMLButtonElement> = event => {
 		confirmPopup({
 			target: event.currentTarget,
 			message: "Are you sure you want to accept the application?",
 			icon: "pi pi-info-circle",
 			defaultFocus: "accept",
 			acceptClassName: "p-button-danger",
-			accept
+			accept: () => {
+				toast.current.show({
+					severity: "warn",
+					summary: "Accepted",
+					detail: "You have accepted the application",
+					life: 3000
+				});
+			}
 		});
 	};
 
-	const submitReport = () => {
+	const report = () => {
 		toast.current.show({
 			severity: "info",
 			summary: "Report Submitted",
 			detail: `Your report has been submitted.`,
 			life: 4000
 		});
-		setVisible(false);
-		setReportMsg("");
 	};
-
-	const { names, genders, degrees, years, letters } = applicant;
 
 	return (
 		<div className="min-h-screen px-4 py-8 sm:px-6 lg:px-12">
@@ -77,7 +77,74 @@ export default function ApplicationPage() {
 			<h1 className="text-3xl font-bold text-[var(--text-color)] mb-6">
 				Application Details
 			</h1>
+			<Alternative ok={false} fallback={<EmptyApplications />}>
+				<ApplicationCard
+					data={applicant}
+					accept={accept}
+					reject={reject}
+					report={report}
+				/>
+			</Alternative>
+		</div>
+	);
+}
 
+const EmptyApplications: React.FC = () => {
+	return (
+		<div className="flex flex-col items-center justify-center p-16 border-2 border-dashed border-surface-200 rounded-xl bg-surface-50 text-center">
+			<div className="flex items-center justify-center w-24 h-24 mb-6 rounded-full bg-surface-100">
+				<FiHome className="text-surface-500" size={50} />
+			</div>
+			<h3 className="text-2xl font-bold text-surface-900 mb-2">
+				No Applications
+			</h3>
+			<p className="text-surface-500 max-w-xs text-lg">
+				There are currently no active applications for this property.
+			</p>
+		</div>
+	);
+};
+
+interface StudentProfile {
+	initials: string;
+	names: string;
+	genders: string;
+	degrees: string;
+	years: string;
+	letters: RecommendationLetter[];
+}
+
+interface RecommendationLetter {
+	name: string;
+	url: string;
+}
+
+interface ApplicationCardProps {
+	data: StudentProfile;
+	accept: MouseEventHandler<HTMLButtonElement>;
+	reject: MouseEventHandler<HTMLButtonElement>;
+	report: MouseEventHandler<HTMLButtonElement>;
+}
+
+function ApplicationCard({
+	data,
+	accept,
+	reject,
+	report
+}: ApplicationCardProps) {
+	const { names, genders, degrees, years, letters } = data;
+
+	const submitReport: MouseEventHandler<HTMLButtonElement> = event => {
+		report(event);
+		setVisible(false);
+		setReportMsg("");
+	};
+
+	const [visible, setVisible] = useState(false);
+	const [reportMsg, setReportMsg] = useState("");
+
+	return (
+		<React.Fragment>
 			<div
 				className="border border-[var(--surface-border)] rounded-xl p-6 shadow-sm mb-10"
 				style={{ background: "var(--gray-62)" }}
@@ -117,14 +184,14 @@ export default function ApplicationPage() {
 					icon="pi pi-check"
 					className="border border-green-600 text-green-600 bg-transparent px-4 py-2 rounded-lg hover:bg-green-50 transition"
 					outlined
-					onClick={confirm3}
+					onClick={accept}
 				/>
 				<Button
 					label="Reject"
 					icon="pi pi-times"
 					className="border border-red-600 text-red-600 bg-transparent px-4 py-2 rounded-lg hover:bg-red-50 transition"
 					outlined
-					onClick={confirm2}
+					onClick={reject}
 				/>
 				<Button
 					label="Report"
@@ -173,6 +240,6 @@ export default function ApplicationPage() {
 					placeholder="Type your report message here..."
 				/>
 			</Dialog>
-		</div>
+		</React.Fragment>
 	);
 }

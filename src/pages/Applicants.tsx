@@ -2,41 +2,9 @@ import React, { useState } from "react";
 import { Button } from "primereact/button";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { text } from "framer-motion/client";
-
-const newApplicants = [
-	{
-		id: 1,
-		initials: "ES",
-		names: "Emma Smith and Ethan Smith",
-		genders: "Female & Male",
-		degrees: "Economics and Finance Students",
-		years: "3rd Years"
-	},
-	{
-		id: 2,
-		initials: "JM",
-		names: "James Miller & 3 Others",
-		genders: "All Male",
-		degrees: "Math and Computer Science Students",
-		years: "2nd Year & 3rd Years"
-	}
-];
-
-const approvedApplicants = [
-	{
-		id: 3,
-		initials: "SC",
-		names: "Sarah Chen and Olivia Green",
-		genders: "Both Female",
-		degrees: "Psychology and Biology Students",
-		years: "4th Years"
-	}
-];
 
 export default function Applicants() {
-	const navigate = useNavigate();
-
+	const navigate = useNavigate()
 	const [activeTab, setActiveTab] = useState("new");
 
 	const renderApplicantCard = (applicant, buttons) => (
@@ -70,7 +38,6 @@ export default function Applicants() {
 			<div className="grid sm:grid-cols-3 gap-2 w-full md:w-auto">
 				<Button
 					label="View Profile"
-					severity="primary"
 					outlined
 					size="small"
 					className="w-full sm:w-auto"
@@ -82,7 +49,6 @@ export default function Applicants() {
 
 				<Button
 					label="Approve"
-					severity="primary"
 					size="small"
 					className="w-full sm:w-auto"
 					style={{
@@ -177,3 +143,33 @@ export default function Applicants() {
 		</div>
 	);
 }
+
+var newApplicants = [
+	{
+		id: 1,
+		initials: "ES",
+		names: "Emma Smith and Ethan Smith",
+		genders: "Female & Male",
+		degrees: "Economics and Finance Students",
+		years: "3rd Years"
+	},
+	{
+		id: 2,
+		initials: "JM",
+		names: "James Miller & 3 Others",
+		genders: "All Male",
+		degrees: "Math and Computer Science Students",
+		years: "2nd Year & 3rd Years"
+	}
+];
+
+var approvedApplicants = [
+	{
+		id: 3,
+		initials: "SC",
+		names: "Sarah Chen and Olivia Green",
+		genders: "Both Female",
+		degrees: "Psychology and Biology Students",
+		years: "4th Years"
+	}
+];

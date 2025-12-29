@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Alternative } from "../components/Alternative.tsx";
 import React, { useContext, useState } from "react";
 import { FiAlertCircle } from "react-icons/fi";
+import { SelectItem } from "primereact/selectitem";
 
 /* -------------------- Marketing Section -------------------- */
 

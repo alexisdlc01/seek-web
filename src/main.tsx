@@ -16,7 +16,8 @@ client.setConfig({
 		// @ts-ignore
 		import.meta.NODE_ENV === "development"
 			? "http://localhost:3000/api"
-			: "https://api.seekapp.uk"
+			: "https://api.seekapp.uk",
+	credentials: "include"
 });
 
 const LoadingScreen = () => (

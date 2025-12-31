@@ -147,27 +147,6 @@ export type Step4ListingDto = {
     requirements: Array<Step4ItemDto>;
 };
 
-export type MessageDto = {
-    _id: string;
-    sender: string;
-    messageType: 'Text' | 'Image';
-    data: string;
-    createdAt: string;
-    conversation: string;
-    seenUsers: Array<string>;
-    deliveredTo: Array<string>;
-};
-
-export type ConversationDto = {
-    _id: string;
-    name: string;
-    createdAt: string;
-    groupDescription: string;
-    avatar: string;
-    users: Array<string>;
-    messages: Array<MessageDto>;
-};
-
 export type ContactDto = {
     [key: string]: unknown;
 };
@@ -761,16 +740,5 @@ export type ContactControllerContactData = {
 };
 
 export type ContactControllerContactResponses = {
-    201: unknown;
-};
-
-export type ApplicationControllerCreateApplicationData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/application';
-};
-
-export type ApplicationControllerCreateApplicationResponses = {
     201: unknown;
 };

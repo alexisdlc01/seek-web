@@ -12,7 +12,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { client } from "./client/client.gen.ts";
 
 client.setConfig({
-	baseUrl: "/api"
+	baseUrl:
+		// @ts-ignore
+		import.meta.NODE_ENV === "development"
+			? "http://localhost:3000/api"
+			: "https://api.seekapp.uk"
 });
 
 const LoadingScreen = () => (

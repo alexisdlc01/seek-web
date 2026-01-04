@@ -2,7 +2,7 @@
   "applinks": {
     "details": [
       {
-        "appIDs": ["75NP4Y9NNB.com.seek.seekapp"],
+        "appIDs": ["75NP4Y9NNB.com.seek.seekapp", "75NP4Y9NNB.com.seek.seekapp.dev"],
         "components": [
             {
                 "/": "/link/*",

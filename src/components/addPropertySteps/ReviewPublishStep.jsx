@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Button } from "primereact/button";
+import { useNavigate } from "react-router-dom";
 
 function formatDate(date) {
 	const d = new Date(date);
@@ -46,6 +47,7 @@ const ReviewPublishStep = ({
 	appRequirements,
 	publish
 }) => {
+	const navigate = useNavigate();
 	useEffect(() => {
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	}, []);
@@ -177,9 +179,7 @@ const ReviewPublishStep = ({
 							<p>
 								<strong>{req.name}</strong>
 							</p>
-							<p>
-								{req.required ? "requried" : "optional"}
-							</p>
+							<p>{req.required ? "requried" : "optional"}</p>
 						</div>
 						<p>{req.desc}</p>
 					</>
@@ -199,6 +199,7 @@ const ReviewPublishStep = ({
 						label="Save Draft"
 						icon="pi pi-save"
 						className="p-button-secondary"
+						onClick={() => navigate("/listings")}
 					/>
 					<Button
 						label="Publish Listing"

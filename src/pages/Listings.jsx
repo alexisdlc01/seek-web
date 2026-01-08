@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
 import { useNavigate } from "react-router-dom";
@@ -84,6 +84,60 @@ export default function Listings() {
 			draggable: false,
 			accept: () => handleDelete(prop._id)
 		});
+	};
+
+	const renderTags = (isDraft, isVerified) => {
+		if (isDraft && !isVerified) {
+			return (
+				<>
+					<Tag
+						value="Draft"
+						severity="warning"
+						className="text-xs font-medium px-3 py-1 rounded-full"
+					/>
+				</>
+			);
+		} else if (isDraft) {
+			return (
+				<>
+					<Tag
+						value="Listing sent!"
+						severity="success"
+						className="text-xs font-medium px-3 py-1 rounded-full"
+					/>
+					<Tag
+						value="Awaiting Verification"
+						severity="warning"
+						className="text-xs font-medium px-3 py-1 rounded-full"
+					/>
+				</>
+			);
+		} else if (isVerified) {
+			return (
+				<>
+					<Tag
+						value="Verified"
+						severity="success"
+						className="text-xs font-medium px-3 py-1 rounded-full"
+					/>
+				</>
+			);
+		} else if (!isVerified && !isDraft) {
+			return (
+				<>
+					<Tag
+						value="Listing sent!"
+						severity="success"
+						className="text-xs font-medium px-3 py-1 rounded-full"
+					/>
+					<Tag
+						value="Awaiting Verification"
+						severity="warning"
+						className="text-xs font-medium px-3 py-1 rounded-full"
+					/>
+				</>
+			);
+		}
 	};
 
 	return (
@@ -180,77 +234,98 @@ export default function Listings() {
 								)}
 							</p>
 							<div className="flex flex-wrap gap-2 mt-2">
-								{prop.isDraft && (
-									<Tag
-										value="Draft"
-										severity="warning"
-										className="text-xs font-medium px-3 py-1 rounded-full"
-									/>
-								)}
-								{!prop.isVerified ? (
-									<Tag
-										value="Not verified"
-										severity="danger"
-										className="text-xs font-medium px-3 py-1 rounded-full"
-									/>
-								) : (
-									<Tag
-										value="Verified!"
-										severity="success"
-										className="text-xs font-medium px-3 py-1 rounded-full"
-									/>
-								)}
+								{renderTags(prop.isDraft, prop.isVerified)}
 							</div>
 						</div>
 
 						{/* Buttons */}
 						<div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
 							{/* View Applicants */}
-							{!prop.isDraft && (
-								<motion.div whileHover={{ scale: 1.01 }}>
-									<Button
-										label="View Applicants"
-										icon="pi pi-users"
-										size="small"
-										severity="primary"
-										outlined
-										className="w-full sm:w-auto "
-										onClick={() => navigate("/applicants")}
-										style={{
-											color: "white",
-											backgroundColor: "#21b8c4",
-											border: "none"
-										}}
-									/>
-								</motion.div>
+							{prop.isVerified && (
+								<>
+									<motion.div whileHover={{ scale: 1.01 }}>
+										<Button
+											label="View Applicants"
+											icon="pi pi-users"
+											size="small"
+											severity="primary"
+											outlined
+											className="w-full sm:w-auto "
+											onClick={() =>
+												navigate("/applicants")
+											}
+											style={{
+												color: "white",
+												backgroundColor: "#21b8c4",
+												border: "none"
+											}}
+										/>
+									</motion.div>
+									<motion.div whileHover={{ scale: 1.01 }}>
+										<Button
+											label="View Listing"
+											icon="pi pi-pencil"
+											size="small"
+											severity="primary"
+											outlined
+											className="w-full sm:w-auto"
+											onClick={() => {
+												setCurrentListing(prop);
+												navigate(
+													`/view-listing/${prop._id}`
+												);
+											}}
+											style={{
+												color: "white",
+												backgroundColor: "#21b8c4",
+												border: "none"
+											}}
+										/>
+									</motion.div>
+								</>
 							)}
 
-							{/* Edit Listing */}
 							{prop.isDraft && (
-								<motion.div whileHover={{ scale: 1.01 }}>
-									<Button
-										label="Continue Editing"
-										icon="pi pi-pencil"
-										size="small"
-										severity="primary"
-										outlined
-										className="w-full sm:w-auto"
-										onClick={() => {
-											setCurrentListing(prop);
-											navigate(
-												`/add-listing/${prop._id}`
-											);
-										}}
-										style={{
-											color: "white",
-											backgroundColor: "#21b8c4",
-											border: "none"
-										}}
-									/>
-								</motion.div>
+								<>
+									<motion.div whileHover={{ scale: 1.01 }}>
+										<Button
+											label="Continue Editing"
+											icon="pi pi-pencil"
+											size="small"
+											severity="primary"
+											outlined
+											className="w-full sm:w-auto"
+											onClick={() => {
+												setCurrentListing(prop);
+												navigate(
+													`/add-listing/${prop._id}`
+												);
+											}}
+											style={{
+												color: "white",
+												backgroundColor: "#21b8c4",
+												border: "none"
+											}}
+										/>
+									</motion.div>
+									<motion.div whileHover={{ scale: 1.01 }}>
+										<Button
+											icon="pi pi-trash"
+											size="small"
+											severity="danger"
+											className="w-full sm:w-auto"
+											onClick={() => confirmDelete(prop)}
+											style={{
+												color: "white",
+												backgroundColor: "#f44336",
+												border: "none"
+											}}
+										/>
+									</motion.div>
+								</>
 							)}
 
-							{!prop.isDraft && (
+							{!prop.isDraft && !prop.isVerified && (
 								<motion.div whileHover={{ scale: 1.01 }}>
 									<Button
 										label="View Listing"
@@ -268,22 +343,6 @@ export default function Listings() {
 										style={{
 											color: "white",
 											backgroundColor: "#21b8c4",
-											border: "none"
-										}}
-									/>
-								</motion.div>
-							)}
-							{prop.isDraft && (
-								<motion.div whileHover={{ scale: 1.01 }}>
-									<Button
-										icon="pi pi-trash"
-										size="small"
-										severity="danger"
-										className="w-full sm:w-auto"
-										onClick={() => confirmDelete(prop)}
-										style={{
-											color: "white",
-											backgroundColor: "#f44336",
 											border: "none"
 										}}
 									/>

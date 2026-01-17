@@ -18,11 +18,11 @@ export default function SignUpStudent() {
 	const navigate = useNavigate();
 	const toast = useRef(null);
 
-	const showError = (detail) => {
+	const showError = detail => {
 		toast.current?.show({
 			severity: "error",
 			summary: "Sign-Up Failed",
-			detail: {detail},
+			detail: { detail },
 			life: 4000,
 			style: {
 				background: "#1E1E2F",
@@ -36,9 +36,7 @@ export default function SignUpStudent() {
 					<i className="pi pi-times-circle text-red-400 text-xl"></i>
 					<div>
 						<p className="font-semibold">Sign-Up Failed</p>
-						<p className="text-sm text-gray-200">
-							{detail}
-						</p>
+						<p className="text-sm text-gray-200">{detail}</p>
 					</div>
 				</div>
 			)
@@ -46,11 +44,8 @@ export default function SignUpStudent() {
 	};
 
 	const validateName = () => {
-		const nameParts = name.trim().split(/\s+/);
-		if (nameParts.length !== 2) {
-			showError(
-				"Please enter exactly your first and last name, eg: Tom Flag"
-			);
+		if (name.length === 0) {
+			showError("Please enter your name");
 			return false;
 		}
 		return true;
@@ -212,7 +207,6 @@ export default function SignUpStudent() {
 						/>
 						<label htmlFor="confirmPwd">Confirm Password</label>
 					</FloatLabel>
-
 
 					<motion.div whileHover={{ scale: 1.02 }}>
 						<Button

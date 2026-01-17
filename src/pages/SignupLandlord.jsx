@@ -21,11 +21,11 @@ export default function SignUpLandlord() {
 	const { signup } = useContext(UserContext);
 	const toast = useRef(null);
 
-	const showError = (detail) => {
+	const showError = detail => {
 		toast.current?.show({
 			severity: "error",
 			summary: "Sign-Up Failed",
-			detail: {detail},
+			detail: { detail },
 			life: 4000,
 			style: {
 				background: "#1E1E2F",
@@ -39,18 +39,15 @@ export default function SignUpLandlord() {
 					<i className="pi pi-times-circle text-red-400 text-xl"></i>
 					<div>
 						<p className="font-semibold">Sign-Up Failed</p>
-						<p className="text-sm text-gray-200">
-							{detail}
-						</p>
+						<p className="text-sm text-gray-200">{detail}</p>
 					</div>
 				</div>
 			)
 		});
 	};
 	const validateName = () => {
-		const nameParts = name.trim().split(/\s+/);
-		if (nameParts.length !== 2) {
-			showError("Please enter exactly your first and last name, eg: Tom Flag");
+		if (name.length === 0) {
+			showError("Please enter your name");
 			return false;
 		}
 		return true;
@@ -58,17 +55,32 @@ export default function SignUpLandlord() {
 
 	const validateEmail = () => {
 		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!email.trim()) { showError("A valid email address is required."); return false; }
-		if (!regex.test(email)) { showError("Please enter a valid email address."); return false; }
+		if (!email.trim()) {
+			showError("A valid email address is required.");
+			return false;
+		}
+		if (!regex.test(email)) {
+			showError("Please enter a valid email address.");
+			return false;
+		}
 		return true;
 	};
 
 	const validatePasswords = () => {
-		if (!password || !confirmPassword) { showError("Please enter both password fields."); return false; }
-		if (password !== confirmPassword) { showError("Passwords do not match one another."); return false; }
-		const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+		if (!password || !confirmPassword) {
+			showError("Please enter both password fields.");
+			return false;
+		}
+		if (password !== confirmPassword) {
+			showError("Passwords do not match one another.");
+			return false;
+		}
+		const strongPasswordRegex =
+			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 		if (!strongPasswordRegex.test(password)) {
-			showError("Password must be at least 8 characters, with uppercase, lowercase, number, and symbol.");
+			showError(
+				"Password must be at least 8 characters, with uppercase, lowercase, number, and symbol."
+			);
 			return false;
 		}
 		return true;
@@ -91,7 +103,6 @@ export default function SignUpLandlord() {
 			{/* same frozen bubbles as other auth pages */}
 			<BackgroundBubbles count={20} color="#8B5CF6" />
 
-
 			<Toast ref={toast} position="bottom-right" />
 
 			<motion.div
@@ -111,7 +122,9 @@ export default function SignUpLandlord() {
 						onChange={e => setName(e.target.value)}
 						className="w-full p-3 text-lg"
 					/>
-					<label htmlFor="name" className="ml-2">Name</label>
+					<label htmlFor="name" className="ml-2">
+						Name
+					</label>
 				</FloatLabel>
 
 				<FloatLabel className="mt-5">
@@ -121,7 +134,9 @@ export default function SignUpLandlord() {
 						onChange={e => setEmail(e.target.value)}
 						className="w-full p-3 text-lg"
 					/>
-					<label htmlFor="email" className="ml-2">Email</label>
+					<label htmlFor="email" className="ml-2">
+						Email
+					</label>
 				</FloatLabel>
 
 				<FloatLabel>
@@ -134,8 +149,12 @@ export default function SignUpLandlord() {
 						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
 						toggleMask
 						pt={{
-							showIcon: { className: "-translate-y-1/4 -translate-x-2/3" },
-							hideIcon: { className: "-translate-y-1/4 -translate-x-2/3" }
+							showIcon: {
+								className: "-translate-y-1/4 -translate-x-2/3"
+							},
+							hideIcon: {
+								className: "-translate-y-1/4 -translate-x-2/3"
+							}
 						}}
 					/>
 					<label htmlFor="password">Password</label>
@@ -151,13 +170,16 @@ export default function SignUpLandlord() {
 						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
 						toggleMask
 						pt={{
-							showIcon: { className: "-translate-y-1/4 -translate-x-2/3" },
-							hideIcon: { className: "-translate-y-1/4 -translate-x-2/3" }
+							showIcon: {
+								className: "-translate-y-1/4 -translate-x-2/3"
+							},
+							hideIcon: {
+								className: "-translate-y-1/4 -translate-x-2/3"
+							}
 						}}
 					/>
 					<label htmlFor="confirmPwd">Confirm Password</label>
 				</FloatLabel>
-
 
 				<motion.div whileHover={{ scale: 1.02 }}>
 					<Button
@@ -173,7 +195,9 @@ export default function SignUpLandlord() {
 				</motion.div>
 
 				<Divider layout="horizontal">
-					<span className="text-sm text-[var(--primary-color-text)]">or sign up with</span>
+					<span className="text-sm text-[var(--primary-color-text)]">
+						or sign up with
+					</span>
 				</Divider>
 
 				<div className="flex flex-col gap-2">
@@ -188,7 +212,9 @@ export default function SignUpLandlord() {
 								border: "none"
 							}}
 							type="button"
-							onClick={() => { window.location.href = `${BASE_URL}/auth/google`; }}
+							onClick={() => {
+								window.location.href = `${BASE_URL}/auth/google`;
+							}}
 						/>
 					</motion.div>
 					<motion.div whileHover={{ scale: 1.02 }}>
@@ -213,7 +239,10 @@ export default function SignUpLandlord() {
 					className="text-sm text-center text-[var(--text-color-secondary)]"
 				>
 					Already have an account?{" "}
-					<Link to="/signin/landlord" className="text-[var(--primary-color-text)] font-medium">
+					<Link
+						to="/signin/landlord"
+						className="text-[var(--primary-color-text)] font-medium"
+					>
 						Login
 					</Link>
 				</motion.p>

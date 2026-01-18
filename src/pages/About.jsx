@@ -210,7 +210,7 @@ export default function AboutPage() {
 						<div className="flex flex-col items-center">
 							<div className="w-28 h-28 bg-gray-300 rounded-full">
 								<img
-									src="/viktor.jpeg"
+									src="/viktor3.jpeg"
 									className="rounded-full"
 									alt=""
 								/>

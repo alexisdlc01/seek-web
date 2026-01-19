@@ -299,7 +299,7 @@ const BasicInfoStep = ({
 							htmlFor="availabilityDate"
 							className="font-medium mb-2"
 						>
-							Available Until
+							Available Until (Optional)
 						</label>
 						<Calendar
 							id="availabilityDate"

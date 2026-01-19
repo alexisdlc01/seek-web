@@ -1,14 +1,12 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Stepper } from "primereact/stepper";
 import { StepperPanel } from "primereact/stepperpanel";
 import { Toast } from "primereact/toast";
 import BasicInfoStep from "../components/addPropertySteps/BasicInfoStep";
-import LocationAvailabilityStep from "../components/addPropertySteps/LocationAvailabilityStep";
 import FeaturesStep from "../components/addPropertySteps/FeaturesStep";
 import PhotosMediaStep from "../components/addPropertySteps/PhotosMediaStep";
 import ApplicationRequirements from "../components/addPropertySteps/ApplicationRequirementsStep.jsx";
 import ReviewPublishStep from "../components/addPropertySteps/ReviewPublishStep";
-import ListingsContext from "../context/ListingsContext.jsx";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { ProgressSpinner } from "primereact/progressspinner";
@@ -192,7 +190,6 @@ const AddListing = () => {
 		if (!rent) missing.push("Monthly rent");
 		if (!deposit) missing.push("Security deposit");
 		if (!availabilityDate) missing.push("Available from");
-		if (!endAvailabilityDate) missing.push("Available until");
 		if (!registerOfTitle) missing.push("Register of Title (PDF)");
 		if (!furnishingStatus) missing.push("Furnishing status");
 		if (photos.length === 0) missing.push("At least one photo");

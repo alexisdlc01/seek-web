@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Dropdown } from "primereact/dropdown";
+import { SelectButton } from "primereact/selectbutton";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import "primeicons/primeicons.css";
@@ -54,11 +55,41 @@ const BasicInfoStep = ({
 	setRegisterOfTitleKeyFromBackend,
 	numOfPeople,
 	setNumOfPeople,
+	registrationNumber,
+	setRegistrationNumber,
 	next
 }) => {
+	const [registerInputMode, setRegisterInputMode] = useState("number");
+	// "number" | "document"
+
 	useEffect(() => {
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	}, []);
+
+	useEffect(() => {
+		if (registerInputMode === "number") {
+			// Clear document-related state
+			setRegisterOfTitle(null);
+			setRegisterOfTitleKeyFromBackend(null);
+		} else {
+			// Clear registration number
+			setRegistrationNumber("");
+		}
+	}, [registerInputMode]);
+
+	const registerInputOptions = [
+		{
+			label: "Registration Number",
+			value: "number",
+			icon: "pi pi-hashtag"
+		},
+		{
+			label: "Upload Document",
+			value: "document",
+			icon: "pi pi-file-pdf"
+		}
+	];
+
 
 	return (
 		<div style={{ background: "#0f0f23", color: "white" }}>
@@ -311,80 +342,129 @@ const BasicInfoStep = ({
 				</div>
 			</div>
 
-			<div className="flex flex-col mt-4">
-				<label htmlFor="floorPlan" className="font-medium mb-3">
-					Register of Title (PDF only)
-				</label>
-				<Button
-					type="button"
-					label={
-						registerOfTitle ? registerOfTitle.name : "Choose File"
-					}
-					icon="pi pi-upload"
-					outlined
-					onClick={() => registerOfTitleRef.current?.click()}
-					className="w-max"
-				/>
-				<input
-					type="file"
-					ref={registerOfTitleRef}
-					accept=".pdf"
-					className="hidden"
-					onChange={async e => {
-						const file = e.target.files[0];
-						if (file && file.type !== "application/pdf") {
-							alert("Please upload a PDF file");
-							return;
-						}
-						const res = await axios.get(
-							`${BASE_URL}/upload/presign`,
-							{
-								params: {
-									filename: file.name,
-									fileType: file.type,
-									folder: "private"
-								},
-								withCredentials: true
+			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+				<div className="flex flex-col gap-2 mb-4">
+					<label className="font-medium">
+						Proof of Ownership (Only select one)
+					</label>
+
+					<SelectButton
+						value={registerInputMode}
+						options={registerInputOptions}
+						onChange={e => setRegisterInputMode(e.value)}
+						optionLabel="label"
+						optionValue="value"
+						optionDisabled={false}
+						className="bg-[#141432] border border-[#2a2a5a] rounded-lg w-fit"
+					/>
+				</div>
+
+				{registerInputMode === "number" && (
+					<div className="flex flex-col">
+						<label
+							htmlFor="registrationNumber"
+							className="font-medium mb-2"
+						>
+							Registration Number
+						</label>
+						<InputText
+							id="registrationNumber"
+							value={registrationNumber}
+							onChange={e =>
+								setRegistrationNumber(e.target.value)
 							}
-						);
+							placeholder="e.g. AB123456"
+							disabled={registerInputMode !== "number"}
+						/>
+					</div>
+				)}
 
-						const { uploadUrl, fileUrl, key } = res.data;
+				{/* Register of Title */}
+				{registerInputMode === "document" && (
+					<div className="flex flex-col">
+						<label className="font-medium mb-2">
+							Register of Title (PDF only)
+						</label>
 
-						await axios.put(uploadUrl, file, {
-							headers: { "Content-Type": file.type }
-						});
+						<Button
+							type="button"
+							label={
+								registerOfTitle
+									? registerOfTitle.name
+									: "Choose File"
+							}
+							icon="pi pi-upload"
+							outlined
+							onClick={() => registerOfTitleRef.current?.click()}
+							className="w-max"
+						/>
 
-						setRegisterOfTitleKeyFromBackend(key);
-						setRegisterOfTitle(file);
-					}}
-				/>
-				{registerOfTitle && (
-					<div className="mt-2 text-sm text-[#1ba4ae] flex items-center">
-						<span
-							className={"cursor-pointer underline text-blue"}
-							onClick={async e => {
+						<input
+							type="file"
+							ref={registerOfTitleRef}
+							accept=".pdf"
+							className="hidden"
+							disabled={registerInputMode !== "document"}
+							onChange={async e => {
+								const file = e.target.files[0];
+								if (file && file.type !== "application/pdf") {
+									alert("Please upload a PDF file");
+									return;
+								}
+
 								const res = await axios.get(
-									`${BASE_URL}/upload/access`,
+									`${BASE_URL}/upload/presign`,
 									{
 										params: {
-											key: registerOfTitleKeyFromBackend
+											filename: file.name,
+											fileType: file.type,
+											folder: "private"
 										},
 										withCredentials: true
 									}
 								);
-								window.open(res.data, "_blank");
+
+								const { uploadUrl, key } = res.data;
+
+								await axios.put(uploadUrl, file, {
+									headers: { "Content-Type": file.type }
+								});
+
+								setRegisterOfTitleKeyFromBackend(key);
+								setRegisterOfTitle(file);
 							}}
-						>
-							{registerOfTitle.name}
-						</span>
-						<Button
-							icon="pi pi-times"
-							text
-							rounded
-							size="small"
-							className="ml-2"
-							onClick={() => setRegisterOfTitle(null)}
 						/>
+
+						{registerOfTitle && (
+							<div className="mt-2 text-sm text-[#1ba4ae] flex items-center">
+								<span
+									className="cursor-pointer underline"
+									onClick={async () => {
+										const res = await axios.get(
+											`${BASE_URL}/upload/access`,
+											{
+												params: {
+													key: registerOfTitleKeyFromBackend
+												},
+												withCredentials: true
+											}
+										);
+										window.open(res.data, "_blank");
+									}}
+								>
+									{registerOfTitle.name}
+								</span>
+
+								<Button
+									icon="pi pi-times"
+									text
+									rounded
+									size="small"
+									className="ml-2"
+									onClick={() => setRegisterOfTitle(null)}
+								/>
+							</div>
+						)}
 					</div>
 				)}
 			</div>

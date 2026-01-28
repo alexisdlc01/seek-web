@@ -109,12 +109,12 @@ const PhotosMediaStep = ({
 					<input
 						type="file"
 						ref={floorPlanInputRef}
-						accept=".pdf"
+						accept=".*/*"
 						className="hidden"
 						onChange={async e => {
 							const file = e.target.files[0];
-							if (file && file.type !== "application/pdf") {
-								alert("Please upload a PDF file");
+							if (file) {
+								alert("Please upload a file");
 								return;
 							}
 							const res = await axios.get(

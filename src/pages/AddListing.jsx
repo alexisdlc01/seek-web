@@ -61,6 +61,7 @@ const AddListing = () => {
 	const [regularBedrooms, setRegularBedrooms] = useState(null);
 	const [ensuiteBedrooms, setEnsuiteBedrooms] = useState(null);
 	const bathroomOptions = [
+		{ label: "0", value: 0 },
 		{ label: "0.5", value: 0.5 },
 		{ label: "1", value: 1 },
 		{ label: "1.5", value: 1.5 },
@@ -70,6 +71,7 @@ const AddListing = () => {
 	const [bathrooms, setBathrooms] = useState(null);
 	const [description, setDescription] = useState("");
 	const [registerOfTitle, setRegisterOfTitle] = useState(null);
+	const [registrationNumber, setRegistrationNumber] = useState("");
 	const [rent, setRent] = useState(null);
 	const [deposit, setDeposit] = useState(null);
 	const [availabilityDate, setAvailabilityDate] = useState(null);
@@ -123,33 +125,27 @@ const AddListing = () => {
 			id: 1,
 			name: "Identification",
 			desc: "National ID or Passport",
-			required: true,
+			required: true
 		},
 		{
 			id: 2,
 			name: "Proof of income or financial support",
-			desc:
-				"A proof of student loan or scholarship, savings, financial support from parents/guardians",
-			required: true,
+			desc: "A proof of student loan or scholarship, savings, financial support from parents/guardians",
+			required: true
 		},
 		{
 			id: 3,
 			name: "Guarantor information",
-			desc:
-				"Upload your guarantor agreement with a UK based guarantor",
-			required: true,
+			desc: "Upload your guarantor agreement with a UK based guarantor",
+			required: true
 		},
 		{
 			id: 4,
 			name: "Landlord reference",
-			desc:
-				"Upload your previous landlord reference or University accommodation letter",
-			required: false,
-		},
+			desc: "Upload your previous landlord reference or University accommodation letter",
+			required: false
+		}
 	]);
-
-
-
 
 	// Step 3 state
 	const [photos, setPhotos] = useState([]);
@@ -193,7 +189,8 @@ const AddListing = () => {
 		if (!registerOfTitle) missing.push("Register of Title (PDF)");
 		if (!furnishingStatus) missing.push("Furnishing status");
 		if (photos.length === 0) missing.push("At least one photo");
-		if (Apprequirements.length === 0) missing.push("At least one requirement");
+		if (Apprequirements.length === 0)
+			missing.push("At least one requirement");
 
 		if (missing.length > 0) {
 			toast.current?.show({
@@ -251,7 +248,7 @@ const AddListing = () => {
 			registerOfTitleKey: registerOfTitleKeyFromBackend,
 			furnishingStatus: furnishingStatus
 				? furnishingStatus.charAt(0).toLowerCase() +
-				furnishingStatus.slice(1)
+					furnishingStatus.slice(1)
 				: null,
 			epcRating: epcRating,
 			amenities: amenities,
@@ -439,12 +436,14 @@ const AddListing = () => {
 				setCurrentListing(res.data);
 				originalListingRef.current = res.data;
 				res.data.propertyTitle ? setTitle(res.data.propertyTitle) : {};
-				res.data.numOfPeople ? setNumOfPeople(res.data.numOfPeople) : {};
+				res.data.numOfPeople
+					? setNumOfPeople(res.data.numOfPeople)
+					: {};
 				res.data.sizeSqMeters ? setSizeSqM(res.data.sizeSqMeters) : {};
 				res.data.propertyType
 					? setPropertyType(
-						propertyTypeMap[res.data.propertyType] || null
-					)
+							propertyTypeMap[res.data.propertyType] || null
+						)
 					: {};
 				res.data.bedroomsCount
 					? setRegularBedrooms(res.data.bedroomsCount)
@@ -475,16 +474,22 @@ const AddListing = () => {
 
 				res.data.furnishingStatus
 					? setFurnishingStatus(
-						res.data.furnishingStatus.charAt(0).toUpperCase() +
-						res.data.furnishingStatus.slice(1)
-					)
+							res.data.furnishingStatus.charAt(0).toUpperCase() +
+								res.data.furnishingStatus.slice(1)
+						)
 					: {};
 				res.data.epcRating ? setEpcRating(res.data.epcRating) : {};
 				res.data.videoTourLink
 					? setVideoLink(res.data.videoTourLink)
 					: {};
 
-				res.data.requirements.length !== 0 ? setRequirements(res.data.requirements) : {};
+				res.data.requirements.length !== 0
+					? setRequirements(res.data.requirements)
+					: {};
+
+				res.data.registrationNumber
+					? setRegistrationNumber(res.data.registrationNumber)
+					: {};
 
 				if (res.data.registerOfTitleKey) {
 					setRegisterOfTitleKeyFromBackend(
@@ -545,7 +550,8 @@ const AddListing = () => {
 						securityDeposit: deposit,
 						availableFrom: availabilityDate,
 						availableUntil: endAvailabilityDate,
-						registerOfTitleKey: registerOfTitleKeyFromBackend
+						registerOfTitleKey: registerOfTitleKeyFromBackend,
+						registrationNumber: registrationNumber
 					});
 
 					const step1Changes = getChangedFields(
@@ -565,7 +571,7 @@ const AddListing = () => {
 					const step2Data = cleanObject({
 						furnishingStatus: furnishingStatus
 							? furnishingStatus.charAt(0).toLowerCase() +
-							furnishingStatus.slice(1)
+								furnishingStatus.slice(1)
 							: null,
 						epcRating: epcRating,
 						amenities: amenities
@@ -650,7 +656,6 @@ const AddListing = () => {
 					);
 					break;
 			}
-
 		})();
 	}, [step]);
 
@@ -717,6 +722,8 @@ const AddListing = () => {
 							registerOfTitleRef={registerOfTitleRef}
 							registerOfTitle={registerOfTitle}
 							setRegisterOfTitle={setRegisterOfTitle}
+							registrationNumber={registrationNumber}
+							setRegistrationNumber={setRegistrationNumber}
 							registerOfTitleKeyFromBackend={
 								registerOfTitleKeyFromBackend
 							}

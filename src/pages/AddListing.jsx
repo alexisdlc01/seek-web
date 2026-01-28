@@ -246,6 +246,7 @@ const AddListing = () => {
 			availableFrom: availabilityDate,
 			availableUntil: endAvailabilityDate,
 			registerOfTitleKey: registerOfTitleKeyFromBackend,
+			registrationNumber: registrationNumber,
 			furnishingStatus: furnishingStatus
 				? furnishingStatus.charAt(0).toLowerCase() +
 					furnishingStatus.slice(1)

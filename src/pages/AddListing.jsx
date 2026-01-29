@@ -186,7 +186,11 @@ const AddListing = () => {
 		if (!rent) missing.push("Monthly rent");
 		if (!deposit) missing.push("Security deposit");
 		if (!availabilityDate) missing.push("Available from");
-		if (!registerOfTitle) missing.push("Register of Title (PDF)");
+		if (!registerOfTitle && !registrationNumber) {
+			missing.push(
+				"One of Register of Title (PDF) or Registration Number"
+			);
+		}
 		if (!furnishingStatus) missing.push("Furnishing status");
 		if (photos.length === 0) missing.push("At least one photo");
 		if (Apprequirements.length === 0)
@@ -231,7 +235,7 @@ const AddListing = () => {
 		const finalData = cleanObject({
 			propertyTitle: title,
 			sizeSqMeters: sizeSqM,
-			numOfPeople: numOfPeople,
+			numOfPeople: numOfPeople.toString(),
 			propertyType: propertyTypeMapInverse[propertyType],
 			streetAddress: street,
 			cityTown: city,
@@ -248,8 +252,7 @@ const AddListing = () => {
 			registerOfTitleKey: registerOfTitleKeyFromBackend,
 			registrationNumber: registrationNumber,
 			furnishingStatus: furnishingStatus
-				? furnishingStatus.charAt(0).toLowerCase() +
-					furnishingStatus.slice(1)
+				? furnishingStatus
 				: null,
 			epcRating: epcRating,
 			amenities: amenities,
@@ -474,10 +477,7 @@ const AddListing = () => {
 					: {};
 
 				res.data.furnishingStatus
-					? setFurnishingStatus(
-							res.data.furnishingStatus.charAt(0).toUpperCase() +
-								res.data.furnishingStatus.slice(1)
-						)
+					? setFurnishingStatus(res.data.furnishingStatus)
 					: {};
 				res.data.epcRating ? setEpcRating(res.data.epcRating) : {};
 				res.data.videoTourLink
@@ -571,8 +571,7 @@ const AddListing = () => {
 				case 3:
 					const step2Data = cleanObject({
 						furnishingStatus: furnishingStatus
-							? furnishingStatus.charAt(0).toLowerCase() +
-								furnishingStatus.slice(1)
+							? furnishingStatus
 							: null,
 						epcRating: epcRating,
 						amenities: amenities

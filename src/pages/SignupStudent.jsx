@@ -113,55 +113,30 @@ export default function SignUpStudent() {
 						Create Student Account
 					</h1>
 
-					<div className="hidden sm:block">
-						<FloatLabel className="w-full mb-8">
-							<div className="p-inputgroup w-full">
-								<InputText
-									id="name"
-									value={name}
-									onChange={e => setName(e.target.value)}
-									className="w-full"
-								/>
-							</div>
-							<label htmlFor="name">First and last name</label>
-						</FloatLabel>
-					</div>
+					<FloatLabel className="w-full mb-8">
+						<InputText
+							id="name"
+							value={name}
+							onChange={e => setName(e.target.value)}
+							className="w-full"
+						/>
+						<label htmlFor="name">First and last name</label>
+					</FloatLabel>
 
-					<div className="hidden sm:block">
-						<FloatLabel className="w-full mb-8">
-							<div className="p-inputgroup w-full">
-								<InputText
-									id="email"
-									value={email}
-									onChange={e => setEmail(e.target.value)}
-									className="w-full"
-								/>
-								<span className="p-inputgroup-addon">
-									@st-andrews.ac.uk
-								</span>
-							</div>
-							<label htmlFor="email">St Andrews Email</label>
-						</FloatLabel>
-					</div>
-
-					{/* Mobile */}
-					<div className="block sm:hidden">
-						<FloatLabel className="w-full mb-8">
+					<FloatLabel className="w-full mb-8">
+						<div className="p-inputgroup w-full">
 							<InputText
-								id="emailMobile"
+								id="email"
 								value={email}
 								onChange={e => setEmail(e.target.value)}
 								className="w-full"
 							/>
-							<label htmlFor="emailMobile">
-								St Andrews Email Username
-							</label>
-						</FloatLabel>
-						<div className="p-inputgroup-addon w-full mt-2 text-center rounded bg-[var(--surface-c)] text-[var(--text-color)] py-2 text-sm">
-							@st-andrews.ac.uk
+							<span className="p-inputgroup-addon hidden sm:inline">
+								@st-andrews.ac.uk
+							</span>
 						</div>
-					</div>
-
+						<label htmlFor="email">Email</label>
+					</FloatLabel>
 					<FloatLabel className="mb-8">
 						<Password
 							inputId="password"

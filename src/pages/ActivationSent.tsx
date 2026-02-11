@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function ActivationSent() {
     return (
         <div className="min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
@@ -11,7 +9,7 @@ export default function ActivationSent() {
                 <p className="text-center text-gray-600">
                     An activation email has been sent to your email address. Please check your inbox and follow the instructions to activate your account.
                 </p>
-                
+
             </div>
         </div>
     );

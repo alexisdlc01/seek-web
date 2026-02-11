@@ -446,8 +446,8 @@ const AddListing = () => {
 				res.data.sizeSqMeters ? setSizeSqM(res.data.sizeSqMeters) : {};
 				res.data.propertyType
 					? setPropertyType(
-							propertyTypeMap[res.data.propertyType] || null
-						)
+						propertyTypeMap[res.data.propertyType] || null
+					)
 					: {};
 				res.data.bedroomsCount
 					? setRegularBedrooms(res.data.bedroomsCount)

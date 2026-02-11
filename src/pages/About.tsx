@@ -1,28 +1,28 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "primereact/button";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 export default function AboutPage() {
-	const [openSection, setOpenSection] = useState(null);
+	const [openSection, setOpenSection] = useState<string>(null);
 	const navigate = useNavigate();
 
-	const toggleAccordion = section => {
+	const toggleAccordion = (section: string) => {
 		setOpenSection(openSection === section ? null : section);
 	};
 
 	return (
-		<div className="min-h-screen bg-[var(--surface-a)] text-[var(--text-color)] px-4 py-16">
+		<div className="min-h-screen px-4 py-16">
 			<div className="max-w-6xl mx-auto space-y-10">
 				{/* Title */}
-				<h1 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)]">
+				<h1 className="text-3xl md:text-4xl font-bold text-primary">
 					About Us
 				</h1>
 
 				<div>
-					<h2 className="text-xl font-semibold text-[var(--text-color)] mb-4">
+					<h2 className="text-xl font-semibold mb-4">
 						Our{" "}
-						<span className="text-[var(--primary-color)]">
+						<span className="text-primary">
 							Mission
 						</span>
 					</h2>

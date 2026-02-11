@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import NavbarMobile from "./NavBarMobile.jsx";
-import NavbarDesktop from "./NavBarDesktop.jsx";
+import NavbarDesktop from "./NavBarDesktop";
 import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 
 export default function Navbar() {

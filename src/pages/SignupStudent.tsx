@@ -109,67 +109,33 @@ export default function SignUpStudent() {
 				className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-md p-8 border border-[var(--surface-border)]"
 			>
 				<form onSubmit={handleSubmit} className="space-y-6">
-					<h1 className="text-center text-2xl font-bold text-[var(--primary-color)] mb-8">
+					<h1 className="text-center text-2xl font-bold text-primary">
 						Create Student Account
 					</h1>
 
-					<div className="hidden sm:block">
-						<FloatLabel className="w-full mb-8">
-							<div className="p-inputgroup w-full">
-								<InputText
-									id="name"
-									value={name}
-									onChange={e => setName(e.target.value)}
-									className="w-full"
-								/>
-							</div>
-							<label htmlFor="name">First and last name</label>
-						</FloatLabel>
-					</div>
+					<FloatLabel>
+						<label htmlFor="name" className="text-black">First and last name</label>
+						<InputText className="w-full"
+							id="name"
+							value={name}
+							onChange={e => setName(e.target.value)} />
+					</FloatLabel>
 
-					<div className="hidden sm:block">
-						<FloatLabel className="w-full mb-8">
-							<div className="p-inputgroup w-full">
-								<InputText
-									id="email"
-									value={email}
-									onChange={e => setEmail(e.target.value)}
-									className="w-full"
-								/>
-								<span className="p-inputgroup-addon">
-									@st-andrews.ac.uk
-								</span>
-							</div>
-							<label htmlFor="email">St Andrews Email</label>
-						</FloatLabel>
-					</div>
+					<FloatLabel>
+						<label htmlFor="email">St Andrews Email</label>
+						<InputText className="w-full bg-red-500"
+							id="email"
+							value={email}
+							onChange={e => setEmail(e.target.value)} />
+					</FloatLabel>
 
-					{/* Mobile */}
-					<div className="block sm:hidden">
-						<FloatLabel className="w-full mb-8">
-							<InputText
-								id="emailMobile"
-								value={email}
-								onChange={e => setEmail(e.target.value)}
-								className="w-full"
-							/>
-							<label htmlFor="emailMobile">
-								St Andrews Email Username
-							</label>
-						</FloatLabel>
-						<div className="p-inputgroup-addon w-full mt-2 text-center rounded bg-[var(--surface-c)] text-[var(--text-color)] py-2 text-sm">
-							@st-andrews.ac.uk
-						</div>
-					</div>
-
-					<FloatLabel className="mb-8">
-						<Password
-							inputId="password"
+					<FloatLabel>
+						<Password id="password"
 							value={password}
 							onChange={e => setPassword(e.target.value)}
 							feedback={false}
 							className="w-full"
-							inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
+							inputClassName="w-full border rounded-md px-3 py-2"
 							toggleMask
 							pt={{
 								showIcon: {
@@ -185,14 +151,14 @@ export default function SignUpStudent() {
 						<label htmlFor="password">Password</label>
 					</FloatLabel>
 
-					<FloatLabel className="mb-8">
+					<FloatLabel>
 						<Password
 							inputId="confirmPwd"
 							value={confirmPassword}
 							onChange={e => setConfirmPassword(e.target.value)}
 							feedback={false}
 							className="w-full"
-							inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
+							inputClassName="w-full border rounded-md px-3 py-2"
 							toggleMask
 							pt={{
 								showIcon: {

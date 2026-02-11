@@ -2,6 +2,24 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
 
+type BackgroundBubblesProps = {
+	count?: number,
+	color?: string,
+	size?: number,
+	rise?: number,
+	durationMin?: number,
+	durationMax?: number,
+	delayMax?: number,
+}
+
+type CFGType = {
+	id: number,
+	left: string,
+	top: string,
+	delay: number,
+	duration: number,
+}
+
 const BackgroundBubbles = React.memo(function BackgroundBubbles({
 	count = 20,
 	color = "#8B5CF6",
@@ -10,8 +28,8 @@ const BackgroundBubbles = React.memo(function BackgroundBubbles({
 	durationMin = 3,
 	durationMax = 5,
 	delayMax = 2
-}) {
-	const cfgRef = useRef(null);
+}: BackgroundBubblesProps) {
+	const cfgRef = useRef<CFGType[]>(null);
 	if (!cfgRef.current) {
 		const r = Math.random;
 		cfgRef.current = Array.from({ length: count }).map((_, i) => ({

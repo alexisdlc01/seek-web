@@ -6,7 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 import { Avatar } from "primereact/avatar";
 
+type NavbarDesktopProps = {
+	user?: any
+}
+
 export default function NavbarDesktop({ user, logout, logo }) {
+	console.log("USER", user);
 	const navigate = useNavigate();
 	const loggedIn = !!user;
 	const { theme, setTheme } = useNavbarTheme();
@@ -85,18 +90,21 @@ export default function NavbarDesktop({ user, logout, logo }) {
 					{user.role === "LANDLORD_AGENCY" ? (
 						<>
 							<Button
+								//@ts-ignore
 								label={<span style={{ color: oppositeBackgroundTheme }}>Dashboard</span>}
 								text
 								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 								onClick={() => navigate("/dashboard")}
 							/>
 							<Button
+								//@ts-ignore
 								label={<span style={{ color: oppositeBackgroundTheme }}>Listings</span>}
 								text
 								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 								onClick={() => navigate("/listings")}
 							/>
 							<Button
+								//@ts-ignore
 								label={<span style={{ color: oppositeBackgroundTheme }}>Chat</span>}
 								text
 								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
@@ -106,18 +114,21 @@ export default function NavbarDesktop({ user, logout, logo }) {
 					) : (
 						<>
 							<Button
+								//@ts-ignore
 								label={<span style={{ color: oppositeBackgroundTheme }}>Home</span>}
 								text
 								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 								onClick={() => navigate("/")}
 							/>
 							<Button
+								//@ts-ignore
 								label={<span style={{ color: oppositeBackgroundTheme }}>About</span>}
 								text
 								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 								onClick={() => navigate("/about")}
 							/>
 							<Button
+								//@ts-ignore
 								label={<span style={{ color: oppositeBackgroundTheme }}>Help</span>}
 								text
 								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
@@ -139,18 +150,22 @@ export default function NavbarDesktop({ user, logout, logo }) {
 									shape="circle"
 								/>
 							) : (
-								<Avatar
-									label={user.name
-										.split(" ")
-										.map(n => n[0])
-										.join("")
-										.toUpperCase()}
-									className="bg-[#3182ce] text-white font-bold"
-									shape="circle"
-									style={{
-										backgroundColor: "#3182ce"
-									}}
-								/>
+								<>
+									{user && (
+										<Avatar
+											label={user.name
+												?.split(" ")
+												.map(n => n[0])
+												.join("")
+												.toUpperCase()}
+											className="bg-[#3182ce] text-white font-bold"
+											shape="circle"
+											style={{
+												backgroundColor: "#3182ce"
+											}}
+										/>
+									)}
+								</>
 							)}
 							<span className="text-white font-medium">{user.name}</span>
 							<i className="pi pi-chevron-down text-white text-sm" />
@@ -251,11 +266,10 @@ export default function NavbarDesktop({ user, logout, logo }) {
 					button: { className: "hidden" }
 				}}
 				style={{ background: backgroundTheme }}
-				className={`transition-colors duration-500 ease-in-out ${
-					theme === "dark"
-						? "bg-black text-white"
-						: "bg-white text-black"
-				}`}
+				className={`transition-colors duration-500 ease-in-out ${theme === "dark"
+					? "bg-black text-white"
+					: "bg-white text-black"
+					}`}
 			/>
 		</div>
 	);

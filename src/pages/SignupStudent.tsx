@@ -109,42 +109,33 @@ export default function SignUpStudent() {
 				className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-md p-8 border border-[var(--surface-border)]"
 			>
 				<form onSubmit={handleSubmit} className="space-y-6">
-					<h1 className="text-center text-2xl font-bold text-[var(--primary-color)] mb-8">
+					<h1 className="text-center text-2xl font-bold text-primary">
 						Create Student Account
 					</h1>
 
-					<FloatLabel className="w-full mb-8">
-						<InputText
+					<FloatLabel>
+						<label htmlFor="name" className="text-black">First and last name</label>
+						<InputText className="w-full"
 							id="name"
 							value={name}
-							onChange={e => setName(e.target.value)}
-							className="w-full"
-						/>
-						<label htmlFor="name">First and last name</label>
+							onChange={e => setName(e.target.value)} />
 					</FloatLabel>
 
-					<FloatLabel className="w-full mb-8">
-						<div className="p-inputgroup w-full">
-							<InputText
-								id="email"
-								value={email}
-								onChange={e => setEmail(e.target.value)}
-								className="w-full"
-							/>
-							<span className="p-inputgroup-addon hidden sm:inline">
-								@st-andrews.ac.uk
-							</span>
-						</div>
-						<label htmlFor="email">Email</label>
+					<FloatLabel>
+						<label htmlFor="email">St Andrews Email</label>
+						<InputText className="w-full bg-red-500"
+							id="email"
+							value={email}
+							onChange={e => setEmail(e.target.value)} />
 					</FloatLabel>
-					<FloatLabel className="mb-8">
-						<Password
-							inputId="password"
+
+					<FloatLabel>
+						<Password id="password"
 							value={password}
 							onChange={e => setPassword(e.target.value)}
 							feedback={false}
 							className="w-full"
-							inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
+							inputClassName="w-full border rounded-md px-3 py-2"
 							toggleMask
 							pt={{
 								showIcon: {
@@ -160,14 +151,14 @@ export default function SignUpStudent() {
 						<label htmlFor="password">Password</label>
 					</FloatLabel>
 
-					<FloatLabel className="mb-8">
+					<FloatLabel>
 						<Password
 							inputId="confirmPwd"
 							value={confirmPassword}
 							onChange={e => setConfirmPassword(e.target.value)}
 							feedback={false}
 							className="w-full"
-							inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
+							inputClassName="w-full border rounded-md px-3 py-2"
 							toggleMask
 							pt={{
 								showIcon: {

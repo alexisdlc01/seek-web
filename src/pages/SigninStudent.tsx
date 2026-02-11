@@ -1,13 +1,13 @@
-import { useContext, useRef, useState, useMemo } from "react";
+import { FormEventHandler, useContext, useRef, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
-import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Link, useNavigate } from "react-router";
 import UserContext from "../context/UserContext.jsx";
 import { Toast } from "primereact/toast";
-import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
+import BackgroundBubbles from "../components/BackgroundBubbles";
 
 export default function SignInStudent() {
 	const { login } = useContext(UserContext);
@@ -43,9 +43,9 @@ export default function SignInStudent() {
 		});
 	};
 
-	const validateEmailPrefix = prefix => /^[a-zA-Z0-9._-]+$/.test(prefix);
+	const validateEmailPrefix = (prefix: string) => /^[a-zA-Z0-9._-]+$/.test(prefix);
 
-	const handleSubmit = async e => {
+	const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault();
 		if (!validateEmailPrefix(email) || email.includes("@")) {
 			toast.current?.show({
@@ -87,13 +87,13 @@ export default function SignInStudent() {
 	return (
 		<div className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
 			<Toast ref={toast} position="bottom-right" />
-			<BackgroundBubbles count={20} />
+			<BackgroundBubbles />
 
 			<motion.form
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
-				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 bg-white space-y-6 border border-[var(--surface-border)]"
+				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 bg-white space-y-8 border border-[var(--surface-border)]"
 				onSubmit={handleSubmit}
 			>
 				<h1
@@ -104,40 +104,15 @@ export default function SignInStudent() {
 				</h1>
 
 				{/* Desktop */}
-				<div className="hidden sm:block mb-8">
-					<FloatLabel className="w-full">
-						<div className="p-inputgroup w-full">
-							<InputText
-								id="email"
-								value={email}
-								onChange={e => setEmail(e.target.value)}
-								className="w-full"
-							/>
-							<span className="p-inputgroup-addon">
-								@st-andrews.ac.uk
-							</span>
-						</div>
-						<label htmlFor="email">St Andrews Email</label>
-					</FloatLabel>
-				</div>
-
-				{/* Mobile */}
-				<div className="block sm:hidden">
-					<FloatLabel className="w-full">
-						<InputText
-							id="emailMobile"
-							value={email}
-							onChange={e => setEmail(e.target.value)}
-							className="w-full"
-						/>
-						<label htmlFor="emailMobile">
-							St Andrews Email Username
-						</label>
-					</FloatLabel>
-					<div className="p-inputgroup-addon w-full mt-2 text-center rounded bg-[var(--surface-c)] text-[var(--text-color)] py-2 text-sm">
-						@st-andrews.ac.uk
-					</div>
-				</div>
+				<FloatLabel className="w-full">
+					<InputText
+						id="email"
+						value={email}
+						onChange={e => setEmail(e.target.value)}
+						className="w-full"
+					/>
+					<label htmlFor="email">St Andrews Email</label>
+				</FloatLabel>
 
 				<FloatLabel className="mb-8">
 					<Password

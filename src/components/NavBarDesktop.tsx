@@ -5,12 +5,16 @@ import { Menu } from "primereact/menu";
 import { useNavigate } from "react-router-dom";
 import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 import { Avatar } from "primereact/avatar";
+import { MenuItem } from "primereact/menuitem";
+import { useAuthControllerLogout } from "../api/auth/auth.js";
 
 type NavbarDesktopProps = {
 	user?: any
 }
 
-export default function NavbarDesktop({ user, logout, logo }) {
+export default function NavbarDesktop({ user, logo }) {
+	const { mutate: logout } = useAuthControllerLogout();
+
 	console.log("USER", user);
 	const navigate = useNavigate();
 	const loggedIn = !!user;
@@ -62,14 +66,14 @@ export default function NavbarDesktop({ user, logout, logo }) {
 
 	const loginItems = [
 		{
-			label: <span style={{ color: "#0F0F23" }}>As Student</span>,
+			label: "As Student",
 			command: () => {
 				setLoginOpen(false);
 				navigate("/signin/student");
 			}
 		},
 		{
-			label: <span style={{ color: "#0F0F23" }}>As Landlord</span>,
+			label: "As Landlord",
 			command: () => {
 				setLoginOpen(false);
 				navigate("/signin/landlord");
@@ -180,9 +184,9 @@ export default function NavbarDesktop({ user, logout, logo }) {
 									<i className="pi pi-user-edit px-0.5"></i> Edit Profile
 								</button>
 								<button
-									onClick={async () => {
+									onClick={() => {
 										setUserMenuOpen(false);
-										await logout();
+										logout();
 									}}
 									className="cursor-pointer w-full text-left px-3 py-2 text-[#3182c] font-semibold hover:bg-black/5 rounded-lg"
 								>
@@ -196,52 +200,61 @@ export default function NavbarDesktop({ user, logout, logo }) {
 				// not logged in (keep your login dropdown as before)
 				<>
 					<Button
-						label={<span style={{ color: oppositeBackgroundTheme }}>Home</span>}
 						text
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/")}
-					/>
+					>
+						<span style={{ color: oppositeBackgroundTheme }}>Home</span>
+					</Button>
 					<Button
-						label={<span style={{ color: oppositeBackgroundTheme }}>About</span>}
 						text
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/about")}
-					/>
+					>
+						<span style={{ color: oppositeBackgroundTheme }}>About</span>
+					</Button>
 					<Button
-						label={<span style={{ color: oppositeBackgroundTheme }}>Help</span>}
 						text
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/contact")}
-					/>
+					>
+						<span style={{ color: oppositeBackgroundTheme }}>Help</span>
+					</Button>
 
 					{/* Existing login dropdown */}
 					<div ref={loginWrapRef} className="relative">
 						<Button
-							label={<span style={{ color: oppositeBackgroundTheme }}>Login</span>}
-							icon="pi pi-chevron-down"
-							iconPos="right"
 							text
 							className={`${baseStyle} ${theme === "dark" ? "text-white after:bg-white" : "text-black"}`}
 							onClick={() => setLoginOpen(v => !v)}
 							pt={{ icon: { className: iconColorClass } }}
-						/>
+						>
+							<div className="space-x-2">
+								<span style={{ color: oppositeBackgroundTheme }}>Login</span>
+								<i style={{ color: oppositeBackgroundTheme }} className="pi pi-chevron-down" />
+							</div>
+						</Button>
 						{loginOpen && (
 							<div
 								className="absolute right-0 top-[calc(100%+8px)] z-50"
 								style={{ width: "30%", right: "155%" }}
 							>
 								<Menu
-									model={loginItems.map(item => ({
-										...item,
-										template: (menuItem, options) => (
-											<Button
-												label={menuItem.label}
-												text
-												className={`${baseStyle} w-full text-left !py-2 !px-3`}
-												onClick={options.onClick}
-											/>
-										)
-									}))}
+									model={loginItems.map(item => {
+										const result: MenuItem = {
+											label: item.label,
+											command: item.command,
+											template: (menuItem, options) => (
+												<Button
+													text
+													className={`${baseStyle} w-full text-left !py-2 !px-3`}
+													onClick={options.onClick}>
+													<span style={{ color: "#0F0F23" }} className="text-center w-full">{menuItem.label}</span>
+												</Button>
+											)
+										}
+										return result;
+									})}
 									className="rounded-xl shadow-lg border bg-white p-1 min-w-0"
 								/>
 							</div>

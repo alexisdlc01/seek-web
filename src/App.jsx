@@ -176,7 +176,7 @@ function App() {
 								element={<ResetPasswordPassword />}
 							/>
 							<Route
-								path="/activationSent"
+								path="/activation-sent"
 								element={<ActivationSent />}
 							/>
 							<Route

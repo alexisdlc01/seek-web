@@ -5,7 +5,7 @@ import { Menu } from "primereact/menu";
 import { useNavigate } from "react-router-dom";
 import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 
-export default function NavbarMobile({ user, logout, logo }) {
+export default function NavbarMobile({ user, logo }) {
 	const navigate = useNavigate();
 	const loggedIn = !!user;
 	const { theme, setTheme } = useNavbarTheme();
@@ -45,17 +45,17 @@ export default function NavbarMobile({ user, logout, logo }) {
 
 	const items = loggedIn
 		? [
-				{ label: "Dashboard", command: () => navigate("/dashboard") },
-				{ label: "Listings", command: () => navigate("/listings") },
-				{ label: "Messages", command: () => navigate("/messages") },
-				{ label: "Settings", command: () => navigate("/settings") },
-				{ label: "Logout", command: async () => await logout() }
-			]
+			{ label: "Dashboard", command: () => navigate("/dashboard") },
+			{ label: "Listings", command: () => navigate("/listings") },
+			{ label: "Messages", command: () => navigate("/messages") },
+			{ label: "Settings", command: () => navigate("/settings") },
+			{ label: "Logout", command: async () => await logout() }
+		]
 		: [
-				{ label: "Home", command: () => navigate("/") },
-				{ label: "About", command: () => navigate("/about") },
-				{ label: "Help", command: () => navigate("/contact") }
-			];
+			{ label: "Home", command: () => navigate("/") },
+			{ label: "About", command: () => navigate("/about") },
+			{ label: "Help", command: () => navigate("/contact") }
+		];
 
 	return (
 		<Menubar

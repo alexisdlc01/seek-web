@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { FormEventHandler, useContext, useRef, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
@@ -8,9 +8,11 @@ import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import { Toast } from "primereact/toast";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
+import { showCustomToast } from "../utils/custom-toast.tsx";
+import { useAuthControllerSignup } from "../api/auth/auth.js";
 
 export default function SignUpStudent() {
-	const { signup } = useContext(UserContext);
+	const { mutate: signup } = useAuthControllerSignup();
 	const [email, setEmail] = useState("");
 	const [name, setName] = useState("");
 	const [password, setPassword] = useState("");
@@ -18,28 +20,10 @@ export default function SignUpStudent() {
 	const navigate = useNavigate();
 	const toast = useRef(null);
 
-	const showError = detail => {
-		toast.current?.show({
-			severity: "error",
+	function showError(detail: string) {
+		showCustomToast(toast.current, {
 			summary: "Sign-Up Failed",
-			detail: { detail },
-			life: 4000,
-			style: {
-				background: "#1E1E2F",
-				color: "#fff",
-				borderLeft: "5px solid #EF4444", // red accent
-				borderRadius: "8px",
-				boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
-			},
-			content: (
-				<div className="flex items-center space-x-3">
-					<i className="pi pi-times-circle text-red-400 text-xl"></i>
-					<div>
-						<p className="font-semibold">Sign-Up Failed</p>
-						<p className="text-sm text-gray-200">{detail}</p>
-					</div>
-				</div>
-			)
+			detail
 		});
 	};
 
@@ -52,15 +36,8 @@ export default function SignUpStudent() {
 	};
 
 	const validateEmail = () => {
-		const regex = /^[a-zA-Z0-9._-]+$/;
-		if (!email.trim()) {
-			showError("A valid St Andrews email prefix is required.");
-			return false;
-		}
-		if (!regex.test(email)) {
-			showError(
-				"Please enter only your email prefix (before @st-andrews.ac.uk)"
-			);
+		if (!email.trim() || !email.trim().endsWith("@st-andrews.ac.uk")) {
+			showError("A valid St Andrews email is required.");
 			return false;
 		}
 		return true;
@@ -86,13 +63,27 @@ export default function SignUpStudent() {
 		return true;
 	};
 
-	const handleSubmit = async e => {
+	const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault();
 		if (!validateName()) return;
 		if (!validateEmail()) return;
 		if (!validatePasswords()) return;
-		await signup(name, `${email}@st-andrews.ac.uk`, password, "STUDENT");
-		navigate("/activationSent");
+		signup({
+			// @ts-ignore
+			data: {
+				name,
+				email,
+				password,
+				role: "STUDENT"
+			}
+		}, {
+			onError(error) {
+				showError(error.response.data.message ?? "Sign up failed.");
+			},
+			onSuccess() {
+				navigate("/activation-sent");
+			}
+		});
 	};
 
 	return (

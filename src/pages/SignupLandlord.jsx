@@ -92,7 +92,7 @@ export default function SignUpLandlord() {
 		if (!validateEmail()) return;
 		if (!validatePasswords()) return;
 		await signup(name, email, password, "LANDLORD_AGENCY");
-		navigate("/activationSent");
+		navigate("/activation-sent");
 	};
 
 	return (

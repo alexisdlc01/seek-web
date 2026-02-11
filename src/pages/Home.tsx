@@ -12,13 +12,15 @@ import { useNavigate } from "react-router-dom";
 import CountUp from "react-countup";
 import Carousel from "../components/Carousel.jsx";
 import UserContext from "../context/UserContext.jsx";
+import { useAuthControllerCurrentUser } from "../api/auth/auth.js";
 
 export default function LandingPage() {
 	const { scrollY, scrollYProgress } = useScroll();
 	const videoRef = useRef(null);
 	const { setTheme } = useNavbarTheme();
 	const navigate = useNavigate();
-	const { user, logout } = useContext(UserContext);
+	const { data: user } = useAuthControllerCurrentUser();
+
 	const [isLandlord, setIsLandlord] = useState(false);
 	const [isStudent, setIsStudent] = useState(false);
 

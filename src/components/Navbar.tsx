@@ -5,10 +5,11 @@ import UserContext from "../context/UserContext.jsx";
 import NavbarMobile from "./NavBarMobile.jsx";
 import NavbarDesktop from "./NavBarDesktop";
 import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
+import { useAuthControllerCurrentUser, useAuthControllerLogin, useAuthControllerLogout } from "../api/auth/auth.js";
 
 export default function Navbar() {
 	const navigate = useNavigate();
-	const { user, logout } = useContext(UserContext);
+	const { data: user } = useAuthControllerCurrentUser();
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 	const { theme } = useNavbarTheme();
 
@@ -39,9 +40,9 @@ export default function Navbar() {
 			className="fixed top-0 left-0 w-full z-50 bg-white shadow"
 		>
 			{isMobile ? (
-				<NavbarMobile user={user} logout={logout} logo={logo} />
+				<NavbarMobile user={user} logo={logo} />
 			) : (
-				<NavbarDesktop user={user} logout={logout} logo={logo} />
+				<NavbarDesktop user={user} logo={logo} />
 			)}
 		</motion.div>
 	);

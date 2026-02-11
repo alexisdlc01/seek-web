@@ -5,83 +5,44 @@ import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router";
-import UserContext from "../context/UserContext.jsx";
 import { Toast } from "primereact/toast";
 import BackgroundBubbles from "../components/BackgroundBubbles";
+import { useAuthControllerLogin } from "../api/auth/auth.js";
+import { showCustomToast } from "../utils/custom-toast.tsx";
 
 export default function SignInStudent() {
-	const { login } = useContext(UserContext);
+	const { mutate: login } = useAuthControllerLogin();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const navigate = useNavigate();
-	const toast = useRef(null);
-
-	const showError = () => {
-		toast.current?.show({
-			severity: "error",
-			summary: "Sign-In Failed",
-			detail: "Your email or password didn’t match our records. Please try again.",
-			life: 4000,
-			style: {
-				background: "#1E1E2F",
-				color: "#fff",
-				borderLeft: "5px solid #EF4444", // red accent
-				borderRadius: "8px",
-				boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
-			},
-			content: (
-				<div className="flex items-center space-x-3">
-					<i className="pi pi-times-circle text-red-400 text-xl"></i>
-					<div>
-						<p className="font-semibold">Sign-In Failed</p>
-						<p className="text-sm text-gray-200">
-							Your email or password didn’t match our records.
-						</p>
-					</div>
-				</div>
-			)
-		});
-	};
-
-	const validateEmailPrefix = (prefix: string) => /^[a-zA-Z0-9._-]+$/.test(prefix);
+	const toast = useRef<Toast>(null);
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault();
-		if (!validateEmailPrefix(email) || email.includes("@")) {
-			toast.current?.show({
-				severity: "error",
-				summary: "Sign-In Failed",
-				detail: "Your email or password didn’t match our records. Please try again.",
-				life: 4000,
-				style: {
-					background: "#1E1E2F",
-					color: "#fff",
-					borderLeft: "5px solid #EF4444", // red accent
-					borderRadius: "8px",
-					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
-				},
-				content: (
-					<div className="flex items-center space-x-3">
-						<i className="pi pi-times-circle text-red-400 text-xl"></i>
-						<div>
-							<p className="font-semibold">
-								Invalid Email Format
-							</p>
-							<p className="text-sm text-gray-200">
-								"Please enter only your email prefix (before
-								@st-andrews.ac.uk)".
-							</p>
-						</div>
-					</div>
-				)
+		if (!email.trim().endsWith("@st-andrews.ac.uk")) {
+			showCustomToast(toast.current, {
+				summary: "Cannot Sign-In",
+				detail: "The provided is not a St Andrews email.",
 			});
 			return;
 		}
-		const fullEmail = `${email}@st-andrews.ac.uk`;
-		const res = await login(fullEmail, password);
-		if (res === "Credentials are not valid." || res === "Unauthorized")
-			showError();
-		else navigate("/download");
+
+		login({
+			data: {
+				email,
+				password,
+			}
+		}, {
+			onError() {
+				showCustomToast(toast.current, {
+					summary: "Cannot Sign-In",
+					detail: "Your email or password didn’t match our records. Please try again.",
+				});
+			},
+			onSuccess() {
+				navigate("/download");
+			}
+		});
 	};
 
 	return (
@@ -94,12 +55,9 @@ export default function SignInStudent() {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
 				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 bg-white space-y-8 border border-[var(--surface-border)]"
-				onSubmit={handleSubmit}
-			>
-				<h1
-					className="text-center text-2xl font-bold mb-8"
-					style={{ color: "#23b7c5" }}
-				>
+				onSubmit={handleSubmit}>
+				<h1 className="text-center text-2xl font-bold mb-8"
+					style={{ color: "#23b7c5" }}>
 					Welcome Back, Student
 				</h1>
 

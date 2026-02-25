@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const UserContext = createContext(undefined);
@@ -8,15 +8,13 @@ const UserContext = createContext(undefined);
 export default UserContext;
 export const UserProvider = ({ children }) => {
 	const [user, setUser] = useState(null);
+	const navigate = useNavigate();
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		(async () => {
 			const currentUser = await getCurrentUser();
 			setUser(currentUser);
-			console.log(
-				`Logged in as ${currentUser ? currentUser.name : currentUser}`
-			);
 			setLoading(false);
 		})();
 	}, []);
@@ -84,6 +82,8 @@ export const UserProvider = ({ children }) => {
 			setUser(null);
 		} catch (err) {
 			console.log("error logging out", err);
+		} finally {
+			navigate("/");
 		}
 	};
 
@@ -111,7 +111,9 @@ export const UserProvider = ({ children }) => {
 	};
 
 	return (
-		<UserContext.Provider value={{ user, setUser, login, logout, signup, loading }}>
+		<UserContext.Provider
+			value={{ user, setUser, login, logout, signup, loading }}
+		>
 			{children}
 		</UserContext.Provider>
 	);

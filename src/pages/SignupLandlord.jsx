@@ -236,7 +236,7 @@ export default function SignUpLandlord() {
 					initial={{ opacity: 0, y: 10 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.4, delay: 0.2 }}
-					className="text-sm text-center"
+					className="text-sm text-[var(--primary-color-text)] text-center"
 				>
 					Already have an account?{" "}
 					<Link

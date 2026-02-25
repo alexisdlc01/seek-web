@@ -90,7 +90,6 @@ const BasicInfoStep = ({
 		}
 	];
 
-
 	return (
 		<div style={{ background: "#0f0f23", color: "white" }}>
 			<div className="space-y-4">
@@ -349,13 +348,14 @@ const BasicInfoStep = ({
 					</label>
 
 					<SelectButton
+						pt={{ button: { style: { marginRight: "10px" } } }}
 						value={registerInputMode}
 						options={registerInputOptions}
 						onChange={e => setRegisterInputMode(e.value)}
 						optionLabel="label"
 						optionValue="value"
 						optionDisabled={false}
-						className="bg-[#141432] border border-[#2a2a5a] rounded-lg w-fit"
+						className="bg-[#141432] rounded-lg w-fit"
 					/>
 				</div>
 

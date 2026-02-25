@@ -351,7 +351,10 @@ const BasicInfoStep = ({
 						pt={{ button: { style: { marginRight: "10px" } } }}
 						value={registerInputMode}
 						options={registerInputOptions}
-						onChange={e => setRegisterInputMode(e.value)}
+						onChange={e => {
+							if (e.value === null) return;
+							setRegisterInputMode(e.value);
+						}}
 						optionLabel="label"
 						optionValue="value"
 						optionDisabled={false}

@@ -3,6 +3,7 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 
 function formatDate(date) {
+	if (!date) return null;
 	const d = new Date(date);
 	const day = d.getDate();
 	const month = d.toLocaleString("default", { month: "long" });

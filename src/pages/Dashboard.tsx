@@ -1,154 +1,37 @@
 import { Button } from "primereact/button";
-import { Badge } from "primereact/badge";
 import { Dropdown } from "primereact/dropdown";
 import { Chart } from "primereact/chart";
 import "chart.js/auto";
 import UserContext from "../context/UserContext.jsx";
 import { useNavigate } from "react-router-dom";
-import { listingsControllerMyListingsOptions } from "../client/@tanstack/react-query.gen.js";
-import { useQuery } from "@tanstack/react-query";
 import { Alternative } from "../components/Alternative.tsx";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FiAlertCircle } from "react-icons/fi";
 import { SelectItem } from "primereact/selectitem";
-
-/* -------------------- Marketing Section -------------------- */
-
-export function SeekPerformanceSection({ onGetReport }) {
-	const left = [
-		{
-			t: "Portfolio performance at a glance",
-			d: "Find all your personal dashboard analytics and KPIs in one place, transformed into a comprehensive, easy-to-understand analysis."
-		},
-		{
-			t: "A macro view of the market",
-			d: "High-level overview of the entire St Andrews market including demand/supply trends, hotspots, and property-type breakdowns."
-		},
-		{
-			t: "Audience insights",
-			d: "Analytics on top search filters, amenities, application demographics, and lease duration trends."
-		},
-		{
-			t: "Competitive analysis",
-			d: "Benchmark your listings against the market to optimize pricing and maximize performance."
-		}
-	];
-
-	const right = [
-		{
-			t: "Student behavior & intent analysis",
-			d: "Understand student intent via search patterns and listing interactions on SEEK to attract ideal tenants."
-		},
-		{
-			t: "Financial & Attribute Benchmarking",
-			d: "Objective financial analysis benchmarking your pricing and property attributes against the wider market."
-		},
-		{
-			t: "Actionable Strategy & Recommendations",
-			d: "Personalized, data-driven strategy and trend forecast to stay ahead and maximize returns."
-		}
-	];
-
-	const Check = () => (
-		<span
-			className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-xs"
-			style={{
-				borderColor: "var(--primary-color)",
-				color: "var(--primary-color)"
-			}}
-		>
-			✓
-		</span>
-	);
-
-	return (
-		<section className="py-12">
-			<div className="mx-auto max-w-5xl px-4">
-				<div className="flex items-center gap-4">
-					<span className="h-[2px] flex-1 bg-white/30" />
-					<h2 className="text-center text-xl font-semibold text-[var(--primary-color)]">
-						Ready to Get to Know
-						<br />
-						Your Market?
-					</h2>
-					<span className="h-[2px] flex-1 bg-white/30" />
-				</div>
-				<p className="mt-4 text-center text-[var(--text-secondary-color)]">
-					With SEEKPerformance, go beyond your portfolio. Get the
-					data-driven edge you need to optimize pricing, forecast
-					demand, and attract the right tenants.
-				</p>
-			</div>
-
-			<div className="mx-auto mt-10 max-w-6xl px-4">
-				<p className="text-lg font-semibold text-[var(--primary-color)]">
-					SEEKPerformance: Your Competitive Edge
-				</p>
-				<p className="mt-1 text-[var(--text-secondary-color)]">
-					What’s included?
-				</p>
-
-				{/* Stacks on mobile, 2 cols on md+ */}
-				<div className="mt-8 grid gap-10 md:grid-cols-2">
-					<ul className="space-y-6">
-						{left.map((x, i) => (
-							<li key={i} className="flex gap-3">
-								<Check />
-								<div>
-									<p className="font-semibold text-[var(--text-color)]">
-										{x.t}
-									</p>
-									<p className="mt-1 text-sm text-[var(--text-secondary-color)]">
-										{x.d}
-									</p>
-								</div>
-							</li>
-						))}
-					</ul>
-
-					<ul className="space-y-6">
-						{right.map((x, i) => (
-							<li key={i} className="flex gap-3">
-								<Check />
-								<div>
-									<p className="font-semibold text-[var(--text-color)]">
-										{x.t}
-									</p>
-									<p className="mt-1 text-sm text-[var(--text-secondary-color)]">
-										{x.d}
-									</p>
-								</div>
-							</li>
-						))}
-					</ul>
-				</div>
-
-				{/* CTA: centered on mobile, right on desktop */}
-				<div className="mt-8 flex items-center justify-center md:justify-end gap-4">
-					<Button
-						label="Get My Report"
-						onClick={onGetReport}
-						className="px-4"
-						style={{
-							background: "var(--primary-color)",
-							borderColor: "var(--primary-color)",
-							color: "black"
-						}}
-					/>
-				</div>
-			</div>
-		</section>
-	);
-}
+import axios from "axios";
+import ListingsContext from "../context/ListingsContext";
+// @ts-ignore
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 /* -------------------- Dashboard -------------------- */
 
 export default function Dashboard() {
-	const { data, isLoading } = useQuery(
-		listingsControllerMyListingsOptions({ cache: "no-cache" })
-	);
-	const listings = data;
-	const numListings = listings?.length;
+	// const { data, isLoading } = useQuery(
+	// 	listingsControllerMyListingsOptions({ cache: "no-cache" })
+	// );
+	const [totalApplications, setTotalApplications] = useState(10);
+
+	useEffect(() => {
+		(async () => {
+			const res = await axios.get(`${BASE_URL}/listings/mine`, {
+				withCredentials: true
+			});
+			console.log(res.data);
+			setTotalApplications(res.data.length);
+		})();
+	}, []);
+
+	const { listings } = useContext(ListingsContext);
 
 	const [range, setRange] = useState("All time");
 	const { user } = useContext(UserContext);
@@ -255,13 +138,6 @@ export default function Dashboard() {
 									icon="pi pi-inbox"
 									onClick={() => navigate("/application")}
 								/>
-								{false && (
-									<Badge
-										value="0"
-										severity="danger"
-										className="absolute -top-2 -right-2"
-									/>
-								)}
 							</div>
 							<div className="relative">
 								<Button
@@ -269,13 +145,6 @@ export default function Dashboard() {
 									icon="pi pi-comments"
 									onClick={() => navigate("/chat")}
 								/>
-								{false && (
-									<Badge
-										value="0"
-										severity="danger"
-										className="absolute -top-2 -right-2"
-									/>
-								)}
 							</div>
 							<Button
 								icon="pi pi-pencil"
@@ -327,7 +196,7 @@ export default function Dashboard() {
 								/>
 							</div>
 						</div>
-						<KpiRail />
+						<KpiRail totalApplications={totalApplications} />
 					</div>
 					<Alternative
 						ok={listings && listings.length > 0}
@@ -357,10 +226,19 @@ function ListingsPlaceholder() {
 
 type KPIProps = { title: string; value: string; icon: string; small?: boolean };
 
-function KpiRail() {
+type KPIRailProps = {
+	totalApplications: number;
+};
+
+function KpiRail({ totalApplications }: KPIRailProps) {
 	return (
 		<div className="md:col-span-4 space-y-6">
-			<Kpi title="Total Applications" value="0" icon="pi pi-file" />
+			<Kpi
+				title="Total Applications"
+				//@ts-ignore
+				value={totalApplications}
+				icon="pi pi-file"
+			/>
 			<Kpi
 				title="Top Performing Property"
 				value="None"
@@ -413,8 +291,11 @@ type PropertyAnalyticsProps = {
 function PropertyAnalytics({ listings }: PropertyAnalyticsProps) {
 	const [selected, setSelected] = useState();
 	const properties: SelectItem[] = listings.map(listing => ({
-		label: "test",
-		value: "test"
+		//@ts-ignore
+		label: listing.streetAddress || "No address set",
+		value: "test",
+		// @ts-ignore
+		...listing
 	}));
 
 	return (
@@ -427,7 +308,7 @@ function PropertyAnalytics({ listings }: PropertyAnalyticsProps) {
 					<div
 						className="rounded-2xl p-6"
 						style={{
-							background: "var(--primary-color)"
+							background: "var(--primary-color)",
 						}}
 					>
 						<div className="flex items-center gap-3">
@@ -445,7 +326,8 @@ function PropertyAnalytics({ listings }: PropertyAnalyticsProps) {
 								<div
 									className="h-54 rounded-xl"
 									style={{
-										background: "var(--gray-62)"
+										background: "var(--gray-62)",
+										// backgroundImage: `url(`${selected.photos[0]}`)`
 									}}
 								/>
 							</div>
@@ -531,208 +413,3 @@ function PropertyAnalytics({ listings }: PropertyAnalyticsProps) {
 		</React.Fragment>
 	);
 }
-
-// GRAHAM MOBIKLE SHIT
-// {
-// 	/* ===================== MOBILE (custom layout) ===================== */
-// }
-// <div className="md:hidden px-4 py-5">
-// 	{/* Header */}
-// 	<div className="flex flex-col gap-3">
-// 		<h1 className="text-xl font-bold text-[var(--text-color)]">
-// 			Welcome back, Graham!
-// 		</h1>
-// 		<div className="flex gap-2">
-// 			<div className="relative">
-// 				<Button
-// 					label="Applications"
-// 					icon="pi pi-inbox"
-// 					className="w-full"
-// 					onClick={() => navigate("/application")}
-// 				/>
-// 				{false && (
-// 					<Badge
-// 						value="0"
-// 						severity="danger"
-// 						className="absolute -top-2 -right-2"
-// 					/>
-// 				)}
-// 			</div>
-// 			<div className="relative">
-// 				<Button
-// 					label="Messages"
-// 					icon="pi pi-comments"
-// 					className="w-full"
-// 				/>
-// 				{false && (
-// 					<Badge
-// 						value="0"
-// 						severity="danger"
-// 						className="absolute -top-2 -right-2"
-// 					/>
-// 				)}
-// 			</div>
-// 			<Button icon="pi pi-pencil" rounded outlined aria-label="Edit" />
-// 		</div>
-// 	</div>
-//
-// 	{/* Active listings */}
-// 	<p className="mt-6 mb-2 text-[var(--text-secondary-color)]">
-// 		You have 0 Active Listings:
-// 	</p>
-// 	<div
-// 		className="rounded-xl border border-[var(--surface-border)] p-4"
-// 		style={{ background: "var(--gray-62)" }}
-// 	>
-// 		<div className="flex items-center gap-3">
-// 			<div
-// 				className="h-8 w-12 rounded-md"
-// 				style={{ background: "var(--surface-500)" }}
-// 			/>
-// 			<div className="flex-1">
-// 				<p className="text-[var(--text-color)]">
-// 					You have 0 active listings
-// 				</p>
-// 				<p className="text-xs text-[var(--text-secondary-color)]">
-// 					{/* Last edited: 20/08/2025 */}
-// 				</p>
-// 			</div>
-// 			<Tag value="Active" rounded />
-// 		</div>
-// 	</div>
-//
-// 	{/* Chart card */}
-// 	<div
-// 		className="mt-6 rounded-xl border border-[var(--surface-border)] p-4"
-// 		style={{ background: "var(--primary-color)" }}
-// 	>
-// 		<div className="flex items-center gap-3 mb-3">
-// 			<p className="font-bold text-[var(--primary-color-text)]">
-// 				Portfolio Engagement Trends:
-// 			</p>
-// 			<Dropdown
-// 				value={range}
-// 				onChange={e => setRange(e.value)}
-// 				options={ranges}
-// 				className="ml-auto w-36 !rounded-lg"
-// 			/>
-// 		</div>
-// 		<div
-// 			className="h-64 rounded-md overflow-hidden"
-// 			style={{ background: "white" }}
-// 		>
-// 			<Chart
-// 				type="line"
-// 				data={lineData}
-// 				options={{
-// 					...lineOptions,
-// 					maintainAspectRatio: false
-// 				}}
-// 				className="w-full h-full"
-// 			/>
-// 		</div>
-// 	</div>
-//
-// 	{/* KPIs grid */}
-// 	<div className="mt-6 grid grid-cols-2 gap-4">
-// 		<Kpi title="Total Applications" value="0" icon="pi pi-file" />
-// 		<Kpi
-// 			title="Top Performing Property"
-// 			value="..."
-// 			icon="pi pi-chart-bar"
-// 			small
-// 		/>
-// 		<Kpi title="Average Time to Lease" value="0 Days" icon="pi pi-clock" />
-// 		<Kpi title="Portfolio Occupancy Rate" value="0%" icon="pi pi-home" />
-// 	</div>
-//
-// 	{/* Property Analytics */}
-// 	<p className="font-bold text-xl text-white mt-8">Property Analytics</p>
-//
-// 	<div
-// 		className="mt-4 rounded-2xl p-4"
-// 		style={{ background: "var(--primary-color)" }}
-// 	>
-// 		<Dropdown
-// 			value={selectedProperty}
-// 			onChange={e => setSelectedProperty(e.value)}
-// 			options={properties}
-// 			className="w-full property-dropdown !rounded-lg"
-// 			placeholder="Select a property"
-// 		/>
-//
-// 		<p className="mt-4 text-xl font-semibold text-[var(--primary-color-text)]">
-// 			{/* Spacious 2-bed flat with garden: */}
-// 		</p>
-//
-// 		<div className="mt-4">
-// 			<div
-// 				className="h-44 rounded-xl"
-// 				style={{ background: "var(--gray-62)" }}
-// 			/>
-// 		</div>
-//
-// 		<div className="mt-4 grid grid-cols-2 gap-3">
-// 			<div className="metric-tile">
-// 				<div className="metric-label text-base font-semibold">
-// 					<i className="pi pi-file mr-2 text-base" />
-// 					Total Applications
-// 				</div>
-// 				<div className="metric-value text-2xl font-semibold">0</div>
-// 			</div>
-// 			<div className="metric-tile">
-// 				<div className="metric-label text-base font-semibold">
-// 					<i className="pi pi-bookmark mr-2 text-base" />
-// 					Saves
-// 				</div>
-// 				<div className="metric-value text-2xl font-semibold">0</div>
-// 			</div>
-// 			<div className="metric-tile">
-// 				<div className="metric-label text-base font-semibold">
-// 					<i className="pi pi-share-alt mr-2 text-base" />
-// 					Shares
-// 				</div>
-// 				<div className="metric-value text-2xl font-semibold">0</div>
-// 			</div>
-// 			<div className="metric-tile">
-// 				<div className="metric-label text-base font-semibold">
-// 					<i className="pi pi-bolt mr-2 text-base" />
-// 					Interaction Rate (%)
-// 				</div>
-// 				<div className="metric-value text-2xl font-semibold">0</div>
-// 			</div>
-// 		</div>
-//
-// 		<div className="mt-3">
-// 			<span className="font-semibold text-[var(--primary-color-text)]">
-// 				Time on market: 0d
-// 			</span>
-// 		</div>
-// 	</div>
-//
-// 	{/* Learn more card (moved below on mobile) */}
-// 	<div
-// 		className="mt-6 rounded-2xl p-5 border border-[var(--surface-border)]"
-// 		style={{ background: "var(--gray-62)" }}
-// 	>
-// 		<p className="text-lg font-semibold text-[var(--text-color)]">
-// 			Go even further with{" "}
-// 			<span className="text-[var(--primary-color)]">SEEKPerformance</span>
-// 		</p>
-// 		<p className="mt-3 text-sm leading-6 text-[var(white)]">
-// 			SEEKPerformance takes you beyond your portfolio’s limits with a
-// 			comprehensive, data-driven view of the market to sharpen your
-// 			competitive edge.
-// 		</p>
-// 		<button
-// 			className="mt-4 w-full rounded-xl px-4 py-2 font-medium border border-[var(--surface-border)]"
-// 			style={{
-// 				background: "var(--primary-color-text)",
-// 				color: "var(white)"
-// 			}}
-// 		>
-// 			Coming Soon
-// 		</button>
-// 	</div>
-// </div>;
-//

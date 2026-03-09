@@ -44,7 +44,7 @@ export default function EditProfile() {
 			params: {
 				filename: f.name,
 				fileType: f.type,
-				folder: "public/avatars"
+				folder: "public"
 			},
 			withCredentials: true
 		});

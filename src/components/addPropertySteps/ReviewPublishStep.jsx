@@ -56,7 +56,7 @@ const ReviewPublishStep = ({
 	const Section = ({ title, children }) => (
 		<div className="bg-[#626262] rounded-xl p-6 mb-6">
 			<h2 className="text-xl font-semibold mb-4 text-white">{title}</h2>
-			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-200">
+			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-white/90">
 				{children}
 			</div>
 		</div>
@@ -193,18 +193,20 @@ const ReviewPublishStep = ({
 					label="Back"
 					severity="secondary"
 					icon="pi pi-arrow-left"
+					className="listing-flow-action-button listing-flow-action-button--secondary px-4 py-2.5"
 					onClick={back}
 				/>
 				<div className="flex gap-3">
 					<Button
 						label="Save Draft"
 						icon="pi pi-save"
-						className="p-button-secondary"
+						className="listing-flow-action-button listing-flow-action-button--secondary px-4 py-2.5"
 						onClick={() => navigate("/listings")}
 					/>
 					<Button
 						label="Publish Listing"
 						icon="pi pi-check"
+						className="listing-flow-action-button px-4 py-2.5"
 						onClick={publish}
 					/>
 				</div>

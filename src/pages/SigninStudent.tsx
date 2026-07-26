@@ -34,7 +34,7 @@ export default function SignInStudent() {
 					<i className="pi pi-times-circle text-red-400 text-xl"></i>
 					<div>
 						<p className="font-semibold">Sign-In Failed</p>
-						<p className="text-sm text-gray-200">
+						<p className="text-sm text-[var(--text-color-secondary)]">
 							Your email or password didn’t match our records.
 						</p>
 					</div>
@@ -67,7 +67,7 @@ export default function SignInStudent() {
 							<p className="font-semibold">
 								Invalid Email Format
 							</p>
-							<p className="text-sm text-gray-200">
+							<p className="text-sm text-[var(--text-color-secondary)]">
 								"Please enter only your email prefix (before
 								@st-andrews.ac.uk)".
 							</p>
@@ -85,7 +85,7 @@ export default function SignInStudent() {
 	};
 
 	return (
-		<div className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
+		<div className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4" style={{ background: "#0f0f23", color: "white" }}>
 			<Toast ref={toast} position="bottom-right" />
 			<BackgroundBubbles />
 
@@ -93,7 +93,7 @@ export default function SignInStudent() {
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
-				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 bg-white space-y-8 border border-[var(--surface-border)]"
+				className="relative z-10 w-full max-w-md rounded-xl shadow-md p-8 bg-white space-y-8 border border-[var(--surface-border)] auth-form-card"
 				onSubmit={handleSubmit}
 			>
 				<h1
@@ -109,7 +109,7 @@ export default function SignInStudent() {
 						id="email"
 						value={email}
 						onChange={e => setEmail(e.target.value)}
-						className="w-full"
+						className="w-full auth-form-input"
 					/>
 					<label htmlFor="email">St Andrews Email</label>
 				</FloatLabel>
@@ -121,14 +121,14 @@ export default function SignInStudent() {
 						onChange={e => setPassword(e.target.value)}
 						feedback={false}
 						className="w-full"
-						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
+						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2 auth-form-input"
 						toggleMask
 						pt={{
 							showIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3"
+								className: "-translate-y-1/4 -translate-x-2/3 text-slate-600"
 							},
 							hideIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3"
+								className: "-translate-y-1/4 -translate-x-2/3 text-slate-600"
 							}
 						}}
 					/>
@@ -138,10 +138,10 @@ export default function SignInStudent() {
 				<motion.div whileHover={{ scale: 1.02 }}>
 					<Button
 						label="Sign in"
-						className="w-full font-medium"
+						className="w-full font-semibold"
 						style={{
-							backgroundColor: "var(--surface-300)",
-							color: "white",
+							backgroundColor: "var(--primary-color)",
+							color: "var(--primary-color-text)",
 							border: "none"
 						}}
 					/>
@@ -156,7 +156,7 @@ export default function SignInStudent() {
 					Don't have an account?{" "}
 					<Link
 						to="/signup/student"
-						className="text-[var(--primary-color-text)] font-medium"
+						className="text-[var(--primary-color)] font-semibold underline-offset-2 hover:underline"
 					>
 						Signup
 					</Link>
@@ -171,7 +171,7 @@ export default function SignInStudent() {
 					Forgot your password?{" "}
 					<Link
 						to="/resetpassword"
-						className="text-[var(--primary-color-text)] font-medium"
+						className="text-[var(--primary-color)] font-semibold underline-offset-2 hover:underline"
 					>
 						Reset Password
 					</Link>

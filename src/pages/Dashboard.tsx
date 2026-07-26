@@ -5,7 +5,7 @@ import "chart.js/auto";
 import UserContext from "../context/UserContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { Alternative } from "../components/Alternative.tsx";
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FiAlertCircle } from "react-icons/fi";
 import { SelectItem } from "primereact/selectitem";
 import axios from "axios";
@@ -16,22 +16,56 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 /* -------------------- Dashboard -------------------- */
 
 export default function Dashboard() {
-	// const { data, isLoading } = useQuery(
-	// 	listingsControllerMyListingsOptions({ cache: "no-cache" })
-	// );
-	const [totalApplications, setTotalApplications] = useState(10);
+	const { listings } = useContext(ListingsContext);
+
+	// Map of listingId -> number of (sent/rejected) applications, fetched per-listing
+	// since the backend has no single "all applications across my listings" endpoint.
+	const [applicationCounts, setApplicationCounts] = useState<
+		Record<string, number>
+	>({});
 
 	useEffect(() => {
+		if (!listings || listings.length === 0) {
+			setApplicationCounts({});
+			return;
+		}
 		(async () => {
-			const res = await axios.get(`${BASE_URL}/listings/mine`, {
-				withCredentials: true
-			});
-			console.log(res.data);
-			setTotalApplications(res.data.length);
+			const entries = await Promise.all(
+				listings.map(async (listing: any) => {
+					try {
+						const res = await axios.get(
+							`${BASE_URL}/application/listing/${listing._id}`,
+							{ withCredentials: true }
+						);
+						return [listing._id, res.data.length] as const;
+					} catch {
+						return [listing._id, 0] as const;
+					}
+				})
+			);
+			setApplicationCounts(Object.fromEntries(entries));
 		})();
-	}, []);
+	}, [listings]);
 
-	const { listings } = useContext(ListingsContext);
+	const totalApplications = Object.values(applicationCounts).reduce(
+		(sum, count) => sum + count,
+		0
+	);
+
+	const topPerformingProperty = (() => {
+		if (!listings || listings.length === 0) return "None";
+		let best: any = null;
+		for (const listing of listings as any[]) {
+			const count = applicationCounts[listing._id] ?? 0;
+			if (!best || count > (applicationCounts[best._id] ?? 0)) {
+				best = listing;
+			}
+		}
+		const bestCount = best ? (applicationCounts[best._id] ?? 0) : 0;
+		return bestCount > 0
+			? best.streetAddress || best.propertyTitle || "Unnamed property"
+			: "None";
+	})();
 
 	const [range, setRange] = useState("All time");
 	const { user } = useContext(UserContext);
@@ -91,14 +125,14 @@ export default function Dashboard() {
 				backgroundColor: "#0f1523",
 				borderColor: "rgba(230,237,243,0.25)",
 				borderWidth: 1,
-				titleColor: "#626262",
-				bodyColor: "#626262",
+				titleColor: "#dbe7f2",
+				bodyColor: "#dbe7f2",
 				displayColors: false
 			}
 		},
 		scales: {
 			x: {
-				grid: { color: "rgba(230,237,243,0.10)" },
+				grid: { color: "#626262" },
 				ticks: {
 					color: "#626262",
 					maxRotation: 0,
@@ -107,7 +141,7 @@ export default function Dashboard() {
 				}
 			},
 			y: {
-				grid: { color: "rgba(230,237,243,0.10)" },
+				grid: { color: "#626262" },
 				ticks: {
 					color: "#626262",
 					font: { size: 12 },
@@ -136,6 +170,7 @@ export default function Dashboard() {
 								<Button
 									label="Applications"
 									icon="pi pi-inbox"
+									className="dashboard-action-button"
 									onClick={() => navigate("/application")}
 								/>
 							</div>
@@ -143,6 +178,7 @@ export default function Dashboard() {
 								<Button
 									label="Messages"
 									icon="pi pi-comments"
+									className="dashboard-action-button"
 									onClick={() => navigate("/chat")}
 								/>
 							</div>
@@ -150,6 +186,7 @@ export default function Dashboard() {
 								icon="pi pi-pencil"
 								rounded
 								outlined
+								className="dashboard-action-button"
 								aria-label="Edit"
 							/>
 						</div>
@@ -159,17 +196,18 @@ export default function Dashboard() {
 						{/* Big chart */}
 						<div
 							className="md:col-span-8 rounded-xl border border-[var(--surface-border)] p-4 flex flex-col h-full"
-							style={{ background: "var(--primary-color)" }}
+							style={{ background: "var(--surface-ground)" }}
 						>
 							<div className="flex items-center justify-between mb-3">
-								<p className="font-bold text-primary-text">
+								<p className="font-bold text-white">
 									Portfolio Engagement Trends:
 								</p>
 								<Dropdown
 									value={range}
 									onChange={e => setRange(e.value)}
 									options={ranges}
-									className="w-36 !rounded-lg"
+									className="listing-flow-dropdown w-36 !rounded-lg"
+									panelClassName="listing-flow-panel"
 								/>
 							</div>
 							<div className="relative flex-1 min-h-0">
@@ -180,8 +218,11 @@ export default function Dashboard() {
 										...lineOptions,
 										maintainAspectRatio: false,
 										scales: {
+											...lineOptions.scales,
 											x: {
+												...lineOptions.scales.x,
 												ticks: {
+													...lineOptions.scales.x.ticks,
 													minRotation: 45,
 													maxRotation: 45
 												}
@@ -190,19 +231,25 @@ export default function Dashboard() {
 									}}
 									className="w-full h-full"
 									style={{
-										background: "white",
+										background: "var(--surface-ground)",
 										borderRadius: "8px"
 									}}
 								/>
 							</div>
 						</div>
-						<KpiRail totalApplications={totalApplications} />
+						<KpiRail
+							totalApplications={totalApplications}
+							topPerformingProperty={topPerformingProperty}
+						/>
 					</div>
 					<Alternative
 						ok={listings && listings.length > 0}
 						fallback={<ListingsPlaceholder />}
 					>
-						<PropertyAnalytics listings={listings ?? []} />
+						<PropertyAnalytics
+							listings={listings ?? []}
+							applicationCounts={applicationCounts}
+						/>
 					</Alternative>
 				</div>
 			</div>
@@ -212,10 +259,10 @@ export default function Dashboard() {
 
 function ListingsPlaceholder() {
 	return (
-		<div className="bg-primary rounded-md py-4 items-center flex flex-col gap-2 w-full">
-			<h2 className="font-bold text-xl text-primary-text">No Listings</h2>
-			<FiAlertCircle className="text-black" size={24} />
-			<p className="text-primary-text">
+		<div className="rounded-md py-4 items-center flex flex-col gap-2 w-full" style={{ background: "var(--surface-100)", color: "var(--surface-900)" }}>
+			<h2 className="font-bold text-xl" style={{ color: "var(--surface-900)" }}>No Listings</h2>
+			<FiAlertCircle className="text-[var(--surface-900)]" size={24} />
+			<p style={{ color: "var(--surface-900)" }}>
 				Add Listings to View Listings Specific Data
 			</p>
 		</div>
@@ -228,30 +275,30 @@ type KPIProps = { title: string; value: string; icon: string; small?: boolean };
 
 type KPIRailProps = {
 	totalApplications: number;
+	topPerformingProperty: string;
 };
 
-function KpiRail({ totalApplications }: KPIRailProps) {
+function KpiRail({ totalApplications, topPerformingProperty }: KPIRailProps) {
 	return (
 		<div className="md:col-span-4 space-y-6">
 			<Kpi
 				title="Total Applications"
-				//@ts-ignore
-				value={totalApplications}
+				value={`${totalApplications}`}
 				icon="pi pi-file"
 			/>
 			<Kpi
 				title="Top Performing Property"
-				value="None"
+				value={topPerformingProperty}
 				icon="pi pi-chart-bar"
 			/>
 			<Kpi
 				title="Average Time to Lease"
-				value="0 Days"
+				value="N/A"
 				icon="pi pi-clock"
 			/>
 			<Kpi
 				title="Portfolio Occupancy Rate"
-				value="0%"
+				value="N/A"
 				icon="pi pi-home"
 			/>
 		</div>
@@ -261,20 +308,15 @@ function KpiRail({ totalApplications }: KPIRailProps) {
 function Kpi({ title, value, icon, small }: KPIProps) {
 	return (
 		<div
-			className="rounded-xl border border-[var(--surface-border)] p-4"
-			style={{ background: "var(--primary-color)" }}
+			className="rounded-xl border border-white/70 p-4"
+			style={{ background: "var(--surface-ground)" }}
 		>
 			<div className="flex items-center gap-3">
-				<i
-					className={`${icon} text-xl`}
-					style={{ color: "var(--primary-color-text)" }}
-				/>
-				<p className="text-sm text-[var(--primary-color-text)]">
-					{title}
-				</p>
+				<i className={`${icon} text-xl text-white`} />
+				<p className="text-sm text-white">{title}</p>
 			</div>
 			<p
-				className={`mt-2 font-semibold text-[var(--primary-color-text)] ${
+				className={`mt-2 font-semibold text-white truncate ${
 					small ? "text-sm" : "text-2xl"
 				}`}
 			>
@@ -285,38 +327,58 @@ function Kpi({ title, value, icon, small }: KPIProps) {
 }
 
 type PropertyAnalyticsProps = {
-	listings: unknown[];
+	listings: any[];
+	applicationCounts: Record<string, number>;
 };
 
-function PropertyAnalytics({ listings }: PropertyAnalyticsProps) {
-	const [selected, setSelected] = useState();
+function PropertyAnalytics({
+	listings,
+	applicationCounts
+}: PropertyAnalyticsProps) {
+	const [selectedId, setSelectedId] = useState<string | undefined>(
+		listings[0]?._id
+	);
+	const selected = listings.find(listing => listing._id === selectedId);
+
 	const properties: SelectItem[] = listings.map(listing => ({
-		//@ts-ignore
 		label: listing.streetAddress || "No address set",
-		value: "test",
-		// @ts-ignore
-		...listing
+		value: listing._id
 	}));
 
+	const applicationsCount = selected
+		? (applicationCounts[selected._id] ?? 0)
+		: 0;
+	const savesCount = selected?.likedBy?.length ?? 0;
+	const timeOnMarketDays = selected?.createdAt
+		? Math.max(
+				0,
+				Math.floor(
+					(Date.now() - new Date(selected.createdAt).getTime()) /
+						86400000
+				)
+			)
+		: 0;
+
 	return (
-		<React.Fragment>
-			<p className="font-bold text-2xl text-white mt-10">
+		<div className="rounded-xl border border-[var(--surface-border)] p-4 mt-10">
+			<p className="font-bold text-2xl text-white">
 				Property Analytics
 			</p>
-			<div className="grid gap-6 md:grid-cols-12">
+			<div className="grid gap-6 md:grid-cols-12 mt-4">
 				<div className="md:col-span-9">
 					<div
 						className="rounded-2xl p-6"
 						style={{
-							background: "var(--primary-color)",
+							background: "var(--surface-ground)",
 						}}
 					>
 						<div className="flex items-center gap-3">
 							<Dropdown
-								value={selected}
-								onChange={e => setSelected(e.value)}
+								value={selectedId}
+								onChange={e => setSelectedId(e.value)}
 								options={properties}
-								className="mr-auto w-full md:w-96 property-dropdown !rounded-lg"
+								className="mr-auto w-full md:w-96 listing-flow-dropdown !rounded-lg"
+								panelClassName="listing-flow-panel"
 								placeholder="Select a property"
 							/>
 						</div>
@@ -337,10 +399,10 @@ function PropertyAnalytics({ listings }: PropertyAnalyticsProps) {
 									<div className="metric-tile">
 										<div className="metric-label text-lg md:text-xl font-semibold">
 											<i className="pi pi-file mr-2 text-lg md:text-xl" />
-											Total Applications
+											Applications
 										</div>
 										<div className="metric-value text-2xl md:text-3xl font-semibold">
-											0
+											{applicationsCount}
 										</div>
 									</div>
 									<div className="metric-tile">
@@ -349,7 +411,7 @@ function PropertyAnalytics({ listings }: PropertyAnalyticsProps) {
 											Saves
 										</div>
 										<div className="metric-value text-2xl md:text-3xl font-semibold">
-											0
+											{savesCount}
 										</div>
 									</div>
 									<div className="metric-tile">
@@ -358,23 +420,23 @@ function PropertyAnalytics({ listings }: PropertyAnalyticsProps) {
 											Shares
 										</div>
 										<div className="metric-value text-2xl md:text-3xl font-semibold">
-											8
+											N/A
 										</div>
 									</div>
 									<div className="metric-tile">
 										<div className="metric-label text-lg md:text-xl font-semibold">
 											<i className="pi pi-bolt mr-2 text-lg md:text-xl" />
-											Interaction Rate (%)
+											Performance
 										</div>
 										<div className="metric-value text-2xl md:text-3xl font-semibold">
-											0
+											{(applicationsCount / savesCount || 0)}
 										</div>
 									</div>
 								</div>
 
 								<div className="self-start">
 									<span className="font-semibold text-[var(--primary-color-text)]">
-										Time on market: 0d
+										Time on market: {timeOnMarketDays}d
 									</span>
 								</div>
 							</div>
@@ -399,7 +461,8 @@ function PropertyAnalytics({ listings }: PropertyAnalyticsProps) {
 							market to sharpen your competitive edge.
 						</p>
 						<button
-							className="mt-5 w-full md:w-auto rounded-xl px-4 py-2 font-medium border border-[var(--surface-border)]"
+							// className="mt-5 w-full md:w-auto rounded-xl px-4 py-2 font-medium border border-[var(--surface-border)]"
+							className="listing-flow-action-button px-4 py-2.5"
 							style={{
 								background: "var(--primary-color-text)",
 								color: "var(white)"
@@ -410,6 +473,6 @@ function PropertyAnalytics({ listings }: PropertyAnalyticsProps) {
 					</div>
 				</aside>
 			</div>
-		</React.Fragment>
+		</div>
 	);
 }

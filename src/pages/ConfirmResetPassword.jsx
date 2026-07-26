@@ -122,10 +122,10 @@ export default function ResetPasswordPassword() {
 					<Button
 						type="submit"
 						label="Update Password"
-						className="w-full font-medium"
+						className="w-full font-semibold"
 						style={{
-							backgroundColor: "var(--surface-300)",
-							color: "white",
+							backgroundColor: "var(--primary-color)",
+							color: "var(--primary-color-text)",
 							border: "none"
 						}}
 					/>

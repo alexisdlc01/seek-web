@@ -106,7 +106,7 @@ export default function EditProfile() {
 	}
 
 	return (
-		<div className="min-h-screen bg-[#0f0f23] text-white px-4 py-10">
+		<div className="min-h-screen bg-[#0f0f23] text-white px-4 py-10 listing-flow-surface" style={{ background: "#0f0f23", color: "white" }}>
 			<div className="max-w-3xl mx-auto">
 				<h1 className="text-2xl md:text-4xl font-bold mb-6">
 					Edit Profile
@@ -136,6 +136,7 @@ export default function EditProfile() {
 							<Button
 								label="Change Photo"
 								icon="pi pi-image"
+								className="px-4 py-2.5"
 								onClick={pickFile}
 								style={{
 									background: "#2563eb",
@@ -187,6 +188,7 @@ export default function EditProfile() {
 							icon={
 								saving ? "pi pi-spin pi-spinner" : "pi pi-check"
 							}
+							className="px-4 py-2.5"
 							disabled={!canSave}
 							onClick={save}
 							style={{

@@ -73,7 +73,7 @@ export default function ContactPage() {
 
 					{/* Contact info cards */}
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl mx-auto mb-14 text-center md:text-left">
-						<div className="bg-[var(--surface-200)] border border-[var(--surface-400)] rounded-xl p-5 shadow-md hover:shadow-lg transition">
+						<div className="bg-[var(--surface-a)] border border-[var(--surface-400)] rounded-xl p-5 shadow-none transition">
 							<h2 className="text-lg font-semibold mb-2 text-[var(--accent-color)]">
 								Alexis de La Chapelle
 							</h2>
@@ -104,7 +104,7 @@ export default function ContactPage() {
 							</div>
 						</div>
 
-						<div className="bg-[var(--surface-200)] border border-[var(--surface-400)] rounded-xl p-5 shadow-md hover:shadow-lg transition">
+						<div className="bg-[var(--surface-a)] border border-[var(--surface-400)] rounded-xl p-5 shadow-none transition">
 							<h2 className="text-lg font-semibold mb-2 text-[var(--accent-color)]">
 								Victor Trinel
 							</h2>
@@ -145,7 +145,7 @@ export default function ContactPage() {
 
 					<form
 						onSubmit={onSubmit}
-						className="bg-[var(--surface-200)] w-full max-w-2xl rounded-lg p-8 shadow-lg border border-[var(--surface-400)]"
+						className="bg-[var(--surface-a)] w-full max-w-2xl rounded-lg p-8 shadow-none border border-[var(--surface-400)]"
 						noValidate
 					>
 						<div className="grid gap-6">

@@ -58,14 +58,14 @@ const ApplicationRequirements = ({
 	};
 
 	return (
-		<div className="min-h-screen bg-[var(--surface-a)] text-[var(--text-color)] px-6 py-5">
+		<div className="listing-flow-surface min-h-screen bg-[var(--surface-a)] text-[var(--text-color)] px-6 py-5" style={{ background: "#0f0f23", color: "white" }}>
 			<div className="max-w-5xl mx-auto">
-				<label className="font-medium text-white">Application Requirements</label>
+				<label className="font-medium listing-flow-text-strong">Application Requirements</label>
 
 
 				<div className="grid grid-cols-12 text-sm font-semibold border-b border-gray-600 pb-2 mb-4 mt-4">
-					<div className="col-span-6">Requirement</div>
-					<div className="col-span-2 text-center">Required</div>
+					<div className="col-span-6 listing-flow-text-muted">Requirement</div>
+					<div className="col-span-2 text-center listing-flow-text-muted">Required</div>
 					<div className="col-span-2"></div>
 				</div>
 
@@ -98,7 +98,7 @@ const ApplicationRequirements = ({
 								) : (
 									<>
 										<p className="font-medium">{req.name}</p>
-										<p className="text-sm text-gray-400 cursor-default">
+										<p className="text-sm listing-flow-text-muted cursor-default">
 											{req.desc}
 										</p>
 									</>
@@ -134,7 +134,7 @@ const ApplicationRequirements = ({
 				{/* Add Requirement Button */}
 				<button
 					onClick={addRequirement}
-					className="mt-8 flex items-center gap-2 text-[var(--primary-color)] hover:underline"
+					className="mt-8 flex items-center gap-2 listing-flow-action-text"
 				>
 					<FiPlus /> Add requirement
 				</button>
@@ -144,12 +144,14 @@ const ApplicationRequirements = ({
 					label="Back"
 					severity="secondary"
 					icon="pi pi-arrow-left"
+					className="listing-flow-action-button listing-flow-action-button--secondary px-4 py-2.5"
 					onClick={back}
 				/>
 				<Button
 					label="Next"
 					icon="pi pi-arrow-right"
 					iconPos="right"
+					className="listing-flow-action-button px-4 py-2.5"
 					onClick={next}
 				/>
 			</div>

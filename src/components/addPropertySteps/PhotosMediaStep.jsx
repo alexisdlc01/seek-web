@@ -31,7 +31,7 @@ const PhotosMediaStep = ({
 	}, [photos]);
 
 	return (
-		<>
+		<div className="listing-flow-surface" style={{ background: "#0f0f23", color: "white" }}>
 			<div className="space-y-6">
 				<div>
 					<label className="font-medium text-white">Photos</label>
@@ -165,16 +165,19 @@ const PhotosMediaStep = ({
 					label="Back"
 					severity="secondary"
 					icon="pi pi-arrow-left"
+					className="listing-flow-action-button listing-flow-action-button--secondary px-4 py-2.5"
 					onClick={back}
 				/>
 				<Button
 					label="Next"
 					icon="pi pi-arrow-right"
 					iconPos="right"
+					className="listing-flow-action-button px-4 py-2.5"
 					onClick={next}
 				/>
 			</div>
-		</>
+		</div>
+	// </div>
 	);
 };
 

@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
-import { Menu } from "primereact/menu";
 import { useNavigate } from "react-router-dom";
 import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 import { Avatar } from "primereact/avatar";
@@ -59,23 +58,6 @@ export default function NavbarDesktop({ user, logout, logo }) {
 	const backgroundTheme = theme === "dark" ? "#0F0F23" : "white";
 	const oppositeBackgroundTheme = theme !== "dark" ? "#0F0F23" : "white";
 	const iconColorClass = theme === "dark" ? "!text-white" : "!text-[#0F0F23]";
-
-	const loginItems = [
-		{
-			label: <span style={{ color: "#0F0F23" }}>As Student</span>,
-			command: () => {
-				setLoginOpen(false);
-				navigate("/signin/student");
-			}
-		},
-		{
-			label: <span style={{ color: "#0F0F23" }}>As Landlord</span>,
-			command: () => {
-				setLoginOpen(false);
-				navigate("/signin/landlord");
-			}
-		}
-	];
 
 	const baseStyle =
 		"navbar-buttons text-base font-semibold text-blue-900 relative hover:bg-transparent focus:ring-0 focus:outline-none active:bg-transparent after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:w-0 after:bg-blue-900 after:transition-all after:duration-300 hover:after:w-full";
@@ -172,10 +154,10 @@ export default function NavbarDesktop({ user, logout, logo }) {
 						</div>
 
 						{userMenuOpen && (
-							<div className="absolute right-0 top-[calc(100%+8px)] z-50 w-full rounded-xl shadow-lg border bg-white p-1 overflow-hidden">
+							<div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-48 rounded-xl shadow-lg border bg-white p-1 overflow-hidden">
 								<button
 									onClick={() => navigate("/edit-profile")}
-									className="cursor-pointer w-full text-left px-3 py-2 text-[#3182c] font-semibold hover:bg-black/5 rounded-lg"
+									className="cursor-pointer w-full text-left px-3 py-2 text-[#3182ce] font-semibold hover:bg-black/5 rounded-lg"
 								>
 									<i className="pi pi-user-edit px-0.5"></i> Edit Profile
 								</button>
@@ -184,7 +166,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 										setUserMenuOpen(false);
 										await logout();
 									}}
-									className="cursor-pointer w-full text-left px-3 py-2 text-[#3182c] font-semibold hover:bg-black/5 rounded-lg"
+									className="cursor-pointer w-full text-left px-3 py-2 text-[#3182ce] font-semibold hover:bg-black/5 rounded-lg"
 								>
 									<i className="pi pi-sign-out px-0.5"></i> Logout
 								</button>
@@ -227,23 +209,28 @@ export default function NavbarDesktop({ user, logout, logo }) {
 						/>
 						{loginOpen && (
 							<div
-								className="absolute right-0 top-[calc(100%+8px)] z-50"
-								style={{ width: "30%", right: "155%" }}
+								className="absolute right-0 top-[calc(100%+8px)] z-50 login-menu"
 							>
-								<Menu
-									model={loginItems.map(item => ({
-										...item,
-										template: (menuItem, options) => (
-											<Button
-												label={menuItem.label}
-												text
-												className={`${baseStyle} w-full text-left !py-2 !px-3`}
-												onClick={options.onClick}
-											/>
-										)
-									}))}
-									className="rounded-xl shadow-lg border bg-white p-1 min-w-0"
-								/>
+								<button
+									type="button"
+									className="block w-full rounded-lg px-4 py-2.5 text-left font-semibold text-[#0F0F23] hover:bg-slate-100"
+									onClick={() => {
+										setLoginOpen(false);
+										navigate("/signin/student");
+									}}
+								>
+									As Student
+								</button>
+								<button
+									type="button"
+									className="block w-full rounded-lg px-4 py-2.5 text-left font-semibold text-[#0F0F23] hover:bg-slate-100"
+									onClick={() => {
+										setLoginOpen(false);
+										navigate("/signin/landlord");
+									}}
+								>
+									As Landlord
+								</button>
 							</div>
 						)}
 					</div>

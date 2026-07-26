@@ -1,39 +1,72 @@
-import React, { Dispatch, Ref, SetStateAction, useRef, useState } from "react";
+import React, { Dispatch, Ref, SetStateAction, useContext, useRef, useState } from "react";
 import { Button } from "primereact/button";
-import { ConversationDto, MessageDto } from "../client";
 import { Toast } from "primereact/toast";
+import UserContext from "../context/UserContext.jsx";
+
+type ChatUser = {
+	_id: string;
+	name: string;
+	profilePicUrl?: string;
+};
+
+type MessageType = "Text" | "Image";
+
+type Message = {
+	_id: string;
+	sender: ChatUser;
+	messageType: MessageType;
+	data: string;
+	createdAt: string;
+	conversation: string;
+	seenUsers: string[];
+	deliveredTo: string[];
+};
+
+type Conversation = {
+	_id: string;
+	name: string;
+	createdAt: string;
+	groupDescription: string;
+	avatar?: string;
+	users: ChatUser[];
+	unreadCount?: number;
+	messages: Message[];
+};
 
 export default function ChatPage() {
-	const [selectedId, setSelectedId] = useState(conversations[0]._id);
+	const { user: currentUser } = useContext(UserContext) as { user?: ChatUser };
+	const [selectedId, setSelectedId] = useState(conversations[0]?._id);
 	const [chats, setChats] = useState(conversations);
+	const [search, setSearch] = useState("");
 	const toast: Ref<Toast> = useRef(null);
 
 	const selectedChat = chats.find(c => c._id === selectedId);
+	const visibleChats = chats.filter(c =>
+		c.name.toLowerCase().includes(search.toLowerCase())
+	);
+
+	const isMe = (msg: Message) => !!currentUser && msg.sender._id === currentUser._id;
 
 	const sendMessage = async (message: string) => {
-		if (!message.trim()) return;
+		if (!message.trim() || !selectedId || !currentUser) return;
 
-		const msg: MessageDto = {
-			sender: "me",
+		const msg: Message = {
+			sender: currentUser,
 			data: message,
-			_id: "" + Math.random(),
+			_id: `local-${Date.now()}`,
 			messageType: "Text",
-			createdAt: "2025-12-01T10:05:00Z",
+			createdAt: new Date().toISOString(),
 			conversation: selectedId,
-			seenUsers: [],
+			seenUsers: [currentUser._id],
 			deliveredTo: []
 		};
 
 		setChats(curr => {
-			// modify the current chat in place
 			const idx = curr.findIndex(val => val._id === selectedId);
-			if (idx === -1) {
-				console.log("failed to find chat");
-				return;
-			}
+			if (idx === -1) return curr;
 
 			const chat = curr[idx];
-			const modified: ConversationDto = {
+			const modified: Conversation = {
 				...chat,
 				messages: chat.messages.concat(msg)
 			};
@@ -45,62 +78,184 @@ export default function ChatPage() {
 	};
 
 	return (
-		<div className="fixed inset-x-0 bottom-0 top-16 bg-gray-50">
+		<div className="fixed inset-x-0 bottom-0 top-16 bg-[var(--surface-a)]">
 			<Toast ref={toast} />
 			<div className="flex h-full overflow-hidden">
 				<div className="w-1/3 bg-[var(--surface-a)] border-r-1 border-[var(--gray-900)] flex flex-col min-h-0">
+					<div className="flex items-center gap-2 px-4 pt-6 pb-4">
+						<div className="relative flex-1">
+							<i className="pi pi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+							<input
+								value={search}
+								onChange={e => setSearch(e.target.value)}
+								type="text"
+								placeholder="Search conversations"
+								className="w-full rounded-lg text-sm text-white placeholder:text-gray-400"
+								style={{ background: "var(--gray-62)", paddingLeft: "2.5rem" }}
+							/>
+						</div>
+						<button
+							type="button"
+							className="shrink-0 rounded-lg p-2.5 flex items-center justify-center"
+							style={{ background: "var(--gray-62)" }}
+							aria-label="Filter conversations"
+						>
+							<i className="pi pi-sliders-h text-white text-sm" />
+						</button>
+					</div>
 					<div className="flex-1 overflow-y-auto divide-y divide-[var(--gray-900)]">
-						{chats.map(conversation => (
+						{visibleChats.map(conversation => (
 							<ConverationsElem
 								key={conversation._id}
 								converation={conversation}
+								currentUser={currentUser}
 								selected={selectedId}
 								setSelected={setSelectedId}
 							/>
 						))}
+						{visibleChats.length === 0 && (
+							<div className="p-6 text-center text-sm text-gray-400">
+								No conversations found
+							</div>
+						)}
 					</div>
 				</div>
 
 				{/* Chat Panel */}
 				<div className="w-2/3 flex flex-col bg-[var(--surface-a)] min-h-0">
-					{/* Header */}
-					<div className="flex items-center justify-between px-6 py-4 border-b-1 border-[var(--gray-900)]">
-						<div className="flex-col items-center gap-3">
-							<h2 className="text-lg font-semibold text-[var(--primary-color)]">
-								{selectedChat.name}
-							</h2>
-							<p className="text-sm text-gray-400">
-								Members: {selectedChat.users}
-							</p>
-						</div>
+					{selectedChat ? (
+						<>
+							{/* Header */}
+							<div className="flex items-center justify-between px-6 py-4 border-b-1 border-[var(--gray-900)]">
+								<div className="flex items-center gap-3">
+									<ConversationAvatar conversation={selectedChat} size={44} />
+									<div className="flex flex-col">
+										<h2 className="text-lg font-semibold text-white">
+											{selectedChat.name}
+										</h2>
+										<p className="text-sm text-gray-400">
+											Members: {formatMembers(selectedChat.users)}
+										</p>
+									</div>
+								</div>
 
-						<div className="flex gap-2">
-							<Button
-								label="View Status"
-								className="px-4 py-1 border border-red-600 rounded-full text-sm"
-								style={{ color: "white" }}
-							/>
-						</div>
-					</div>
+								<div className="flex gap-2">
+									<Button
+										label="View Status"
+										className="px-4 py-1 border border-red-500 text-red-500 bg-transparent rounded-full text-sm"
+									/>
+								</div>
+							</div>
 
-					{/* Messages + Input */}
-					<div className="flex flex-col flex-1 overflow-hidden min-h-0">
-						<div className="flex-1 px-4 py-4 overflow-y-auto space-y-3 bg-[var(--surface-a)]">
-							{selectedChat.messages.map((msg, i) => (
-								<ChatMessage
-									key={msg._id}
-									isLast={i === selectedChat.messages.length}
-									isMe={msg.sender === "me"}
-									data={msg}
-								/>
-							))}
-						</div>
+							{/* Messages + Input */}
+							<div className="flex flex-col flex-1 overflow-hidden min-h-0">
+								<div className="flex-1 px-4 py-4 overflow-y-auto space-y-3 bg-[var(--surface-a)]">
+									{selectedChat.messages.length === 0 ? (
+										<div className="h-full flex items-center justify-center text-sm text-gray-400">
+											No messages yet
+										</div>
+									) : (
+										renderMessages(selectedChat.messages, isMe)
+									)}
+								</div>
 
-						{/* Input */}
-						<ChatInput send={sendMessage} toast={toast.current} />
-					</div>
+								{/* Input */}
+								<ChatInput send={sendMessage} toast={toast.current} />
+							</div>
+						</>
+					) : (
+						<div className="h-full flex items-center justify-center text-sm text-gray-400">
+							Select a conversation to start chatting
+						</div>
+					)}
 				</div>
 			</div>
+		</div>
+	);
+}
+
+function renderMessages(messages: Message[], isMe: (msg: Message) => boolean) {
+	const items: React.ReactNode[] = [];
+	let lastDayKey: string | null = null;
+
+	messages.forEach((msg, i) => {
+		const dayKey = new Date(msg.createdAt).toDateString();
+		if (dayKey !== lastDayKey) {
+			items.push(
+				<DateDivider key={`divider-${dayKey}`} label={formatDayDivider(msg.createdAt)} />
+			);
+			lastDayKey = dayKey;
+		}
+
+		const prev = messages[i - 1];
+		const consecutive =
+			!!prev &&
+			prev.sender._id === msg.sender._id &&
+			new Date(prev.createdAt).toDateString() === dayKey;
+
+		items.push(
+			<ChatMessage
+				key={msg._id}
+				data={msg}
+				isMe={isMe(msg)}
+				showLabel={!isMe(msg) && !consecutive}
+			/>
+		);
+	});
+
+	return items;
+}
+
+function formatMembers(users: ChatUser[]): string {
+	const names = users.map(u => u.name);
+	return names.length === 2 ? names.join(" & ") : names.join(", ");
+}
+
+function startOfDay(date: Date) {
+	return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function daysBetween(a: Date, b: Date) {
+	return Math.round((startOfDay(a).getTime() - startOfDay(b).getTime()) / 86400000);
+}
+
+function formatDayDivider(dateStr: string): string {
+	const date = new Date(dateStr);
+	const now = new Date();
+	const diff = daysBetween(now, date);
+
+	if (diff === 0) return "Today";
+	if (diff === 1) return "Yesterday";
+	if (diff > 1 && diff < 7) return date.toLocaleDateString([], { weekday: "long" });
+	return date.toLocaleDateString([], {
+		month: "long",
+		day: "numeric",
+		year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined
+	});
+}
+
+function formatListTimestamp(dateStr?: string): string {
+	if (!dateStr) return "";
+	const date = new Date(dateStr);
+	const now = new Date();
+	const diff = daysBetween(now, date);
+
+	if (diff === 0) return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+	if (diff === 1) return "Yesterday";
+	if (diff > 1 && diff < 7) return date.toLocaleDateString([], { weekday: "short" });
+	return date.toLocaleDateString([], {
+		month: "short",
+		day: "numeric",
+		year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined
+	});
+}
+
+function DateDivider({ label }: { label: string }) {
+	return (
+		<div className="flex items-center gap-3 px-2">
+			<div className="flex-1 h-px bg-[var(--gray-900)]" />
+			<span className="text-xs text-gray-400 shrink-0">{label}</span>
+			<div className="flex-1 h-px bg-[var(--gray-900)]" />
 		</div>
 	);
 }
@@ -129,7 +284,15 @@ function ChatInput({ send, toast }: ChatInputProps) {
 	};
 
 	return (
-		<div className="border-t-1 border-[var(--gray-900)] p-4 flex gap-3">
+		<div className="border-t-1 border-[var(--gray-900)] p-4 flex items-center gap-3">
+			<button
+				type="button"
+				className="shrink-0 rounded-full p-2.5 flex items-center justify-center"
+				style={{ backgroundColor: "var(--gray-62)" }}
+				aria-label="Attach file"
+			>
+				<i className="pi pi-paperclip text-white text-sm" />
+			</button>
 			<input
 				value={input}
 				onChange={e => setInput(e.target.value)}
@@ -141,261 +304,221 @@ function ChatInput({ send, toast }: ChatInputProps) {
 			<Button
 				onClick={() => handleSend()}
 				label="Send"
-				className="px-4 py-1 border border-blue-600 text-blue-600 bg-transparent rounded-full text-sm"
-				style={{ color: "white" }}
+				className="px-4 py-1 border border-blue-400 text-blue-400 bg-transparent rounded-full text-sm"
 			/>
 		</div>
 	);
 }
 
 type ChatMessageProp = {
-	data: MessageDto;
-	isLast: boolean;
+	data: Message;
 	isMe: boolean;
+	showLabel: boolean;
 };
 
-function ChatMessage({ data, isMe, isLast }: ChatMessageProp) {
-	const showLabel = !isLast || !isMe;
-
+function ChatMessage({ data, isMe, showLabel }: ChatMessageProp) {
 	return (
 		<div className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
 			<div className="max-w-[55%]">
 				{showLabel && (
-					<div
-						className={`text-xs mb-1 ${
-							isMe ? "text-right" : ""
-						} text-gray-300`}
-					>
-						{data.sender}
-					</div>
+					<div className="text-xs mb-1 text-gray-300">{data.sender.name}</div>
 				)}
 				<div
-					className={`px-4 py-3 text-sm rounded-xl shadow ${
+					className={`px-4 py-3 text-sm rounded-xl shadow-sm border ${
 						isMe
-							? "bg-[var(--primary-color)] text-white"
-							: "bg-[var(--gray-62)] text-white"
+							? "bg-[var(--primary-color)] text-white border-[var(--primary-color)]"
+							: "chat-bubble--received"
 					}`}
 				>
-					{data.data}
+					<MessageContent data={data} />
+				</div>
+				<div
+					className={`text-xs mt-1 text-gray-400 ${
+						isMe ? "text-right" : ""
+					}`}
+				>
+					{new Date(data.createdAt).toLocaleTimeString([], {
+						hour: "numeric",
+						minute: "2-digit"
+					})}
 				</div>
 			</div>
+		</div>
+	);
+}
+
+function MessageContent({ data }: { data: Message }) {
+	const [imageErrored, setImageErrored] = useState(false);
+	const isImageUrl =
+		data.messageType === "Image" && /^(https?:)?\/\//.test(data.data);
+
+	if (isImageUrl && !imageErrored) {
+		return (
+			<img
+				src={data.data}
+				alt="Attachment"
+				className="max-w-full max-h-64 rounded-lg"
+				onError={() => setImageErrored(true)}
+			/>
+		);
+	}
+
+	if (data.messageType === "Image") {
+		return (
+			<span className="flex items-center gap-2">
+				<i className="pi pi-image" />
+				{data.data}
+			</span>
+		);
+	}
+
+	return <>{data.data}</>;
+}
+
+type AvatarConfig = { icon?: string; initials?: string; color: string };
+
+const AVATAR_CONFIG: Record<string, AvatarConfig> = {
+	c1: { initials: "A&B", color: "#10b981" },
+	c2: { icon: "pi pi-building", color: "#1b2f4a" },
+	c3: { initials: "SF", color: "#1b2f4a" },
+	c4: { icon: "pi pi-calendar", color: "#1b2f4a" },
+	c5: { icon: "pi pi-wrench", color: "#1b2f4a" }
+};
+
+function getAvatarConfig(conversation: Conversation): AvatarConfig {
+	if (AVATAR_CONFIG[conversation._id]) return AVATAR_CONFIG[conversation._id];
+
+	const initials = conversation.name
+		.split(" ")
+		.map(word => word[0])
+		.filter(Boolean)
+		.slice(0, 2)
+		.join("")
+		.toUpperCase();
+
+	return { initials, color: "#1b2f4a" };
+}
+
+function ConversationAvatar({
+	conversation,
+	size = 40
+}: {
+	conversation: Conversation;
+	size?: number;
+}) {
+	const imageUrl =
+		conversation.avatar && /^https?:\/\//.test(conversation.avatar)
+			? conversation.avatar
+			: undefined;
+
+	if (imageUrl) {
+		return (
+			<img
+				src={imageUrl}
+				alt={conversation.name}
+				className="rounded-full object-cover shrink-0"
+				style={{ width: size, height: size }}
+			/>
+		);
+	}
+
+	const { icon, initials, color } = getAvatarConfig(conversation);
+
+	return (
+		<div
+			className="flex items-center justify-center rounded-full text-white font-semibold shrink-0"
+			style={{ width: size, height: size, background: color, fontSize: size * 0.35 }}
+		>
+			{icon ? <i className={icon} /> : initials}
 		</div>
 	);
 }
 
 type ConverationElemProp = {
-	selected: string;
-	setSelected: Dispatch<SetStateAction<string>>;
-	converation: ConversationDto;
+	selected?: string;
+	setSelected: Dispatch<SetStateAction<string | undefined>>;
+	converation: Conversation;
+	currentUser?: ChatUser;
 };
 
 function ConverationsElem({
 	selected,
 	setSelected,
-	converation
+	converation,
+	currentUser
 }: ConverationElemProp) {
+	const isSelected = selected === converation._id;
+	const lastMessage = converation.messages.at(-1);
+	const lastActivity = lastMessage?.createdAt ?? converation.createdAt;
+
 	return (
 		<div
 			key={converation._id}
 			onClick={() => setSelected(converation._id)}
-			className={`flex items-center justify-between gap-4 p-4 px-5 cursor-pointer transition ${
-				selected === converation._id
-					? "bg-[var(--gray-62)]"
-					: "hover:bg-[var(--gray-62)]"
+			className={`relative flex items-center justify-between gap-4 p-4 px-5 cursor-pointer transition ${
+				isSelected ? "bg-[var(--gray-62)]" : "hover:bg-[var(--gray-62)]"
 			}`}
 		>
+			<div
+				className={`absolute left-0 top-0 bottom-0 w-[3px] ${
+					isSelected ? "bg-[var(--primary-color)]" : "bg-transparent"
+				}`}
+			/>
 			<div className="flex items-center gap-3 overflow-hidden">
+				<ConversationAvatar conversation={converation} />
 				<div className="overflow-hidden">
-					<p className="font-medium text-base text-[var(--primary-color)] truncate">
+					<p className="font-medium text-base text-white truncate">
 						{converation.name}
 					</p>
-					<p className="text-sm truncate">
-						{converation.messages.at(-1)?.sender === "me" && (
-							<span className="text-[var(--primary-color)]">
-								You:{" "}
-							</span>
-						)}
-						<span className="text-white">
-							{converation.messages.at(-1)?.data}
-						</span>
-					</p>
+					{lastMessage && (
+						<p className="text-sm truncate">
+							{currentUser && lastMessage.sender._id === currentUser._id && (
+								<span className="text-[var(--primary-color)]">You: </span>
+							)}
+							<span className="text-gray-300">{lastMessage.data}</span>
+						</p>
+					)}
 				</div>
 			</div>
-			<div className="flex flex-col items-end shrink-0 min-w-[50px]">
-				<div className="flex items-center gap-1">
-					<p className="text-sm text-gray-400">Yesterday</p>
-				</div>
+			<div className="flex flex-col items-end shrink-0 min-w-[50px] gap-1.5">
+				<p className="text-sm text-gray-400">{formatListTimestamp(lastActivity)}</p>
+				{!!converation.unreadCount && (
+					<span
+						className="flex items-center justify-center rounded-full text-[11px] font-semibold text-white"
+						style={{
+							width: 18,
+							height: 18,
+							background: "var(--primary-color)"
+						}}
+					>
+						{converation.unreadCount}
+					</span>
+				)}
 			</div>
 		</div>
 	);
 }
 
-// HEATHCOTE
-// {
-// 	/* ===== Mobile (< md): List view ===== */
-// }
-// <div
-// 	className={`${
-// 		mobileView === "list" ? "flex" : "hidden"
-// 	} md:hidden h-full overflow-hidden`}
-// >
-// 	<div className="w-full bg-[var(--surface-a)] flex flex-col min-h-0">
-// 		{/* Mobile List Header */}
-// 		<div className="flex items-center justify-between px-5 py-3 border-b-1 border-[var(--gray-900)]">
-// 			<h2 className="text-lg font-semibold text-[var(--primary-color)]">
-// 				Chats
-// 			</h2>
-// 		</div>
-//
-// 		{/* Conversations */}
-// 		<div className="flex-1 overflow-y-auto divide-y divide-[var(--gray-900)]">
-// 			{conversations.map(c => (
-// 				<div
-// 					key={c.id}
-// 					onClick={() => openChat(c.id)}
-// 					className={`flex items-center justify-between gap-4 p-4 px-5 cursor-pointer transition ${
-// 						selectedId === c.id
-// 							? "bg-[var(--gray-62)]"
-// 							: "hover:bg-[var(--gray-62)]"
-// 					}`}
-// 				>
-// 					<div className="flex items-center gap-3 overflow-hidden">
-// 						<div className="overflow-hidden">
-// 							<p className="font-medium text-base text-[var(--primary-color)] truncate">
-// 								{c.name}
-// 							</p>
-// 							<p className="text-sm truncate">
-// 								{c.messages.at(-1)?.from === "me" && (
-// 									<span className="text-[var(--primary-color)]">
-// 										You:{" "}
-// 									</span>
-// 								)}
-// 								<span className="text-white">
-// 									{c.messages.at(-1)?.text}
-// 								</span>
-// 							</p>
-// 						</div>
-// 					</div>
-// 					<div className="flex flex-col items-end shrink-0 min-w-[50px]">
-// 						<p className="text-sm text-gray-400">Yesterday</p>
-// 					</div>
-// 				</div>
-// 			))}
-// 		</div>
-// 	</div>
-// </div>;
-//
-// {
-// 	/* ===== Mobile (< md): Chat view ===== */
-// }
-// <div
-// 	className={`${
-// 		mobileView === "chat" ? "flex" : "hidden"
-// 	} md:hidden h-full overflow-hidden`}
-// >
-// 	<div className="w-full flex flex-col bg-[var(--surface-a)] min-h-0">
-// 		{/* Mobile Chat Header */}
-// 		<div className="flex items-center justify-between px-4 py-3 border-b-1 border-[var(--gray-900)]">
-// 			<div className="flex items-center gap-3">
-// 				<button
-// 					onClick={() => setMobileView("list")}
-// 					className="text-[var(--primary-color)] text-xl leading-none"
-// 					aria-label="Back to chats"
-// 				>
-// 					←
-// 				</button>
-// 				<div className="flex-col items-center gap-3">
-// 					<h2 className="text-lg font-semibold text-[var(--primary-color)]">
-// 						{selectedChat.name}
-// 					</h2>
-// 					<p className="text-sm text-gray-400">
-// 						Members: {selectedChat.members}
-// 					</p>
-// 				</div>
-// 			</div>
-// 			<div className="flex gap-2">
-// 				<Button
-// 					label="View Status"
-// 					className="px-3 py-1 border border-red-600 rounded-full text-sm"
-// 					style={{ color: "white" }}
-// 				/>
-// 			</div>
-// 		</div>
-//
-// 		{/* Messages + Input */}
-// 		<div className="flex flex-col flex-1 overflow-hidden min-h-0">
-// 			<div className="flex-1 px-4 py-4 overflow-y-auto space-y-3 bg-[var(--surface-a)]">
-// 				{selectedChat.messages.map((msg, i) => {
-// 					const isMe = msg.from === "me";
-// 					const showLabel =
-// 						i === 0 ||
-// 						selectedChat.messages[i - 1].from !== msg.from;
-// 					return (
-// 						<div
-// 							key={i}
-// 							className={`flex ${
-// 								isMe ? "justify-end" : "justify-start"
-// 							}`}
-// 						>
-// 							<div className="max-w-[80%]">
-// 								{showLabel && (
-// 									<div
-// 										className={`text-xs mb-1 ${
-// 											isMe ? "text-right" : ""
-// 										} text-gray-300`}
-// 									>
-// 										{msg.from}
-// 									</div>
-// 								)}
-// 								<div
-// 									className={`px-4 py-3 text-sm rounded-xl shadow ${
-// 										isMe
-// 											? "bg-[var(--primary-color)] text-white"
-// 											: "bg-[var(--gray-62)] text-white"
-// 									}`}
-// 								>
-// 									{msg.text}
-// 								</div>
-// 							</div>
-// 						</div>
-// 					);
-// 				})}
-// 			</div>
-//
-// 			<div className="border-t-1 border-[var(--gray-900)] p-3 flex gap-2">
-// 				<input
-// 					value={input}
-// 					onChange={e => setInput(e.target.value)}
-// 					onKeyDown={e => e.key === "Enter" && sendMessage()}
-// 					className="w-full rounded-lg px-3 py-2 text-sm text-white placeholder:!text-white"
-// 					placeholder="Type a message..."
-// 					style={{ backgroundColor: "var(--gray-62)" }}
-// 				/>
-// 				<Button
-// 					label="Send"
-// 					className="px-3 py-1 border border-blue-600 text-blue-600 bg-transparent rounded-full text-sm"
-// 					style={{ color: "white" }}
-// 				/>
-// 			</div>
-// 		</div>
-// 	</div>
-// </div>;
-//
-//
-//
+function daysAgoAt(days: number, hour: number, minute: number): string {
+	const d = new Date();
+	d.setDate(d.getDate() - days);
+	d.setHours(hour, minute, 0, 0);
+	return d.toISOString();
+}
 
-const textMessage: MessageDto = {
-	_id: "m1",
-	sender: "Alice",
-	messageType: "Text",
-	data: "Is the room still available?",
-	createdAt: "2025-12-23T10:00:00Z",
-	conversation: "c1",
-	seenUsers: ["Alice", "Bob"],
-	deliveredTo: ["Bob"]
-};
+const USERS = {
+	alice: { _id: "u-alice", name: "Alice" },
+	bob: { _id: "u-bob", name: "Bob" },
+	charlie: { _id: "u-charlie", name: "Charlie" },
+	dave: { _id: "u-dave", name: "Dave" },
+	landlordJoe: { _id: "u-landlord-joe", name: "Landlord_Joe" },
+	emmaSmith: { _id: "u-emma-smith", name: "Emma_Smith" },
+	ethanSmith: { _id: "u-ethan-smith", name: "Ethan_Smith" },
+	agentSarah: { _id: "u-agent-sarah", name: "Agent_Sarah" },
+	adminRepair: { _id: "u-admin-repair", name: "Admin_Repair" }
+} satisfies Record<string, ChatUser>;
 
-var conversations: ConversationDto[] = [
+var conversations: Conversation[] = [
 	// 1. Private Chat
 	{
 		_id: "c1",
@@ -403,17 +526,18 @@ var conversations: ConversationDto[] = [
 		createdAt: "2025-12-01T10:00:00Z",
 		groupDescription: "Direct message",
 		avatar: "avatar_alice.png",
-		users: ["Alice", "Bob"],
+		users: [USERS.alice, USERS.bob],
+		unreadCount: 1,
 		messages: [
 			{
 				_id: "m1",
-				sender: "Alice",
+				sender: USERS.alice,
 				messageType: "Text",
 				data: "Hi Bob!",
-				createdAt: "2025-12-01T10:05:00Z",
+				createdAt: daysAgoAt(1, 11, 4),
 				conversation: "c1",
-				seenUsers: ["Alice", "Bob"],
-				deliveredTo: ["Bob"]
+				seenUsers: [USERS.alice._id],
+				deliveredTo: [USERS.bob._id]
 			}
 		]
 	},
@@ -425,17 +549,17 @@ var conversations: ConversationDto[] = [
 		createdAt: "2025-11-15T09:00:00Z",
 		groupDescription: "Official group for the Baker St. house.",
 		avatar: "house_icon.jpg",
-		users: ["Alice", "Bob", "Charlie", "Dave"],
+		users: [USERS.alice, USERS.bob, USERS.charlie, USERS.dave],
 		messages: [
 			{
 				_id: "m2",
-				sender: "Dave",
+				sender: USERS.dave,
 				messageType: "Text",
 				data: "Who left the fridge open?",
-				createdAt: "2025-12-23T08:00:00Z",
+				createdAt: daysAgoAt(1, 8, 0),
 				conversation: "c2",
-				seenUsers: ["Dave"],
-				deliveredTo: ["Alice", "Bob", "Charlie"]
+				seenUsers: [USERS.dave._id],
+				deliveredTo: [USERS.alice._id, USERS.bob._id, USERS.charlie._id]
 			}
 		]
 	},
@@ -444,10 +568,10 @@ var conversations: ConversationDto[] = [
 	{
 		_id: "c3",
 		name: "Smith Family Application",
-		createdAt: "2025-12-20T14:30:00Z",
+		createdAt: daysAgoAt(1, 14, 30),
 		groupDescription: "Discussing the lease for the Smith family.",
 		avatar: "folder_icon.png",
-		users: ["Landlord_Joe", "Emma_Smith", "Ethan_Smith"],
+		users: [USERS.landlordJoe, USERS.emmaSmith, USERS.ethanSmith],
 		messages: []
 	},
 
@@ -458,17 +582,17 @@ var conversations: ConversationDto[] = [
 		createdAt: "2025-12-22T11:00:00Z",
 		groupDescription: "Coordinating the walkthrough.",
 		avatar: "calendar_icon.png",
-		users: ["Agent_Sarah", "Alice", "Bob"],
+		users: [USERS.agentSarah, USERS.alice, USERS.bob],
 		messages: [
 			{
 				_id: "m3",
-				sender: "Agent_Sarah",
+				sender: USERS.agentSarah,
 				messageType: "Image",
 				data: "map_location.png",
-				createdAt: "2025-12-22T11:05:00Z",
+				createdAt: daysAgoAt(1, 11, 5),
 				conversation: "c4",
-				seenUsers: ["Agent_Sarah", "Alice"],
-				deliveredTo: ["Bob"]
+				seenUsers: [USERS.agentSarah._id, USERS.alice._id],
+				deliveredTo: [USERS.bob._id]
 			}
 		]
 	},
@@ -480,17 +604,17 @@ var conversations: ConversationDto[] = [
 		createdAt: "2025-10-01T12:00:00Z",
 		groupDescription: "Report repairs here.",
 		avatar: "wrench_icon.png",
-		users: ["Alice", "Admin_Repair"],
+		users: [USERS.alice, USERS.adminRepair],
 		messages: [
 			{
 				_id: "m4",
-				sender: "Alice",
+				sender: USERS.alice,
 				messageType: "Text",
 				data: "The sink is leaking again.",
-				createdAt: "2025-12-23T18:00:00Z",
+				createdAt: daysAgoAt(1, 18, 0),
 				conversation: "c5",
-				seenUsers: ["Alice"],
-				deliveredTo: ["Admin_Repair"]
+				seenUsers: [USERS.alice._id],
+				deliveredTo: [USERS.adminRepair._id]
 			}
 		]
 	}

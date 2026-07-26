@@ -37,7 +37,7 @@ export default function Listings() {
 						<i className="pi pi-check-circle text-green-400 text-xl"></i>
 						<div>
 							<p className="font-semibold">Listing Deleted</p>
-							<p className="text-sm text-gray-200">
+							<p className="text-sm listing-flow-text-muted">
 								Your listing was successfully deleted.
 							</p>
 						</div>
@@ -63,7 +63,7 @@ export default function Listings() {
 						<i className="pi pi-times-circle text-red-400 text-xl"></i>
 						<div>
 							<p className="font-semibold">Deletion Failed</p>
-							<p className="text-sm text-gray-200">
+							<p className="text-sm listing-flow-text-muted">
 								Unable to delete your listing. Please try again.
 							</p>
 						</div>
@@ -164,10 +164,7 @@ export default function Listings() {
 							icon="pi pi-plus"
 							size="small"
 							severity="primary"
-							className="w-full sm:w-auto"
-							style={{
-								background: "#23b7c5"
-							}}
+							className="w-full sm:w-auto px-4 py-2.5 listing-flow-action-button"
 							onClick={async () => {
 								const res = await axios.post(
 									`${BASE_URL}/listings/draft`,
@@ -250,15 +247,10 @@ export default function Listings() {
 											size="small"
 											severity="primary"
 											outlined
-											className="w-full sm:w-auto "
+											className="w-full sm:w-auto px-4 py-2.5 listing-flow-action-button"
 											onClick={() =>
 												navigate("/applicants")
 											}
-											style={{
-												color: "white",
-												backgroundColor: "#21b8c4",
-												border: "none"
-											}}
 										/>
 									</motion.div>
 									<motion.div whileHover={{ scale: 1.01 }}>
@@ -268,17 +260,12 @@ export default function Listings() {
 											size="small"
 											severity="primary"
 											outlined
-											className="w-full sm:w-auto"
+											className="w-full sm:w-auto px-4 py-2.5 listing-flow-action-button"
 											onClick={() => {
 												setCurrentListing(prop);
 												navigate(
 													`/view-listing/${prop._id}`
 												);
-											}}
-											style={{
-												color: "white",
-												backgroundColor: "#21b8c4",
-												border: "none"
 											}}
 										/>
 									</motion.div>
@@ -294,17 +281,12 @@ export default function Listings() {
 											size="small"
 											severity="primary"
 											outlined
-											className="w-full sm:w-auto"
+											className="w-full sm:w-auto px-4 py-2.5 listing-flow-action-button"
 											onClick={() => {
 												setCurrentListing(prop);
 												navigate(
 													`/add-listing/${prop._id}`
 												);
-											}}
-											style={{
-												color: "white",
-												backgroundColor: "#21b8c4",
-												border: "none"
 											}}
 										/>
 									</motion.div>
@@ -313,13 +295,8 @@ export default function Listings() {
 											icon="pi pi-trash"
 											size="small"
 											severity="danger"
-											className="w-full sm:w-auto"
+											className="w-full sm:w-auto px-4 py-2.5 listing-flow-action-button listing-flow-action-button--danger"
 											onClick={() => confirmDelete(prop)}
-											style={{
-												color: "white",
-												backgroundColor: "#f44336",
-												border: "none"
-											}}
 										/>
 									</motion.div>
 								</>

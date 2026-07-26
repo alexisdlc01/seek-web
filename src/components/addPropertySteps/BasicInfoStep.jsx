@@ -91,7 +91,7 @@ const BasicInfoStep = ({
 	];
 
 	return (
-		<div style={{ background: "#0f0f23", color: "white" }}>
+		<div className="listing-flow-surface" style={{ background: "#0f0f23", color: "white" }}>
 			<div className="space-y-4">
 				<div className="flex flex-col"></div>
 
@@ -140,6 +140,8 @@ const BasicInfoStep = ({
 							options={propertyTypes}
 							onChange={e => setPropertyType(e.value)}
 							placeholder="Select a Type"
+							className="listing-flow-dropdown"
+							panelClassName="listing-flow-panel"
 						/>
 					</div>
 					{propertyType === "Other (please specify)" && (
@@ -228,6 +230,8 @@ const BasicInfoStep = ({
 							options={bedroomOptions}
 							onChange={e => setRegularBedrooms(e.value)}
 							placeholder="Select"
+							className="listing-flow-dropdown"
+							panelClassName="listing-flow-panel"
 						/>
 					</div>
 					<div className="flex flex-col">
@@ -243,6 +247,8 @@ const BasicInfoStep = ({
 							options={bedroomOptions}
 							onChange={e => setEnsuiteBedrooms(e.value)}
 							placeholder="Select"
+							className="listing-flow-dropdown"
+							panelClassName="listing-flow-panel"
 						/>
 					</div>
 					<div className="flex flex-col">
@@ -257,6 +263,8 @@ const BasicInfoStep = ({
 							placeholder="Select"
 							data-pr-tooltip="Half bathrooms (0.5) mean toilets without a shower or bath."
 							data-pr-position="bottom"
+							className="listing-flow-dropdown"
+							panelClassName="listing-flow-panel"
 						/>
 						<Tooltip target="#bathrooms" />
 					</div>
@@ -322,6 +330,8 @@ const BasicInfoStep = ({
 								setAvailabilityDate(e.value);
 							}}
 							showIcon
+							className="listing-flow-calendar"
+							panelClassName="listing-flow-panel"
 						/>
 					</div>
 					<div className="flex flex-col">
@@ -336,6 +346,8 @@ const BasicInfoStep = ({
 							value={endAvailabilityDate}
 							onChange={e => setEndAvailabilityDate(e.value)}
 							showIcon
+							className="listing-flow-calendar"
+							panelClassName="listing-flow-panel"
 						/>
 					</div>
 				</div>
@@ -477,6 +489,7 @@ const BasicInfoStep = ({
 					label="Next"
 					icon="pi pi-arrow-right"
 					iconPos="right"
+					className="listing-flow-action-button px-4 py-2.5"
 					onClick={next}
 				/>
 			</div>

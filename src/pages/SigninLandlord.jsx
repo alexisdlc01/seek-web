@@ -37,7 +37,7 @@ export default function SignInLandlord() {
 					<i className="pi pi-times-circle text-red-400 text-xl"></i>
 					<div>
 						<p className="font-semibold">Sign-In Failed</p>
-						<p className="text-sm text-gray-200">
+						<p className="text-sm text-[var(--text-color-secondary)]">
 							{detail}
 						</p>
 					</div>
@@ -93,7 +93,7 @@ export default function SignInLandlord() {
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
-				className="relative z-10 w-full bg-white max-w-md rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
+				className="relative z-10 w-full bg-white max-w-md rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)] auth-form-card"
 			>
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Welcome Back, Landlord
@@ -122,10 +122,10 @@ export default function SignInLandlord() {
 						toggleMask
 						pt={{
 							showIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3"
+								className: "-translate-y-1/4 -translate-x-2/3 text-slate-600"
 							},
 							hideIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3"
+								className: "-translate-y-1/4 -translate-x-2/3 text-slate-600"
 							}
 						}}
 					/>
@@ -137,10 +137,10 @@ export default function SignInLandlord() {
 					<Button
 						type="submit"
 						label="Sign in"
-						className="w-full font-medium"
+						className="w-full font-semibold"
 						style={{
-							backgroundColor: "var(--surface-300)",
-							color: "white",
+							backgroundColor: "var(--primary-color)",
+							color: "var(--primary-color-text)",
 							border: "none"
 						}}
 					/>
@@ -149,7 +149,7 @@ export default function SignInLandlord() {
 				<Divider
 					layout="horizontal"
 				>
-					<span className="text-sm text-[var(--primary-color-text)]">or sign in with</span>
+					<span className="text-sm text-[var(--text-color-secondary)]">or sign in with</span>
 				</Divider>
 
 				<div className="flex flex-col gap-2">
@@ -159,9 +159,9 @@ export default function SignInLandlord() {
 							icon="pi pi-google"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
 							style={{
-								backgroundColor: "var(--surface-300)",
-								color: "white",
-								border: "none"
+								backgroundColor: "var(--surface-0)",
+								color: "#1f2937",
+								border: "1px solid var(--surface-border)"
 							}}
 							type="button"
 							onClick={() => {
@@ -175,9 +175,9 @@ export default function SignInLandlord() {
 							icon="pi pi-apple"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
 							style={{
-								backgroundColor: "var(--surface-300)",
-								color: "white",
-								border: "none"
+								backgroundColor: "var(--surface-0)",
+								color: "#1f2937",
+								border: "1px solid var(--surface-border)"
 							}}
 							type="button"
 						/>
@@ -193,7 +193,7 @@ export default function SignInLandlord() {
 					Don't have an account?{" "}
 					<Link
 						to="/signup/landlord"
-						className="text-[var(--primary-color-text)] font-medium"
+						className="text-[var(--primary-color)] font-semibold underline-offset-2 hover:underline"
 					>
 						Signup
 					</Link>
@@ -208,7 +208,7 @@ export default function SignInLandlord() {
 					Forgot your password?{" "}
 					<Link
 						to="/resetpassword"
-						className="text-[var(--primary-color-text)] font-medium"
+						className="text-[var(--primary-color)] font-semibold underline-offset-2 hover:underline"
 					>
 						Reset Password
 					</Link>

@@ -23,7 +23,7 @@ const LocationAvailabilityStep = ({
 	}, []);
 
 	return (
-		<div
+		<div className="listing-flow-surface"
 			style={{
 				background: "#0f0f23",
 				color: "white"
@@ -71,6 +71,8 @@ const LocationAvailabilityStep = ({
 							value={availabilityDate}
 							onChange={e => setAvailabilityDate(e.value)}
 							showIcon
+							className="listing-flow-calendar"
+							panelClassName="listing-flow-panel"
 						/>
 					</div>
 					<div className="flex flex-col">
@@ -85,6 +87,8 @@ const LocationAvailabilityStep = ({
 							value={endAvailabilityDate}
 							onChange={e => setEndAvailabilityDate(e.value)}
 							showIcon
+							className="listing-flow-calendar"
+							panelClassName="listing-flow-panel"
 						/>
 					</div>
 				</div>
@@ -94,12 +98,14 @@ const LocationAvailabilityStep = ({
 					label="Back"
 					severity="secondary"
 					icon="pi pi-arrow-left"
+					className="listing-flow-action-button listing-flow-action-button--secondary px-4 py-2.5"
 					onClick={back}
 				/>
 				<Button
 					label="Next"
 					icon="pi pi-arrow-right"
 					iconPos="right"
+					className="listing-flow-action-button px-4 py-2.5"
 					onClick={next}
 				/>
 			</div>

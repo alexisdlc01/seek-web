@@ -185,17 +185,17 @@ export default function SignUpLandlord() {
 					<Button
 						type="submit"
 						label="Create Account"
-						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
+						className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-semibold"
 						style={{
-							backgroundColor: "var(--surface-300)",
-							color: "white",
+							backgroundColor: "var(--primary-color)",
+							color: "var(--primary-color-text)",
 							border: "none"
 						}}
 					/>
 				</motion.div>
 
 				<Divider layout="horizontal">
-					<span className="text-sm text-[var(--primary-color-text)]">
+					<span className="text-sm text-[var(--text-color-secondary)]">
 						or sign up with
 					</span>
 				</Divider>
@@ -207,9 +207,9 @@ export default function SignUpLandlord() {
 							icon="pi pi-google"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
 							style={{
-								backgroundColor: "var(--surface-300)",
-								color: "white",
-								border: "none"
+								backgroundColor: "var(--surface-0)",
+								color: "var(--text-color)",
+								border: "1px solid var(--surface-border)"
 							}}
 							type="button"
 							onClick={() => {
@@ -223,9 +223,9 @@ export default function SignUpLandlord() {
 							icon="pi pi-apple"
 							className="w-full border border-gray-300 text-gray-800 bg-white"
 							style={{
-								backgroundColor: "var(--surface-300)",
-								color: "white",
-								border: "none"
+								backgroundColor: "var(--surface-0)",
+								color: "var(--text-color)",
+								border: "1px solid var(--surface-border)"
 							}}
 							type="button"
 						/>
@@ -236,12 +236,12 @@ export default function SignUpLandlord() {
 					initial={{ opacity: 0, y: 10 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.4, delay: 0.2 }}
-					className="text-sm text-[var(--primary-color-text)] text-center"
+					className="text-sm text-[var(--text-color-secondary)] text-center"
 				>
 					Already have an account?{" "}
 					<Link
 						to="/signin/landlord"
-						className="text-[var(--primary-color-text)] font-medium"
+						className="text-[var(--primary-color)] font-semibold underline-offset-2 hover:underline"
 					>
 						Login
 					</Link>

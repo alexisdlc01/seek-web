@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { InputText } from "primereact/inputtext";
-import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
-import { Divider } from "primereact/divider";
-import { Link } from "react-router-dom";
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -35,7 +32,7 @@ export default function ResetPassword() {
 					<InputText
 						id="reset-email"
 						type="email"
-						className={`w-full p-3 text-lg}`}
+						className="w-full p-3 text-lg"
 						onChange={e => setEmail(e.target.value)}
 					/>
 					<label htmlFor="reset-email" className="ml-2">

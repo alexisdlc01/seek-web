@@ -36,7 +36,7 @@ export default function SigninSuperuser() {
 					<i className="pi pi-times-circle text-red-400 text-xl"></i>
 					<div>
 						<p className="font-semibold">Sign-In Failed</p>
-						<p className="text-sm text-gray-200">
+						<p className="text-sm text-[var(--text-color-secondary)]">
 							{detail}
 						</p>
 					</div>
@@ -123,10 +123,10 @@ export default function SigninSuperuser() {
 					<Button
 						type="submit"
 						label="Sign in"
-						className="w-full font-medium"
+						className="w-full font-semibold"
 						style={{
-							backgroundColor: "var(--surface-300)",
-							color: "white",
+							backgroundColor: "var(--primary-color)",
+							color: "var(--primary-color-text)",
 							border: "none"
 						}}
 					/>

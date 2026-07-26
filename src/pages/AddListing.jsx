@@ -226,13 +226,13 @@ const AddListing = () => {
 							<p className="font-semibold">
 								Missing Required Fields
 							</p>
-							<p className="text-sm text-gray-200">
+							<p className="text-sm listing-flow-text-muted">
 								Please fill in: {missing.join(", ")}
 							</p>
 						</div>
 						<button
 							onClick={() => toast.current.clear()}
-							className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+							className="listing-flow-text-soft hover:listing-flow-text-strong transition-colors cursor-pointer"
 						>
 							<i className="pi pi-times text-sm"></i>
 						</button>
@@ -293,13 +293,13 @@ const AddListing = () => {
 						<i className="pi pi-check-circle text-green-400 text-xl"></i>
 						<div className="flex-1">
 							<p className="font-semibold">Listing Published!</p>
-							<p className="text-sm text-gray-200">
+							<p className="text-sm listing-flow-text-muted">
 								Your property listing is now live.
 							</p>
 						</div>
 						<button
 							onClick={() => toast.current.clear()}
-							className="text-gray-400 hover:text-white transition-colors"
+							className="listing-flow-text-soft hover:listing-flow-text-strong transition-colors"
 						>
 							<i className="pi pi-times text-sm"></i>
 						</button>
@@ -327,7 +327,7 @@ const AddListing = () => {
 						<i className="pi pi-times-circle text-red-400 text-xl"></i>
 						<div>
 							<p className="font-semibold">Publish Failed</p>
-							<p className="text-sm text-gray-200">
+							<p className="text-sm listing-flow-text-muted">
 								An error occurred while publishing your listing.
 							</p>
 							<button
@@ -688,7 +688,7 @@ const AddListing = () => {
 					Add New Property
 				</h1>
 
-				<Stepper ref={stepperRef} linear>
+				<Stepper ref={stepperRef} linear className="listing-flow-stepper">
 					<StepperPanel header="Basics">
 						<BasicInfoStep
 							title={title}

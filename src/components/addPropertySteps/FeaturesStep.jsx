@@ -106,7 +106,7 @@ const FeaturesStep = ({
 	};
 
 	return (
-		<div
+		<div className="listing-flow-surface"
 			style={{
 				background: "#0f0f23",
 				color: "white"
@@ -147,6 +147,8 @@ const FeaturesStep = ({
 						options={epcOptions}
 						onChange={e => setEpcRating(e.value)}
 						placeholder="Select rating"
+						className="listing-flow-dropdown"
+						panelClassName="listing-flow-panel"
 					/>
 				</div>
 			</div>
@@ -167,6 +169,7 @@ const FeaturesStep = ({
 					<Button
 						label="Add"
 						icon="pi pi-plus"
+						className="listing-flow-action-button px-4 py-2.5"
 						onClick={addCustomAmenity}
 					/>
 				</div>
@@ -243,12 +246,14 @@ const FeaturesStep = ({
 					label="Back"
 					severity="secondary"
 					icon="pi pi-arrow-left"
+					className="listing-flow-action-button listing-flow-action-button--secondary px-4 py-2.5"
 					onClick={back}
 				/>
 				<Button
 					label="Next"
 					icon="pi pi-arrow-right"
 					iconPos="right"
+					className="listing-flow-action-button px-4 py-2.5"
 					onClick={next}
 				/>
 			</div>

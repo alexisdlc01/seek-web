@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
-import { Menu } from "primereact/menu";
 import { useNavigate } from "react-router-dom";
 import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 
@@ -38,11 +37,6 @@ export default function NavbarMobile({ user, logout, logo }) {
 	const backgroundTheme = theme === "dark" ? "#0F0F23" : "white";
 	const textColor = theme === "dark" ? "white" : "#0F0F23";
 
-	const loginItems = [
-		{ label: "As Student", command: () => navigate("/signin/student") },
-		{ label: "As Landlord", command: () => navigate("/signin/landlord") }
-	];
-
 	const items = loggedIn
 		? [
 				{ label: "Dashboard", command: () => navigate("/dashboard") },
@@ -65,22 +59,36 @@ export default function NavbarMobile({ user, logout, logo }) {
 			end={
 				!loggedIn ? (
 					<div ref={loginWrapRef} className="relative">
+						<Button
+							label="Login"
+							icon="pi pi-chevron-down"
+							iconPos="right"
+							text
+							className={`font-semibold ${theme === "dark" ? "!text-white" : "!text-[#0F0F23]"}`}
+							onClick={() => setLoginOpen(v => !v)}
+						/>
 						{loginOpen && (
-							<div className="absolute right-0 top-[calc(100%+8px)] z-50 w-40">
-								<Menu
-									model={loginItems.map(item => ({
-										...item,
-										template: (menuItem, options) => (
-											<Button
-												label={menuItem.label}
-												text
-												className={`w-full text-left !py-2 !px-3 ${theme === "dark" ? "text-white" : "text-black"}`}
-												onClick={options.onClick}
-											/>
-										)
-									}))}
-									className={`rounded-xl shadow-lg border ${theme === "dark" ? "bg-gray-900" : "bg-white"} p-1`}
-								/>
+							<div className="absolute right-0 top-[calc(100%+8px)] z-50 login-menu">
+								<button
+									type="button"
+									className="block w-full rounded-lg px-4 py-2.5 text-left font-semibold text-[#0F0F23] hover:bg-slate-100"
+									onClick={() => {
+										setLoginOpen(false);
+										navigate("/signin/student");
+									}}
+								>
+									As Student
+								</button>
+								<button
+									type="button"
+									className="block w-full rounded-lg px-4 py-2.5 text-left font-semibold text-[#0F0F23] hover:bg-slate-100"
+									onClick={() => {
+										setLoginOpen(false);
+										navigate("/signin/landlord");
+									}}
+								>
+									As Landlord
+								</button>
 							</div>
 						)}
 					</div>

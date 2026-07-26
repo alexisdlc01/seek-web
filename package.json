@@ -11,7 +11,7 @@
     "generate-api": "openapi-ts"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.11",
+    "@tailwindcss/vite": "^4.3.3",
     "axios": "^1.10.0",
     "chart.js": "^4.5.0",
     "chartjs": "^0.3.24",
@@ -25,7 +25,7 @@
     "react-router-dom": "^7.6.3",
     "reactflow": "^11.11.4",
     "socket.io-client": "^4.8.1",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

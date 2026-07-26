@@ -114,19 +114,23 @@ export default function SignUpStudent() {
 					</h1>
 
 					<FloatLabel>
-						<label htmlFor="name" className="text-black">First and last name</label>
-						<InputText className="w-full"
+						<InputText
+							className="w-full"
 							id="name"
 							value={name}
-							onChange={e => setName(e.target.value)} />
+							onChange={e => setName(e.target.value)}
+						/>
+						<label htmlFor="name">First and last name</label>
 					</FloatLabel>
 
 					<FloatLabel>
-						<label htmlFor="email">St Andrews Email</label>
-						<InputText className="w-full bg-red-500"
+						<InputText
+							className="w-full"
 							id="email"
 							value={email}
-							onChange={e => setEmail(e.target.value)} />
+							onChange={e => setEmail(e.target.value)}
+						/>
+						<label htmlFor="email">St Andrews Email</label>
 					</FloatLabel>
 
 					<FloatLabel>
@@ -178,10 +182,10 @@ export default function SignUpStudent() {
 						<Button
 							type="submit"
 							label="Send Activation Email"
-							className="w-full font-medium"
+							className="w-full font-semibold"
 							style={{
-								backgroundColor: "var(--surface-300)",
-								color: "white",
+								backgroundColor: "var(--primary-color)",
+								color: "var(--primary-color-text)",
 								border: "none"
 							}}
 						/>
@@ -196,7 +200,7 @@ export default function SignUpStudent() {
 						Already have an account?{" "}
 						<Link
 							to="/signin/student"
-							className="text-[var(--primary-color-text)] font-medium"
+							className="text-[var(--primary-color)] font-semibold underline-offset-2 hover:underline"
 						>
 							Login
 						</Link>

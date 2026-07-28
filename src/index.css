@@ -737,3 +737,18 @@ select:focus,
 	padding: 0.35rem !important;
 	box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18) !important;
 }
+
+/* iconPos="right" keeps the icon first in the DOM and repositions it visually
+   via flex `order`, so it never matches a label+icon sibling selector. Target
+   its dedicated class instead, mirroring the icon-before-text gap above, so
+   icon-after-text buttons (e.g. "Next") get the same gap "Back" has. */
+.p-button .p-button-icon-right {
+	margin-left: 0.45rem !important;
+}
+
+/* PrimeReact always renders a (possibly empty, "&nbsp;"-only) label span even
+   for icon-only buttons. Left unhidden, it still occupies layout space and
+   picks up the adjacent-sibling margin above, pushing the icon off-center. */
+.p-button.p-button-icon-only .p-button-label {
+	display: none !important;
+}

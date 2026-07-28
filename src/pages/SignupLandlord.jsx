@@ -109,7 +109,7 @@ export default function SignUpLandlord() {
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
-				className="relative bg-white z-10 w-full max-w-md rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)]"
+				className="relative bg-white z-10 w-full max-w-md rounded-xl shadow-md p-8 space-y-6 border border-[var(--surface-border)] auth-form-card"
 			>
 				<h1 className="text-center text-2xl font-bold text-[var(--primary-color)]">
 					Create Landlord Account
@@ -150,10 +150,10 @@ export default function SignUpLandlord() {
 						toggleMask
 						pt={{
 							showIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3"
+								className: "-translate-y-1/4 -translate-x-2/3 text-slate-600"
 							},
 							hideIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3"
+								className: "-translate-y-1/4 -translate-x-2/3 text-slate-600"
 							}
 						}}
 					/>
@@ -171,10 +171,10 @@ export default function SignUpLandlord() {
 						toggleMask
 						pt={{
 							showIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3"
+								className: "-translate-y-1/4 -translate-x-2/3 text-slate-600"
 							},
 							hideIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3"
+								className: "-translate-y-1/4 -translate-x-2/3 text-slate-600"
 							}
 						}}
 					/>
@@ -208,7 +208,7 @@ export default function SignUpLandlord() {
 							className="w-full border border-gray-300 text-gray-800 bg-white"
 							style={{
 								backgroundColor: "var(--surface-0)",
-								color: "var(--text-color)",
+								color: "#1f2937",
 								border: "1px solid var(--surface-border)"
 							}}
 							type="button"
@@ -224,7 +224,7 @@ export default function SignUpLandlord() {
 							className="w-full border border-gray-300 text-gray-800 bg-white"
 							style={{
 								backgroundColor: "var(--surface-0)",
-								color: "var(--text-color)",
+								color: "#1f2937",
 								border: "1px solid var(--surface-border)"
 							}}
 							type="button"

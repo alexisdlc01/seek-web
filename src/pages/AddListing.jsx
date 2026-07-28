@@ -310,11 +310,15 @@ const AddListing = () => {
 			navigate("/listings");
 		} catch (error) {
 			console.error("Publishing failed:", error);
+			const serverMessage = error?.response?.data?.message;
+			const detail = Array.isArray(serverMessage)
+				? serverMessage.join(", ")
+				: serverMessage || "An error occurred while publishing your listing.";
 			toast.current?.show({
 				severity: "error",
 				summary: "Publish Failed",
-				detail: "An error occurred while publishing your listing.",
-				life: 4000,
+				detail,
+				life: 6000,
 				style: {
 					background: "#1E1E2F",
 					color: "#fff",
@@ -328,7 +332,7 @@ const AddListing = () => {
 						<div>
 							<p className="font-semibold">Publish Failed</p>
 							<p className="text-sm listing-flow-text-muted">
-								An error occurred while publishing your listing.
+								{detail}
 							</p>
 							<button
 								onClick={() => toast.current.clear()}

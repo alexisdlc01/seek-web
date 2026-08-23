@@ -48,7 +48,10 @@ export default function NavbarMobile({ user, logout, logo }) {
 				{ label: "Dashboard", command: () => navigate("/dashboard") },
 				{ label: "Listings", command: () => navigate("/listings") },
 				{ label: "Messages", command: () => navigate("/messages") },
-				{ label: "Settings", command: () => navigate("/settings") },
+				{
+					label: "Edit Profile",
+					command: () => navigate("/edit-profile")
+				},
 				{ label: "Logout", command: async () => await logout() }
 			]
 		: [

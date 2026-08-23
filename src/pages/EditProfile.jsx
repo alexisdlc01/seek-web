@@ -1,12 +1,10 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Avatar } from "primereact/avatar";
 import axios from "axios";
 import UserContext from "../context/UserContext.jsx";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE_URL } from "../config/api.js";
 
 export default function EditProfile() {
 	const fileRef = useRef(null);
@@ -16,7 +14,6 @@ export default function EditProfile() {
 
 	const [displayName, setDisplayName] = useState("");
 	const [avatarUrl, setAvatarUrl] = useState("");
-	const [avatarKey, setAvatarKey] = useState("");
 
 	const [initialName, setInitialName] = useState("");
 	const [initialKey, setInitialKey] = useState("");
@@ -24,23 +21,22 @@ export default function EditProfile() {
 	const { loading, user, setUser } = useContext(UserContext);
 
 	useEffect(() => {
-		(async () => {
-			if (!loading) {
-				try {
-					setDisplayName(user.name);
-					setAvatarUrl(user.profilePicUrl);
-				} finally {
-					setLoading2(false);
-				}
-			}
-		})();
+		if (loading) return;
+
+		const name = user?.name ?? "";
+		const profilePicUrl = user?.profilePicUrl ?? "";
+		setDisplayName(name);
+		setAvatarUrl(profilePicUrl);
+		setInitialName(name);
+		setInitialKey(profilePicUrl);
+		setLoading2(false);
 	}, [loading, user]);
 
 	const pickFile = () => fileRef.current?.click();
 
 	const onFile = async f => {
 		if (!f?.type?.startsWith("image/")) return;
-		const { data } = await axios.get(`${BASE_URL}/upload/presign`, {
+		const { data } = await axios.get(`${API_BASE_URL}/upload/presign`, {
 			params: {
 				filename: f.name,
 				fileType: f.type,
@@ -51,11 +47,10 @@ export default function EditProfile() {
 		await axios.put(data.uploadUrl, f, {
 			headers: { "Content-Type": f.type }
 		});
-		setAvatarKey(data.key);
 		setAvatarUrl(data.fileUrl || URL.createObjectURL(f)); // instant preview
 	};
 
-	const dirty = displayName !== initialName || avatarKey !== initialKey;
+	const dirty = displayName !== initialName || avatarUrl !== initialKey;
 	const canSave = displayName.trim().length > 0 && dirty && !saving;
 
 	const save = async () => {
@@ -64,26 +59,26 @@ export default function EditProfile() {
 		try {
 			if (avatarUrl !== "") {
 				await axios.put(
-					`${BASE_URL}/users/setProfilePic`,
+					`${API_BASE_URL}/users/setProfilePic`,
 					{ url: avatarUrl },
 					{ withCredentials: true }
 				);
 			}
 			if (avatarUrl === "" && removePicture) {
-				console.log("hhsdkfsdhf");
 				await axios.put(
-					`${BASE_URL}/users/setProfilePic`,
+					`${API_BASE_URL}/users/setProfilePic`,
 					{ url: avatarUrl },
 					{ withCredentials: true }
 				);
 			}
 			await axios.put(
-				`${BASE_URL}/users/setUsername`,
+				`${API_BASE_URL}/users/setUsername`,
 				{ name: displayName },
 				{ withCredentials: true }
 			);
 			setInitialName(displayName);
-			setInitialKey(avatarKey);
+			setInitialKey(avatarUrl);
+			setRemovePicture(false);
 			setUser(prev => ({
 				...prev,
 				name: displayName,
@@ -118,7 +113,7 @@ export default function EditProfile() {
 							image={avatarUrl}
 							label={
 								!avatarUrl
-									? user.name
+									? displayName
 											.split(" ")
 											.map(n => n[0])
 											.join("")
@@ -152,7 +147,6 @@ export default function EditProfile() {
 									onClick={() => {
 										setRemovePicture(true);
 										setAvatarUrl("");
-										setAvatarKey("");
 									}}
 									style={{
 										borderColor: "#ef4444",

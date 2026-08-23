@@ -54,7 +54,7 @@ export default function Terms() {
 							<ul className="list-disc pl-6 space-y-2">
 								<li>
 									Accounts are available only to students who
-									register using a valid university email
+									register using a valid email address
 									address.
 								</li>
 								<li>

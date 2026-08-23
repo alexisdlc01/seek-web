@@ -15,6 +15,7 @@ export default function SignUpStudent() {
 	const [name, setName] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const navigate = useNavigate();
 	const toast = useRef(null);
 
@@ -22,7 +23,7 @@ export default function SignUpStudent() {
 		toast.current?.show({
 			severity: "error",
 			summary: "Sign-Up Failed",
-			detail: { detail },
+			detail,
 			life: 4000,
 			style: {
 				background: "#1E1E2F",
@@ -44,7 +45,7 @@ export default function SignUpStudent() {
 	};
 
 	const validateName = () => {
-		if (name.length === 0) {
+		if (name.trim().length === 0) {
 			showError("Please enter your name");
 			return false;
 		}
@@ -52,15 +53,13 @@ export default function SignUpStudent() {
 	};
 
 	const validateEmail = () => {
-		const regex = /^[a-zA-Z0-9._-]+$/;
+		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!email.trim()) {
-			showError("A valid St Andrews email prefix is required.");
+			showError("A valid email address is required.");
 			return false;
 		}
-		if (!regex.test(email)) {
-			showError(
-				"Please enter only your email prefix (before @st-andrews.ac.uk)"
-			);
+		if (!regex.test(email.trim())) {
+			showError("Please enter a valid email address.");
 			return false;
 		}
 		return true;
@@ -91,8 +90,16 @@ export default function SignUpStudent() {
 		if (!validateName()) return;
 		if (!validateEmail()) return;
 		if (!validatePasswords()) return;
-		await signup(name, `${email}@st-andrews.ac.uk`, password, "STUDENT");
-		navigate("/activationSent");
+		setIsSubmitting(true);
+		const result = await signup(name.trim(), email.trim().toLowerCase(), password);
+		setIsSubmitting(false);
+
+		if (!result.ok) {
+			showError(result.error);
+			return;
+		}
+
+		navigate(result.verificationRequired ? "/activationSent" : "/download");
 	};
 
 	return (
@@ -122,9 +129,10 @@ export default function SignUpStudent() {
 					</FloatLabel>
 
 					<FloatLabel>
-						<label htmlFor="email">St Andrews Email</label>
-						<InputText className="w-full bg-red-500"
+						<label htmlFor="email">Email</label>
+						<InputText className="w-full"
 							id="email"
+							type="email"
 							value={email}
 							onChange={e => setEmail(e.target.value)} />
 					</FloatLabel>
@@ -177,7 +185,9 @@ export default function SignUpStudent() {
 					<motion.div whileHover={{ scale: 1.02 }}>
 						<Button
 							type="submit"
-							label="Send Activation Email"
+							label={isSubmitting ? "Creating Account..." : "Create Account"}
+							disabled={isSubmitting}
+							loading={isSubmitting}
 							className="w-full font-medium"
 							style={{
 								backgroundColor: "var(--surface-300)",

@@ -13,14 +13,17 @@ export default function SignInStudent() {
 	const { login } = useContext(UserContext);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const navigate = useNavigate();
 	const toast = useRef(null);
 
-	const showError = () => {
+	const showError = (
+		detail = "Your email or password didn’t match our records. Please try again."
+	) => {
 		toast.current?.show({
 			severity: "error",
 			summary: "Sign-In Failed",
-			detail: "Your email or password didn’t match our records. Please try again.",
+			detail,
 			life: 4000,
 			style: {
 				background: "#1E1E2F",
@@ -34,20 +37,19 @@ export default function SignInStudent() {
 					<i className="pi pi-times-circle text-red-400 text-xl"></i>
 					<div>
 						<p className="font-semibold">Sign-In Failed</p>
-						<p className="text-sm text-gray-200">
-							Your email or password didn’t match our records.
-						</p>
+						<p className="text-sm text-gray-200">{detail}</p>
 					</div>
 				</div>
 			)
 		});
 	};
 
-	const validateEmailPrefix = (prefix: string) => /^[a-zA-Z0-9._-]+$/.test(prefix);
+	const validateEmail = (value: string) =>
+		/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault();
-		if (!validateEmailPrefix(email) || email.includes("@")) {
+		if (!validateEmail(email) || !password) {
 			toast.current?.show({
 				severity: "error",
 				summary: "Sign-In Failed",
@@ -68,8 +70,7 @@ export default function SignInStudent() {
 								Invalid Email Format
 							</p>
 							<p className="text-sm text-gray-200">
-								"Please enter only your email prefix (before
-								@st-andrews.ac.uk)".
+								Enter a valid email address and password.
 							</p>
 						</div>
 					</div>
@@ -77,11 +78,18 @@ export default function SignInStudent() {
 			});
 			return;
 		}
-		const fullEmail = `${email}@st-andrews.ac.uk`;
-		const res = await login(fullEmail, password);
-		if (res === "Credentials are not valid." || res === "Unauthorized")
-			showError();
-		else navigate("/download");
+		setIsSubmitting(true);
+		const error = await login(
+			email.trim().toLowerCase(),
+			password,
+			"STUDENT"
+		);
+		setIsSubmitting(false);
+		if (error) {
+			showError(error);
+			return;
+		}
+		navigate("/download");
 	};
 
 	return (
@@ -111,7 +119,7 @@ export default function SignInStudent() {
 						onChange={e => setEmail(e.target.value)}
 						className="w-full"
 					/>
-					<label htmlFor="email">St Andrews Email</label>
+					<label htmlFor="email">Email</label>
 				</FloatLabel>
 
 				<FloatLabel className="mb-8">
@@ -137,7 +145,9 @@ export default function SignInStudent() {
 
 				<motion.div whileHover={{ scale: 1.02 }}>
 					<Button
-						label="Sign in"
+						label={isSubmitting ? "Signing in..." : "Sign in"}
+						disabled={isSubmitting}
+						loading={isSubmitting}
 						className="w-full font-medium"
 						style={{
 							backgroundColor: "var(--surface-300)",

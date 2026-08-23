@@ -9,12 +9,11 @@ import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
 export default function SigninSuperuser() {
 	const navigate = useNavigate();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const { login } = useContext(UserContext);
 	const toast = useRef(null);
 
@@ -61,7 +60,21 @@ export default function SigninSuperuser() {
 	const handleSubmit = async e => {
 		e.preventDefault();
 		if (!validateEmail()) return;
-		await login(email, password);
+		if (!password) {
+			showError("Enter your password.");
+			return;
+		}
+		setIsSubmitting(true);
+		const error = await login(
+			email.trim().toLowerCase(),
+			password,
+			"SUPERUSER"
+		);
+		setIsSubmitting(false);
+		if (error) {
+			showError(error);
+			return;
+		}
 		navigate("/superuser");
 	};
 
@@ -122,7 +135,9 @@ export default function SigninSuperuser() {
 				<motion.div whileHover={{ scale: 1.02 }}>
 					<Button
 						type="submit"
-						label="Sign in"
+						label={isSubmitting ? "Signing in..." : "Sign in"}
+						disabled={isSubmitting}
+						loading={isSubmitting}
 						className="w-full font-medium"
 						style={{
 							backgroundColor: "var(--surface-300)",

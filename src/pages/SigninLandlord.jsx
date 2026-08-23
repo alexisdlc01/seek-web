@@ -3,19 +3,17 @@ import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
-import { Divider } from "primereact/divider";
 import { Toast } from "primereact/toast";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
 export default function SignInLandlord() {
 	const navigate = useNavigate();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const { login } = useContext(UserContext);
 	const toast = useRef(null);
 
@@ -46,18 +44,6 @@ export default function SignInLandlord() {
 		});
 	};
 
-	const validatePassword = () => {
-		const strongPasswordRegex =
-			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-		if (!strongPasswordRegex.test(password)) {
-			showError(
-				"Password must be at least 8 characters, with uppercase, lowercase, number, and symbol."
-			);
-			return false;
-		}
-		return true;
-	};
-
 	const validateEmail = () => {
 		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!email.trim()) {
@@ -74,8 +60,22 @@ export default function SignInLandlord() {
 	const handleSubmit = async e => {
 		e.preventDefault();
 		if (!validateEmail()) return;
-		if (!validatePassword()) return;
-		await login(email, password);
+		if (!password) {
+			showError("Enter your password.");
+			return;
+		}
+
+		setIsSubmitting(true);
+		const error = await login(
+			email.trim().toLowerCase(),
+			password,
+			"LANDLORD_AGENCY"
+		);
+		setIsSubmitting(false);
+		if (error) {
+			showError(error);
+			return;
+		}
 		navigate("/");
 	};
 
@@ -136,7 +136,9 @@ export default function SignInLandlord() {
 				<motion.div whileHover={{ scale: 1.02 }}>
 					<Button
 						type="submit"
-						label="Sign in"
+						label={isSubmitting ? "Signing in..." : "Sign in"}
+						disabled={isSubmitting}
+						loading={isSubmitting}
 						className="w-full font-medium"
 						style={{
 							backgroundColor: "var(--surface-300)",
@@ -146,56 +148,18 @@ export default function SignInLandlord() {
 					/>
 				</motion.div>
 
-				<Divider
-					layout="horizontal"
-				>
-					<span className="text-sm text-[var(--primary-color-text)]">or sign in with</span>
-				</Divider>
-
-				<div className="flex flex-col gap-2">
-					<motion.div whileHover={{ scale: 1.02 }}>
-						<Button
-							label="Sign in with Google"
-							icon="pi pi-google"
-							className="w-full border border-gray-300 text-gray-800 bg-white"
-							style={{
-								backgroundColor: "var(--surface-300)",
-								color: "white",
-								border: "none"
-							}}
-							type="button"
-							onClick={() => {
-								window.location.href = `${BASE_URL}/auth/google`;
-							}}
-						/>
-					</motion.div>
-					<motion.div whileHover={{ scale: 1.02 }}>
-						<Button
-							label="Sign in with Apple"
-							icon="pi pi-apple"
-							className="w-full border border-gray-300 text-gray-800 bg-white"
-							style={{
-								backgroundColor: "var(--surface-300)",
-								color: "white",
-								border: "none"
-							}}
-							type="button"
-						/>
-					</motion.div>
-				</div>
-
 				<motion.p
 					initial={{ opacity: 0, y: 10 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.4, delay: 0.2 }}
 					className="text-sm text-center text-[var(--text-color-secondary)]"
 				>
-					Don't have an account?{" "}
+					Landlord and agency accounts are created by Seek administrators.{" "}
 					<Link
-						to="/signup/landlord"
+						to="/contact"
 						className="text-[var(--primary-color-text)] font-medium"
 					>
-						Signup
+						Contact us
 					</Link>
 				</motion.p>
 

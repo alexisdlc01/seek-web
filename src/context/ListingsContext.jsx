@@ -21,7 +21,11 @@ export const ListingsProvider = ({ children }) => {
 	const { user } = useContext(UserContext);
 
 	useEffect(() => {
-		if (!user || user.role !== "LANDLORD_AGENCY") return;
+		if (!user || user.role !== "LANDLORD_AGENCY") {
+			setListings([]);
+			setCurrentListing({});
+			return;
+		}
 		(async () => {
 			const res = await axios.get(`${BASE_URL}/listings/mine`, {
 				withCredentials: true

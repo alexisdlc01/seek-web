@@ -34,7 +34,7 @@ export default function PrivacyPolicy() {
 						<p className="text-[var(--text-color-secondary)]">
 							<strong>a. Information You Provide</strong>
 							<ul className="list-disc pl-6 space-y-1 mt-2">
-								<li>Your name and university email address</li>
+								<li>Your name and email address</li>
 								<li>
 									Your student status and university
 									affiliation

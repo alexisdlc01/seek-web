@@ -1,9 +1,14 @@
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import {
+	Routes,
+	Route,
+	useLocation,
+	useNavigate
+} from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-import SignUpLandlord from "./pages/SignupLandlord";
+import LandlordAccountAccess from "./pages/SignupLandlord";
 import SignInLandlord from "./pages/SigninLandlord";
 import SignInStudent from "./pages/SigninStudent";
 import SignUpStudent from "./pages/SignupStudent";
@@ -92,7 +97,7 @@ function App() {
 							<Route path="/about" element={<About />} />
 							<Route
 								path="/signup/landlord"
-								element={<SignUpLandlord />}
+								element={<LandlordAccountAccess />}
 							/>
 							<Route
 								path="/signup/student"

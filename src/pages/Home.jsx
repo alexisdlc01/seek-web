@@ -236,10 +236,10 @@ export default function LandingPage() {
 								<motion.div whileHover={{ scale: 1.05 }}>
 									<Button
 										size="small"
-										label="I'm a Landlord"
+										label="Landlord sign in"
 										className="equal-btn landlord"
 										onClick={() =>
-											navigate("/signup/landlord")
+											navigate("/signin/landlord")
 										}
 									/>
 								</motion.div>

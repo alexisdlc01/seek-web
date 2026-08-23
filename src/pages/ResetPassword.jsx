@@ -1,24 +1,37 @@
 import React, { useState } from "react";
 import { InputText } from "primereact/inputtext";
-import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
-import { Divider } from "primereact/divider";
-import { Link } from "react-router-dom";
 import axios from "axios";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE_URL } from "../config/api.js";
 
 export default function ResetPassword() {
 	const [email, setEmail] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [message, setMessage] = useState("");
+	const [error, setError] = useState("");
 
 	const handleSubmit = async e => {
 		e.preventDefault();
-		await axios.post(
-			`${BASE_URL}/auth/forgot-password`,
-			{ email },
-			{ withCredentials: true }
-		);
+		setIsSubmitting(true);
+		setMessage("");
+		setError("");
+
+		try {
+			const response = await axios.post(
+				`${API_BASE_URL}/auth/forgot-password`,
+				{ email: email.trim().toLowerCase() },
+				{ withCredentials: true }
+			);
+			setMessage(
+				response.data?.message ||
+					"If an account exists, a password reset link has been sent."
+			);
+		} catch {
+			setError("Unable to request a reset link. Please try again.");
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
 	return (
@@ -32,11 +45,13 @@ export default function ResetPassword() {
 					Reset Password
 				</h1>
 				<FloatLabel className="mt-5">
-					<InputText
+				<InputText
 						id="reset-email"
 						type="email"
-						className={`w-full p-3 text-lg}`}
+						className="w-full p-3 text-lg"
+						value={email}
 						onChange={e => setEmail(e.target.value)}
+						required
 					/>
 					<label htmlFor="reset-email" className="ml-2">
 						Email associated with your account
@@ -44,10 +59,22 @@ export default function ResetPassword() {
 				</FloatLabel>
 
 				<Button
-					label="Send Reset Link"
+					label={isSubmitting ? "Sending..." : "Send Reset Link"}
 					className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
 					type="submit"
+					disabled={isSubmitting}
+					loading={isSubmitting}
 				/>
+				{message ? (
+					<p className="text-sm text-green-700" role="status">
+						{message}
+					</p>
+				) : null}
+				{error ? (
+					<p className="text-sm text-red-600" role="alert">
+						{error}
+					</p>
+				) : null}
 			</form>
 		</div>
 	);

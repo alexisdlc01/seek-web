@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
@@ -7,8 +7,8 @@ import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE_URL } from "../config/api.js";
+import UserContext from "../context/UserContext.jsx";
 
 export default function ResetPasswordPassword() {
 	const [searchParams] = useSearchParams();
@@ -17,8 +17,10 @@ export default function ResetPasswordPassword() {
 
 	const [password, setPassword] = useState("");
 	const [confirm, setConfirm] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const toast = useRef(null);
 	const navigate = useNavigate();
+	const { setUser } = useContext(UserContext);
 
 	const showError = (summary, detail) => {
 		toast.current?.show({
@@ -56,23 +58,53 @@ export default function ResetPasswordPassword() {
 		e.preventDefault();
 		if (!validatePassword()) return;
 
+		setIsSubmitting(true);
 		try {
-			await axios.post(`${BASE_URL}/auth/confirmPasswordReset`, {
-				userId,
-				token,
-				newPassword: password
-			});
+			await axios.post(
+				`${API_BASE_URL}/auth/confirmPasswordReset`,
+				{
+					userId,
+					token,
+					newPassword: password
+				},
+				{ withCredentials: true }
+			);
+			setUser(null);
 			toast.current?.show({
 				severity: "success",
 				summary: "Password Reset",
 				detail: "Your password has been updated successfully.",
 				life: 3000
 			});
-			setTimeout(() => navigate("/signin/landlord"), 1000);
-		} catch (err) {
+			setTimeout(() => navigate("/"), 1000);
+		} catch {
 			showError("Failed", "Password reset link invalid or expired.");
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
+
+	if (!userId || !token) {
+		return (
+			<div className="relative overflow-hidden min-h-screen bg-[var(--surface-a)] flex items-center justify-center px-4">
+				<BackgroundBubbles count={20} color="#8B5CF6" />
+				<div className="relative z-10 w-full max-w-md rounded-xl border border-[var(--surface-border)] bg-white p-8 text-center shadow-md">
+					<h1 className="text-2xl font-bold text-[var(--primary-color)]">
+						Reset link unavailable
+					</h1>
+					<p className="mt-4 text-[var(--text-color-secondary)]">
+						This password reset link is invalid or incomplete. Request a
+						new link and try again.
+					</p>
+					<Button
+						className="mt-7 w-full"
+						label="Request a New Link"
+						onClick={() => navigate("/resetpassword")}
+					/>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<form
@@ -121,7 +153,9 @@ export default function ResetPasswordPassword() {
 				<motion.div whileHover={{ scale: 1.02 }}>
 					<Button
 						type="submit"
-						label="Update Password"
+						label={isSubmitting ? "Updating..." : "Update Password"}
+						disabled={isSubmitting}
+						loading={isSubmitting}
 						className="w-full font-medium"
 						style={{
 							backgroundColor: "var(--surface-300)",

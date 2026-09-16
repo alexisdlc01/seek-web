@@ -1,12 +1,25 @@
-import React, { Dispatch, Ref, SetStateAction, useContext, useRef, useState } from "react";
+import axios, { AxiosError } from "axios";
+import React, {
+	Dispatch,
+	Ref,
+	SetStateAction,
+	useContext,
+	useEffect,
+	useRef,
+	useState
+} from "react";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import UserContext from "../context/UserContext.jsx";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 type ChatUser = {
 	_id: string;
 	name: string;
 	profilePicUrl?: string;
+	email?: string;
+	role?: string;
 };
 
 type MessageType = "Text" | "Image";
@@ -33,12 +46,69 @@ type Conversation = {
 	messages: Message[];
 };
 
+type Application = {
+	_id: string;
+	conversation?: Conversation;
+};
+
+type Listing = {
+	_id: string;
+};
+
 export default function ChatPage() {
 	const { user: currentUser } = useContext(UserContext) as { user?: ChatUser };
-	const [selectedId, setSelectedId] = useState(conversations[0]?._id);
-	const [chats, setChats] = useState(conversations);
+	const [selectedId, setSelectedId] = useState<string | undefined>();
+	const [chats, setChats] = useState<Conversation[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [loadError, setLoadError] = useState<string | null>(null);
 	const [search, setSearch] = useState("");
 	const toast: Ref<Toast> = useRef(null);
+
+	useEffect(() => {
+		let isMounted = true;
+
+		const loadChats = async () => {
+			if (!currentUser) {
+				setIsLoading(false);
+				setChats([]);
+				setSelectedId(undefined);
+				return;
+			}
+
+			setIsLoading(true);
+			setLoadError(null);
+
+			try {
+				const databaseChats = await fetchDatabaseConversations();
+				if (!isMounted) return;
+
+				setChats(databaseChats);
+				setSelectedId(prev =>
+					prev && databaseChats.some(chat => chat._id === prev)
+						? prev
+						: databaseChats[0]?._id
+				);
+			} catch (error) {
+				if (!isMounted) return;
+
+				setLoadError("Failed to load conversations");
+				toast.current?.show({
+					severity: "error",
+					summary: "Failed to load conversations",
+					detail: getErrorMessage(error),
+					life: 3000
+				});
+			} finally {
+				if (isMounted) setIsLoading(false);
+			}
+		};
+
+		loadChats();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [currentUser]);
 
 	const selectedChat = chats.find(c => c._id === selectedId);
 	const visibleChats = chats.filter(c =>
@@ -50,7 +120,7 @@ export default function ChatPage() {
 	const sendMessage = async (message: string) => {
 		if (!message.trim() || !selectedId || !currentUser) return;
 
-		const msg: Message = {
+		const optimisticMessage: Message = {
 			sender: currentUser,
 			data: message,
 			_id: `local-${Date.now()}`,
@@ -61,8 +131,39 @@ export default function ChatPage() {
 			deliveredTo: []
 		};
 
+		appendMessage(selectedId, optimisticMessage);
+
+		try {
+			await axios.post(
+				`${BASE_URL}/conversation/${selectedId}/sendMessage`,
+				{ message },
+				{ withCredentials: true }
+			);
+			const { data } = await axios.get<Conversation>(
+				`${BASE_URL}/conversation/${selectedId}`,
+				{ withCredentials: true }
+			);
+			replaceConversation(sortConversation(data));
+		} catch (error) {
+			setChats(curr =>
+				curr.map(chat =>
+					chat._id === selectedId
+						? {
+								...chat,
+								messages: chat.messages.filter(
+									msg => msg._id !== optimisticMessage._id
+								)
+							}
+						: chat
+				)
+			);
+			throw error;
+		}
+	};
+
+	const appendMessage = (conversationId: string, msg: Message) => {
 		setChats(curr => {
-			const idx = curr.findIndex(val => val._id === selectedId);
+			const idx = curr.findIndex(val => val._id === conversationId);
 			if (idx === -1) return curr;
 
 			const chat = curr[idx];
@@ -75,6 +176,12 @@ export default function ChatPage() {
 			output.splice(idx, 1, modified);
 			return output;
 		});
+	};
+
+	const replaceConversation = (conversation: Conversation) => {
+		setChats(curr =>
+			curr.map(chat => (chat._id === conversation._id ? conversation : chat))
+		);
 	};
 
 	return (
@@ -104,18 +211,24 @@ export default function ChatPage() {
 						</button>
 					</div>
 					<div className="flex-1 overflow-y-auto divide-y divide-[var(--gray-900)]">
-						{visibleChats.map(conversation => (
-							<ConverationsElem
-								key={conversation._id}
-								converation={conversation}
-								currentUser={currentUser}
-								selected={selectedId}
-								setSelected={setSelectedId}
-							/>
-						))}
-						{visibleChats.length === 0 && (
+						{isLoading ? (
 							<div className="p-6 text-center text-sm text-gray-400">
-								No conversations found
+								Loading conversations...
+							</div>
+						) : (
+							visibleChats.map(conversation => (
+								<ConverationsElem
+									key={conversation._id}
+									converation={conversation}
+									currentUser={currentUser}
+									selected={selectedId}
+									setSelected={setSelectedId}
+								/>
+							))
+						)}
+						{!isLoading && visibleChats.length === 0 && (
+							<div className="p-6 text-center text-sm text-gray-400">
+								{loadError ?? "No conversations found"}
 							</div>
 						)}
 					</div>
@@ -172,6 +285,93 @@ export default function ChatPage() {
 			</div>
 		</div>
 	);
+}
+
+async function fetchDatabaseConversations(): Promise<Conversation[]> {
+	try {
+		const applications = await fetchMyApplications();
+		return hydrateConversations(applications);
+	} catch (error) {
+		const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+		if (status && ![401, 403, 404].includes(status)) {
+			throw error;
+		}
+
+		const applications = await fetchLandlordApplications();
+		return hydrateConversations(applications);
+	}
+}
+
+async function fetchMyApplications(): Promise<Application[]> {
+	const { data } = await axios.get<Application[]>(`${BASE_URL}/application/mine`, {
+		withCredentials: true
+	});
+	return data ?? [];
+}
+
+async function fetchLandlordApplications(): Promise<Application[]> {
+	const { data: listings } = await axios.get<Listing[]>(`${BASE_URL}/listings/mine`, {
+		withCredentials: true
+	});
+
+	const applicationGroups = await Promise.all(
+		(listings ?? []).map(async listing => {
+			const { data } = await axios.get<Application[]>(
+				`${BASE_URL}/application/listing/${listing._id}`,
+				{ withCredentials: true }
+			);
+			return data ?? [];
+		})
+	);
+
+	return applicationGroups.flat();
+}
+
+async function hydrateConversations(applications: Application[]): Promise<Conversation[]> {
+	const conversationIds = Array.from(
+		new Set(
+			applications
+				.map(application => application.conversation?._id)
+				.filter((id): id is string => !!id)
+		)
+	);
+
+	const conversations = await Promise.all(
+		conversationIds.map(async id => {
+			const { data } = await axios.get<Conversation>(
+				`${BASE_URL}/conversation/${id}`,
+				{ withCredentials: true }
+			);
+			return sortConversation(data);
+		})
+	);
+
+	return conversations.sort(
+		(a, b) => getConversationTime(b).getTime() - getConversationTime(a).getTime()
+	);
+}
+
+function sortConversation(conversation: Conversation): Conversation {
+	return {
+		...conversation,
+		messages: [...(conversation.messages ?? [])].sort(
+			(a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+		)
+	};
+}
+
+function getConversationTime(conversation: Conversation): Date {
+	const lastMessage = conversation.messages.at(-1);
+	return new Date(lastMessage?.createdAt ?? conversation.createdAt);
+}
+
+function getErrorMessage(error: unknown): string {
+	if (axios.isAxiosError(error)) {
+		const axiosError = error as AxiosError<{ message?: string }>;
+		return axiosError.response?.data?.message ?? axiosError.message;
+	}
+
+	return "Please try again shortly.";
 }
 
 function renderMessages(messages: Message[], isMe: (msg: Message) => boolean) {
@@ -498,124 +698,3 @@ function ConverationsElem({
 		</div>
 	);
 }
-
-function daysAgoAt(days: number, hour: number, minute: number): string {
-	const d = new Date();
-	d.setDate(d.getDate() - days);
-	d.setHours(hour, minute, 0, 0);
-	return d.toISOString();
-}
-
-const USERS = {
-	alice: { _id: "u-alice", name: "Alice" },
-	bob: { _id: "u-bob", name: "Bob" },
-	charlie: { _id: "u-charlie", name: "Charlie" },
-	dave: { _id: "u-dave", name: "Dave" },
-	landlordJoe: { _id: "u-landlord-joe", name: "Landlord_Joe" },
-	emmaSmith: { _id: "u-emma-smith", name: "Emma_Smith" },
-	ethanSmith: { _id: "u-ethan-smith", name: "Ethan_Smith" },
-	agentSarah: { _id: "u-agent-sarah", name: "Agent_Sarah" },
-	adminRepair: { _id: "u-admin-repair", name: "Admin_Repair" }
-} satisfies Record<string, ChatUser>;
-
-var conversations: Conversation[] = [
-	// 1. Private Chat
-	{
-		_id: "c1",
-		name: "Alice & Bob",
-		createdAt: "2025-12-01T10:00:00Z",
-		groupDescription: "Direct message",
-		avatar: "avatar_alice.png",
-		users: [USERS.alice, USERS.bob],
-		unreadCount: 1,
-		messages: [
-			{
-				_id: "m1",
-				sender: USERS.alice,
-				messageType: "Text",
-				data: "Hi Bob!",
-				createdAt: daysAgoAt(1, 11, 4),
-				conversation: "c1",
-				seenUsers: [USERS.alice._id],
-				deliveredTo: [USERS.bob._id]
-			}
-		]
-	},
-
-	// 2. House Group Chat
-	{
-		_id: "c2",
-		name: "221B Baker St. Residents",
-		createdAt: "2025-11-15T09:00:00Z",
-		groupDescription: "Official group for the Baker St. house.",
-		avatar: "house_icon.jpg",
-		users: [USERS.alice, USERS.bob, USERS.charlie, USERS.dave],
-		messages: [
-			{
-				_id: "m2",
-				sender: USERS.dave,
-				messageType: "Text",
-				data: "Who left the fridge open?",
-				createdAt: daysAgoAt(1, 8, 0),
-				conversation: "c2",
-				seenUsers: [USERS.dave._id],
-				deliveredTo: [USERS.alice._id, USERS.bob._id, USERS.charlie._id]
-			}
-		]
-	},
-
-	// 3. Application Discussion
-	{
-		_id: "c3",
-		name: "Smith Family Application",
-		createdAt: daysAgoAt(1, 14, 30),
-		groupDescription: "Discussing the lease for the Smith family.",
-		avatar: "folder_icon.png",
-		users: [USERS.landlordJoe, USERS.emmaSmith, USERS.ethanSmith],
-		messages: []
-	},
-
-	// 4. Viewing Coordination
-	{
-		_id: "c4",
-		name: "Viewing - Friday 4pm",
-		createdAt: "2025-12-22T11:00:00Z",
-		groupDescription: "Coordinating the walkthrough.",
-		avatar: "calendar_icon.png",
-		users: [USERS.agentSarah, USERS.alice, USERS.bob],
-		messages: [
-			{
-				_id: "m3",
-				sender: USERS.agentSarah,
-				messageType: "Image",
-				data: "map_location.png",
-				createdAt: daysAgoAt(1, 11, 5),
-				conversation: "c4",
-				seenUsers: [USERS.agentSarah._id, USERS.alice._id],
-				deliveredTo: [USERS.bob._id]
-			}
-		]
-	},
-
-	// 5. Maintenance Requests
-	{
-		_id: "c5",
-		name: "Maintenance Support",
-		createdAt: "2025-10-01T12:00:00Z",
-		groupDescription: "Report repairs here.",
-		avatar: "wrench_icon.png",
-		users: [USERS.alice, USERS.adminRepair],
-		messages: [
-			{
-				_id: "m4",
-				sender: USERS.alice,
-				messageType: "Text",
-				data: "The sink is leaking again.",
-				createdAt: daysAgoAt(1, 18, 0),
-				conversation: "c5",
-				seenUsers: [USERS.alice._id],
-				deliveredTo: [USERS.adminRepair._id]
-			}
-		]
-	}
-];

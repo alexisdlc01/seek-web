@@ -48,7 +48,7 @@ type Conversation = {
 
 type Application = {
 	_id: string;
-	conversation?: Conversation;
+	conversation?: string | { _id?: string } | Conversation;
 };
 
 type Listing = {
@@ -331,7 +331,7 @@ async function hydrateConversations(applications: Application[]): Promise<Conver
 	const conversationIds = Array.from(
 		new Set(
 			applications
-				.map(application => application.conversation?._id)
+				.map(application => getApplicationConversationId(application))
 				.filter((id): id is string => !!id)
 		)
 	);
@@ -349,6 +349,13 @@ async function hydrateConversations(applications: Application[]): Promise<Conver
 	return conversations.sort(
 		(a, b) => getConversationTime(b).getTime() - getConversationTime(a).getTime()
 	);
+}
+
+function getApplicationConversationId(application: Application): string | undefined {
+	const { conversation } = application;
+	if (!conversation) return undefined;
+	if (typeof conversation === "string") return conversation;
+	return conversation._id;
 }
 
 function sortConversation(conversation: Conversation): Conversation {

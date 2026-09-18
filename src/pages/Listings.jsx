@@ -249,7 +249,7 @@ export default function Listings() {
 											outlined
 											className="w-full sm:w-auto px-4 py-2.5 listing-flow-action-button"
 											onClick={() =>
-												navigate("/applicants")
+												navigate(`/applicants/${prop._id}`)
 											}
 										/>
 									</motion.div>

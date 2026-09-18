@@ -10,6 +10,8 @@ import React, {
 } from "react";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
+import { useSearchParams } from "react-router-dom";
+import { io, Socket } from "socket.io-client";
 import UserContext from "../context/UserContext.jsx";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -43,26 +45,27 @@ type Conversation = {
 	avatar?: string;
 	users: ChatUser[];
 	unreadCount?: number;
+	// GET /conversation returns lastMessage with an empty messages array;
+	// the full history is fetched from GET /conversation/:id on selection.
+	lastMessage?: Message;
 	messages: Message[];
-};
-
-type Application = {
-	_id: string;
-	conversation?: string | { _id?: string } | Conversation;
-};
-
-type Listing = {
-	_id: string;
+	messagesLoaded?: boolean;
 };
 
 export default function ChatPage() {
 	const { user: currentUser } = useContext(UserContext) as { user?: ChatUser };
-	const [selectedId, setSelectedId] = useState<string | undefined>();
+	const [searchParams] = useSearchParams();
+	const requestedId = searchParams.get("conversation") ?? undefined;
+	const [selectedId, setSelectedId] = useState<string | undefined>(requestedId);
 	const [chats, setChats] = useState<Conversation[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [loadError, setLoadError] = useState<string | null>(null);
 	const [search, setSearch] = useState("");
 	const toast: Ref<Toast> = useRef(null);
+	const socketRef = useRef<Socket | null>(null);
+	// Latest selection, readable from the long-lived socket handler below.
+	const selectedIdRef = useRef(selectedId);
+	selectedIdRef.current = selectedId;
 
 	useEffect(() => {
 		let isMounted = true;
@@ -79,7 +82,7 @@ export default function ChatPage() {
 			setLoadError(null);
 
 			try {
-				const databaseChats = await fetchDatabaseConversations();
+				const databaseChats = await fetchConversations();
 				if (!isMounted) return;
 
 				setChats(databaseChats);
@@ -109,6 +112,98 @@ export default function ChatPage() {
 			isMounted = false;
 		};
 	}, [currentUser]);
+
+	// Live updates: one socket for the page, joined to every conversation's room
+	// so unread badges and open threads update as messages arrive.
+	useEffect(() => {
+		if (!currentUser) return;
+
+		const socket = io(`${BASE_URL}/conversation`, {
+			withCredentials: true,
+			transports: ["websocket"]
+		});
+		socketRef.current = socket;
+
+		socket.on("message:new", (incoming: Message) => {
+			setChats(curr =>
+				curr.map(chat => {
+					if (chat._id !== incoming.conversation) return chat;
+					if (chat.messages.some(m => m._id === incoming._id)) return chat;
+
+					// The gateway emits the raw message, so the sender may be an
+					// unpopulated id; fill in the name from the member list.
+					const msg = resolveSender(chat, incoming);
+					const mine = msg.sender._id === currentUser._id;
+					const messages = mine
+						? chat.messages
+								.filter(m => !(m._id.startsWith("local-") && m.data === msg.data))
+								.concat(msg)
+						: chat.messages.concat(msg);
+
+					return {
+						...chat,
+						messages,
+						lastMessage: msg,
+						unreadCount:
+							mine || chat._id === selectedIdRef.current
+								? chat.unreadCount
+								: (chat.unreadCount ?? 0) + 1
+					};
+				})
+			);
+		});
+
+		return () => {
+			socket.disconnect();
+			socketRef.current = null;
+		};
+	}, [currentUser]);
+
+	useEffect(() => {
+		const socket = socketRef.current;
+		if (!socket) return;
+		chats.forEach(chat => socket.emit("conversation:join", chat._id));
+	}, [chats.length, currentUser]);
+
+	// Load the full message history the first time a conversation is opened,
+	// then mark it as seen.
+	useEffect(() => {
+		if (!selectedId || !currentUser) return;
+		const chat = chats.find(c => c._id === selectedId);
+		if (!chat) return;
+
+		let cancelled = false;
+		(async () => {
+			if (!chat.messagesLoaded) {
+				try {
+					const { data } = await axios.get<Conversation>(
+						`${BASE_URL}/conversation/${selectedId}`,
+						{ withCredentials: true }
+					);
+					if (cancelled) return;
+					mergeConversation(data);
+				} catch (error) {
+					if (cancelled) return;
+					toast.current?.show({
+						severity: "error",
+						summary: "Failed to load messages",
+						detail: getErrorMessage(error),
+						life: 3000
+					});
+					return;
+				}
+			}
+
+			socketRef.current?.emit("conversation:seen", selectedId);
+			setChats(curr =>
+				curr.map(c => (c._id === selectedId ? { ...c, unreadCount: 0 } : c))
+			);
+		})();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [selectedId, currentUser]);
 
 	const selectedChat = chats.find(c => c._id === selectedId);
 	const visibleChats = chats.filter(c =>
@@ -143,7 +238,7 @@ export default function ChatPage() {
 				`${BASE_URL}/conversation/${selectedId}`,
 				{ withCredentials: true }
 			);
-			replaceConversation(sortConversation(data));
+			mergeConversation(data);
 		} catch (error) {
 			setChats(curr =>
 				curr.map(chat =>
@@ -178,9 +273,23 @@ export default function ChatPage() {
 		});
 	};
 
-	const replaceConversation = (conversation: Conversation) => {
+	// Apply a freshly fetched GET /conversation/:id payload (full history, but no
+	// list metadata) on top of the list entry without losing that metadata.
+	const mergeConversation = (fetched: Conversation) => {
+		const sorted = sortConversation(fetched);
 		setChats(curr =>
-			curr.map(chat => (chat._id === conversation._id ? conversation : chat))
+			curr.map(chat =>
+				chat._id === fetched._id
+					? {
+							...chat,
+							...sorted,
+							messages: sorted.messages.map(m => resolveSender(sorted, m)),
+							lastMessage: sorted.messages.at(-1) ?? chat.lastMessage,
+							unreadCount: chat.unreadCount,
+							messagesLoaded: true
+						}
+					: chat
+			)
 		);
 	};
 
@@ -287,75 +396,35 @@ export default function ChatPage() {
 	);
 }
 
-async function fetchDatabaseConversations(): Promise<Conversation[]> {
-	try {
-		const applications = await fetchMyApplications();
-		return hydrateConversations(applications);
-	} catch (error) {
-		const status = axios.isAxiosError(error) ? error.response?.status : undefined;
-		if (status && ![401, 403, 404].includes(status)) {
-			throw error;
-		}
-
-		const applications = await fetchLandlordApplications();
-		return hydrateConversations(applications);
-	}
-}
-
-async function fetchMyApplications(): Promise<Application[]> {
-	const { data } = await axios.get<Application[]>(`${BASE_URL}/application/mine`, {
-		withCredentials: true
-	});
-	return data ?? [];
-}
-
-async function fetchLandlordApplications(): Promise<Application[]> {
-	const { data: listings } = await axios.get<Listing[]>(`${BASE_URL}/listings/mine`, {
+// Every conversation the logged-in user is a member of, newest activity first.
+async function fetchConversations(): Promise<Conversation[]> {
+	const { data } = await axios.get<Conversation[]>(`${BASE_URL}/conversation`, {
 		withCredentials: true
 	});
 
-	const applicationGroups = await Promise.all(
-		(listings ?? []).map(async listing => {
-			const { data } = await axios.get<Application[]>(
-				`${BASE_URL}/application/listing/${listing._id}`,
-				{ withCredentials: true }
-			);
-			return data ?? [];
-		})
-	);
-
-	return applicationGroups.flat();
+	return (data ?? [])
+		.map(conversation => ({
+			...sortConversation(conversation),
+			lastMessage: conversation.lastMessage
+				? resolveSender(conversation, conversation.lastMessage)
+				: undefined
+		}))
+		.sort(
+			(a, b) => getConversationTime(b).getTime() - getConversationTime(a).getTime()
+		);
 }
 
-async function hydrateConversations(applications: Application[]): Promise<Conversation[]> {
-	const conversationIds = Array.from(
-		new Set(
-			applications
-				.map(application => getApplicationConversationId(application))
-				.filter((id): id is string => !!id)
-		)
-	);
-
-	const conversations = await Promise.all(
-		conversationIds.map(async id => {
-			const { data } = await axios.get<Conversation>(
-				`${BASE_URL}/conversation/${id}`,
-				{ withCredentials: true }
-			);
-			return sortConversation(data);
-		})
-	);
-
-	return conversations.sort(
-		(a, b) => getConversationTime(b).getTime() - getConversationTime(a).getTime()
-	);
-}
-
-function getApplicationConversationId(application: Application): string | undefined {
-	const { conversation } = application;
-	if (!conversation) return undefined;
-	if (typeof conversation === "string") return conversation;
-	return conversation._id;
+// Messages arriving over the socket carry an unpopulated sender (`{ _id }`);
+// look the name up from the conversation's member list.
+function resolveSender(conversation: Conversation, msg: Message): Message {
+	if (msg.sender?.name) return msg;
+	const senderId =
+		typeof msg.sender === "string" ? msg.sender : msg.sender?._id;
+	const member = conversation.users.find(u => u._id === senderId);
+	return {
+		...msg,
+		sender: member ?? { _id: senderId ?? "", name: "Unknown" }
+	};
 }
 
 function sortConversation(conversation: Conversation): Conversation {
@@ -367,9 +436,12 @@ function sortConversation(conversation: Conversation): Conversation {
 	};
 }
 
+function latestMessage(conversation: Conversation): Message | undefined {
+	return conversation.messages.at(-1) ?? conversation.lastMessage;
+}
+
 function getConversationTime(conversation: Conversation): Date {
-	const lastMessage = conversation.messages.at(-1);
-	return new Date(lastMessage?.createdAt ?? conversation.createdAt);
+	return new Date(latestMessage(conversation)?.createdAt ?? conversation.createdAt);
 }
 
 function getErrorMessage(error: unknown): string {
@@ -655,7 +727,7 @@ function ConverationsElem({
 	currentUser
 }: ConverationElemProp) {
 	const isSelected = selected === converation._id;
-	const lastMessage = converation.messages.at(-1);
+	const lastMessage = latestMessage(converation);
 	const lastActivity = lastMessage?.createdAt ?? converation.createdAt;
 
 	return (

@@ -165,47 +165,52 @@ export default function ChatPage() {
 		chats.forEach(chat => socket.emit("conversation:join", chat._id));
 	}, [chats.length, currentUser]);
 
-	// Load the full message history the first time a conversation is opened,
-	// then mark it as seen.
+	const selectedChat = chats.find(c => c._id === selectedId);
+	// Derived booleans (rather than `chats` itself) so these effects re-run when
+	// the selected conversation appears or finishes loading, not on every list
+	// update. With a `?conversation=` deep link, `selectedId` is set before the
+	// list has loaded, so keying only on `selectedId` would never fire.
+	const selectedExists = !!selectedChat;
+	const selectedLoaded = !!selectedChat?.messagesLoaded;
+
+	// Load the full message history the first time a conversation is opened.
 	useEffect(() => {
-		if (!selectedId || !currentUser) return;
-		const chat = chats.find(c => c._id === selectedId);
-		if (!chat) return;
+		if (!selectedId || !currentUser || !selectedExists || selectedLoaded) return;
 
 		let cancelled = false;
 		(async () => {
-			if (!chat.messagesLoaded) {
-				try {
-					const { data } = await axios.get<Conversation>(
-						`${BASE_URL}/conversation/${selectedId}`,
-						{ withCredentials: true }
-					);
-					if (cancelled) return;
-					mergeConversation(data);
-				} catch (error) {
-					if (cancelled) return;
-					toast.current?.show({
-						severity: "error",
-						summary: "Failed to load messages",
-						detail: getErrorMessage(error),
-						life: 3000
-					});
-					return;
-				}
+			try {
+				const { data } = await axios.get<Conversation>(
+					`${BASE_URL}/conversation/${selectedId}`,
+					{ withCredentials: true }
+				);
+				if (cancelled) return;
+				mergeConversation(data);
+			} catch (error) {
+				if (cancelled) return;
+				toast.current?.show({
+					severity: "error",
+					summary: "Failed to load messages",
+					detail: getErrorMessage(error),
+					life: 3000
+				});
 			}
-
-			socketRef.current?.emit("conversation:seen", selectedId);
-			setChats(curr =>
-				curr.map(c => (c._id === selectedId ? { ...c, unreadCount: 0 } : c))
-			);
 		})();
 
 		return () => {
 			cancelled = true;
 		};
-	}, [selectedId, currentUser]);
+	}, [selectedId, currentUser, selectedExists, selectedLoaded]);
 
-	const selectedChat = chats.find(c => c._id === selectedId);
+	// Once the open conversation's messages are available, mark it as seen.
+	useEffect(() => {
+		if (!selectedId || !currentUser || !selectedLoaded) return;
+
+		socketRef.current?.emit("conversation:seen", selectedId);
+		setChats(curr =>
+			curr.map(c => (c._id === selectedId ? { ...c, unreadCount: 0 } : c))
+		);
+	}, [selectedId, currentUser, selectedLoaded]);
 	const visibleChats = chats.filter(c =>
 		c.name.toLowerCase().includes(search.toLowerCase())
 	);

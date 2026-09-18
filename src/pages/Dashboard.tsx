@@ -171,7 +171,7 @@ export default function Dashboard() {
 									label="Applications"
 									icon="pi pi-inbox"
 									className="dashboard-action-button"
-									onClick={() => navigate("/application")}
+									onClick={() => navigate("/applicants")}
 								/>
 							</div>
 							<div className="relative">

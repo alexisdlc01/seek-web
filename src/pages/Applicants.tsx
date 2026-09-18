@@ -24,6 +24,9 @@ type Application = {
 	conversation?: string | { _id?: string };
 	applicants: string[];
 	applicantUsers?: Applicant[];
+	// Attached client-side so the all-listings view can say which property
+	// each application is for.
+	listingTitle?: string;
 };
 
 const TABS: { stage: ApplicationStage; label: string }[] = [
@@ -44,27 +47,56 @@ export default function Applicants() {
 	const [loadError, setLoadError] = useState<string | null>(null);
 	const [pendingId, setPendingId] = useState<string | null>(null);
 
-	const listing = listings?.find(l => l._id === listingId);
+	// With a listingId, show that listing's applications; without one (the
+	// Dashboard's "Applications" button), show applications across every
+	// listing the landlord owns.
+	const listing = listingId ? listings?.find(l => l._id === listingId) : undefined;
+	const targetListings = listingId
+		? [listing ?? { _id: listingId }]
+		: listings ?? [];
 	const title = listing
-		? `Applications - ${listing.streetAddress || listing.propertyTitle}`
+		? `Applications - ${listingTitleOf(listing)}`
 		: "Applications";
 
+	const targetIds = targetListings.map(l => l._id).join(",");
+
 	const loadApplications = useCallback(async () => {
-		if (!listingId) return;
+		if (targetListings.length === 0) {
+			setApplications([]);
+			setIsLoading(false);
+			return;
+		}
 		setIsLoading(true);
 		setLoadError(null);
 		try {
-			const { data } = await axios.get<Application[]>(
-				`${BASE_URL}/application/listing/${listingId}`,
-				{ withCredentials: true }
+			const perListing = await Promise.all(
+				targetListings.map(async l => {
+					const { data } = await axios.get<Application[]>(
+						`${BASE_URL}/application/listing/${l._id}`,
+						{ withCredentials: true }
+					);
+					return (data ?? []).map(a => ({
+						...a,
+						listingTitle: listingTitleOf(l)
+					}));
+				})
 			);
-			setApplications(data ?? []);
+			setApplications(
+				perListing
+					.flat()
+					.sort(
+						(a, b) =>
+							new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+					)
+			);
 		} catch (error) {
 			setLoadError(getErrorMessage(error));
 		} finally {
 			setIsLoading(false);
 		}
-	}, [listingId]);
+		// targetIds captures which listings we're loading for.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [targetIds]);
 
 	useEffect(() => {
 		loadApplications();
@@ -133,6 +165,11 @@ export default function Applicants() {
 						<h2 className="font-semibold text-[var(--text-color)]">
 							{formatApplicantNames(applicants)}
 						</h2>
+						{!listingId && application.listingTitle && (
+							<p className="text-sm text-[var(--primary-color)]">
+								{application.listingTitle}
+							</p>
+						)}
 						<p className="text-sm text-white">
 							Applied {formatDate(application.createdAt)} •{" "}
 							{applicants.length || application.applicants.length}{" "}
@@ -227,6 +264,10 @@ export default function Applicants() {
 					<p className="text-sm text-gray-400">Loading applications...</p>
 				) : loadError ? (
 					<p className="text-sm text-red-400">{loadError}</p>
+				) : targetListings.length === 0 ? (
+					<p className="text-sm text-gray-400">
+						You have no listings yet, so there are no applications to show.
+					</p>
 				) : visible.length === 0 ? (
 					<p className="text-sm text-gray-400">
 						No {TABS.find(t => t.stage === activeStage)?.label.toLowerCase()} yet.
@@ -237,6 +278,10 @@ export default function Applicants() {
 			</div>
 		</div>
 	);
+}
+
+function listingTitleOf(listing: { _id: string; streetAddress?: string; propertyTitle?: string }): string {
+	return listing.streetAddress || listing.propertyTitle || "Untitled listing";
 }
 
 function getConversationId(application: Application): string | undefined {

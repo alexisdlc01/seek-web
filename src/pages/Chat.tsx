@@ -37,6 +37,14 @@ type Message = {
 	deliveredTo: string[];
 };
 
+// The application behind a group chat; only the fields this page uses.
+type ApplicationSummary = {
+	_id: string;
+	owner: string;
+	landlord: string;
+	stage: "NOT_SENT" | "SENT" | "ACCEPTED" | "REJECTED";
+};
+
 type Conversation = {
 	_id: string;
 	name: string;
@@ -166,6 +174,51 @@ export default function ChatPage() {
 	}, [chats.length, currentUser]);
 
 	const selectedChat = chats.find(c => c._id === selectedId);
+	const application = useApplicationForConversation(selectedId, !!currentUser);
+	// Admins of a group: the student who created it, and the landlord once the
+	// application has been sent to them.
+	const canInvite =
+		!!application &&
+		!!currentUser &&
+		(application.owner === currentUser._id ||
+			(application.landlord === currentUser._id &&
+				application.stage !== "NOT_SENT"));
+
+	const createInvite = async () => {
+		if (!application) return;
+		try {
+			const { data } = await axios.post<{ inviteToken: string }>(
+				`${BASE_URL}/application/${application._id}/invite`,
+				{},
+				{ withCredentials: true }
+			);
+			const link = `${INVITE_LINK_BASE}/${application._id}/join?invite=${encodeURIComponent(data.inviteToken)}`;
+			try {
+				await navigator.clipboard.writeText(link);
+				toast.current?.show({
+					severity: "success",
+					summary: "Invite link copied",
+					detail: "It works for 7 days. Creating a new one cancels this one.",
+					life: 4000
+				});
+			} catch {
+				// Clipboard can be blocked; show the link so it can be copied by hand.
+				toast.current?.show({
+					severity: "info",
+					summary: "Invite link",
+					detail: link,
+					sticky: true
+				});
+			}
+		} catch (error) {
+			toast.current?.show({
+				severity: "error",
+				summary: "Could not create an invite",
+				detail: getErrorMessage(error),
+				life: 3000
+			});
+		}
+	};
 	// Derived booleans (rather than `chats` itself) so these effects re-run when
 	// the selected conversation appears or finishes loading, not on every list
 	// update. With a `?conversation=` deep link, `selectedId` is set before the
@@ -367,6 +420,14 @@ export default function ChatPage() {
 								</div>
 
 								<div className="flex gap-2">
+									{canInvite && (
+										<Button
+											label="Invite"
+											icon="pi pi-user-plus"
+											onClick={() => void createInvite()}
+											className="px-4 py-1 border border-blue-400 text-blue-400 bg-transparent rounded-full text-sm"
+										/>
+									)}
 									<Button
 										label="View Status"
 										className="px-4 py-1 border border-red-500 text-red-500 bg-transparent rounded-full text-sm"
@@ -399,6 +460,39 @@ export default function ChatPage() {
 			</div>
 		</div>
 	);
+}
+
+// Opens in the app (universal link) and joins the group with the invite secret.
+const INVITE_LINK_BASE = "https://www.seekapp.uk/link/chat";
+
+function useApplicationForConversation(
+	conversationId: string | undefined,
+	enabled: boolean
+): ApplicationSummary | undefined {
+	const [application, setApplication] = useState<ApplicationSummary>();
+
+	useEffect(() => {
+		setApplication(undefined);
+		if (!conversationId || !enabled) return;
+
+		let cancelled = false;
+		axios
+			.get<ApplicationSummary>(
+				`${BASE_URL}/application/conversation/${conversationId}`,
+				{ withCredentials: true }
+			)
+			.then(({ data }) => {
+				if (!cancelled) setApplication(data);
+			})
+			// Not every chat belongs to an application; no invite button then.
+			.catch(() => undefined);
+
+		return () => {
+			cancelled = true;
+		};
+	}, [conversationId, enabled]);
+
+	return application;
 }
 
 // Every conversation the logged-in user is a member of, newest activity first.

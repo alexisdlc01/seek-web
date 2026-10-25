@@ -139,10 +139,55 @@
 	margin-right: 0 !important;
 }
 
+/* Password with toggleMask nests the input in .p-icon-field; without the
+   external theme that wrapper shrinks to its content and the eye icon drops
+   below the input. Stretch it and pin the icon inside the field. */
+.p-password .p-icon-field {
+	position: relative;
+	display: block;
+	width: 100%;
+}
+
+.p-password .p-icon-field .p-inputtext {
+	padding-right: 2.75rem;
+}
+
+.p-password .p-input-icon {
+	position: absolute;
+	top: 50%;
+	right: 0.9rem;
+	transform: translateY(-50%);
+	display: flex;
+	cursor: pointer;
+}
+
+/* The auth cards are white, so the site's light-on-dark tokens wash out;
+   use darker shades with readable contrast. */
+.auth-form-card {
+	--primary-color: #0f8794;
+	--text-color-secondary: #475569;
+	--surface-border: #cbd5e1;
+}
+
+.auth-form-card h1,
+.auth-form-card a {
+	color: var(--primary-color);
+}
+
+.auth-form-card a {
+	font-weight: 600;
+}
+
 .auth-form-card .p-inputtext,
 .auth-form-card .p-password input {
 	color: #0f172a !important;
 	background-color: #ffffff !important;
+	border-color: #94a3b8 !important;
+}
+
+.auth-form-card .p-inputtext:focus,
+.auth-form-card .p-password input:focus {
+	border-color: var(--primary-color) !important;
 }
 
 .auth-form-card .p-inputtext::placeholder,
@@ -150,8 +195,24 @@
 	color: #64748b !important;
 }
 
+.auth-form-card .p-password .p-input-icon {
+	color: #475569;
+}
+
+/* Label above its field rather than under it. */
+.auth-form-card .p-float-label {
+	flex-direction: column-reverse;
+}
+
 .auth-form-card .p-float-label label {
-	color: #475569 !important;
+	color: #334155 !important;
+	font-size: 0.875rem;
+	font-weight: 500;
+	margin: 0 !important;
+}
+
+.auth-form-card .p-divider .p-divider-content {
+	background: #ffffff;
 }
 
 .dashboard-action-button {
@@ -220,6 +281,17 @@
 	color: #f8fafc !important;
 	border: 1px solid rgba(255, 255, 255, 0.24) !important;
 	box-shadow: inset 0 0 0 1px rgba(35, 183, 197, 0.16) !important;}
+
+/* The default dialog surface is light; the chat page is dark. */
+.chat-status-dialog.p-dialog {
+	background: var(--surface-a) !important;
+	color: #f8fafc !important;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.chat-status-dialog .p-dialog-header-icon {
+	color: #cbd5e1;
+}
 
 .p-menubar {
 	border-radius: 0;

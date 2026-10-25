@@ -120,14 +120,6 @@ export default function SignInLandlord() {
 						className="w-full"
 						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2"
 						toggleMask
-						pt={{
-							showIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3 text-slate-600"
-							},
-							hideIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3 text-slate-600"
-							}
-						}}
 					/>
 					<label htmlFor="confirm">Password</label>
 				</FloatLabel>

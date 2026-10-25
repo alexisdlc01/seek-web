@@ -98,7 +98,7 @@ export default function SignInStudent() {
 			>
 				<h1
 					className="text-center text-2xl font-bold mb-8"
-					style={{ color: "#23b7c5" }}
+					style={{ color: "var(--primary-color)" }}
 				>
 					Welcome Back, Student
 				</h1>
@@ -123,14 +123,6 @@ export default function SignInStudent() {
 						className="w-full"
 						inputClassName="w-full border border-[var(--surface-border)] rounded-md px-3 py-2 auth-form-input"
 						toggleMask
-						pt={{
-							showIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3 text-slate-600"
-							},
-							hideIcon: {
-								className: "-translate-y-1/4 -translate-x-2/3 text-slate-600"
-							}
-						}}
 					/>
 					<label htmlFor="password">Password</label>
 				</FloatLabel>

@@ -5,10 +5,12 @@ import React, {
 	SetStateAction,
 	useContext,
 	useEffect,
+	useLayoutEffect,
 	useRef,
 	useState
 } from "react";
 import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
 import { Toast } from "primereact/toast";
 import { useSearchParams } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
@@ -174,7 +176,12 @@ export default function ChatPage() {
 	}, [chats.length, currentUser]);
 
 	const selectedChat = chats.find(c => c._id === selectedId);
-	const application = useApplicationForConversation(selectedId, !!currentUser);
+	const [application, setApplication] = useApplicationForConversation(
+		selectedId,
+		!!currentUser
+	);
+	const [statusOpen, setStatusOpen] = useState(false);
+	const messagesRef = useRef<HTMLDivElement>(null);
 	// Admins of a group: the student who created it, and the landlord once the
 	// application has been sent to them.
 	const canInvite =
@@ -203,11 +210,13 @@ export default function ChatPage() {
 				});
 			} catch {
 				// Clipboard can be blocked; show the link so it can be copied by hand.
+				// Not sticky: the close icon is hidden site-wide (index.css), so a
+				// sticky toast could never be dismissed.
 				toast.current?.show({
 					severity: "info",
 					summary: "Invite link",
 					detail: link,
-					sticky: true
+					life: 20000
 				});
 			}
 		} catch (error) {
@@ -219,6 +228,47 @@ export default function ChatPage() {
 			});
 		}
 	};
+
+	const deleteApplication = async () => {
+		if (!application) return;
+		try {
+			await axios.patch(
+				`${BASE_URL}/application/${application._id}/delete`,
+				{},
+				{ withCredentials: true }
+			);
+			setApplication(undefined);
+			setStatusOpen(false);
+			toast.current?.show({
+				severity: "success",
+				summary: "Application deleted",
+				life: 3000
+			});
+		} catch (error) {
+			toast.current?.show({
+				severity: "error",
+				summary: "Could not delete the application",
+				detail: getErrorMessage(error),
+				life: 3000
+			});
+		}
+	};
+
+	// Keep the newest message in view: jump straight to the bottom when a
+	// conversation is opened, and glide down when a new message arrives.
+	// The history arriving counts as opening, so it doesn't animate from the top.
+	const messageCount = selectedChat?.messages.length ?? 0;
+	const scrollKey = `${selectedId}:${!!selectedChat?.messagesLoaded}`;
+	const lastScrolled = useRef({ key: "", count: 0 });
+	useLayoutEffect(() => {
+		const el = messagesRef.current;
+		if (!el) return;
+		const opened = lastScrolled.current.key !== scrollKey;
+		const grew = messageCount > lastScrolled.current.count;
+		lastScrolled.current = { key: scrollKey, count: messageCount };
+		if (!opened && !grew) return;
+		el.scrollTo({ top: el.scrollHeight, behavior: opened ? "auto" : "smooth" });
+	}, [scrollKey, messageCount]);
 	// Derived booleans (rather than `chats` itself) so these effects re-run when
 	// the selected conversation appears or finishes loading, not on every list
 	// update. With a `?conversation=` deep link, `selectedId` is set before the
@@ -352,113 +402,123 @@ export default function ChatPage() {
 	};
 
 	return (
-		<div className="fixed inset-x-0 bottom-0 top-16 bg-[var(--surface-a)]">
+		<>
+			{/* Outside the fixed page container: `position: fixed` makes it a stacking
+			    context, which would trap the toast under the z-50 navbar. */}
 			<Toast ref={toast} />
-			<div className="flex h-full overflow-hidden">
-				<div className="w-1/3 bg-[var(--surface-a)] border-r-1 border-[var(--gray-900)] flex flex-col min-h-0">
-					<div className="flex items-center gap-2 px-4 pt-6 pb-4">
-						<div className="relative flex-1">
-							<i className="pi pi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
-							<input
-								value={search}
-								onChange={e => setSearch(e.target.value)}
-								type="text"
-								placeholder="Search conversations"
-								className="w-full rounded-lg text-sm text-white placeholder:text-gray-400"
-								style={{ background: "var(--gray-62)", paddingLeft: "2.5rem" }}
-							/>
-						</div>
-						<button
-							type="button"
-							className="shrink-0 rounded-lg p-2.5 flex items-center justify-center"
-							style={{ background: "var(--gray-62)" }}
-							aria-label="Filter conversations"
-						>
-							<i className="pi pi-sliders-h text-white text-sm" />
-						</button>
-					</div>
-					<div className="flex-1 overflow-y-auto divide-y divide-[var(--gray-900)]">
-						{isLoading ? (
-							<div className="p-6 text-center text-sm text-gray-400">
-								Loading conversations...
-							</div>
-						) : (
-							visibleChats.map(conversation => (
-								<ConverationsElem
-									key={conversation._id}
-									converation={conversation}
-									currentUser={currentUser}
-									selected={selectedId}
-									setSelected={setSelectedId}
+			<div className="fixed inset-x-0 bottom-0 top-16 bg-[var(--surface-a)]">
+				<div className="flex h-full overflow-hidden">
+					<div className="w-1/3 bg-[var(--surface-a)] border-r-1 border-[var(--gray-900)] flex flex-col min-h-0">
+						<div className="flex items-center gap-2 px-4 pt-6 pb-4">
+							<div className="relative flex-1">
+								<i className="pi pi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+								<input
+									value={search}
+									onChange={e => setSearch(e.target.value)}
+									type="text"
+									placeholder="Search conversations"
+									className="w-full rounded-lg text-sm text-white placeholder:text-gray-400"
+									style={{ background: "var(--gray-62)", paddingLeft: "2.5rem" }}
 								/>
-							))
-						)}
-						{!isLoading && visibleChats.length === 0 && (
-							<div className="p-6 text-center text-sm text-gray-400">
-								{loadError ?? "No conversations found"}
 							</div>
-						)}
+						</div>
+						<div className="flex-1 overflow-y-auto divide-y divide-[var(--gray-900)]">
+							{isLoading ? (
+								<div className="p-6 text-center text-sm text-gray-400">
+									Loading conversations...
+								</div>
+							) : (
+								visibleChats.map(conversation => (
+									<ConverationsElem
+										key={conversation._id}
+										converation={conversation}
+										currentUser={currentUser}
+										selected={selectedId}
+										setSelected={setSelectedId}
+									/>
+								))
+							)}
+							{!isLoading && visibleChats.length === 0 && (
+								<div className="p-6 text-center text-sm text-gray-400">
+									{loadError ?? "No conversations found"}
+								</div>
+							)}
+						</div>
 					</div>
-				</div>
 
-				{/* Chat Panel */}
-				<div className="w-2/3 flex flex-col bg-[var(--surface-a)] min-h-0">
-					{selectedChat ? (
-						<>
-							{/* Header */}
-							<div className="flex items-center justify-between px-6 py-4 border-b-1 border-[var(--gray-900)]">
-								<div className="flex items-center gap-3">
-									<ConversationAvatar conversation={selectedChat} size={44} />
-									<div className="flex flex-col">
-										<h2 className="text-lg font-semibold text-white">
-											{selectedChat.name}
-										</h2>
-										<p className="text-sm text-gray-400">
-											Members: {formatMembers(selectedChat.users)}
-										</p>
+					{/* Chat Panel */}
+					<div className="w-2/3 flex flex-col bg-[var(--surface-a)] min-h-0">
+						{selectedChat ? (
+							<>
+								{/* Header */}
+								<div className="flex items-center justify-between px-6 py-4 border-b-1 border-[var(--gray-900)]">
+									<div className="flex items-center gap-3">
+										<ConversationAvatar conversation={selectedChat} size={44} />
+										<div className="flex flex-col">
+											<h2 className="text-lg font-semibold text-white">
+												{selectedChat.name}
+											</h2>
+											<p className="text-sm text-gray-400">
+												Members: {formatMembers(selectedChat.users)}
+											</p>
+										</div>
+									</div>
+
+									<div className="flex gap-2">
+										{canInvite && (
+											<Button
+												label="Invite"
+												icon="pi pi-user-plus"
+												onClick={() => void createInvite()}
+												className="px-4 py-1 border border-blue-400 text-blue-400 bg-transparent rounded-full text-sm"
+											/>
+										)}
+										<Button
+											label="View Status"
+											icon="pi pi-info-circle"
+											onClick={() => setStatusOpen(true)}
+											className="px-4 py-1 border border-[var(--primary-color)] text-[var(--primary-color)] bg-transparent rounded-full text-sm"
+										/>
 									</div>
 								</div>
 
-								<div className="flex gap-2">
-									{canInvite && (
-										<Button
-											label="Invite"
-											icon="pi pi-user-plus"
-											onClick={() => void createInvite()}
-											className="px-4 py-1 border border-blue-400 text-blue-400 bg-transparent rounded-full text-sm"
-										/>
-									)}
-									<Button
-										label="View Status"
-										className="px-4 py-1 border border-red-500 text-red-500 bg-transparent rounded-full text-sm"
-									/>
-								</div>
-							</div>
+								<ChatStatusDialog
+									visible={statusOpen}
+									onHide={() => setStatusOpen(false)}
+									conversation={selectedChat}
+									application={application}
+									currentUser={currentUser}
+									onDelete={deleteApplication}
+								/>
 
-							{/* Messages + Input */}
-							<div className="flex flex-col flex-1 overflow-hidden min-h-0">
-								<div className="flex-1 px-4 py-4 overflow-y-auto space-y-3 bg-[var(--surface-a)]">
-									{selectedChat.messages.length === 0 ? (
-										<div className="h-full flex items-center justify-center text-sm text-gray-400">
-											No messages yet
-										</div>
-									) : (
-										renderMessages(selectedChat.messages, isMe)
-									)}
-								</div>
+								{/* Messages + Input */}
+								<div className="flex flex-col flex-1 overflow-hidden min-h-0">
+									<div
+										ref={messagesRef}
+										className="flex-1 px-4 py-4 overflow-y-auto space-y-3 bg-[var(--surface-a)]"
+									>
+										{selectedChat.messages.length === 0 ? (
+											<div className="h-full flex items-center justify-center text-sm text-gray-400">
+												No messages yet
+											</div>
+										) : (
+											renderMessages(selectedChat.messages, isMe)
+										)}
+									</div>
 
-								{/* Input */}
-								<ChatInput send={sendMessage} toast={toast.current} />
+									{/* Input */}
+									<ChatInput send={sendMessage} toast={toast.current} />
+								</div>
+							</>
+						) : (
+							<div className="h-full flex items-center justify-center text-sm text-gray-400">
+								Select a conversation to start chatting
 							</div>
-						</>
-					) : (
-						<div className="h-full flex items-center justify-center text-sm text-gray-400">
-							Select a conversation to start chatting
-						</div>
-					)}
+						)}
+					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }
 
@@ -468,7 +528,7 @@ const INVITE_LINK_BASE = "https://www.seekapp.uk/link/chat";
 function useApplicationForConversation(
 	conversationId: string | undefined,
 	enabled: boolean
-): ApplicationSummary | undefined {
+) {
 	const [application, setApplication] = useState<ApplicationSummary>();
 
 	useEffect(() => {
@@ -492,7 +552,188 @@ function useApplicationForConversation(
 		};
 	}, [conversationId, enabled]);
 
-	return application;
+	return [application, setApplication] as const;
+}
+
+const STAGE_INFO: Record<
+	ApplicationSummary["stage"],
+	{ label: string; detail: string; color: string }
+> = {
+	NOT_SENT: {
+		label: "Not sent",
+		detail: "The group is still preparing this application.",
+		color: "#94a3b8"
+	},
+	SENT: {
+		label: "Sent to landlord",
+		detail: "Waiting for the landlord to respond.",
+		color: "#23b7c5"
+	},
+	ACCEPTED: {
+		label: "Accepted",
+		detail: "The landlord accepted this application.",
+		color: "#10b981"
+	},
+	REJECTED: {
+		label: "Rejected",
+		detail: "The landlord declined this application.",
+		color: "#ef4444"
+	}
+};
+
+type ChatStatusDialogProps = {
+	visible: boolean;
+	onHide: () => void;
+	conversation: Conversation;
+	application?: ApplicationSummary;
+	currentUser?: ChatUser;
+	onDelete: () => Promise<void>;
+};
+
+// Web counterpart of the app's chat details screen: application status,
+// members, and deleting the application for the student who owns it.
+function ChatStatusDialog({
+	visible,
+	onHide,
+	conversation,
+	application,
+	currentUser,
+	onDelete
+}: ChatStatusDialogProps) {
+	const [confirming, setConfirming] = useState(false);
+	const [deleting, setDeleting] = useState(false);
+	const stage = application ? STAGE_INFO[application.stage] : undefined;
+	const isOwner = !!application && application.owner === currentUser?._id;
+
+	const hide = () => {
+		setConfirming(false);
+		onHide();
+	};
+
+	const handleDelete = async () => {
+		setDeleting(true);
+		await onDelete();
+		setDeleting(false);
+		setConfirming(false);
+	};
+
+	return (
+		<Dialog
+			header={conversation.name}
+			visible={visible}
+			onHide={hide}
+			dismissableMask
+			className="chat-status-dialog w-[92vw] max-w-md"
+		>
+			<div className="flex flex-col gap-5 text-white">
+				<section>
+					<h3 className="text-xs uppercase tracking-wide text-gray-400 mb-2">
+						Application status
+					</h3>
+					{stage ? (
+						<div className="flex items-start gap-3 rounded-lg p-3 bg-[var(--gray-62)]">
+							<span
+								className="mt-1.5 shrink-0 rounded-full"
+								style={{ width: 10, height: 10, background: stage.color }}
+							/>
+							<div>
+								<p className="font-semibold">{stage.label}</p>
+								<p className="text-sm text-gray-300">{stage.detail}</p>
+							</div>
+						</div>
+					) : (
+						<p className="text-sm text-gray-300">
+							This chat isn't linked to an application.
+						</p>
+					)}
+				</section>
+
+				<section>
+					<h3 className="text-xs uppercase tracking-wide text-gray-400 mb-2">
+						Members ({conversation.users.length})
+					</h3>
+					<ul className="flex flex-col gap-3 max-h-64 overflow-y-auto">
+						{conversation.users.map(member => (
+							<li key={member._id} className="flex items-center gap-3">
+								<MemberAvatar user={member} />
+								<span className="font-medium">
+									{member.name}
+									{member._id === currentUser?._id && (
+										<span className="text-gray-400 font-normal"> (you)</span>
+									)}
+								</span>
+								{application?.owner === member._id && (
+									<span className="ml-auto text-xs text-[var(--primary-color)]">
+										Admin
+									</span>
+								)}
+							</li>
+						))}
+					</ul>
+				</section>
+
+				{isOwner &&
+					(confirming ? (
+						<div className="flex flex-col gap-3 rounded-lg p-3 border border-red-500/60">
+							<p className="text-sm">
+								Delete this application? This can't be undone.
+							</p>
+							<div className="flex justify-end gap-2">
+								<Button
+									label="Cancel"
+									onClick={() => setConfirming(false)}
+									className="px-4 py-1 border border-gray-500 text-gray-200 bg-transparent rounded-full text-sm"
+								/>
+								<Button
+									label="Delete"
+									loading={deleting}
+									onClick={() => void handleDelete()}
+									className="px-4 py-1 border border-red-500 bg-red-500 text-white rounded-full text-sm"
+								/>
+							</div>
+						</div>
+					) : (
+						<Button
+							label="Delete Application"
+							icon="pi pi-trash"
+							onClick={() => setConfirming(true)}
+							className="self-start px-4 py-1 border border-red-500 text-red-400 bg-transparent rounded-full text-sm"
+						/>
+					))}
+			</div>
+		</Dialog>
+	);
+}
+
+function MemberAvatar({ user }: { user: ChatUser }) {
+	const [errored, setErrored] = useState(false);
+	if (user.profilePicUrl && !errored) {
+		return (
+			<img
+				src={user.profilePicUrl}
+				alt=""
+				className="rounded-full object-cover shrink-0"
+				style={{ width: 36, height: 36 }}
+				onError={() => setErrored(true)}
+			/>
+		);
+	}
+
+	const initials = user.name
+		.split(" ")
+		.map(word => word[0])
+		.filter(Boolean)
+		.slice(0, 2)
+		.join("")
+		.toUpperCase();
+	return (
+		<div
+			className="flex items-center justify-center rounded-full text-white text-xs font-semibold shrink-0"
+			style={{ width: 36, height: 36, background: "#1b2f4a" }}
+		>
+			{initials}
+		</div>
+	);
 }
 
 // Every conversation the logged-in user is a member of, newest activity first.

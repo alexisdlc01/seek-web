@@ -4,13 +4,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserContext from "../context/UserContext.jsx";
 import { Card, ErrorState, Loading, Page, PageHeader } from "../components/sk.jsx";
 import { AdviceCard, Notice } from "../components/StudentBits.jsx";
-import { DEPOSIT_SCHEMES, api, errMessage, fmtDate, gbp } from "../lib/landlord.js";
+import { DEPOSIT_SCHEMES, api, depositRules, errMessage, fmtDate, gbp } from "../lib/landlord.js";
 import { idOf, useMyTenancy } from "../lib/student.js";
 
 const linkCls = "flex h-9 items-center rounded-[10px] border border-sk-border2 px-3 text-[13px] font-semibold text-sk-text no-underline";
-
-// Tenant Fees Act: at most five weeks' rent (annual rent under £50,000).
-const capPence = (monthlyPence) => Math.floor(((monthlyPence * 12) / 52) * 5);
 
 const Row = ({ label, children }) => (
 	<div className="flex justify-between gap-3 border-b border-sk-hair pb-2.5 text-sm last:border-none last:pb-0">
@@ -47,11 +44,12 @@ export default function StudentDeposit() {
 		);
 
 	const people = tenancy.tenants?.length || tenancy.listing?.numOfPeople || 1;
-	const cap = capPence(tenancy.monthlyRent ?? 0);
+	const rules = depositRules(tenancy.listing?.nation, tenancy.monthlyRent ?? 0, tenancy);
+	const cap = rules.capPence;
 	const overCap = (tenancy.depositAmount ?? 0) > cap;
 	const scheme = DEPOSIT_SCHEMES.find((s) => s.value === tenancy.depositScheme);
 	const certificate = (tenancy.documents ?? []).find((d) => d.type === "DEPOSIT_CERTIFICATE");
-	const protectBy = tenancy.depositReceivedAt ? new Date(new Date(tenancy.depositReceivedAt).getTime() + 30 * 86400000) : null;
+	const protectBy = rules.protectBy;
 
 	const contracts = contractsQ.data ?? [];
 	const withDeductions = contracts.find((c) => c.deductions);
@@ -86,7 +84,7 @@ export default function StudentDeposit() {
 						<Row label="Scheme">{scheme?.label ?? tenancy.depositScheme ?? "Not given yet"}</Row>
 						<Row label="Reference">{tenancy.depositReference ?? "—"}</Row>
 						<Row label="Protected on">{tenancy.depositProtectedAt ? fmtDate(tenancy.depositProtectedAt) : protectBy ? `Due by ${fmtDate(protectBy)}` : "—"}</Row>
-						<Row label="Legal maximum (5 weeks' rent)">
+						<Row label={`Legal maximum (${rules.capName})`}>
 							<span className={overCap ? "text-sk-warn" : "text-sk-ok"}>{gbp(cap)} {overCap ? "· yours is above it" : "· yours is within it"}</span>
 						</Row>
 						{!tenancy.depositProtectedAt && protectBy && protectBy < new Date() && (
@@ -95,7 +93,7 @@ export default function StudentDeposit() {
 							</div>
 						)}
 						<span className="text-[12.5px] leading-snug text-sk-muted">
-							Your landlord must protect the deposit in a government scheme within 30 days and send you the certificate. At the end of the tenancy, any deductions must be agreed or go to the scheme's free dispute service.
+							Your landlord must protect the deposit in a government scheme within {rules.window} and send you the certificate. At the end of the tenancy, any deductions must be agreed or go to the scheme's free dispute service.
 						</span>
 					</Card>
 

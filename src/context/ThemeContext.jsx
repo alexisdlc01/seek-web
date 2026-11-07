@@ -54,3 +54,13 @@ export const useApplyTheme = (role) => {
 		};
 	}, [role, theme]);
 };
+
+/** Palette only (no light/dark switch): for the dark sign-in pages, so they never fall back to the landlord turquoise. */
+export const useApplyRole = (role) => {
+	useEffect(() => {
+		document.documentElement.dataset.role = role;
+		return () => {
+			delete document.documentElement.dataset.role;
+		};
+	}, [role]);
+};

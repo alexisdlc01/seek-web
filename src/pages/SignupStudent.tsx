@@ -5,11 +5,13 @@ import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useApplyRole } from "../context/ThemeContext.jsx";
 import UserContext from "../context/UserContext.jsx";
 import { Toast } from "primereact/toast";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
 
 export default function SignUpStudent() {
+	useApplyRole("student");
 	const { signup } = useContext(UserContext);
 	const [email, setEmail] = useState("");
 	const [name, setName] = useState("");
@@ -106,7 +108,7 @@ export default function SignUpStudent() {
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
-				className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-md p-8 border border-[var(--surface-border)] auth-form-card"
+				className="relative z-10 w-full max-w-md bg-white rounded-xl shadow-md p-8 border border-[var(--surface-border)] auth-form-card auth-form-card--student"
 			>
 				<form onSubmit={handleSubmit} className="space-y-6">
 					<h1 className="text-center text-2xl font-bold text-primary">

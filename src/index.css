@@ -167,7 +167,7 @@
 /* Legacy variables (PrimeReact-era pages) follow the active palette so the
    pre-redesign pages (listing wizard, chat, ...) stay readable. Dark keeps the
    original values; the student palette swaps the turquoise accent for blues. */
-:root[data-role="student"][data-theme="dark"] {
+:root[data-role="student"]:not([data-theme="light"]) {
   --primary-color: #d9e9ff;
   --primary-color-text: #0b2a5b;
   --accent-color: #d9e9ff;
@@ -344,9 +344,15 @@
 /* The auth cards are white, so the site's light-on-dark tokens wash out;
    use darker shades with readable contrast. */
 .auth-form-card {
-	--primary-color: #0f8794;
+	--primary-color: #0f8794; /* landlord turquoise */
 	--text-color-secondary: #475569;
 	--surface-border: #cbd5e1;
+}
+
+:root[data-role="student"] .auth-form-card,
+.auth-form-card.auth-form-card--student {
+	--primary-color: #0b2a5b;
+	--primary-color-text: #ffffff;
 }
 
 .auth-form-card h1,
@@ -534,6 +540,13 @@ select:focus,
 	outline: none;
 	border-color: var(--primary-color);
 	box-shadow: 0 0 0 4px rgba(35, 183, 197, 0.16);
+}
+
+:root[data-role="student"] .p-button:focus,
+.auth-form-card--student .p-button:focus,
+.auth-form-card--student .p-inputtext:focus,
+.auth-form-card--student .p-password input:focus {
+	box-shadow: 0 0 0 4px rgba(11, 42, 91, 0.18);
 }
 
 .p-float-label {

@@ -794,7 +794,7 @@ export type Tenancy = {
      * Energy fair-use allowance for the whole household, in pence per month. Usage above it is split between the tenants.
      */
     energyAllowance: number | null;
-    depositScheme: 'DPS' | 'TDS' | 'MYDEPOSITS';
+    depositScheme: 'DPS' | 'TDS' | 'MYDEPOSITS' | 'SAFEDEPOSITS_SCOTLAND' | 'LPS_SCOTLAND' | 'MYDEPOSITS_SCOTLAND';
     depositReference?: string;
     depositProtectedAt: string | null;
     /**
@@ -838,7 +838,7 @@ export type CreateTenancyDto = {
      * Energy fair-use allowance for the household, in pence per month.
      */
     energyAllowance?: number;
-    depositScheme?: 'DPS' | 'TDS' | 'MYDEPOSITS';
+    depositScheme?: 'DPS' | 'TDS' | 'MYDEPOSITS' | 'SAFEDEPOSITS_SCOTLAND' | 'LPS_SCOTLAND' | 'MYDEPOSITS_SCOTLAND';
     depositReference?: string;
     depositProtectedAt?: string;
     /**
@@ -848,7 +848,7 @@ export type CreateTenancyDto = {
 };
 
 export type UpdateDepositDto = {
-    depositScheme: 'DPS' | 'TDS' | 'MYDEPOSITS';
+    depositScheme: 'DPS' | 'TDS' | 'MYDEPOSITS' | 'SAFEDEPOSITS_SCOTLAND' | 'LPS_SCOTLAND' | 'MYDEPOSITS_SCOTLAND';
     depositReference: string;
     /**
      * Defaults to now.

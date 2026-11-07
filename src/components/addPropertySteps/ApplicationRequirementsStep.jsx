@@ -50,7 +50,7 @@ const ApplicationRequirements = ({
 	const england = nation === "ENGLAND";
 	// Holding deposit max one week, security deposit max five weeks.
 	const weekly = perRoomRent ? Math.floor((perRoomRent * 12) / 52) : 0;
-	const depositCap = perRoomRent ? Math.floor(((perRoomRent * 12) / 52) * 5) : 0; // same as backend compliance.ts
+	const depositCap = perRoomRent ? (nation === "SCOTLAND" ? perRoomRent * 2 : Math.floor(((perRoomRent * 12) / 52) * 5)) : 0; // same as backend compliance.ts
 	const plans = england ? ["MONTHLY"] : paymentPlans?.length ? paymentPlans : ["MONTHLY"];
 	const togglePlan = plan => {
 		if (plan === "MONTHLY") return;
@@ -375,7 +375,7 @@ const ApplicationRequirements = ({
 								max={depositCap || undefined}
 							/>
 							<span className="text-xs text-sk-muted">
-								Max five weeks{depositCap ? ` (${"£" + depositCap.toLocaleString("en-GB")})` : ""}. Protected with a government-approved scheme by Seek.
+								Max {nation === "SCOTLAND" ? "two months" : "five weeks"}{depositCap ? ` (${"£" + depositCap.toLocaleString("en-GB")})` : ""}. Protected with a government-approved scheme by Seek.
 							</span>
 						</div>
 					</div>

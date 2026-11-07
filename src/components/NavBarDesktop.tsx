@@ -127,7 +127,7 @@ export default function NavbarDesktop({ user, logout, logo }) {
 					{/* Account dropdown (always shown when logged in) */}
 					<div ref={userWrapRef} className="relative">
 						<div
-							className="flex items-center gap-2 bg-[#186273] rounded-lg px-3 py-1.5 cursor-pointer hover:bg-[#186273] transition"
+							className={`flex items-center gap-2 rounded-lg px-3 py-1.5 cursor-pointer transition ${user.role === "STUDENT" ? "bg-[#0b2a5b]" : "bg-[#186273]"}`}
 							onClick={() => setUserMenuOpen(v => !v)}
 						>
 							{user.profilePicUrl ? (

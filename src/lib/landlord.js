@@ -30,6 +30,27 @@ const refreshOn401 = async error => {
 api.interceptors.response.use(undefined, refreshOn401);
 axios.interceptors.response.use(undefined, refreshOn401);
 
+// Deposit rules per nation; mirrors SeekBackend tenancies/compliance.ts.
+// shortcut: working days skip weekends only, not bank holidays (same as the backend).
+export const depositRules = (nation, monthlyPence, tenancy) => {
+	const scot = nation === "SCOTLAND";
+	let protectBy = null;
+	if (scot && tenancy?.startDate) {
+		protectBy = new Date(tenancy.startDate);
+		for (let left = 30; left > 0; ) {
+			protectBy.setDate(protectBy.getDate() + 1);
+			if (protectBy.getDay() % 6) left--;
+		}
+	} else if (!scot && tenancy?.depositReceivedAt) protectBy = new Date(new Date(tenancy.depositReceivedAt).getTime() + 30 * 86400000);
+	return {
+		capPence: scot ? monthlyPence * 2 : Math.floor(((monthlyPence * 12) / 52) * 5),
+		capName: scot ? "two months' rent" : "5 weeks' rent",
+		capShort: scot ? "two months" : "five weeks",
+		window: scot ? "30 working days of the tenancy starting" : "30 days of receiving the deposit",
+		protectBy
+	};
+};
+
 // Money is stored in integer pence.
 export const gbp = pence => {
 	const value = (pence ?? 0) / 100;
@@ -111,7 +132,10 @@ export const activityRoute = (kind, link = "") => {
 export const DEPOSIT_SCHEMES = [
 	{ label: "DPS", value: "DPS" },
 	{ label: "TDS", value: "TDS" },
-	{ label: "mydeposits", value: "MYDEPOSITS" }
+	{ label: "mydeposits", value: "MYDEPOSITS" },
+	{ label: "SafeDeposits Scotland", value: "SAFEDEPOSITS_SCOTLAND" },
+	{ label: "Letting Protection Service Scotland", value: "LPS_SCOTLAND" },
+	{ label: "mydeposits Scotland", value: "MYDEPOSITS_SCOTLAND" }
 ];
 
 export const greeting = () => {

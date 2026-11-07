@@ -96,14 +96,14 @@ function CoreDiscovery() {
 
 				{/* Right: copy */}
 				<div>
-					<h2 className="text-[#23b7c5] uppercase tracking-wide font-semibold text-xl">
+					<h2 className="text-[#d9e9ff] uppercase tracking-wide font-semibold text-xl">
 						Core Discovery & Search
 					</h2>
 
 					<ul className="mt-6 space-y-5">
 						<li className="flex items-start gap-3">
-							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#23b7c5]/30 bg-[#23b7c5]/10 grid place-items-center shrink-0">
-								<i className="pi pi-mobile text-[#23b7c5] text-lg" />
+							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#d9e9ff]/30 bg-[#d9e9ff]/10 grid place-items-center shrink-0">
+								<i className="pi pi-mobile text-[#d9e9ff] text-lg" />
 							</span>
 							<p className="text-sm sm:text-base text-slate-300 leading-relaxed">
 								Our home page features an ergonomic, scrollable
@@ -115,8 +115,8 @@ function CoreDiscovery() {
 						</li>
 
 						<li className="flex items-start gap-3">
-							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#23b7c5]/30 bg-[#23b7c5]/10 grid place-items-center shrink-0">
-								<i className="pi pi-sliders-h text-[#23b7c5] text-lg" />
+							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#d9e9ff]/30 bg-[#d9e9ff]/10 grid place-items-center shrink-0">
+								<i className="pi pi-sliders-h text-[#d9e9ff] text-lg" />
 							</span>
 							<p className="text-sm sm:text-base text-slate-300 leading-relaxed">
 								Use filters such as rent price, number of rooms,
@@ -127,8 +127,8 @@ function CoreDiscovery() {
 						</li>
 
 						<li className="flex items-start gap-3">
-							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#23b7c5]/30 bg-[#23b7c5]/10 grid place-items-center shrink-0">
-								<i className="pi pi-map-marker text-[#23b7c5] text-lg" />
+							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#d9e9ff]/30 bg-[#d9e9ff]/10 grid place-items-center shrink-0">
+								<i className="pi pi-map-marker text-[#d9e9ff] text-lg" />
 							</span>
 							<p className="text-sm sm:text-base text-slate-300 leading-relaxed">
 								Interact with our map to view property pins
@@ -137,8 +137,8 @@ function CoreDiscovery() {
 						</li>
 
 						<li className="flex items-start gap-3">
-							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#23b7c5]/30 bg-[#23b7c5]/10 grid place-items-center shrink-0">
-								<i className="pi pi-info-circle text-[#23b7c5] text-lg" />
+							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#d9e9ff]/30 bg-[#d9e9ff]/10 grid place-items-center shrink-0">
+								<i className="pi pi-info-circle text-[#d9e9ff] text-lg" />
 							</span>
 							<p className="text-sm sm:text-base text-slate-300 leading-relaxed">
 								Tap a listing to access detailed information:
@@ -159,14 +159,14 @@ function ApplicationManagement() {
 			<div className="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
 				{/* Left: copy */}
 				<div>
-					<h2 className="text-[#23b7c5] uppercase tracking-wide font-semibold text-xl">
+					<h2 className="text-[#d9e9ff] uppercase tracking-wide font-semibold text-xl">
 						Application & Management
 					</h2>
 
 					<ul className="mt-6 space-y-5">
 						<li className="flex items-start gap-3">
-							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#23b7c5]/30 bg-[#23b7c5]/10 grid place-items-center shrink-0">
-								<i className="pi pi-tags text-[#23b7c5] text-lg" />
+							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#d9e9ff]/30 bg-[#d9e9ff]/10 grid place-items-center shrink-0">
+								<i className="pi pi-tags text-[#d9e9ff] text-lg" />
 							</span>
 							<p className="text-sm sm:text-base text-slate-300 leading-relaxed">
 								Track all your applications with a dashboard
@@ -176,8 +176,8 @@ function ApplicationManagement() {
 						</li>
 
 						<li className="flex items-start gap-3">
-							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#23b7c5]/30 bg-[#23b7c5]/10 grid place-items-center shrink-0">
-								<i className="pi pi-users text-[#23b7c5] text-lg" />
+							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#d9e9ff]/30 bg-[#d9e9ff]/10 grid place-items-center shrink-0">
+								<i className="pi pi-users text-[#d9e9ff] text-lg" />
 							</span>
 							<div>
 								<p className="text-sm sm:text-base text-slate-300 leading-relaxed">
@@ -193,8 +193,8 @@ function ApplicationManagement() {
 						</li>
 
 						<li className="flex items-start gap-3">
-							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#23b7c5]/30 bg-[#23b7c5]/10 grid place-items-center shrink-0">
-								<i className="pi pi-id-card text-[#23b7c5] text-lg" />
+							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#d9e9ff]/30 bg-[#d9e9ff]/10 grid place-items-center shrink-0">
+								<i className="pi pi-id-card text-[#d9e9ff] text-lg" />
 							</span>
 							<div>
 								<p className="text-sm sm:text-base text-slate-300 leading-relaxed">
@@ -324,14 +324,14 @@ function CommunicationSecurity() {
 
 				{/* Right: copy */}
 				<div>
-					<h2 className="text-[#23b7c5] uppercase tracking-wide font-semibold text-xl">
+					<h2 className="text-[#d9e9ff] uppercase tracking-wide font-semibold text-xl">
 						Communication & Security
 					</h2>
 
 					<ul className="mt-6 space-y-5">
 						<li className="flex items-start gap-3">
-							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#23b7c5]/30 bg-[#23b7c5]/10 grid place-items-center shrink-0">
-								<i className="pi pi-comments text-[#23b7c5] text-lg" />
+							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#d9e9ff]/30 bg-[#d9e9ff]/10 grid place-items-center shrink-0">
+								<i className="pi pi-comments text-[#d9e9ff] text-lg" />
 							</span>
 							<p className="text-sm sm:text-base text-slate-300 leading-relaxed">
 								Once your application is submitted, communicate
@@ -342,8 +342,8 @@ function CommunicationSecurity() {
 						</li>
 
 						<li className="flex items-start gap-3">
-							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#23b7c5]/30 bg-[#23b7c5]/10 grid place-items-center shrink-0">
-								<i className="pi pi-shield text-[#23b7c5] text-lg" />
+							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#d9e9ff]/30 bg-[#d9e9ff]/10 grid place-items-center shrink-0">
+								<i className="pi pi-shield text-[#d9e9ff] text-lg" />
 							</span>
 							<p className="text-sm sm:text-base text-slate-300 leading-relaxed">
 								Don’t worry about fraudulent listings—landlords
@@ -354,8 +354,8 @@ function CommunicationSecurity() {
 						</li>
 
 						<li className="flex items-start gap-3">
-							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#23b7c5]/30 bg-[#23b7c5]/10 grid place-items-center shrink-0">
-								<i className="pi pi-lock text-[#23b7c5] text-lg" />
+							<span className="mt-0.5 h-9 w-9 rounded-lg border border-[#d9e9ff]/30 bg-[#d9e9ff]/10 grid place-items-center shrink-0">
+								<i className="pi pi-lock text-[#d9e9ff] text-lg" />
 							</span>
 							<div>
 								<p className="text-sm sm:text-base text-slate-300 leading-relaxed">
@@ -419,13 +419,13 @@ const Download = () => {
 				<div className="max-w-2xl mx-auto text-center pt-14 md:pt-2">
 					<h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold leading-tight tracking-tight">
 						Find your home on the
-						<span className="block mt-1 text-[#23b7c5]">
+						<span className="block mt-1 text-[#d9e9ff]">
 							SEEK App
 						</span>
 					</h1>
 
 					<p className="mt-5 text-sm sm:text-base text-slate-300">
-						The <span className="text-[#23b7c5]">SEEK app</span> is
+						The <span className="text-[#d9e9ff]">SEEK app</span> is
 						a completely free mobile-first platform designed to
 						simplify the student housing search from start to
 						finish.
@@ -439,7 +439,7 @@ const Download = () => {
 					</p>
 
 					<Button
-						className="mt-16 px-6 py-3 border-0 bg-[#23b7c5] text-white rounded-md hover:opacity-90 transition"
+						className="mt-16 px-6 py-3 border-0 bg-[#d9e9ff] text-[#0b2a5b] rounded-md hover:opacity-90 transition"
 						style={{ color: "white" }}
 						onClick={() =>
 							window.scrollTo({

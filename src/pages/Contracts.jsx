@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, Chip, Empty, ErrorState, Loading, Page, PageHeader, btnSmGhost, btnSmPrimary } from "../components/sk.jsx";
-import { DEPOSIT_SCHEMES, api, engineerLink, errMessage, fmtDate, fmtDay, gbp, openAttachment } from "../lib/landlord.js";
+import { DEPOSIT_SCHEMES, api, engineerLink, errMessage, fmtDate, depositRules, fmtDay, gbp, openAttachment } from "../lib/landlord.js";
 
 const SCHEME_LABEL = Object.fromEntries(DEPOSIT_SCHEMES.map((s) => [s.value, s.label]));
 const CONTRACT_TONE = { DRAFT: "muted", SENT: "warn", SIGNED: "ok" };
@@ -312,10 +312,12 @@ function TenancyCard({ tenancy: t, contracts, templates }) {
 	const weeklyRent = (t.monthlyRent * 12) / 52;
 	const weeks = weeklyRent ? t.depositAmount / weeklyRent : 0;
 	const isProtected = !!t.depositProtectedAt;
+	const rules = depositRules(t.listing?.nation, t.monthlyRent, t);
+	const overCap = t.depositAmount > rules.capPence;
 	const names = t.tenants.map((x) => x.name).join(", ");
 	const facts = [
-		["Deposit", gbp(t.depositAmount * count), `${count} × ${gbp(t.depositAmount)}${t.depositScheme ? ` · ${SCHEME_LABEL[t.depositScheme]}` : ""} · ${weeks.toFixed(1)} weeks each${weeks > 5 ? " · over the 5 week cap" : ""}`, weeks > 5 ? "warn" : ""],
-		["Protected", isProtected ? fmtDay(t.depositProtectedAt) : "Not yet", isProtected ? `Ref ${t.depositReference || "-"}` : t.depositReceivedAt ? `Protect within 30 days of receiving the deposit: due ${fmtDay(new Date(new Date(t.depositReceivedAt).getTime() + 30 * 86400000))}` : "Protect within 30 days of receiving the deposit. The clock starts when it is received", isProtected ? "ok" : "warn"],
+		["Deposit", gbp(t.depositAmount * count), `${count} × ${gbp(t.depositAmount)}${t.depositScheme ? ` · ${SCHEME_LABEL[t.depositScheme]}` : ""} · ${weeks.toFixed(1)} weeks each${overCap ? ` · over the ${rules.capShort} cap` : ""}`, overCap ? "warn" : ""],
+		["Protected", isProtected ? fmtDay(t.depositProtectedAt) : "Not yet", isProtected ? `Ref ${t.depositReference || "-"}` : rules.protectBy ? `Protect within ${rules.window}: due ${fmtDay(rules.protectBy)}` : `Protect within ${rules.window}. The clock starts when it is received`, isProtected ? "ok" : "warn"],
 		["Prescribed information", t.prescribedInfoSentAt ? "Sent" : "Not sent", t.prescribedInfoSentAt ? fmtDay(t.prescribedInfoSentAt) : t.depositReceivedAt ? "Give it to the tenants once the deposit is received" : "Sent after the deposit is received", t.prescribedInfoSentAt ? "ok" : ""],
 		["Rent", gbp(t.monthlyRent * count), `${count} × ${gbp(t.monthlyRent)} pcm · ${t.periodic ? "Periodic tenancy" : `Until ${fmtDate(t.endDate)}`}`, ""]
 	];
@@ -442,7 +444,7 @@ export default function Contracts() {
 					<section className="flex flex-col gap-2 rounded-2xl bg-sk-card2 p-5">
 						<span className="text-xs font-bold text-sk-link">Deposit rules</span>
 						<span className="text-[13.5px] leading-normal text-sk-text2">
-							Deposits are capped at 5 weeks of rent and must be protected in a government-approved scheme within 30 days of receiving the deposit.
+							Deposits are capped at 5 weeks of rent (two months in Scotland) and must be protected in a government-approved scheme within 30 days of receiving the deposit (30 working days of the tenancy starting in Scotland).
 						</span>
 					</section>
 				</aside>

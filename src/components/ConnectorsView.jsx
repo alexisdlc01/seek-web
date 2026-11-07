@@ -165,7 +165,7 @@ export default function ConnectorsView({ title, intro, scopeLabel, scopeHint, op
 										</div>
 									</div>
 									<span className="text-[13px] text-sk-text2">
-										{p.available ? "Sign in to connect. Nothing is stored until the first sync." : p.reason}
+										{p.available ? "Sign in to connect. Nothing is stored until the first sync." : "Not available yet."}
 									</span>
 									<button
 										type="button"

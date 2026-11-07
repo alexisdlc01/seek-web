@@ -8,7 +8,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 export default function ResetPasswordPassword() {
 	const [searchParams] = useSearchParams();
@@ -57,7 +57,7 @@ export default function ResetPasswordPassword() {
 		if (!validatePassword()) return;
 
 		try {
-			await axios.post(`${BASE_URL}/auth/confirmPasswordReset`, {
+			await axios.post(`${API_BASE}/auth/confirmPasswordReset`, {
 				userId,
 				token,
 				newPassword: password

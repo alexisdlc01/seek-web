@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap");
 @import "tailwindcss";
 @import "primereact/resources/primereact.min.css";
 @import "primeicons/primeicons.css";
@@ -20,6 +21,185 @@
   --color-success: var(--success-color);
   --color-warning: var(--warning-color);
   --color-danger: var(--danger-color);
+}
+
+/* ------------------------------------------------------------------
+   Seek design tokens (--sk-*)
+   Four palettes, picked with <html data-role="landlord|student"
+   data-theme="dark|light">. The attributes are set by ThemeContext while a
+   layout (LandlordLayout / StudentLayout) is mounted; outside of the layouts
+   (public site, sign-in) none are set and the landlord-dark defaults apply.
+   ------------------------------------------------------------------ */
+@theme inline {
+  --font-display: "Space Grotesk", Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-sk-bg: var(--sk-bg);
+  --color-sk-side: var(--sk-side);
+  --color-sk-side-border: var(--sk-side-border);
+  --color-sk-card: var(--sk-card);
+  --color-sk-card2: var(--sk-card2);
+  --color-sk-hair: var(--sk-hair);
+  --color-sk-border: var(--sk-border);
+  --color-sk-border2: var(--sk-border2);
+  --color-sk-text: var(--sk-text);
+  --color-sk-text2: var(--sk-text2);
+  --color-sk-muted: var(--sk-muted);
+  --color-sk-accent: var(--sk-accent);
+  --color-sk-on-accent: var(--sk-on-accent);
+  --color-sk-link: var(--sk-link);
+  --color-sk-tint: var(--sk-tint);
+  --color-sk-ok: var(--sk-ok);
+  --color-sk-ok-bg: var(--sk-ok-bg);
+  --color-sk-warn: var(--sk-warn);
+  --color-sk-warn-bg: var(--sk-warn-bg);
+  --color-sk-amber: var(--sk-amber);
+  --color-sk-danger: var(--sk-danger);
+  --color-sk-danger-border: var(--sk-danger-border);
+}
+
+:root,
+:root[data-role="landlord"][data-theme="dark"] {
+  /* landlord dark (default) */
+  --sk-bg: #0f0f23;
+  --sk-side: #0b0d17;
+  --sk-side-border: rgba(255, 255, 255, 0.08);
+  --sk-card: #16253e;
+  --sk-card2: #1b2f4a;
+  --sk-hair: rgba(255, 255, 255, 0.07);
+  --sk-border: rgba(255, 255, 255, 0.12);
+  --sk-border2: rgba(255, 255, 255, 0.24);
+  --sk-text: #f8fafc;
+  --sk-text2: #dce8f4;
+  --sk-muted: #9fb0c7;
+  --sk-accent: #23b7c5;
+  --sk-on-accent: #0f0f23;
+  --sk-link: #2ed2de;
+  --sk-tint: rgba(35, 183, 197, 0.16);
+  --sk-ok: #34d399;
+  --sk-ok-bg: rgba(52, 211, 153, 0.14);
+  --sk-warn: #fbbf24;
+  --sk-warn-bg: rgba(251, 191, 36, 0.14);
+  --sk-amber: #d99a2b;
+  --sk-danger: #f87171;
+  --sk-danger-border: rgba(248, 113, 113, 0.5);
+  --sk-shadow: rgba(0, 0, 0, 0.35);
+}
+
+:root[data-role="landlord"][data-theme="light"] {
+  --sk-bg: #f8fafc;
+  --sk-side: #ffffff;
+  --sk-side-border: #e2e8f0;
+  --sk-card: #ffffff;
+  --sk-card2: #eef4f8;
+  --sk-hair: #f1f5f9;
+  --sk-border: #e2e8f0;
+  --sk-border2: #cbd5e1;
+  --sk-text: #0f172a;
+  --sk-text2: #334155;
+  --sk-muted: #64748b;
+  --sk-accent: #23b7c5;
+  --sk-on-accent: #0f0f23;
+  --sk-link: #186273;
+  --sk-tint: rgba(35, 183, 197, 0.16);
+  --sk-ok: #15803d;
+  --sk-ok-bg: rgba(52, 211, 153, 0.14);
+  --sk-warn: #a16207;
+  --sk-warn-bg: rgba(251, 191, 36, 0.16);
+  --sk-amber: #a16207;
+  --sk-danger: #b91c1c;
+  --sk-danger-border: rgba(185, 28, 28, 0.4);
+  --sk-shadow: rgba(15, 23, 42, 0.12);
+}
+
+:root[data-role="student"][data-theme="dark"] {
+  --sk-bg: #0f0f23;
+  --sk-side: #0b0d17;
+  --sk-side-border: rgba(255, 255, 255, 0.08);
+  --sk-card: #16253e;
+  --sk-card2: #1b2f4a;
+  --sk-hair: rgba(255, 255, 255, 0.07);
+  --sk-border: rgba(255, 255, 255, 0.12);
+  --sk-border2: rgba(255, 255, 255, 0.24);
+  --sk-text: #f8fafc;
+  --sk-text2: #dce8f4;
+  --sk-muted: #9fb0c7;
+  --sk-accent: #d9e9ff;
+  --sk-on-accent: #0b2a5b;
+  --sk-link: #a8c8f5;
+  --sk-tint: rgba(168, 200, 245, 0.16);
+  --sk-ok: #34d399;
+  --sk-ok-bg: rgba(52, 211, 153, 0.14);
+  --sk-warn: #fbbf24;
+  --sk-warn-bg: rgba(251, 191, 36, 0.14);
+  --sk-amber: #d99a2b;
+  --sk-danger: #f87171;
+  --sk-danger-border: rgba(248, 113, 113, 0.5);
+  --sk-shadow: rgba(0, 0, 0, 0.35);
+}
+
+:root[data-role="student"][data-theme="light"] {
+  --sk-bg: #f8fafc;
+  --sk-side: #ffffff;
+  --sk-side-border: #e2e8f0;
+  --sk-card: #ffffff;
+  --sk-card2: #eef4f8;
+  --sk-hair: #f1f5f9;
+  --sk-border: #e2e8f0;
+  --sk-border2: #cbd5e1;
+  --sk-text: #0f172a;
+  --sk-text2: #334155;
+  --sk-muted: #64748b;
+  --sk-accent: #0b2a5b;
+  --sk-on-accent: #ffffff;
+  --sk-link: #0b2a5b;
+  --sk-tint: #eaf3ff;
+  --sk-ok: #15803d;
+  --sk-ok-bg: rgba(21, 128, 61, 0.1);
+  --sk-warn: #a16207;
+  --sk-warn-bg: rgba(161, 98, 7, 0.1);
+  --sk-amber: #a16207;
+  --sk-danger: #b91c1c;
+  --sk-danger-border: rgba(185, 28, 28, 0.4);
+  --sk-shadow: rgba(15, 23, 42, 0.12);
+}
+
+/* Legacy variables (PrimeReact-era pages) follow the active palette so the
+   pre-redesign pages (listing wizard, chat, ...) stay readable. Dark keeps the
+   original values; the student palette swaps the turquoise accent for blues. */
+:root[data-role="student"][data-theme="dark"] {
+  --primary-color: #d9e9ff;
+  --primary-color-text: #0b2a5b;
+  --accent-color: #d9e9ff;
+  --listing-accent: #a8c8f5;
+}
+
+:root[data-theme="light"] {
+  --surface-a: #f8fafc;
+  --surface-ground: #f8fafc;
+  --surface-0: #ffffff;
+  --surface-100: #f1f5f9;
+  --surface-border: #e2e8f0;
+  --text-color: #0f172a;
+  --text-color-secondary: #64748b;
+  --gray-62: #ffffff;
+  --gray-900: #e2e8f0;
+  --listing-surface: #ffffff;
+  --listing-surface-strong: #f1f5f9;
+  --listing-surface-soft: #f1f5f9;
+  --listing-border: #cbd5e1;
+  --listing-text-strong: #0f172a;
+  --listing-text-muted: #334155;
+  --listing-text-soft: #64748b;
+  --listing-accent: #186273;
+  color-scheme: light;
+}
+
+:root[data-role="student"][data-theme="light"] {
+  --primary-color: #0b2a5b;
+  --primary-color-text: #ffffff;
+  --accent-color: #0b2a5b;
+  --listing-accent: #0b2a5b;
 }
 
 :root {
@@ -823,4 +1003,57 @@ select:focus,
    picks up the adjacent-sibling margin above, pushing the icon off-center. */
 .p-button.p-button-icon-only .p-button-label {
 	display: none !important;
+}
+
+/* ------------------------------------------------------------------
+   ListingsMap price pills (Leaflet divIcon markup, so plain CSS)
+   ------------------------------------------------------------------ */
+.sk-pill-wrap {
+  background: none;
+  border: none;
+}
+.sk-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 60px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 18px;
+  font: 700 13px Inter, sans-serif;
+  background: var(--sk-accent);
+  color: var(--sk-on-accent);
+  border: 2px solid #ffffff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.sk-pill--on {
+  background: #ffffff;
+  color: #0b2a5b;
+  border: 3px solid var(--sk-accent);
+  transform: scale(1.15);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+.sk-pill--dim {
+  opacity: 0.45;
+}
+.sk-landmark {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font: 700 11.5px Inter, sans-serif;
+  color: #151515;
+  text-shadow: 0 0 3px #fff, 0 0 3px #fff;
+}
+.sk-landmark i {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background: #151515;
+  border: 2px solid #fff;
+  box-sizing: border-box;
+  flex: none;
 }

@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 export default function SignInLandlord() {
 	const navigate = useNavigate();
@@ -76,7 +76,7 @@ export default function SignInLandlord() {
 		if (!validateEmail()) return;
 		if (!validatePassword()) return;
 		await login(email, password);
-		navigate("/");
+		navigate("/dashboard");
 	};
 
 	return (
@@ -157,7 +157,7 @@ export default function SignInLandlord() {
 							}}
 							type="button"
 							onClick={() => {
-								window.location.href = `${BASE_URL}/auth/google`;
+								window.location.href = `${API_BASE}/auth/google`;
 							}}
 						/>
 					</motion.div>

@@ -1,12 +1,11 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import { motion } from "framer-motion";
 import axios, { AxiosError } from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import DeclineDialog from "../components/DeclineDialog";
 import ListingsContext from "../context/ListingsContext.jsx";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { Chip, Page, PageHeader, btnSmGhost, btnSmPrimary } from "../components/sk.jsx";
+import { API_BASE, fmtDate, gbp, timeAgo } from "../lib/landlord.js";
 
 type Applicant = {
 	_id: string;
@@ -15,7 +14,7 @@ type Applicant = {
 	profilePicUrl?: string;
 };
 
-type ApplicationStage = "NOT_SENT" | "SENT" | "ACCEPTED" | "REJECTED";
+type ApplicationStage = "NOT_SENT" | "SENT" | "VIEWED" | "OFFERED" | "ACCEPTED" | "SIGNED" | "REJECTED";
 
 type Application = {
 	_id: string;
@@ -24,28 +23,59 @@ type Application = {
 	conversation?: string | { _id?: string };
 	applicants: string[];
 	applicantUsers?: Applicant[];
+	listing?: string | { _id?: string };
+	readiness?: number;
+	qualified?: boolean;
+	viewingAt?: string | null;
+	holdingDeposit?: number | null;
+	offerExpiresAt?: string | null;
+	sentAt?: string | null;
+	members?: {
+		user: string;
+		name: string;
+		shareExpiresAt?: string | null;
+		passport?: { ready?: boolean };
+	}[];
 	// Attached client-side so the all-listings view can say which property
 	// each application is for.
 	listingTitle?: string;
+	listingPeople?: number;
 };
 
-const TABS: { stage: ApplicationStage; label: string }[] = [
-	{ stage: "SENT", label: "New Applications" },
-	{ stage: "ACCEPTED", label: "Approved Applicants" },
-	{ stage: "REJECTED", label: "Rejected" }
+type ColumnKey = "SUBMITTED" | "QUALIFIED" | "VIEWED" | "OFFER" | "SIGNED";
+
+const COLUMNS: { key: ColumnKey; label: string; empty: string }[] = [
+	{ key: "SUBMITTED", label: "Submitted", empty: "New applications land here." },
+	{ key: "QUALIFIED", label: "Qualified", empty: "Households whose passports are all complete appear here, first come first served." },
+	{ key: "VIEWED", label: "Viewed", empty: "Households move here after their viewing. Make the offer in one click." },
+	{ key: "OFFER", label: "Offer and hold", empty: "Holding deposit collected (max one week). 15-day clock to sign." },
+	{ key: "SIGNED", label: "Signed", empty: "Contract emailed to all and filed in their app. Deposit registration starts." }
 ];
+
+// Where an application sits on the board. Rejected ones are off the board.
+function columnOf(a: Application, signed: Set<string>): ColumnKey | null {
+	if (a.stage === "SIGNED") return "SIGNED";
+	if (a.stage === "ACCEPTED") return signed.has(a._id) ? "SIGNED" : "OFFER";
+	if (a.stage === "OFFERED") return "OFFER";
+	if (a.stage === "VIEWED") return "VIEWED";
+	if (a.stage !== "SENT") return null;
+	if (a.viewingAt && new Date(a.viewingAt).getTime() <= Date.now()) return "VIEWED";
+	return a.qualified ? "QUALIFIED" : "SUBMITTED";
+}
 
 export default function Applicants() {
 	const navigate = useNavigate();
 	const { listingId } = useParams<{ listingId: string }>();
-	const { listings } = useContext(ListingsContext) as { listings: any[] };
+	const { listings } = useContext(ListingsContext)!;
 	const toast = useRef<Toast>(null);
+	const [decliningApp, setDecliningApp] = useState<Application | null>(null);
 
-	const [activeStage, setActiveStage] = useState<ApplicationStage>("SENT");
 	const [applications, setApplications] = useState<Application[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [loadError, setLoadError] = useState<string | null>(null);
 	const [pendingId, setPendingId] = useState<string | null>(null);
+	// Applications whose tenancy contract is fully signed.
+	const [signedIds, setSignedIds] = useState<Set<string>>(new Set());
 
 	// With a listingId, show that listing's applications; without one (the
 	// Dashboard's "Applications" button), show applications across every
@@ -54,11 +84,24 @@ export default function Applicants() {
 	const targetListings = listingId
 		? [listing ?? { _id: listingId }]
 		: listings ?? [];
-	const title = listing
-		? `Applications - ${listingTitleOf(listing)}`
-		: "Applications";
-
+	
 	const targetIds = targetListings.map(l => l._id).join(",");
+
+	// Criteria come from the listing itself; Right to Rent is required by law.
+	const criteria: string[] = ["Right to Rent"];
+	if (listing) {
+		const c = listing.criteria ?? {};
+		const G: Record<string, string> = { UK_ONLY: "UK guarantor needed", UK_OR_SERVICE: "UK guarantor or guarantor service", NONE: "No guarantor needed" };
+		if (c.guarantor && G[c.guarantor]) criteria.push(G[c.guarantor]);
+		if (c.referencesRequired) criteria.push("References required");
+		if (c.maxHousehold) criteria.push(`Up to ${c.maxHousehold} people`);
+		if (listing.monthlyRent && listing.numOfPeople) {
+			criteria.push(`${gbp(Math.round((listing.monthlyRent * 100) / listing.numOfPeople))} pcm each, fixed (no bidding)`);
+		}
+		criteria.push("First qualified household is first in line");
+	} else {
+		criteria.push("Fixed rent, no bidding", "First qualified household is first in line");
+	}
 
 	const loadApplications = useCallback(async () => {
 		if (targetListings.length === 0) {
@@ -72,23 +115,44 @@ export default function Applicants() {
 			const perListing = await Promise.all(
 				targetListings.map(async l => {
 					const { data } = await axios.get<Application[]>(
-						`${BASE_URL}/application/listing/${l._id}`,
+						`${API_BASE}/application/listing/${l._id}`,
 						{ withCredentials: true }
 					);
 					return (data ?? []).map(a => ({
 						...a,
-						listingTitle: listingTitleOf(l)
+						listing: a.listing ?? l._id,
+						listingTitle: listingTitleOf(l),
+						listingPeople: l.numOfPeople
 					}));
 				})
 			);
-			setApplications(
-				perListing
-					.flat()
-					.sort(
-						(a, b) =>
-							new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-					)
-			);
+			// Keep the order the API returns (qualified first, then first sent):
+			// the home goes to the first qualified household, no bidding.
+			const all = perListing.flat();
+			setApplications(all);
+
+			if (all.some(a => a.stage === "ACCEPTED")) {
+				try {
+					const [tenancies, contracts] = await Promise.all([
+						axios.get<{ _id: string; application?: string | null }[]>(`${API_BASE}/tenancies/landlord`, { withCredentials: true }),
+						axios.get<{ status: string; tenancy?: { _id?: string } | string }[]>(`${API_BASE}/contracts/landlord`, { withCredentials: true })
+					]);
+					const signedTenancies = new Set(
+						(contracts.data ?? [])
+							.filter(c => c.status === "SIGNED")
+							.map(c => (typeof c.tenancy === "string" ? c.tenancy : c.tenancy?._id))
+					);
+					setSignedIds(
+						new Set(
+							(tenancies.data ?? [])
+								.filter(t => t.application && signedTenancies.has(t._id))
+								.map(t => String(t.application))
+						)
+					);
+				} catch {
+					setSignedIds(new Set());
+				}
+			}
 		} catch (error) {
 			setLoadError(getErrorMessage(error));
 		} finally {
@@ -102,19 +166,23 @@ export default function Applicants() {
 		loadApplications();
 	}, [loadApplications]);
 
-	const updateStage = async (application: Application, action: "approve" | "reject") => {
+	const updateStage = async (application: Application, action: "offer" | "reject", reason?: string) => {
 		setPendingId(application._id);
 		try {
-			await axios.patch(
-				`${BASE_URL}/application/${application._id}/${action}`,
-				{},
-				{ withCredentials: true }
-			);
+			// The offer is a POST (15 days to accept, holding deposit recorded); reject is a PATCH.
+			await axios.request({
+				method: action === "offer" ? "post" : "patch",
+				url: `${API_BASE}/application/${application._id}/${action}`,
+				data: reason ? { reason } : {},
+				withCredentials: true
+			});
 			await loadApplications();
 		} catch (error) {
+			const queueBlocked = axios.isAxiosError(error) && error.response?.status === 409;
+			if (queueBlocked) await loadApplications();
 			toast.current?.show({
-				severity: "error",
-				summary: action === "approve" ? "Approve failed" : "Reject failed",
+				severity: queueBlocked ? "warn" : "error",
+				summary: queueBlocked ? "Not next in line" : action === "offer" ? "Offer failed" : "Reject failed",
 				detail: getErrorMessage(error),
 				life: 4000
 			});
@@ -137,151 +205,210 @@ export default function Applicants() {
 		navigate(`/chat?conversation=${conversationId}`);
 	};
 
-	const visible = applications.filter(a => a.stage === activeStage);
-	const countFor = (stage: ApplicationStage) =>
-		applications.filter(a => a.stage === stage).length;
+	// The first qualified household of each listing is first in line.
+	const firstInLine = new Set<string>();
+	// A live offer on a listing blocks its queue (the backend answers 409).
+	const seenListings = new Set<string>(
+		applications
+			.filter(a => a.stage === "OFFERED" && !!a.offerExpiresAt && new Date(a.offerExpiresAt).getTime() > Date.now())
+			.map(getListingId)
+	);
+	for (const a of applications) {
+		const lid = getListingId(a);
+		if (["SENT", "VIEWED"].includes(a.stage) && a.qualified && !seenListings.has(lid)) {
+			seenListings.add(lid);
+			firstInLine.add(a._id);
+		}
+	}
+	const rejectedCount = applications.filter(a => a.stage === "REJECTED").length;
 
 	const renderApplicationCard = (application: Application) => {
 		const applicants = application.applicantUsers ?? [];
 		const busy = pendingId === application._id;
+		const count = applicants.length || application.applicants.length;
+		const members = application.members ?? [];
+		const passportsReady = members.filter(m => m.passport?.ready).length;
 
 		return (
-			<motion.div
+			<article
 				key={application._id}
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.3 }}
-				className="flex flex-col md:flex-row items-center justify-between border border-[var(--surface-border)] rounded-xl px-4 py-5 shadow-sm gap-4"
-				style={{
-					background: "var(--gray-62)"
-				}}
+				className="flex flex-col gap-2 rounded-xl bg-sk-card2 p-3"
 			>
-				{/* Avatar and Info */}
-				<div className="flex items-start gap-4 w-full md:w-auto">
-					<div className="w-12 h-12 rounded-full bg-gray-200 text-[var(--text-color)] flex items-center justify-center font-bold text-sm">
+				<div className="flex items-center gap-2.5">
+					<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sk-tint text-xs font-bold text-sk-link">
 						{initialsOf(applicants)}
 					</div>
-					<div>
-						<h2 className="font-semibold text-[var(--text-color)]">
-							{formatApplicantNames(applicants)}
-						</h2>
-						{!listingId && application.listingTitle && (
-							<p className="text-sm text-[var(--primary-color)]">
-								{application.listingTitle}
-							</p>
-						)}
-						<p className="text-sm text-white">
-							Applied {formatDate(application.createdAt)} •{" "}
-							{applicants.length || application.applicants.length}{" "}
-							{applicants.length === 1 ? "applicant" : "applicants"}
-						</p>
-						{applicants.some(a => a.email) && (
-							<p className="text-sm text-gray-300 truncate">
-								{applicants
-									.map(a => a.email)
-									.filter(Boolean)
-									.join(", ")}
-							</p>
-						)}
-					</div>
+					<span className="min-w-0 flex-1 truncate text-sm font-semibold">
+						{formatApplicantNames(applicants)}
+					</span>
+					{firstInLine.has(application._id) && <Chip tone="ok">First in line</Chip>}
 				</div>
-
-				{/* Action Buttons */}
-				<div className="grid sm:grid-cols-3 gap-2 w-full md:w-auto">
-					<Button
-						label="Chat"
-						icon="pi pi-comments"
-						outlined
-						size="small"
-						className="w-full sm:w-auto"
+				{!listingId && application.listingTitle && (
+					<span className="truncate text-[12.5px] font-semibold text-sk-link">
+						{application.listingTitle}
+					</span>
+				)}
+				<div className="flex flex-wrap items-center gap-2">
+					<Chip tone={application.qualified ? "ok" : "warn"}>
+						Passports {passportsReady} of {members.length || count}
+					</Chip>
+					{application.viewingAt && (
+						<Chip tone="accent">Viewing {formatViewing(application.viewingAt)}</Chip>
+					)}
+					{application.stage === "OFFERED" && (
+						<Chip tone="accent">
+							Offer out{application.offerExpiresAt ? ` · until ${new Date(application.offerExpiresAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}` : ""}
+						</Chip>
+					)}
+					{application.holdingDeposit ? <Chip tone="muted">Holding deposit £{application.holdingDeposit} each</Chip> : null}
+				</div>
+				<span className="text-xs text-sk-muted">
+					{application.qualified
+						? "All criteria pass"
+						: application.listingPeople && (members.length || count) < application.listingPeople
+							? `${members.length || count} ${(members.length || count) === 1 ? "person" : "people"}, needs ${application.listingPeople}`
+							: "Waiting on students"}
+					{" · "}Sent {timeAgo(application.sentAt || application.createdAt)}
+				</span>
+				<div className="flex flex-wrap gap-2 pt-1">
+					<Link
+						to={`/application?listing=${getListingId(application)}&id=${application._id}`}
+						className={btnSmGhost}
+					>
+						Review
+					</Link>
+					<button
+						type="button"
+						className={btnSmGhost}
 						onClick={() => openChat(application)}
-						style={{ color: "white" }}
-					/>
-					{application.stage !== "ACCEPTED" && (
-						<Button
-							label="Approve"
-							icon="pi pi-check"
-							size="small"
-							className="w-full sm:w-auto"
-							loading={busy}
-							onClick={() => updateStage(application, "approve")}
-							style={{ color: "white" }}
-						/>
+					>
+						Chat
+					</button>
+					{["SENT", "VIEWED"].includes(application.stage) && (
+						<button
+							type="button"
+							className={`${btnSmPrimary} disabled:opacity-50`}
+							disabled={busy || !firstInLine.has(application._id)}
+							title={firstInLine.has(application._id) ? undefined : "Only the first qualified household can get the offer."}
+							onClick={() => updateStage(application, "offer")}
+						>
+							{busy ? "Working…" : "Make offer"}
+						</button>
 					)}
 					{application.stage !== "REJECTED" && (
-						<Button
-							label="Reject"
-							icon="pi pi-times"
-							severity="danger"
-							size="small"
-							className="w-full sm:w-auto"
-							loading={busy}
-							onClick={() => updateStage(application, "reject")}
-							style={{ color: "white" }}
-						/>
+						<button
+							type="button"
+							className={`${btnSmGhost} !text-sk-danger disabled:opacity-50`}
+							disabled={busy}
+							onClick={() => setDecliningApp(application)}
+						>
+							Reject
+						</button>
 					)}
 				</div>
-			</motion.div>
+			</article>
 		);
 	};
 
 	return (
-		<div className="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
+		<Page>
 			<Toast ref={toast} position="bottom-right" />
+			<DeclineDialog
+				visible={!!decliningApp}
+				busy={!!pendingId}
+				onHide={() => setDecliningApp(null)}
+				onConfirm={async reason => {
+					if (decliningApp) await updateStage(decliningApp, "reject", reason);
+					setDecliningApp(null);
+				}}
+			/>
 
-			{/* Header */}
-			<motion.div
-				initial={{ opacity: 0, y: -20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.5 }}
-				className="mb-6"
+			<PageHeader
+				eyebrow={listing ? "Applications for" : "Applications across all properties"}
+				title={listing ? listingTitleOf(listing) : "Applicants"}
 			>
-				<h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-color)]">
-					{title}
-				</h1>
-			</motion.div>
-
-			{/* Tabs */}
-			<div className="flex border-b border-gray-200 mb-6 text-sm font-medium">
-				{TABS.map((tab, i) => (
-					<div
-						key={tab.stage}
-						onClick={() => setActiveStage(tab.stage)}
-						className={`px-4 py-2 cursor-pointer ${i > 0 ? "ml-4" : ""} ${
-							activeStage === tab.stage
-								? "text-[var(--primary-color)] border-b-2 border-[var(--primary-color)]"
-								: "text-gray-500"
-						}`}
+				<label className="flex flex-col gap-1 text-[12.5px] text-sk-muted">
+					Property
+					<select
+						className="h-11 min-w-[220px] rounded-xl border border-sk-border2 bg-sk-card px-3 text-sm text-sk-text"
+						value={listingId ?? ""}
+						onChange={e =>
+							navigate(e.target.value ? `/applicants/${e.target.value}` : "/applicants")
+						}
 					>
-						{tab.label} ({countFor(tab.stage)})
-					</div>
-				))}
-			</div>
+						<option value="">All properties</option>
+						{(listings ?? []).map(l => (
+							<option key={l._id} value={l._id}>
+								{listingTitleOf(l)}
+							</option>
+						))}
+					</select>
+				</label>
+			</PageHeader>
 
-			{/* Applicant Cards */}
-			<div className="space-y-6">
-				{isLoading ? (
-					<p className="text-sm text-gray-400">Loading applications...</p>
-				) : loadError ? (
-					<p className="text-sm text-red-400">{loadError}</p>
-				) : targetListings.length === 0 ? (
-					<p className="text-sm text-gray-400">
-						You have no listings yet, so there are no applications to show.
-					</p>
-				) : visible.length === 0 ? (
-					<p className="text-sm text-gray-400">
-						No {TABS.find(t => t.stage === activeStage)?.label.toLowerCase()} yet.
-					</p>
-				) : (
-					visible.map(renderApplicationCard)
+			<section className="flex flex-wrap items-center gap-x-6 gap-y-3 rounded-2xl border border-sk-border bg-sk-card px-5 py-4">
+				<span className="text-sm font-semibold">Criteria checked automatically</span>
+				<div className="flex flex-1 flex-wrap gap-2 text-[13px]">
+					{criteria.map(c => (
+						<span key={c} className="rounded-lg bg-sk-hair px-2.5 py-1.5">
+							{c}
+						</span>
+					))}
+				</div>
+				{listing && (
+					<Link to={`/add-listing/${listing._id}`} className={btnSmGhost}>
+						Edit criteria
+					</Link>
 				)}
-			</div>
-		</div>
+			</section>
+
+			{isLoading ? (
+				<p className="text-sm text-sk-muted">Loading applications...</p>
+			) : loadError ? (
+				<p className="text-sm text-sk-danger">{loadError}</p>
+			) : targetListings.length === 0 ? (
+				<p className="text-sm text-sk-muted">
+					You have no listings yet, so there are no applications to show.
+				</p>
+			) : (
+				<div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] items-start gap-4">
+					{COLUMNS.map(col => {
+						const items = applications.filter(a => columnOf(a, signedIds) === col.key);
+						return (
+							<section
+								key={col.key}
+								className="flex flex-col gap-2.5 rounded-2xl bg-sk-hair p-3"
+							>
+								<h2 className="flex justify-between px-1 pt-1 text-sm font-semibold">
+									{col.label}
+									<span className="text-sk-muted">{items.length}</span>
+								</h2>
+								{items.length === 0 ? (
+									<p className="p-1 text-[12.5px] text-sk-muted">{col.empty}</p>
+								) : (
+									items.map(renderApplicationCard)
+								)}
+							</section>
+						);
+					})}
+				</div>
+			)}
+			{!isLoading && !loadError && rejectedCount > 0 && (
+				<p className="text-[12.5px] text-sk-muted">
+					{rejectedCount} declined {rejectedCount === 1 ? "household is" : "households are"} not shown.
+				</p>
+			)}
+		</Page>
 	);
 }
 
 function listingTitleOf(listing: { _id: string; streetAddress?: string; propertyTitle?: string }): string {
 	return listing.streetAddress || listing.propertyTitle || "Untitled listing";
+}
+
+function getListingId(application: Application): string {
+	const { listing } = application;
+	return (typeof listing === "string" ? listing : listing?._id) ?? "";
 }
 
 function getConversationId(application: Application): string | undefined {
@@ -309,11 +436,12 @@ function initialsOf(applicants: Applicant[]): string {
 	return initials || "?";
 }
 
-function formatDate(dateStr: string): string {
-	return new Date(dateStr).toLocaleDateString([], {
+function formatViewing(dateStr: string): string {
+	return new Date(dateStr).toLocaleString("en-GB", {
+		weekday: "short",
 		day: "numeric",
-		month: "short",
-		year: "numeric"
+		hour: "2-digit",
+		minute: "2-digit"
 	});
 }
 

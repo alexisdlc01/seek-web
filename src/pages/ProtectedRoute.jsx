@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import UserContext from "../context/UserContext.jsx";
 import { ProgressSpinner } from "primereact/progressspinner";
@@ -6,6 +6,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 
 export default function ProtectedRoute({ children, allowedRoles }) {
 	const { user, loading } = useContext(UserContext);
+	const loc = useLocation();
 
 	if (loading) {
 		return (
@@ -20,6 +21,11 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 		);
 	}
 
+
+	if (!user && loc.pathname.startsWith("/student/")) {
+		// keep the deep link (e.g. a housemate invite) through sign-in
+		return <Navigate to={`/signin/student?returnTo=${encodeURIComponent(loc.pathname + loc.search)}`} replace />;
+	}
 
 	if (!user) {
 		return <Navigate to="/" replace />;

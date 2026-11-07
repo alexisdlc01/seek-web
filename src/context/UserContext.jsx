@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 const UserContext = createContext(undefined);
 
@@ -21,7 +21,7 @@ export const UserProvider = ({ children }) => {
 
 	const getCurrentUser = async () => {
 		try {
-			const res = await axios.get(`${BASE_URL}/auth/currentUser`, {
+			const res = await axios.get(`${API_BASE}/auth/currentUser`, {
 				withCredentials: true
 			});
 			return res.data;
@@ -29,7 +29,7 @@ export const UserProvider = ({ children }) => {
 			if (err.response.status === 401) {
 				try {
 					await axios.post(
-						`${BASE_URL}/auth/refresh`,
+						`${API_BASE}/auth/refresh`,
 						{},
 						{
 							withCredentials: true
@@ -46,7 +46,7 @@ export const UserProvider = ({ children }) => {
 	const login = async (email, password) => {
 		try {
 			await axios.post(
-				`${BASE_URL}/auth/login`,
+				`${API_BASE}/auth/login`,
 				{
 					email,
 					password
@@ -55,7 +55,7 @@ export const UserProvider = ({ children }) => {
 			);
 
 			try {
-				const res = await axios.get(`${BASE_URL}/auth/currentUser`, {
+				const res = await axios.get(`${API_BASE}/auth/currentUser`, {
 					withCredentials: true
 				});
 				setUser(res.data);
@@ -73,7 +73,7 @@ export const UserProvider = ({ children }) => {
 	const logout = async () => {
 		try {
 			await axios.post(
-				`${BASE_URL}/auth/logout`,
+				`${API_BASE}/auth/logout`,
 				{},
 				{
 					withCredentials: true
@@ -90,7 +90,7 @@ export const UserProvider = ({ children }) => {
 	const signup = async (name, email, password, role) => {
 		try {
 			await axios.post(
-				`${BASE_URL}/auth/signup`,
+				`${API_BASE}/auth/signup`,
 				{
 					name,
 					email,
@@ -101,7 +101,7 @@ export const UserProvider = ({ children }) => {
 					withCredentials: true
 				}
 			);
-			const res = await axios.get(`${BASE_URL}/auth/currentUser`, {
+			const res = await axios.get(`${API_BASE}/auth/currentUser`, {
 				withCredentials: true
 			});
 			setUser(res.data);

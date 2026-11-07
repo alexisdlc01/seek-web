@@ -1,48 +1,220 @@
-import React, { useContext, useRef } from "react";
-import { Button } from "primereact/button";
+import React, { useContext, useRef, useState } from "react";
 import { Tag } from "primereact/tag";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import axios from "axios";
 import ListingsContext from "../context/ListingsContext.jsx";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { Chip } from "../components/sk.jsx";
+import { API_BASE, api, currentMonth, daysUntil, fmtDate } from "../lib/landlord.js";
+
+// Steps in the Add property wizard (Basics to Review).
+const WIZARD_STEPS = 5;
+
+const NATION = { WALES: "Wales", SCOTLAND: "Scotland", NORTHERN_IRELAND: "Northern Ireland" };
+
+// Gas safety, EICR and EPC: a warning chip when due within 60 days or overdue.
+function certChip(label, expiry) {
+	if (!expiry) return null;
+	const days = daysUntil(expiry);
+	if (days <= 60) {
+		return (
+			<Chip key={label} tone="warn">
+				{days < 0 ? `${label} expired` : `${label} due in ${days} ${days === 1 ? "day" : "days"}`}
+			</Chip>
+		);
+	}
+	return (
+		<Chip key={label} tone="muted">
+			{label} to {fmtDate(expiry, { month: "short", year: "numeric" })}
+		</Chip>
+	);
+}
+
+// Everything a landlord wants to see on a property at a glance, from the
+// listing plus its applications, tenancies and this month's rent.
+function usePropertyFacts(prop, tenancies, payRows) {
+	const live = !prop.isDraft && prop.isVerified;
+	const apps = useQuery({
+		queryKey: ["listing-applications", prop._id],
+		enabled: live,
+		queryFn: async () => (await api.get(`/application/listing/${prop._id}`)).data
+	});
+	const sent = (apps.data ?? []).filter(a => a.stage === "SENT");
+	const qualified = sent.filter(a => a.qualified).length;
+	const rows = payRows.filter(r => r.property && (r.property === prop.propertyTitle || r.property === prop.streetAddress));
+	const paidPct = rows.length ? Math.round((rows.filter(r => r.status === "PAID").length / rows.length) * 100) : null;
+	const ends = tenancies
+		.filter(t => t.listing?._id === prop._id && t.status === "ACTIVE" && t.endDate)
+		.map(t => t.endDate)
+		.sort()[0];
+	const letNow = tenancies
+		.filter(t => t.listing?._id === prop._id && t.status === "ACTIVE")
+		.reduce((n, t) => n + (t.tenants?.length ?? 0), 0);
+	const isLet = live && prop.numOfPeople > 0 && letNow >= prop.numOfPeople;
+
+	return { isLet, letNow, applied: sent.length, qualified, paidPct, ends };
+}
+
+// One property card.
+function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navigate }) {
+	const f = usePropertyFacts(prop, tenancies, payRows);
+	const perRoom = prop.monthlyRent && prop.numOfPeople ? Math.round(prop.monthlyRent / prop.numOfPeople) : null;
+	const place = [prop.cityTown, (prop.postcodeZIP || "").split(" ")[0]].filter(Boolean).join(" ");
+	const sub = [place, prop.bedroomsCount ? `${prop.bedroomsCount} bed` : null, NATION[prop.nation]].filter(Boolean).join(" · ");
+	const plans = prop.paymentPlans ?? [];
+	const status = prop.isDraft
+		? { tone: "warning", label: `Draft · step ${Math.min((prop.draftStep ?? 0) + 1, WIZARD_STEPS)} of ${WIZARD_STEPS}` }
+		: !prop.isVerified
+			? { tone: "warning", label: "Awaiting verification" }
+			: f.isLet
+				? { tone: "info", label: `Let · ${f.letNow} of ${prop.numOfPeople}` }
+				: { tone: "success", label: "Taking applications" };
+	const btnPrimary =
+		"flex h-10 flex-1 cursor-pointer items-center justify-center rounded-[10px] border-none bg-sk-accent px-3.5 text-[13px] font-semibold text-sk-on-accent";
+	const btnGhost =
+		"flex h-10 cursor-pointer items-center justify-center rounded-[10px] border border-sk-border2 bg-transparent px-3.5 text-[13px] font-semibold text-sk-text";
+	const edit = () => {
+		onOpen(prop);
+		navigate(`/add-listing/${prop._id}`);
+	};
+
+	return (
+		<motion.article
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.4, delay: Math.min(index, 8) * 0.05 }}
+			className="flex flex-col overflow-hidden rounded-2xl border border-sk-border bg-sk-card"
+		>
+			<div className="relative h-[150px] bg-sk-card2">
+				{prop.photos?.[0] ? (
+					<img src={prop.photos[0]} alt="" className="h-full w-full object-cover" />
+				) : (
+					<div className="flex h-full items-center justify-center text-[13px] text-sk-muted">No photos yet</div>
+				)}
+				<div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+					<Tag value={status.label} severity={status.tone} className="rounded-full px-3 py-1 text-xs font-medium" />
+				</div>
+			</div>
+			<div className="flex flex-1 flex-col gap-2.5 p-4">
+				<div className="flex items-baseline justify-between gap-2">
+					<h2 className="font-display text-[17px] font-semibold">
+						{prop.propertyTitle || <i>No listing title</i>}
+					</h2>
+					<span className="whitespace-nowrap text-sm font-semibold">
+						{perRoom ? `£${perRoom.toLocaleString("en-GB")}` : "—"}
+						{perRoom ? <span className="text-xs font-normal text-sk-muted"> pcm/room</span> : null}
+					</span>
+				</div>
+				<span className="text-[13px] text-sk-muted">
+					{sub || prop.streetAddress || <i>No street address</i>}
+				</span>
+				{prop.isDraft ? (
+					<span className="text-[13px] text-sk-text2">
+						Add photos and requirements to publish. Seek AI can write the description from your photos.
+					</span>
+				) : (
+					<>
+						<div className="flex flex-wrap gap-1.5">
+							{certChip("Gas safety", prop.gasSafetyExpiry)}
+							{certChip("EICR", prop.eicrExpiry)}
+							{prop.epcRating && <Chip tone="muted">EPC {prop.epcRating}</Chip>}
+							{(prop.hmoLicenceExpiry || prop.licenceNumber) && <Chip tone="muted">HMO licence</Chip>}
+							{prop.nation === "WALES" && <Chip tone="muted">Rent Smart Wales</Chip>}
+							{plans.includes("SIX_MONTHS") && plans.includes("YEARLY") && <Chip tone="accent">Half-year and full year on</Chip>}
+						</div>
+						{f.isLet ? (
+							<span className="text-[13px] text-sk-text2">
+								{f.ends ? `Contract ends ${fmtDate(f.ends)}` : "Periodic contract"}
+								{f.paidPct != null ? ` · Rent ${f.paidPct}% paid` : ""}
+							</span>
+						) : (
+							<span className="text-[13px] text-sk-text2">
+								{f.applied} {f.applied === 1 ? "household" : "households"} applied
+								{f.applied ? ` · ${f.qualified} qualified` : ""}
+								{prop.views ? ` · ${prop.views} views` : ""}
+							</span>
+						)}
+					</>
+				)}
+				<div className="mt-auto flex gap-2 pt-2">
+					{prop.isDraft ? (
+						<>
+							<button type="button" className={btnPrimary} onClick={edit}>Continue listing</button>
+							<button
+								type="button"
+								aria-label="Delete draft"
+								className={`${btnGhost} !border-sk-danger-border !text-sk-danger`}
+								onClick={() => onDelete(prop)}
+							>
+								<i className="pi pi-trash" />
+							</button>
+						</>
+					) : !prop.isVerified ? (
+						<button
+							type="button"
+							className={btnPrimary}
+							onClick={() => {
+								onOpen(prop);
+								navigate(`/view-listing/${prop._id}`);
+							}}
+						>
+							View listing
+						</button>
+					) : (
+						<>
+							<button
+								type="button"
+								className={btnPrimary}
+								onClick={() => navigate(f.isLet ? "/contracts" : `/applicants/${prop._id}`)}
+							>
+								{f.isLet ? "Contract and deposit" : "View applicants"}
+							</button>
+							<button type="button" className={btnGhost} onClick={edit}>Edit</button>
+						</>
+					)}
+				</div>
+			</div>
+		</motion.article>
+	);
+}
 
 export default function Listings() {
 	const navigate = useNavigate();
 	const { listings, setCurrentListing } = useContext(ListingsContext);
 	const toast = useRef(null);
+	const tenanciesQ = useQuery({
+		queryKey: ["landlord-tenancies"],
+		queryFn: async () => (await api.get("/tenancies/landlord")).data
+	});
+	const paymentsQ = useQuery({
+		queryKey: ["landlord-payments", currentMonth()],
+		queryFn: async () => (await api.get("/payments/landlord", { params: { month: currentMonth() } })).data
+	});
+	const tenancies = tenanciesQ.data ?? [];
+	const payRows = paymentsQ.data?.rows ?? [];
+	// A property is let when its tenants fill every room.
+	const isLetNow = p =>
+		!p.isDraft &&
+		p.isVerified &&
+		p.numOfPeople > 0 &&
+		tenancies
+			.filter(t => t.listing?._id === p._id && t.status === "ACTIVE")
+			.reduce((n, t) => n + (t.tenants?.length ?? 0), 0) >= p.numOfPeople;
 
 	const handleDelete = async id => {
 		try {
-			await axios.delete(`${BASE_URL}/listings/${id}`, {
+			await axios.delete(`${API_BASE}/listings/${id}`, {
 				withCredentials: true
 			});
 			toast.current?.show({
 				severity: "success",
 				summary: "Listing Deleted",
 				detail: "Your listing has been successfully removed.",
-				life: 4000,
-				style: {
-					background: "#1E1E2F",
-					color: "#fff",
-					borderLeft: "5px solid #22C55E", // green accent
-					borderRadius: "8px",
-					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
-				},
-				content: (
-					<div className="flex items-center space-x-3">
-						<i className="pi pi-check-circle text-green-400 text-xl"></i>
-						<div>
-							<p className="font-semibold">Listing Deleted</p>
-							<p className="text-sm listing-flow-text-muted">
-								Your listing was successfully deleted.
-							</p>
-						</div>
-					</div>
-				)
+				life: 4000
 			});
 		} catch (err) {
 			console.error("Delete failed:", err);
@@ -50,25 +222,7 @@ export default function Listings() {
 				severity: "error",
 				summary: "Deletion Failed",
 				detail: "Unable to delete your listing. Please try again.",
-				life: 4000,
-				style: {
-					background: "#1E1E2F",
-					color: "#fff",
-					borderLeft: "5px solid #EF4444", // red accent
-					borderRadius: "8px",
-					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
-				},
-				content: (
-					<div className="flex items-center space-x-3">
-						<i className="pi pi-times-circle text-red-400 text-xl"></i>
-						<div>
-							<p className="font-semibold">Deletion Failed</p>
-							<p className="text-sm listing-flow-text-muted">
-								Unable to delete your listing. Please try again.
-							</p>
-						</div>
-					</div>
-				)
+				life: 4000
 			});
 		}
 	};
@@ -86,249 +240,102 @@ export default function Listings() {
 		});
 	};
 
-	const renderTags = (isDraft, isVerified) => {
-		if (isDraft && !isVerified) {
-			return (
-				<>
-					<Tag
-						value="Draft"
-						severity="warning"
-						className="text-xs font-medium px-3 py-1 rounded-full"
-					/>
-				</>
-			);
-		} else if (isDraft) {
-			return (
-				<>
-					<Tag
-						value="Listing sent!"
-						severity="success"
-						className="text-xs font-medium px-3 py-1 rounded-full"
-					/>
-					<Tag
-						value="Awaiting Verification"
-						severity="warning"
-						className="text-xs font-medium px-3 py-1 rounded-full"
-					/>
-				</>
-			);
-		} else if (isVerified) {
-			return (
-				<>
-					<Tag
-						value="Verified"
-						severity="success"
-						className="text-xs font-medium px-3 py-1 rounded-full"
-					/>
-				</>
-			);
-		} else if (!isVerified && !isDraft) {
-			return (
-				<>
-					<Tag
-						value="Listing sent!"
-						severity="success"
-						className="text-xs font-medium px-3 py-1 rounded-full"
-					/>
-					<Tag
-						value="Awaiting Verification"
-						severity="warning"
-						className="text-xs font-medium px-3 py-1 rounded-full"
-					/>
-				</>
-			);
-		}
+	const addListing = async () => {
+		const res = await axios.post(
+			`${API_BASE}/listings/draft`,
+			{},
+			{ withCredentials: true }
+		);
+		navigate(`/add-listing/${res.data}`);
 	};
 
+	const FILTERS = [
+		["all", "All", () => true],
+		["live", "Taking applications", p => p.isVerified && !isLetNow(p)],
+		["let", "Let", p => isLetNow(p)],
+		["review", "Awaiting verification", p => !p.isDraft && !p.isVerified],
+		["draft", "Drafts", p => p.isDraft]
+	];
+	const [filter, setFilter] = useState("all");
+	const [query, setQuery] = useState("");
+	const shown = listings.filter(p => {
+		const f = FILTERS.find(x => x[0] === filter)[2];
+		const q = query.trim().toLowerCase();
+		const hay = `${p.propertyTitle ?? ""} ${p.streetAddress ?? ""} ${p.postcodeZIP ?? ""}`.toLowerCase();
+		return f(p) && (!q || hay.includes(q));
+	});
+
 	return (
-		<div
-			className="min-h-screen bg-white px-4 py-6 sm:px-6 lg:px-8"
-			style={{ background: "#0f0f23", margin: "0 auto", width: "80%" }}
-		>
-			<Toast ref={toast} />
+		<div className="flex flex-col gap-6 p-4 md:p-8">
+			<Toast ref={toast} position="bottom-right" />
 			<ConfirmDialog />
-			{/* Header with Add New Property Button */}
-			<motion.div
-				initial={{ opacity: 0, y: -20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.5 }}
-				className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"
-			>
-				<h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-color)]">
-					My Listings
-				</h1>
-				<div className="flex gap-3 ml-auto">
-					<motion.div whileHover={{ scale: 1.01 }}>
-						<Button
-							label="Add New Listing"
-							icon="pi pi-plus"
-							size="small"
-							severity="primary"
-							className="w-full sm:w-auto px-4 py-2.5 listing-flow-action-button"
-							onClick={async () => {
-								const res = await axios.post(
-									`${BASE_URL}/listings/draft`,
-									{},
-									{
-										withCredentials: true
-									}
-								);
-								const id = res.data;
-								navigate(`/add-listing/${id}`);
-							}}
-						/>
-					</motion.div>
+			<div className="flex flex-wrap items-center justify-between gap-3">
+				<div className="flex flex-col gap-1">
+					<span className="text-sm text-sk-muted">
+						{listings.length} {listings.length === 1 ? "property" : "properties"} ·{" "}
+						{listings.reduce((n, p) => n + (p.numOfPeople || 0), 0)} rooms
+					</span>
+					<h1 className="font-display text-2xl font-semibold md:text-[30px]">Properties</h1>
 				</div>
-			</motion.div>
-
-			{/* Listings */}
-			<div className="space-y-6">
-				{listings.map((prop, i) => (
-					<motion.div
-						key={i}
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.4, delay: i * 0.1 }}
-						className="flex flex-col md:flex-row items-start md:items-center justify-between border border-[var(--surface-border)] rounded-xl px-4 py-5 shadow-sm gap-4"
-						style={{
-							background: "var(--gray-62)"
-						}}
+				<div className="flex flex-wrap gap-2.5">
+					<label htmlFor="property-search" className="sr-only">Search properties</label>
+					<input
+						id="property-search"
+						value={query}
+						onChange={e => setQuery(e.target.value)}
+						placeholder="Search address or postcode"
+						className="h-11 w-full rounded-xl border border-sk-border2 bg-sk-card px-3.5 text-sm text-sk-text sm:w-[260px]"
+					/>
+					<button
+						type="button"
+						onClick={addListing}
+						className="inline-flex h-11 cursor-pointer items-center rounded-xl border-none bg-sk-accent px-4 text-sm font-semibold text-sk-on-accent"
 					>
-						{/* Image */}
-						{prop.photos[0] ? (
-							<div className="w-full md:w-32 h-40 md:h-20 flex-shrink-0 rounded-md overflow-hidden">
-								{prop.photos[0] && (
-									<img
-										src={prop.photos[0]}
-										alt="Property"
-										className="w-full h-full object-cover"
-									/>
-								)}
-							</div>
-						) : (
-							<div className="w-full md:w-32 h-40 md:h-20 flex-shrink-0 rounded-md overflow-hidden">
-								<img
-									src="/placeholder.png"
-									alt="Property"
-									className="w-full h-full object-cover"
-								/>
-							</div>
-						)}
+						+ Add property
+					</button>
+				</div>
+			</div>
 
-						{/* Info + Tags */}
-						<div className="flex-1 w-full">
-							<h2 className="font-semibold text-[var(--text-color)] text-base mt-2 md:mt-0">
-								{prop.propertyTitle || <i>No listing title</i>}
-							</h2>
-							<h2 className="font-semibold text-[var(--text-color)] text-base mt-2 md:mt-0">
-								{prop.streetAddress || <i>No Street Address</i>}
-							</h2>
-							<p className="text-sm text-white">
-								{!prop.cityTown && !prop.postcodeZIP ? (
-									<i>No Postcode</i>
-								) : (
-									`${prop.cityTown}, ${prop.postcodeZIP}`
-								)}
-							</p>
-							<div className="flex flex-wrap gap-2 mt-2">
-								{renderTags(prop.isDraft, prop.isVerified)}
-							</div>
-						</div>
-
-						{/* Buttons */}
-						<div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-							{/* View Applicants */}
-							{prop.isVerified && (
-								<>
-									<motion.div whileHover={{ scale: 1.01 }}>
-										<Button
-											label="View Applicants"
-											icon="pi pi-users"
-											size="small"
-											severity="primary"
-											outlined
-											className="w-full sm:w-auto px-4 py-2.5 listing-flow-action-button"
-											onClick={() =>
-												navigate(`/applicants/${prop._id}`)
-											}
-										/>
-									</motion.div>
-									<motion.div whileHover={{ scale: 1.01 }}>
-										<Button
-											label="View Listing"
-											icon="pi pi-pencil"
-											size="small"
-											severity="primary"
-											outlined
-											className="w-full sm:w-auto px-4 py-2.5 listing-flow-action-button"
-											onClick={() => {
-												setCurrentListing(prop);
-												navigate(
-													`/view-listing/${prop._id}`
-												);
-											}}
-										/>
-									</motion.div>
-								</>
-							)}
-
-							{prop.isDraft && (
-								<>
-									<motion.div whileHover={{ scale: 1.01 }}>
-										<Button
-											label="Continue Editing"
-											icon="pi pi-pencil"
-											size="small"
-											severity="primary"
-											outlined
-											className="w-full sm:w-auto px-4 py-2.5 listing-flow-action-button"
-											onClick={() => {
-												setCurrentListing(prop);
-												navigate(
-													`/add-listing/${prop._id}`
-												);
-											}}
-										/>
-									</motion.div>
-									<motion.div whileHover={{ scale: 1.01 }}>
-										<Button
-											icon="pi pi-trash"
-											size="small"
-											severity="danger"
-											className="w-full sm:w-auto px-4 py-2.5 listing-flow-action-button listing-flow-action-button--danger"
-											onClick={() => confirmDelete(prop)}
-										/>
-									</motion.div>
-								</>
-							)}
-
-							{!prop.isDraft && !prop.isVerified && (
-								<motion.div whileHover={{ scale: 1.01 }}>
-									<Button
-										label="View Listing"
-										icon="pi pi-pencil"
-										size="small"
-										severity="primary"
-										outlined
-										className="w-full sm:w-auto"
-										onClick={() => {
-											setCurrentListing(prop);
-											navigate(
-												`/view-listing/${prop._id}`
-											);
-										}}
-										style={{
-											color: "white",
-											backgroundColor: "#21b8c4",
-											border: "none"
-										}}
-									/>
-								</motion.div>
-							)}
-						</div>
-					</motion.div>
+			<div role="tablist" aria-label="Filter" className="flex flex-wrap gap-2 text-[13px]">
+				{FILTERS.map(([key, label, fn]) => (
+					<button
+						key={key}
+						type="button"
+						role="tab"
+						aria-selected={filter === key}
+						onClick={() => setFilter(key)}
+						className={`h-9 cursor-pointer rounded-full px-3.5 ${
+							filter === key
+								? "border-none bg-sk-accent font-semibold text-sk-on-accent"
+								: "border border-sk-border2 bg-transparent text-sk-text"
+						}`}
+					>
+						{label} {listings.filter(fn).length}
+					</button>
 				))}
-				<Toast ref={toast} position="bottom-right" />
+			</div>
+
+			<div className="grid gap-5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
+				{shown.map((prop, i) => (
+					<PropertyCard
+						key={prop._id ?? i}
+						prop={prop}
+						index={i}
+						tenancies={tenancies}
+						payRows={payRows}
+						onOpen={setCurrentListing}
+						onDelete={confirmDelete}
+						navigate={navigate}
+					/>
+				))}
+				<button
+					type="button"
+					onClick={addListing}
+					className="flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border border-dashed border-sk-border2 bg-sk-card p-5 text-sk-text"
+				>
+					<span className="font-display text-[17px] font-semibold">Add a property</span>
+					<span className="text-[13px] text-sk-muted">Start a draft, finish it later.</span>
+				</button>
 			</div>
 		</div>
 	);

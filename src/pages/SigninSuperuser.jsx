@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 export default function SigninSuperuser() {
 	const navigate = useNavigate();

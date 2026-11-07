@@ -5,7 +5,7 @@ import { Button } from "primereact/button";
 import axios from "axios";
 import { Carousel } from "primereact/carousel";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 const ViewListing = () => {
 	const { id } = useParams();
@@ -15,8 +15,7 @@ const ViewListing = () => {
 	useEffect(() => {
 		(async () => {
 			try {
-				console.log(id);
-				const res = await axios.get(`${BASE_URL}/listings/mine/${id}`, {
+				const res = await axios.get(`${API_BASE}/listings/mine/${id}`, {
 					withCredentials: true
 				});
 				setListing(res.data);
@@ -43,21 +42,21 @@ const ViewListing = () => {
 	};
 
 	if (loading) {
-		return <div className="text-center text-white p-6">Loading...</div>;
+		return <div className="text-center text-sk-text p-6">Loading...</div>;
 	}
 
 	if (!listing) {
 		return (
-			<div className="text-center text-white p-6">Listing not found.</div>
+			<div className="text-center text-sk-text p-6">Listing not found.</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen bg-[#0f0f23] text-white px-4 py-6">
+		<div className="min-h-screen bg-sk-bg text-sk-text px-4 py-6">
 			{/* Header */}
 			<div className="max-w-6xl mx-auto">
 				<h1 className="text-3xl font-bold">{listing.propertyTitle}</h1>
-				<p className="text-gray-300 text-lg">
+				<p className="text-sk-text2 text-lg">
 					{listing.streetAddress}, {listing.cityTown},{" "}
 					{listing.postcodeZIP}, {listing.country}
 				</p>
@@ -92,10 +91,10 @@ const ViewListing = () => {
 					<h2 className="text-2xl font-semibold">
 						About this property
 					</h2>
-					<p className="text-gray-300">{listing.propertyDesc}</p>
+					<p className="text-sk-text2">{listing.propertyDesc}</p>
 
 					<h3 className="text-xl font-semibold mt-4">Details</h3>
-					<ul className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-gray-200 text-sm">
+					<ul className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sk-text text-sm">
 						<li>
 							<b>Size:</b> {listing.sizeSqMeters} m²
 						</li>
@@ -138,7 +137,7 @@ const ViewListing = () => {
 							<img
 								src={listing.floorPlanImage}
 								alt="Floor Plan"
-								className="w-full max-w-md rounded-lg border border-gray-700"
+								className="w-full max-w-md rounded-lg border border-sk-border"
 							/>
 						</>
 					)}
@@ -151,11 +150,11 @@ const ViewListing = () => {
 							<Button
 								label="View Document"
 								icon="pi pi-file-pdf"
-								className="p-button-text text-blue-400 underline"
+								className="p-button-text text-sk-link underline"
 								onClick={async () => {
 									try {
 										const res = await axios.get(
-											`${BASE_URL}/upload/access`,
+											`${API_BASE}/upload/access`,
 											{
 												params: {
 													key: listing.registerOfTitleKey
@@ -177,14 +176,14 @@ const ViewListing = () => {
 				</div>
 
 				{/* Right column */}
-				<div className="bg-[#1c1c2e] p-5 rounded-lg shadow-lg space-y-4">
+				<div className="bg-sk-card p-5 rounded-lg shadow-lg space-y-4">
 					<h2 className="text-2xl font-bold">
 						£{listing.monthlyRent}/month
 					</h2>
-					<p className="text-gray-300">
+					<p className="text-sk-text2">
 						Deposit: £{listing.securityDeposit}
 					</p>
-					<p className="text-gray-300">
+					<p className="text-sk-text2">
 						Available:{" "}
 						{new Date(listing.availableFrom).toLocaleDateString()} –{" "}
 						{new Date(listing.availableUntil).toLocaleDateString()}

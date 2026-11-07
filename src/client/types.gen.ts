@@ -4,13 +4,8 @@ export type ClientOptions = {
     baseUrl: string;
 };
 
-export type UserDto = {
-    _id: string;
-    name: string;
-    email: string;
-    role: 'SUPERUSER' | 'STUDENT' | 'LANDLORD_AGENCY';
-    profilePicUrl: string;
-    isVerified: string;
+export type DeleteAccountResultDto = {
+    deletedAt: string;
 };
 
 export type ErrorDto = {
@@ -28,22 +23,259 @@ export type ErrorDto = {
     error?: string;
 };
 
+export type TeamMemberDto = {
+    id: string;
+    email: string;
+    /**
+     * The member's name, once they have a Seek account.
+     */
+    name: string | null;
+    scopes: Array<'VIEWINGS_INBOX' | 'APPLICATIONS' | 'LISTINGS' | 'REPAIRS' | 'TENANCIES'>;
+    /**
+     * The invitee accepted the invite with this email. False while the invite is pending.
+     */
+    hasAccount: boolean;
+    invitedAt: string;
+    /**
+     * Team members never see payouts.
+     */
+    canSeePayouts: false;
+};
+
+export type InviteTeamMemberDto = {
+    email: string;
+    /**
+     * There is no payouts scope.
+     */
+    scopes: Array<'VIEWINGS_INBOX' | 'APPLICATIONS' | 'LISTINGS' | 'REPAIRS' | 'TENANCIES'>;
+};
+
+export type TeamInviteDto = {
+    /**
+     * The landlord who invited you; use it to accept.
+     */
+    ownerId: string;
+    ownerName: string;
+    scopes: Array<'VIEWINGS_INBOX' | 'APPLICATIONS' | 'LISTINGS' | 'REPAIRS' | 'TENANCIES'>;
+    invitedAt: string;
+};
+
+export type DocumentTypesDto = {
+    data: Array<'IDENTIFICATION' | 'PROOF_OF_INCOME' | 'GUARANTOR_AGREEMENT' | 'LANDLORD_REFERENCE' | 'CHARACTER_REFERENCE' | 'PASSPORT' | 'VISA' | 'RIGHT_TO_RENT' | 'STUDENT_STATUS' | 'CAS_LETTER' | 'PROOF_OF_FUNDS' | 'AGENT_REFERENCE' | 'RECOMMENDATION'>;
+};
+
 export type CreateUserDto = {
     name: string;
     email: string;
-    role: string;
+    role?: 'SUPERUSER' | 'STUDENT' | 'LANDLORD_AGENCY';
     imageUrl: string;
     password: string;
-    emailVerificationToken: string;
-    emailVerificationTokenExpires: string;
+};
+
+export type RegistrationDto = {
+    kind: 'HMO_LICENCE' | 'SELECTIVE_LICENCE' | 'PRS_DATABASE' | 'RENT_SMART_WALES' | 'LANDLORD_REGISTRATION_SCOTLAND' | 'LANDLORD_REGISTRATION_NI' | 'OTHER';
+    number: string;
+    verified: boolean;
+};
+
+export type NotificationPrefsDto = {
+    rentReminderDaysBefore: number;
+    receiptEveryPayment: boolean;
+    landlordEveryPayment: boolean;
+    newQualifiedHousehold: boolean;
+    complianceDue: boolean;
+    weeklySummary: boolean;
+};
+
+export type TeamOfDto = {
+    ownerId: string;
+    ownerName: string;
+    /**
+     * Never includes payouts: payments endpoints answer 403.
+     */
+    scopes: Array<'VIEWINGS_INBOX' | 'APPLICATIONS' | 'LISTINGS' | 'REPAIRS' | 'TENANCIES'>;
+};
+
+export type UserDto = {
+    _id: string;
+    name: string;
+    username?: string;
+    email: string;
+    phone?: string;
+    dateOfBirth?: string;
+    universityDetails?: string;
+    role: 'SUPERUSER' | 'STUDENT' | 'LANDLORD_AGENCY';
+    profilePicUrl: string;
+    isVerified: boolean;
+    lastSeen: string;
+    companyName?: string;
+    registrations?: Array<RegistrationDto>;
+    notificationPrefs?: NotificationPrefsDto;
+    /**
+     * Whether rent payouts are connected (landlords).
+     */
+    payoutsConnected?: boolean;
+    /**
+     * Where payouts go (landlords): { last4, bankName, verified }. Null until Stripe has a bank account.
+     */
+    payoutBank?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Set when this account is on a landlord's team: whose account it helps run.
+     */
+    teamOf?: TeamOfDto | null;
 };
 
 export type SetProfilePicDto = {
+    /**
+     * Send an empty string to clear it.
+     */
     url: string;
 };
 
 export type SetUsernameDto = {
     name: string;
+};
+
+export type RegistrationInputDto = {
+    kind: 'HMO_LICENCE' | 'SELECTIVE_LICENCE' | 'PRS_DATABASE' | 'RENT_SMART_WALES' | 'LANDLORD_REGISTRATION_SCOTLAND' | 'LANDLORD_REGISTRATION_NI' | 'OTHER';
+    number: string;
+};
+
+export type NotificationPrefsInputDto = {
+    rentReminderDaysBefore?: number;
+    receiptEveryPayment?: boolean;
+    landlordEveryPayment?: boolean;
+    newQualifiedHousehold?: boolean;
+    complianceDue?: boolean;
+    weeklySummary?: boolean;
+};
+
+export type UpdateUserProfileDto = {
+    name?: string;
+    /**
+     * A unique username using letters, numbers, dots, underscores, or hyphens. Send an empty string to clear it.
+     */
+    username?: string;
+    /**
+     * Send an empty string to clear it.
+     */
+    phone?: string;
+    /**
+     * ISO date (YYYY-MM-DD). Send an empty string to clear it.
+     */
+    dateOfBirth?: string;
+    /**
+     * Send an empty string to clear it.
+     */
+    universityDetails?: string;
+    /**
+     * Landlord company name. Send an empty string to clear it.
+     */
+    companyName?: string;
+    /**
+     * Replaces the landlord's registrations. Verification is kept for unchanged numbers.
+     */
+    registrations?: Array<RegistrationInputDto>;
+    notificationPrefs?: NotificationPrefsInputDto;
+    /**
+     * Stripe Connect account (acct_...) that receives rent payouts. Landlords only. Empty string clears it.
+     */
+    stripeAccountId?: string;
+};
+
+export type PassportItemDto = {
+    type: 'IDENTIFICATION' | 'PROOF_OF_INCOME' | 'GUARANTOR_AGREEMENT' | 'LANDLORD_REFERENCE' | 'CHARACTER_REFERENCE' | 'PASSPORT' | 'VISA' | 'RIGHT_TO_RENT' | 'STUDENT_STATUS' | 'CAS_LETTER' | 'PROOF_OF_FUNDS' | 'AGENT_REFERENCE' | 'RECOMMENDATION';
+    label: string;
+    status: 'PENDING' | 'VERIFIED' | 'EXPIRED' | 'REJECTED' | 'MISSING';
+    required: boolean;
+    expiresAt: string | null;
+    uploadedAt: string | null;
+    /**
+     * Only for the owner or a viewer with an active share.
+     */
+    url?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Only for the owner or a viewer with an active share.
+     */
+    key?: {
+        [key: string]: unknown;
+    } | null;
+};
+
+export type PassportSectionDto = {
+    key: 'identity' | 'studies' | 'money' | 'references';
+    label: string;
+    items: Array<PassportItemDto>;
+};
+
+export type PassportDto = {
+    /**
+     * Every required item is verified.
+     */
+    ready: boolean;
+    /**
+     * Number of passport items.
+     */
+    total: number;
+    /**
+     * Number of verified items.
+     */
+    completed: number;
+    /**
+     * completed / total, 0-100.
+     */
+    percent: number;
+    missingRequired: Array<'IDENTIFICATION' | 'PROOF_OF_INCOME' | 'GUARANTOR_AGREEMENT' | 'LANDLORD_REFERENCE' | 'CHARACTER_REFERENCE' | 'PASSPORT' | 'VISA' | 'RIGHT_TO_RENT' | 'STUDENT_STATUS' | 'CAS_LETTER' | 'PROOF_OF_FUNDS' | 'AGENT_REFERENCE' | 'RECOMMENDATION'>;
+    sections: Array<PassportSectionDto>;
+};
+
+export type ShareViewerDto = {
+    _id: string;
+    name?: string;
+    companyName?: string;
+};
+
+export type ShareListingDto = {
+    _id: string;
+    propertyTitle?: string;
+    streetAddress?: string;
+    cityTown?: string;
+};
+
+export type DocumentShareDto = {
+    _id: string;
+    viewer: ShareViewerDto;
+    listing: ShareListingDto | null;
+    application: string | null;
+    expiresAt: string;
+    revokedAt: string | null;
+    /**
+     * Not revoked and not yet expired.
+     */
+    active: boolean;
+};
+
+export type UpdateDocumentStatusDto = {
+    status: 'PENDING' | 'VERIFIED' | 'EXPIRED' | 'REJECTED';
+    expiresAt?: string | null;
+};
+
+export type AddDocumentDto = {
+    documentType: 'IDENTIFICATION' | 'PROOF_OF_INCOME' | 'GUARANTOR_AGREEMENT' | 'LANDLORD_REFERENCE' | 'CHARACTER_REFERENCE' | 'PASSPORT' | 'VISA' | 'RIGHT_TO_RENT' | 'STUDENT_STATUS' | 'CAS_LETTER' | 'PROOF_OF_FUNDS' | 'AGENT_REFERENCE' | 'RECOMMENDATION';
+    url: string;
+    /**
+     * Object key returned by /upload/presign. Must have been issued to the calling account.
+     */
+    key: string;
+    /**
+     * Shown in the passport, e.g. file name or share code.
+     */
+    label?: string;
+    expiresAt?: string;
 };
 
 export type LoginDto = {
@@ -53,6 +285,10 @@ export type LoginDto = {
 
 export type VerifyEmailDto = {
     token: string;
+    userId: string;
+};
+
+export type ResendOtpDto = {
     userId: string;
 };
 
@@ -66,10 +302,46 @@ export type ConfirmPasswordResetDto = {
     newPassword: string;
 };
 
+export type ChangePasswordDto = {
+    currentPassword: string;
+    newPassword: string;
+};
+
+export type ChangeEmailDto = {
+    /**
+     * The current password, required to confirm the account holder is making this change.
+     */
+    currentPassword: string;
+    /**
+     * The address to move the account to.
+     */
+    newEmail: string;
+};
+
+export type ConfirmEmailChangeDto = {
+    userId: string;
+    /**
+     * Token from the confirmation email.
+     */
+    token: string;
+};
+
+export type PresignResDto = {
+    uploadUrl: string;
+    fileUrl: string;
+    key: string;
+};
+
 export type Step4ItemDto = {
     name: string;
     desc: string;
     required: boolean;
+};
+
+export type ListingCriteriaDto = {
+    guarantor?: 'UK_ONLY' | 'UK_OR_SERVICE' | 'NONE';
+    referencesRequired?: boolean;
+    maxHousehold?: number;
 };
 
 export type CreateListingDto = {
@@ -90,13 +362,72 @@ export type CreateListingDto = {
     availableFrom: string;
     availableUntil: string;
     registerOfTitleKey: string;
-    furnishingStatus: 'furnished' | 'unfurnished' | 'partFurnished';
+    registrationNumber: string;
+    furnishingStatus: 'Furnished' | 'Unfurnished' | 'Part-Furnished';
     epcRating: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
     photos: Array<string>;
     videoTourLink: string;
     floorPlanImage: string;
     amenities: Array<string>;
     requirements: Array<Step4ItemDto>;
+    nation?: 'ENGLAND' | 'WALES' | 'SCOTLAND' | 'NORTHERN_IRELAND';
+    /**
+     * Bills (energy, water, Wi-Fi) are included in the rent.
+     */
+    billsIncluded?: boolean;
+    gasSafetyExpiry?: string | null;
+    eicrExpiry?: string | null;
+    epcExpiry?: string | null;
+    hmoLicenceExpiry?: string | null;
+    /**
+     * HMO / selective licence or registration number.
+     */
+    licenceNumber?: string;
+    /**
+     * Holding deposit per room in whole pounds (max one week's rent).
+     */
+    holdingDeposit?: number;
+    criteria?: ListingCriteriaDto;
+    /**
+     * Rent plans offered. Properties in England allow MONTHLY only.
+     */
+    paymentPlans?: Array<'MONTHLY' | 'SIX_MONTHS' | 'YEARLY'>;
+    /**
+     * Viewing times offered to applicants.
+     */
+    viewingSlots?: Array<string>;
+    /**
+     * Households that can book the same slot.
+     */
+    viewingSlotCapacity?: number;
+};
+
+export type ListingCriteria = {
+    guarantor: 'UK_ONLY' | 'UK_OR_SERVICE' | 'NONE';
+    /**
+     * Applicants must upload a landlord, agent or character reference.
+     */
+    referencesRequired: boolean;
+    /**
+     * Largest household the landlord will accept.
+     */
+    maxHousehold?: number;
+};
+
+export type ViewingSlotAvailability = {
+    at: string;
+    /**
+     * Households that can still book this time (capacity minus open bookings).
+     */
+    remaining: number;
+};
+
+export type RequiredDocumentInfo = {
+    label: string;
+    /**
+     * Any one of these Seek Passport types satisfies it.
+     */
+    types: Array<'IDENTIFICATION' | 'PROOF_OF_INCOME' | 'GUARANTOR_AGREEMENT' | 'LANDLORD_REFERENCE' | 'CHARACTER_REFERENCE' | 'PASSPORT' | 'VISA' | 'RIGHT_TO_RENT' | 'STUDENT_STATUS' | 'CAS_LETTER' | 'PROOF_OF_FUNDS' | 'AGENT_REFERENCE' | 'RECOMMENDATION'>;
 };
 
 export type Listing = {
@@ -110,6 +441,7 @@ export type Listing = {
     enSuiteBedroomCount: number;
     bathrooms: number;
     registerOfTitleKey: string;
+    registrationNumber: string;
     propertyDesc: string;
     amenities: Array<string>;
     streetAddress: string;
@@ -120,7 +452,7 @@ export type Listing = {
     securityDeposit: number;
     availableFrom: string;
     availableUntil: string;
-    furnishingStatus: 'furnished' | 'unfurnished' | 'partFurnished';
+    furnishingStatus: 'Furnished' | 'Unfurnished' | 'Part-Furnished';
     epcRating: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
     photos: Array<string>;
     videoTourLink: string;
@@ -129,6 +461,53 @@ export type Listing = {
     isVerified: boolean;
     isDraft: boolean;
     lastUpdated: string;
+    likedBy: Array<string>;
+    nation: 'ENGLAND' | 'WALES' | 'SCOTLAND' | 'NORTHERN_IRELAND';
+    billsIncluded: boolean;
+    gasSafetyExpiry?: string | null;
+    eicrExpiry?: string | null;
+    epcExpiry?: string | null;
+    hmoLicenceExpiry?: string | null;
+    licenceNumber?: string;
+    /**
+     * Holding deposit per room, in whole pounds. Capped at one week's rent (rent x 12 / 52).
+     */
+    holdingDeposit?: number;
+    criteria?: ListingCriteria;
+    /**
+     * Rent plans tenants may pick. Monthly only for properties in England.
+     */
+    paymentPlans: Array<'MONTHLY' | 'SIX_MONTHS' | 'YEARLY'>;
+    /**
+     * Viewing times the landlord offers.
+     */
+    viewingSlots: Array<string>;
+    /**
+     * Households that can book the same viewing slot.
+     */
+    viewingSlotCapacity: number;
+    /**
+     * Places left per viewing slot. Returned by GET /listings/{id} and on the student's own applications.
+     */
+    viewingSlotAvailability?: Array<ViewingSlotAvailability>;
+    /**
+     * Documents a student must have uploaded to apply, from the requirements and criteria (no guarantor when the criterion is NONE). Returned by GET /listings/{id}.
+     */
+    requiredDocuments?: Array<RequiredDocumentInfo>;
+    /**
+     * Times the public listing page was opened.
+     */
+    views: number;
+    /**
+     * Last wizard step saved on a draft (1-4).
+     */
+    draftStep?: number;
+    /**
+     * GeoJSON point, [lng, lat]. Null when the address could not be geocoded.
+     */
+    location?: {
+        [key: string]: unknown;
+    } | null;
 };
 
 export type Step2ListingDto = {
@@ -145,10 +524,1414 @@ export type Step3ListingDto = {
 
 export type Step4ListingDto = {
     requirements: Array<Step4ItemDto>;
+    criteria?: ListingCriteriaDto;
+};
+
+export type ListingSearchResultDto = {
+    _id: string;
+    landlord: string;
+    propertyTitle: string;
+    numOfPeople: number;
+    sizeSqMeters: number;
+    propertyType: 'FLAT_APARTMENT' | 'HOUSE' | 'ROOM_IN_SHARED_HOUSE' | 'STUDIO' | 'OTHER';
+    bedroomsCount: number;
+    enSuiteBedroomCount: number;
+    bathrooms: number;
+    registerOfTitleKey: string;
+    registrationNumber: string;
+    propertyDesc: string;
+    amenities: Array<string>;
+    streetAddress: string;
+    cityTown: string;
+    postcodeZIP: string;
+    country: string;
+    monthlyRent: number;
+    securityDeposit: number;
+    availableFrom: string;
+    availableUntil: string;
+    furnishingStatus: 'Furnished' | 'Unfurnished' | 'Part-Furnished';
+    epcRating: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
+    photos: Array<string>;
+    videoTourLink: string;
+    floorPlanImage: string;
+    requirements: Array<string>;
+    isVerified: boolean;
+    isDraft: boolean;
+    lastUpdated: string;
+    likedBy: Array<string>;
+    nation: 'ENGLAND' | 'WALES' | 'SCOTLAND' | 'NORTHERN_IRELAND';
+    billsIncluded: boolean;
+    gasSafetyExpiry?: string | null;
+    eicrExpiry?: string | null;
+    epcExpiry?: string | null;
+    hmoLicenceExpiry?: string | null;
+    licenceNumber?: string;
+    /**
+     * Holding deposit per room, in whole pounds. Capped at one week's rent (rent x 12 / 52).
+     */
+    holdingDeposit?: number;
+    criteria?: ListingCriteria;
+    /**
+     * Rent plans tenants may pick. Monthly only for properties in England.
+     */
+    paymentPlans: Array<'MONTHLY' | 'SIX_MONTHS' | 'YEARLY'>;
+    /**
+     * Viewing times the landlord offers.
+     */
+    viewingSlots: Array<string>;
+    /**
+     * Households that can book the same viewing slot.
+     */
+    viewingSlotCapacity: number;
+    /**
+     * Places left per viewing slot. Returned by GET /listings/{id} and on the student's own applications.
+     */
+    viewingSlotAvailability?: Array<ViewingSlotAvailability>;
+    /**
+     * Documents a student must have uploaded to apply, from the requirements and criteria (no guarantor when the criterion is NONE). Returned by GET /listings/{id}.
+     */
+    requiredDocuments?: Array<RequiredDocumentInfo>;
+    /**
+     * Times the public listing page was opened.
+     */
+    views: number;
+    /**
+     * Last wizard step saved on a draft (1-4).
+     */
+    draftStep?: number;
+    /**
+     * GeoJSON point, [lng, lat]. Null when the address could not be geocoded.
+     */
+    location?: {
+        [key: string]: unknown;
+    } | null;
+    lat: number | null;
+    lng: number | null;
+    /**
+     * monthlyRent divided by numOfPeople, in pounds.
+     */
+    rentPerPerson: number | null;
+};
+
+export type LikedListingsDto = {
+    data: Array<Listing>;
+    total: number;
+};
+
+export type SendMessageDto = {
+    message: string;
+};
+
+export type MessageDto = {
+    _id: string;
+    sender: UserDto;
+    messageType: 'Text' | 'Image';
+    data: string;
+    createdAt: string;
+    conversation: string;
+    seenUsers: Array<string>;
+    deliveredTo: Array<string>;
+};
+
+export type ConversationDto = {
+    _id: string;
+    name: string;
+    lastMessage?: MessageDto;
+    unreadCount?: number;
+    createdAt: string;
+    groupDescription: string;
+    avatar: string;
+    users: Array<UserDto>;
+    messages: Array<MessageDto>;
 };
 
 export type ContactDto = {
-    [key: string]: unknown;
+    name: string;
+    email: string;
+    message: string;
+};
+
+export type ReportDto = {
+    /**
+     * What happened.
+     */
+    message: string;
+    /**
+     * The account being reported, as the reporter described it.
+     */
+    reportedAccount?: string;
+};
+
+export type CreateApplicationDto = {
+    listingId: string;
+};
+
+export type ApplicationCriterionDto = {
+    key: 'PASSPORTS' | 'HOUSEHOLD_SIZE' | 'MAX_HOUSEHOLD' | 'GUARANTOR' | 'REFERENCES';
+    label: string;
+    passed: boolean;
+    detail: string;
+};
+
+export type UniversityDetailsDto = {
+    /**
+     * What the student wrote on their profile.
+     */
+    text: string;
+    course?: string;
+    university?: string;
+    /**
+     * 1-4, or Final.
+     */
+    year?: string;
+};
+
+export type ApplicationMemberDto = {
+    user: string;
+    name?: string;
+    /**
+     * File links are only included while the member's share is active.
+     */
+    passport: PassportDto;
+    shareExpiresAt: string | null;
+    /**
+     * Course, university and year from the student's profile.
+     */
+    universityDetails: UniversityDetailsDto | null;
+};
+
+export type ApplicationDto = {
+    _id: string;
+    listing: Listing;
+    conversation: ConversationDto;
+    landlord: string;
+    applicants: Array<string>;
+    applicantUsers?: Array<UserDto>;
+    createdAt: string;
+    owner: string;
+    stage: 'SENT' | 'NOT_SENT' | 'VIEWED' | 'OFFERED' | 'ACCEPTED' | 'SIGNED' | 'REJECTED';
+    sentAt?: string | null;
+    viewingAt?: string | null;
+    offeredAt?: string | null;
+    /**
+     * Deadline for the household to accept the offer (15 days after it was made).
+     */
+    offerExpiresAt?: string | null;
+    /**
+     * Holding deposit per room in whole pounds, recorded with the offer.
+     */
+    holdingDeposit?: number | null;
+    rejectReason?: string | null;
+    /**
+     * Landlord view: pass or fail for each criterion on the listing.
+     */
+    criteria?: Array<ApplicationCriterionDto>;
+    /**
+     * Share of members whose passport is ready, 0-100.
+     */
+    readiness?: number;
+    /**
+     * Every member ready and the group meets the listing criteria.
+     */
+    qualified?: boolean;
+    /**
+     * Student view: place among qualified households, 1 = first in line. Null while not qualified.
+     */
+    queuePosition?: number | null;
+    /**
+     * Student view: qualified households in this listing's queue.
+     */
+    queueSize?: number;
+    members?: Array<ApplicationMemberDto>;
+};
+
+export type ScheduleViewingDto = {
+    viewingAt: string;
+};
+
+export type RejectApplicationDto = {
+    /**
+     * Why the application was declined. Shown to the household.
+     */
+    reason?: string;
+};
+
+export type TenancyDocument = {
+    _id: string;
+    type: 'TENANCY_AGREEMENT' | 'DEPOSIT_CERTIFICATE' | 'GAS_SAFETY' | 'EPC' | 'EICR' | 'INVENTORY' | 'COUNCIL_TAX_EXEMPTION' | 'HOW_TO_RENT' | 'OTHER';
+    title: string;
+    url: string;
+    key?: string;
+    source: 'EMAIL' | 'UPLOAD' | 'SEEK';
+    addedAt: string;
+};
+
+export type Tenancy = {
+    _id: string;
+    listing: string;
+    landlord: string;
+    tenants: Array<string>;
+    /**
+     * Students invited to a hand-made tenancy who have not accepted yet. They move to tenants on accept.
+     */
+    pendingTenants: Array<string>;
+    application?: string | null;
+    startDate: string;
+    endDate: string | null;
+    /**
+     * Rolling (periodic) tenancy, the default under the Renters' Rights Act.
+     */
+    periodic: boolean;
+    /**
+     * Rent per tenant per month, in pence.
+     */
+    monthlyRent: number;
+    /**
+     * Deposit per tenant, in pence.
+     */
+    depositAmount: number;
+    /**
+     * Energy fair-use allowance for the whole household, in pence per month. Usage above it is split between the tenants.
+     */
+    energyAllowance: number | null;
+    depositScheme: 'DPS' | 'TDS' | 'MYDEPOSITS';
+    depositReference?: string;
+    depositProtectedAt: string | null;
+    /**
+     * When the deposit reached the landlord. It must be protected within 30 days of this date.
+     */
+    depositReceivedAt: string | null;
+    /**
+     * When the landlord gave tenants the deposit's prescribed information.
+     */
+    prescribedInfoSentAt: string | null;
+    documents: Array<TenancyDocument>;
+    status: 'PENDING_ACCEPTANCE' | 'ACTIVE' | 'ENDED';
+    createdAt: string;
+};
+
+export type CreateTenancyDto = {
+    /**
+     * Listing id (must be yours).
+     */
+    listing: string;
+    /**
+     * Student user ids to invite, for a tenancy made by hand. Each must accept before rent is scheduled. Ignored when application is given.
+     */
+    tenants?: Array<string>;
+    /**
+     * ACCEPTED application on your listing this tenancy comes from. Its applicants become the tenants.
+     */
+    application?: string;
+    startDate: string;
+    endDate?: string;
+    periodic?: boolean;
+    /**
+     * Rent per tenant per month, in pence.
+     */
+    monthlyRent: number;
+    /**
+     * Deposit per tenant, in pence.
+     */
+    depositAmount?: number;
+    /**
+     * Energy fair-use allowance for the household, in pence per month.
+     */
+    energyAllowance?: number;
+    depositScheme?: 'DPS' | 'TDS' | 'MYDEPOSITS';
+    depositReference?: string;
+    depositProtectedAt?: string;
+    /**
+     * When the deposit was received.
+     */
+    depositReceivedAt?: string;
+};
+
+export type UpdateDepositDto = {
+    depositScheme: 'DPS' | 'TDS' | 'MYDEPOSITS';
+    depositReference: string;
+    /**
+     * Defaults to now.
+     */
+    depositProtectedAt?: string;
+    /**
+     * When the deposit was received.
+     */
+    depositReceivedAt?: string;
+    /**
+     * Correct the deposit per tenant, in pence.
+     */
+    depositAmount?: number;
+};
+
+export type DepositReceivedDto = {
+    /**
+     * Defaults to now.
+     */
+    receivedAt?: string;
+};
+
+export type PrescribedInfoDto = {
+    /**
+     * Defaults to now.
+     */
+    sentAt?: string;
+};
+
+export type AddTenancyDocumentDto = {
+    type: 'TENANCY_AGREEMENT' | 'DEPOSIT_CERTIFICATE' | 'GAS_SAFETY' | 'EPC' | 'EICR' | 'INVENTORY' | 'COUNCIL_TAX_EXEMPTION' | 'HOW_TO_RENT' | 'OTHER';
+    title: string;
+    url: string;
+    /**
+     * Private upload key from /upload/presign.
+     */
+    key?: string;
+    source?: 'EMAIL' | 'UPLOAD' | 'SEEK';
+};
+
+export type Notification = {
+    _id: string;
+    user: string;
+    kind: 'RENT_RECEIPT' | 'RENT_REMINDER' | 'RENT_LATE' | 'PAYMENT_RECEIVED' | 'PAYMENT_FAILED' | 'NEW_QUALIFIED_HOUSEHOLD' | 'COMPLIANCE_DUE' | 'CONTRACT_SENT' | 'CONTRACT_SIGNED' | 'INVENTORY_RECORDED' | 'DEPOSIT_DEDUCTIONS' | 'REPAIR_REPORTED' | 'REPAIR_UPDATED' | 'TENANCY_CREATED' | 'TENANCY_INVITE' | 'VIEWING_SCHEDULED' | 'OFFER_MADE' | 'OFFER_EXPIRED' | 'APPLICATION_REJECTED';
+    title: string;
+    body?: string;
+    /**
+     * seek-web path to open, e.g. /student/home/rent. Same route as `target`.
+     */
+    link?: string;
+    /**
+     * Typed destination: a logical `screen` plus the `id` it is about. Clients route on `screen`;
+     * `link` is the seek-web path and `mobile` the seek-mobile path (students only).
+     *
+     * | kind | student screen → web / mobile | landlord screen → web |
+     * |---|---|---|
+     * | PAYMENTS | rent → /student/home/rent / /(app)/(tabs)/rent | landlord-rent → /rent |
+     * | COMPLIANCE | deposit → /student/home/deposit / /(app)/deposit | dashboard → /dashboard |
+     * | TENANCY | home → /student/home / /(app)/(tabs)/my-home | contracts → /contracts |
+     * | CONTRACTS | contract → /student/home / /(app)/contract | contracts → /contracts |
+     * | REPAIRS | repairs → /student/home / /(app)/repairs | dashboard → /dashboard |
+     * | APPLICATION | applications → /student/home / /(app)/(tabs)/applied | application → /application?listing=<listing>&id=<id> (or /applicants) |
+     */
+    target?: {
+        [key: string]: unknown;
+    };
+    readAt: string | null;
+    createdAt: string;
+};
+
+export type CreateFlagDto = {
+    text: string;
+    category: 'INNAPPROPRIATE_BEHAVIOUR' | 'OTHER';
+    reportedUser: string;
+};
+
+export type Flag = {
+    _id: string;
+    status: 'UNDER_REVIEW' | 'ACCOUNT_SUSPENDED' | 'NO_ACTION';
+    category: 'INNAPPROPRIATE_BEHAVIOUR' | 'OTHER';
+    reportedUser: string;
+    createdBy: string;
+    text: string;
+    resolutionDate?: string;
+};
+
+export type ResolveFlagDto = {
+    status: string;
+};
+
+export type CreateContractDto = {
+    tenancy: string;
+    title: string;
+    url: string;
+    /**
+     * Private upload key from /upload/presign.
+     */
+    key?: string;
+    source?: 'EMAIL' | 'UPLOAD' | 'SEEK';
+};
+
+export type ContractSignature = {
+    user: string;
+    signedAt: string;
+};
+
+export type InventoryItem = {
+    room: string;
+    item: string;
+    condition: string;
+    photoUrls: Array<string>;
+};
+
+export type Inventory = {
+    items: Array<InventoryItem>;
+    recordedAt: string;
+};
+
+export type DeductionItem = {
+    description: string;
+    /**
+     * In pence.
+     */
+    amount: number;
+    /**
+     * Photo or invoice backing the deduction.
+     */
+    evidenceUrl?: string;
+};
+
+export type DeductionResponse = {
+    user: string;
+    accepted: boolean;
+    note?: string;
+    at: string;
+};
+
+export type Deductions = {
+    items: Array<DeductionItem>;
+    /**
+     * Sum of the items, in pence. Never more than the household's deposit.
+     */
+    total: number;
+    /**
+     * ACCEPTED once every tenant agrees; DISPUTED as soon as one disagrees.
+     */
+    status: 'PROPOSED' | 'ACCEPTED' | 'DISPUTED';
+    responses: Array<DeductionResponse>;
+    proposedAt: string;
+};
+
+export type Contract = {
+    _id: string;
+    tenancy: string;
+    landlord: string;
+    title: string;
+    url: string;
+    key?: string;
+    source: 'EMAIL' | 'UPLOAD' | 'SEEK';
+    status: 'DRAFT' | 'SENT' | 'SIGNED';
+    signatures: Array<ContractSignature>;
+    sentAt: string | null;
+    signedAt: string | null;
+    /**
+     * Set when the contract is Seek's built-in agreement.
+     */
+    templateKind: 'ENGLAND_ASSURED_PERIODIC' | 'WALES_STANDARD_OCCUPATION';
+    /**
+     * The deposit's prescribed information (HTML), for Seek agreements.
+     */
+    prescribedInformationUrl: string | null;
+    /**
+     * Check-in inventory.
+     */
+    inventory: Inventory | null;
+    /**
+     * Proposed end-of-tenancy deductions.
+     */
+    deductions: Deductions | null;
+};
+
+export type DefaultContractDto = {
+    tenancy: string;
+};
+
+export type InventoryItemDto = {
+    room: string;
+    item: string;
+    condition: string;
+    photoUrls?: Array<string>;
+};
+
+export type InventoryDto = {
+    items: Array<InventoryItemDto>;
+};
+
+export type DeductionItemDto = {
+    description: string;
+    /**
+     * In pence.
+     */
+    amount: number;
+    /**
+     * Photo or invoice backing the deduction.
+     */
+    evidenceUrl?: string;
+};
+
+export type DeductionsDto = {
+    /**
+     * An empty list proposes returning the whole deposit.
+     */
+    items: Array<DeductionItemDto>;
+};
+
+export type RespondDeductionsDto = {
+    /**
+     * true to agree to the proposed deductions, false to dispute them.
+     */
+    accept: boolean;
+    note?: string;
+};
+
+export type CreateContractTemplateDto = {
+    title: string;
+    url: string;
+    /**
+     * Private upload key from /upload/presign.
+     */
+    key?: string;
+};
+
+export type ContractTemplate = {
+    _id: string;
+    landlord: string;
+    title: string;
+    url: string;
+    /**
+     * Private upload key from /upload/presign.
+     */
+    key?: string;
+    createdAt: string;
+};
+
+export type RentPlan = {
+    _id: string;
+    tenancy: string;
+    tenant: string;
+    frequency: 'MONTHLY' | 'SIX_MONTHS' | 'YEARLY';
+    autopay: boolean;
+    notifyEveryPayment: boolean;
+    remindDaysBefore: number;
+};
+
+export type StudentPaymentDto = {
+    _id: string;
+    kind: 'RENT' | 'HOLDING_DEPOSIT';
+    /**
+     * Null for a holding deposit (no tenancy yet).
+     */
+    tenancy: string | null;
+    /**
+     * The application a holding deposit secures.
+     */
+    application?: string;
+    tenant: string;
+    landlord: string;
+    /**
+     * What the tenant pays, in pence.
+     */
+    amount: number;
+    /**
+     * Months of rent this payment covers.
+     */
+    coversMonths: number;
+    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE';
+    dueDate: string;
+    paidAt: string | null;
+    provider: 'stripe' | 'simulated';
+    providerRef?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * HELD: paid by card while the landlord's payouts weren't set up, so Seek holds the money. TRANSFERRED: Seek has since sent it to the landlord. Null: it goes straight to the landlord.
+     */
+    payoutStatus?: 'HELD' | 'TRANSFERRED';
+    /**
+     * Stripe transfer that released a held payment.
+     */
+    transferRef?: {
+        [key: string]: unknown;
+    } | null;
+    /**
+     * Reminders Seek has sent the tenant for this payment.
+     */
+    remindersSent: number;
+    lastReminderAt: string | null;
+    /**
+     * A paid holding deposit the landlord must refund within 7 days (Tenant Fees Act), e.g. after declining the household.
+     */
+    refundDue: boolean;
+};
+
+export type RentPlanViewDto = {
+    /**
+     * False until the tenant saves a plan; plan then holds the defaults.
+     */
+    exists: boolean;
+    plan: RentPlan;
+    /**
+     * Rent per tenant per month, in pence.
+     */
+    monthlyRent: number;
+    nation: string;
+    /**
+     * England: MONTHLY only.
+     */
+    allowedFrequencies: Array<'MONTHLY' | 'SIX_MONTHS' | 'YEARLY'>;
+    /**
+     * Why other frequencies are not offered.
+     */
+    restrictionReason: string | null;
+    mode: 'stripe' | 'simulated' | 'unavailable';
+    /**
+     * Next payments due (up to 3).
+     */
+    upcoming: Array<StudentPaymentDto>;
+};
+
+export type UpdateRentPlanDto = {
+    frequency: 'MONTHLY' | 'SIX_MONTHS' | 'YEARLY';
+    autopay?: boolean;
+    notifyEveryPayment?: boolean;
+    remindDaysBefore?: number;
+};
+
+export type LandlordPaymentRowDto = {
+    payment: string;
+    kind: 'RENT' | 'HOLDING_DEPOSIT';
+    /**
+     * Null for a holding deposit.
+     */
+    tenancy: string | null;
+    property: string | null;
+    tenant: {
+        [key: string]: unknown;
+    };
+    amount: number;
+    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE';
+    dueDate: string;
+    paidAt: string | null;
+    /**
+     * How often this tenant pays. Null for a holding deposit.
+     */
+    plan: 'MONTHLY' | 'SIX_MONTHS' | 'YEARLY';
+    /**
+     * Paid automatically with a saved card.
+     */
+    autopay: boolean;
+    remindDaysBefore: number;
+    /**
+     * Reminders Seek has sent this tenant for this payment.
+     */
+    remindersSent: number;
+    /**
+     * A paid holding deposit the landlord must refund within 7 days (Tenant Fees Act).
+     */
+    refundDue: boolean;
+    /**
+     * Seek's 0.5% fee on this payment, pence.
+     */
+    fee: number;
+    /**
+     * What the landlord receives for this payment, pence.
+     */
+    payout: number;
+    /**
+     * Estimated payout date for this payment: two working days after it is paid or due. Null once it is late or failed, or while it is held.
+     */
+    nextPayout: string | null;
+    /**
+     * HELD: Seek holds this payment until payouts are set up. TRANSFERRED: released since.
+     */
+    payoutStatus: 'HELD' | 'TRANSFERRED';
+};
+
+export type LandlordPaymentsDto = {
+    month: string;
+    /**
+     * Rent paid this month, pence. Holding deposits are in holdingDepositsCollected. Same figure as /landlord/overview rentCollectedThisMonth.
+     */
+    collected: number;
+    /**
+     * Rent due this month, pence (holding deposits excluded).
+     */
+    expected: number;
+    /**
+     * Number of late rent payments this month.
+     */
+    late: number;
+    /**
+     * Late rent amount this month, pence.
+     */
+    lateAmount: number;
+    /**
+     * Holding deposits paid this month, pence. Not rent: the landlord keeps them in full.
+     */
+    holdingDepositsCollected: number;
+    /**
+     * Holding deposits due this month, pence.
+     */
+    holdingDepositsExpected: number;
+    /**
+     * Seek fees on payments collected this month, pence.
+     */
+    seekFee: number;
+    /**
+     * Paid out to the landlord this month, pence.
+     */
+    payouts: number;
+    /**
+     * Estimated date of the next payout: two working days after the earliest paid or due rent. Null when nothing is on its way, or while payouts are on hold.
+     */
+    nextPayoutDate: string | null;
+    /**
+     * True when card payments can't reach the landlord yet (no Stripe payout account able to take them): Seek holds them until payouts are set up.
+     */
+    payoutsOnHold: boolean;
+    /**
+     * Paid this month but held by Seek until payouts are set up, pence (after Seek's fee).
+     */
+    held: number;
+    rows: Array<LandlordPaymentRowDto>;
+};
+
+export type ReminderScheduleDto = {
+    /**
+     * Remind before the due date (each tenant's own lead time, 3 days by default).
+     */
+    beforeDue: boolean;
+    /**
+     * Remind on the day rent is due.
+     */
+    onDueDay: boolean;
+    /**
+     * Remind once, three days after the due date, if it is still unpaid.
+     */
+    lateAfterThreeDays: boolean;
+};
+
+export type UpdateReminderScheduleDto = {
+    beforeDue?: boolean;
+    onDueDay?: boolean;
+    lateAfterThreeDays?: boolean;
+};
+
+export type RemindLateDto = {
+    /**
+     * Only these late payments. Omit to remind every late tenant.
+     */
+    payments?: Array<string>;
+};
+
+export type RemindLateResponseDto = {
+    /**
+     * Tenants reminded just now.
+     */
+    reminded: number;
+    /**
+     * Late payments skipped because the tenant was already reminded in the last 24 hours.
+     */
+    skipped: number;
+};
+
+export type ConnectOnboardResponseDto = {
+    mode: 'stripe' | 'simulated';
+    accountId: string;
+    /**
+     * Stripe-hosted onboarding page to open. Null in simulated mode, where the account is ready straight away.
+     */
+    url: string | null;
+};
+
+export type PayoutBankDto = {
+    last4: string | null;
+    bankName: string | null;
+    /**
+     * Stripe has verified the account.
+     */
+    verified: boolean;
+};
+
+export type ConnectStatusDto = {
+    mode: 'stripe' | 'simulated' | 'unavailable';
+    /**
+     * A payout account has been created for this landlord.
+     */
+    connected: boolean;
+    accountId: string | null;
+    /**
+     * Tenants can pay by card.
+     */
+    chargesEnabled: boolean;
+    /**
+     * Stripe can pay out to the landlord's bank.
+     */
+    payoutsEnabled: boolean;
+    /**
+     * The landlord finished Stripe's onboarding form.
+     */
+    detailsSubmitted: boolean;
+    /**
+     * Where payouts go. Null until a bank account is added.
+     */
+    payoutBank: PayoutBankDto | null;
+};
+
+export type CheckoutResponseDto = {
+    mode: 'stripe' | 'simulated';
+    /**
+     * Checkout Session id. Null in simulated mode.
+     */
+    sessionId: string | null;
+    /**
+     * Open this page. Stripe's hosted Checkout, or the success URL straight away in simulated mode (already paid). Null when the payment was already paid: nothing to open.
+     */
+    url: string | null;
+    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE';
+};
+
+export type PayResponseDto = {
+    paymentId: string;
+    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE';
+    provider: 'stripe' | 'simulated';
+    /**
+     * Stripe PaymentIntent client secret for the Payment Element. Null when already paid or simulated.
+     */
+    clientSecret: string | null;
+};
+
+export type BillShareDto = {
+    user: string;
+    /**
+     * This tenant's share, in pence.
+     */
+    amount: number;
+    /**
+     * This tenant has paid their share.
+     */
+    paid: boolean;
+};
+
+export type BillShareAmountDto = {
+    user: string;
+    /**
+     * Amount in pence.
+     */
+    amount: number;
+};
+
+export type BillAllowanceDto = {
+    utility: 'ENERGY' | 'WATER' | 'BROADBAND' | 'COUNCIL_TAX' | 'TV_LICENCE' | 'OTHER';
+    /**
+     * Household allowance for this bill's period, in pence.
+     */
+    allowance: number;
+    /**
+     * What this bill used, in pence.
+     */
+    used: number;
+    /**
+     * Share of the allowance used, as a whole percentage (can exceed 100).
+     */
+    percentUsed: number;
+    /**
+     * Usage over the allowance, in pence (0 when within it).
+     */
+    overage: number;
+    /**
+     * The overage split between the tenants, in pence.
+     */
+    overagePerMember: Array<BillShareAmountDto>;
+};
+
+export type BillViewDto = {
+    _id: string;
+    tenancy: string;
+    provider: string;
+    category: 'ENERGY' | 'WATER' | 'BROADBAND' | 'COUNCIL_TAX' | 'TV_LICENCE' | 'OTHER';
+    /**
+     * Whole bill, in pence.
+     */
+    amount: number;
+    periodStart: string | null;
+    periodEnd: string | null;
+    dueDate: string | null;
+    /**
+     * Covered by the rent: nobody owes a share.
+     */
+    includedInRent: boolean;
+    /**
+     * Tenants who share this bill.
+     */
+    splitBetween: Array<string>;
+    /**
+     * Tenants who have paid their share. The bill is PAID once everyone has.
+     */
+    paidShares: Array<string>;
+    /**
+     * Tenant who fronted the whole bill (a shared extra); the others owe them their share.
+     */
+    paidBy: string | null;
+    status: 'DUE' | 'PAID';
+    source: 'EMAIL' | 'MANUAL';
+    paidAt: string | null;
+    /**
+     * Name of the tenant in paidBy.
+     */
+    paidByName: string | null;
+    shares: Array<BillShareDto>;
+    /**
+     * The signed-in tenant's share, in pence (0 if they don't share it).
+     */
+    myShare: number;
+    /**
+     * The signed-in tenant's share is paid (or the bill is settled).
+     */
+    myPaid: boolean;
+    /**
+     * Energy fair-use allowance for this bill, when the tenancy has one.
+     */
+    allowance: BillAllowanceDto | null;
+};
+
+export type CreateBillDto = {
+    tenancy: string;
+    provider: string;
+    category: 'ENERGY' | 'WATER' | 'BROADBAND' | 'COUNCIL_TAX' | 'TV_LICENCE' | 'OTHER';
+    /**
+     * Whole bill, in pence.
+     */
+    amount: number;
+    periodStart?: string;
+    periodEnd?: string;
+    dueDate?: string;
+    includedInRent?: boolean;
+    /**
+     * Tenant ids. Defaults to every tenant.
+     */
+    splitBetween?: Array<string>;
+    source?: 'EMAIL' | 'MANUAL';
+};
+
+export type Repair = {
+    _id: string;
+    tenancy: string;
+    landlord: string;
+    reportedBy: string;
+    title: string;
+    description?: string;
+    status: 'OPEN' | 'SCHEDULED' | 'FIXED';
+    scheduledFor: string | null;
+    fixedAt: string | null;
+    createdAt: string;
+};
+
+export type CreateRepairDto = {
+    tenancy: string;
+    title: string;
+    description?: string;
+};
+
+export type UpdateRepairDto = {
+    status: 'OPEN' | 'SCHEDULED' | 'FIXED';
+    scheduledFor?: string | null;
+};
+
+export type ChatMessageDto = {
+    role: 'user' | 'assistant';
+    content: string;
+};
+
+export type SearchChatDto = {
+    /**
+     * The conversation so far, oldest first.
+     */
+    messages: Array<ChatMessageDto>;
+};
+
+export type SearchFiltersDto = {
+    city?: string;
+    /**
+     * Monthly rent per person, in pounds.
+     */
+    maxRent?: number;
+    minBedrooms?: number;
+    billsIncluded?: boolean;
+    nearUniversity?: string;
+    /**
+     * YYYY-MM-DD
+     */
+    moveIn?: string;
+    /**
+     * Neighbourhood matched against the listing text.
+     */
+    area?: string;
+};
+
+export type ListingCheckDto = {
+    kind: 'pass' | 'warn';
+    text: string;
+};
+
+export type SearchChatListingDto = {
+    id: string;
+    title: string;
+    address: string | null;
+    city: string | null;
+    postcode: string | null;
+    lat: number | null;
+    lng: number | null;
+    /**
+     * Whole-property monthly rent, in pounds.
+     */
+    monthlyRent: number | null;
+    /**
+     * Monthly rent per person, in pounds.
+     */
+    rentPerPerson: number | null;
+    bedrooms: number | null;
+    bathrooms: number | null;
+    billsIncluded: boolean;
+    availableFrom: string | null;
+    photo: string | null;
+    /**
+     * Distance to the university asked about, in km.
+     */
+    distanceKm: number | null;
+    /**
+     * How well the home fits the search, in percent.
+     */
+    match: number;
+    /**
+     * Why it fits, most important first.
+     */
+    reasons: Array<string>;
+    /**
+     * Budget, EPC and (for a student) the landlord's criteria against their Seek Passport.
+     */
+    checks: Array<ListingCheckDto>;
+};
+
+export type SearchChatResponseDto = {
+    reply: string;
+    filters: SearchFiltersDto;
+    listings: Array<SearchChatListingDto>;
+    /**
+     * Filters dropped because nothing matched them all.
+     */
+    relaxed: Array<string>;
+    /**
+     * Quick replies for the next message.
+     */
+    suggestions: Array<string>;
+    /**
+     * Whether the model or the built-in parser read the request.
+     */
+    source: 'ai' | 'rules';
+    /**
+     * Which provider answered: Gemini first, then Anthropic, then the built-in parser.
+     */
+    provider: 'gemini' | 'anthropic' | 'rules';
+};
+
+export type AdviceRequestDto = {
+    topic: 'deposit' | 'bills' | 'contract' | 'guarantor' | 'inbox' | 'rent' | 'application';
+    /**
+     * Defaults to your current tenancy.
+     */
+    tenancyId?: string;
+    /**
+     * With topic application: assess this household (criteria and each member's Seek Passport) instead of the overview. Landlord of the listing or a household member only.
+     */
+    applicationId?: string;
+    /**
+     * A question in your own words, answered from the same facts as the card.
+     */
+    question?: string;
+    /**
+     * Inbox thread, for topic inbox.
+     */
+    threadId?: string;
+};
+
+export type AdviceActionDto = {
+    label: string;
+    link: string;
+};
+
+export type AdviceResponseDto = {
+    title: string;
+    advice: string;
+    actions?: Array<AdviceActionDto>;
+    source: 'ai' | 'rules';
+    provider: 'gemini' | 'anthropic' | 'rules';
+    /**
+     * topic inbox with a threadId: a reply to the last message received, ready to edit. Null when AI replies are off.
+     */
+    suggestedReply?: string | null;
+};
+
+export type ProviderAvailabilityDto = {
+    provider: 'GMAIL' | 'OUTLOOK' | 'DEMO' | 'IMAP';
+    label: string;
+    available: boolean;
+    /**
+     * Why the provider cannot be connected on this server.
+     */
+    reason?: string;
+};
+
+export type ConnectorSettingsDto = {
+    /**
+     * Connected mailboxes only ever import housing-related emails.
+     */
+    scope: 'housing';
+    /**
+     * File leases, certificates and bills found in attachments automatically.
+     */
+    autoFileAttachments: boolean;
+    /**
+     * Students: add landlord and character references found in emails to the Seek Passport.
+     */
+    addReferencesToProfile: boolean;
+    /**
+     * Read utility bills from emails so they can be split.
+     */
+    readUtilityBills: boolean;
+    /**
+     * File signed tenancy agreements in the tenancy, where every tenant sees them.
+     */
+    copySignedContracts: boolean;
+    /**
+     * Let Seek AI suggest replies in the inbox (the user always presses send).
+     */
+    aiDraftReplies: boolean;
+};
+
+export type MatchedContactDto = {
+    name: string;
+    email: string;
+    category: 'LANDLORD' | 'TENANT' | 'APPLICANT' | 'BILLS' | 'DEPOSIT' | 'HOUSEHOLD' | 'UNIVERSITY' | 'OTHER';
+    emailCount: number;
+};
+
+export type EmailConnectionViewDto = {
+    id: string;
+    provider: 'GMAIL' | 'OUTLOOK' | 'DEMO' | 'IMAP';
+    label: string;
+    emailAddress: string;
+    status: 'CONNECTED' | 'ERROR' | 'DISCONNECTED';
+    /**
+     * Only housing emails are synced (your connector settings scope is housing).
+     */
+    housingOnly: boolean;
+    lastSyncAt: string | null;
+    lastError: string | null;
+    /**
+     * Housing emails stored from this mailbox.
+     */
+    emailCount: number;
+    /**
+     * Distinct senders and recipients matched.
+     */
+    contactCount: number;
+    matchedContacts: Array<MatchedContactDto>;
+};
+
+export type ConnectorsOverviewDto = {
+    providers: Array<ProviderAvailabilityDto>;
+    settings: ConnectorSettingsDto;
+    connections: Array<EmailConnectionViewDto>;
+};
+
+export type UpdateConnectorSettingsDto = {
+    scope?: 'housing';
+    autoFileAttachments?: boolean;
+    addReferencesToProfile?: boolean;
+    readUtilityBills?: boolean;
+    copySignedContracts?: boolean;
+    aiDraftReplies?: boolean;
+};
+
+export type ConnectImapDto = {
+    host: string;
+    /**
+     * IMAP over TLS port (usually 993).
+     */
+    port: number;
+    /**
+     * Usually your email address.
+     */
+    username: string;
+    /**
+     * An app password from your email provider, not your normal password. Stored encrypted.
+     */
+    appPassword: string;
+};
+
+export type ImapConnectResultDto = {
+    /**
+     * Emails looked at.
+     */
+    scanned: number;
+    /**
+     * Housing emails stored.
+     */
+    imported: number;
+    /**
+     * Emails dropped because they are not about housing.
+     */
+    skipped: number;
+    /**
+     * Attachments filed into tenancy documents or bills.
+     */
+    filed: number;
+    connection: EmailConnectionViewDto;
+    /**
+     * demo: the IMAP sign-in failed outside production, so the demo mailbox was connected instead.
+     */
+    mode: 'imap' | 'demo';
+    /**
+     * Why the demo mailbox was used.
+     */
+    notice?: string;
+};
+
+export type AuthUrlDto = {
+    provider: 'GMAIL' | 'OUTLOOK';
+    /**
+     * Open this URL to grant read and send access to the mailbox.
+     */
+    url: string;
+};
+
+export type ConfirmConnectorDto = {
+    /**
+     * The nonce from the seekapp://connectors?status=pending redirect.
+     */
+    nonce: string;
+};
+
+export type SyncResultDto = {
+    /**
+     * Emails looked at.
+     */
+    scanned: number;
+    /**
+     * Housing emails stored.
+     */
+    imported: number;
+    /**
+     * Emails dropped because they are not about housing.
+     */
+    skipped: number;
+    /**
+     * Attachments filed into tenancy documents or bills.
+     */
+    filed: number;
+    connection: EmailConnectionViewDto;
+};
+
+export type DisconnectResultDto = {
+    id: string;
+    status: 'DISCONNECTED';
+    /**
+     * Stored emails deleted with the connection.
+     */
+    removedEmails: number;
+};
+
+export type InboxThreadDto = {
+    /**
+     * seek-<conversationId> or email-<threadKey>.
+     */
+    id: string;
+    kind: 'seek' | 'email';
+    name: string;
+    sub: string;
+    via: string;
+    preview: string;
+    time: string;
+    /**
+     * Short UK-time label for lists.
+     */
+    timeLabel: string;
+    category: 'LANDLORD' | 'TENANT' | 'APPLICANT' | 'BILLS' | 'DEPOSIT' | 'HOUSEHOLD' | 'UNIVERSITY' | 'OTHER';
+    unread: boolean;
+    unreadCount: number;
+    initials: string;
+    channels: Array<'seek' | 'email'>;
+    tenancyId: string | null;
+};
+
+export type InboxRentSummaryDto = {
+    /**
+     * Tenants who have paid this month's rent.
+     */
+    paid: number;
+    /**
+     * Tenants on the tenancy.
+     */
+    total: number;
+};
+
+export type InboxAttachmentDto = {
+    name: string;
+    /**
+     * Empty when the file could not be stored.
+     */
+    url: string;
+    /**
+     * Private storage key, for a signed download.
+     */
+    key: string | null;
+    filedAs: string | null;
+};
+
+export type InboxMessageDto = {
+    id: string;
+    from: string;
+    me: boolean;
+    via: 'Seek' | 'Email';
+    time: string;
+    timeLabel: string;
+    /**
+     * Email subject.
+     */
+    subject?: string;
+    text: string;
+    /**
+     * First attachment.
+     */
+    attachment?: InboxAttachmentDto;
+    attachments: Array<InboxAttachmentDto>;
+};
+
+export type InboxThreadDetailDto = {
+    id: string;
+    kind: 'seek' | 'email';
+    name: string;
+    sub: string;
+    category: 'LANDLORD' | 'TENANT' | 'APPLICANT' | 'BILLS' | 'DEPOSIT' | 'HOUSEHOLD' | 'UNIVERSITY' | 'OTHER';
+    tenancyId: string | null;
+    /**
+     * A reply can go through Seek (Seek threads only).
+     */
+    canReplyBySeek: boolean;
+    /**
+     * A reply can go out by email from your own address.
+     */
+    canReplyByEmail: boolean;
+    /**
+     * Your address email replies are sent from.
+     */
+    replyFrom: string | null;
+    /**
+     * A reply to the last message, ready to edit and send. Null when you wrote last or AI replies are off.
+     */
+    suggestedReply: string | null;
+    /**
+     * This month's rent for the thread's tenancy.
+     */
+    rent: InboxRentSummaryDto | null;
+    messages: Array<InboxMessageDto>;
+};
+
+export type InboxReplyDto = {
+    text: string;
+    /**
+     * Seek threads go through Seek unless this is email. Email threads always reply by email.
+     */
+    via?: 'seek' | 'email';
 };
 
 export type AppControllerGetHelloData = {
@@ -162,27 +1945,188 @@ export type AppControllerGetHelloResponses = {
     200: unknown;
 };
 
-export type UsersControllerGetUserData = {
+export type UsersControllerDeleteMeData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/users/me';
+};
+
+export type UsersControllerDeleteMeErrors = {
+    /**
+     * An active tenancy still has rent to pay or collect.
+     */
+    409: ErrorDto;
+};
+
+export type UsersControllerDeleteMeError = UsersControllerDeleteMeErrors[keyof UsersControllerDeleteMeErrors];
+
+export type UsersControllerDeleteMeResponses = {
+    200: DeleteAccountResultDto;
+};
+
+export type UsersControllerDeleteMeResponse = UsersControllerDeleteMeResponses[keyof UsersControllerDeleteMeResponses];
+
+export type UsersControllerUpdateCurrentUserData = {
+    body: UpdateUserProfileDto;
+    path?: never;
+    query?: never;
+    url: '/users/me';
+};
+
+export type UsersControllerUpdateCurrentUserErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+    404: ErrorDto;
+    409: ErrorDto;
+};
+
+export type UsersControllerUpdateCurrentUserError = UsersControllerUpdateCurrentUserErrors[keyof UsersControllerUpdateCurrentUserErrors];
+
+export type UsersControllerUpdateCurrentUserResponses = {
+    200: UserDto;
+};
+
+export type UsersControllerUpdateCurrentUserResponse = UsersControllerUpdateCurrentUserResponses[keyof UsersControllerUpdateCurrentUserResponses];
+
+export type UsersControllerListTeamData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/users/me/team';
+};
+
+export type UsersControllerListTeamResponses = {
+    200: Array<TeamMemberDto>;
+};
+
+export type UsersControllerListTeamResponse = UsersControllerListTeamResponses[keyof UsersControllerListTeamResponses];
+
+export type UsersControllerInviteTeamMemberData = {
+    body: InviteTeamMemberDto;
+    path?: never;
+    query?: never;
+    url: '/users/me/team/invite';
+};
+
+export type UsersControllerInviteTeamMemberErrors = {
+    400: ErrorDto;
+};
+
+export type UsersControllerInviteTeamMemberError = UsersControllerInviteTeamMemberErrors[keyof UsersControllerInviteTeamMemberErrors];
+
+export type UsersControllerInviteTeamMemberResponses = {
+    201: TeamMemberDto;
+};
+
+export type UsersControllerInviteTeamMemberResponse = UsersControllerInviteTeamMemberResponses[keyof UsersControllerInviteTeamMemberResponses];
+
+export type UsersControllerListTeamInvitesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/users/me/team-invites';
+};
+
+export type UsersControllerListTeamInvitesResponses = {
+    200: Array<TeamInviteDto>;
+};
+
+export type UsersControllerListTeamInvitesResponse = UsersControllerListTeamInvitesResponses[keyof UsersControllerListTeamInvitesResponses];
+
+export type UsersControllerAcceptTeamInviteData = {
+    body?: never;
+    path: {
+        ownerId: string;
+    };
+    query?: never;
+    url: '/users/me/team-invites/{ownerId}/accept';
+};
+
+export type UsersControllerAcceptTeamInviteErrors = {
+    /**
+     * Your email is not verified.
+     */
+    403: ErrorDto;
+    /**
+     * No pending invite from this landlord for your email.
+     */
+    404: ErrorDto;
+    /**
+     * You are already on a team.
+     */
+    409: ErrorDto;
+};
+
+export type UsersControllerAcceptTeamInviteError = UsersControllerAcceptTeamInviteErrors[keyof UsersControllerAcceptTeamInviteErrors];
+
+export type UsersControllerAcceptTeamInviteResponses = {
+    /**
+     * You joined the team.
+     */
+    204: void;
+};
+
+export type UsersControllerAcceptTeamInviteResponse = UsersControllerAcceptTeamInviteResponses[keyof UsersControllerAcceptTeamInviteResponses];
+
+export type UsersControllerLeaveTeamData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/users/me/team/leave';
+};
+
+export type UsersControllerLeaveTeamErrors = {
+    /**
+     * You are not on a team.
+     */
+    404: ErrorDto;
+};
+
+export type UsersControllerLeaveTeamError = UsersControllerLeaveTeamErrors[keyof UsersControllerLeaveTeamErrors];
+
+export type UsersControllerLeaveTeamResponses = {
+    /**
+     * You left the team.
+     */
+    204: void;
+};
+
+export type UsersControllerLeaveTeamResponse = UsersControllerLeaveTeamResponses[keyof UsersControllerLeaveTeamResponses];
+
+export type UsersControllerRemoveTeamMemberData = {
     body?: never;
     path: {
         id: string;
     };
     query?: never;
-    url: '/users/{id}';
+    url: '/users/me/team/{id}';
 };
 
-export type UsersControllerGetUserErrors = {
-    401: ErrorDto;
+export type UsersControllerRemoveTeamMemberErrors = {
     404: ErrorDto;
 };
 
-export type UsersControllerGetUserError = UsersControllerGetUserErrors[keyof UsersControllerGetUserErrors];
+export type UsersControllerRemoveTeamMemberError = UsersControllerRemoveTeamMemberErrors[keyof UsersControllerRemoveTeamMemberErrors];
 
-export type UsersControllerGetUserResponses = {
-    200: UserDto;
+export type UsersControllerDocumentTypesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/users/document-types';
 };
 
-export type UsersControllerGetUserResponse = UsersControllerGetUserResponses[keyof UsersControllerGetUserResponses];
+export type UsersControllerDocumentTypesErrors = {
+    401: ErrorDto;
+};
+
+export type UsersControllerDocumentTypesError = UsersControllerDocumentTypesErrors[keyof UsersControllerDocumentTypesErrors];
+
+export type UsersControllerDocumentTypesResponses = {
+    200: DocumentTypesDto;
+};
+
+export type UsersControllerDocumentTypesResponse = UsersControllerDocumentTypesResponses[keyof UsersControllerDocumentTypesResponses];
 
 export type UsersControllerGetAllUsersData = {
     body?: never;
@@ -198,7 +2142,7 @@ export type UsersControllerGetAllUsersErrors = {
 export type UsersControllerGetAllUsersError = UsersControllerGetAllUsersErrors[keyof UsersControllerGetAllUsersErrors];
 
 export type UsersControllerGetAllUsersResponses = {
-    200: Array<unknown>;
+    200: Array<UserDto>;
 };
 
 export type UsersControllerGetAllUsersResponse = UsersControllerGetAllUsersResponses[keyof UsersControllerGetAllUsersResponses];
@@ -264,6 +2208,128 @@ export type UsersControllerSetUsernameResponses = {
 
 export type UsersControllerSetUsernameResponse = UsersControllerSetUsernameResponses[keyof UsersControllerSetUsernameResponses];
 
+export type UsersControllerGetPassportData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/users/me/passport';
+};
+
+export type UsersControllerGetPassportErrors = {
+    401: ErrorDto;
+};
+
+export type UsersControllerGetPassportError = UsersControllerGetPassportErrors[keyof UsersControllerGetPassportErrors];
+
+export type UsersControllerGetPassportResponses = {
+    200: PassportDto;
+};
+
+export type UsersControllerGetPassportResponse = UsersControllerGetPassportResponses[keyof UsersControllerGetPassportResponses];
+
+export type UsersControllerListSharesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/users/me/shares';
+};
+
+export type UsersControllerListSharesErrors = {
+    401: ErrorDto;
+};
+
+export type UsersControllerListSharesError = UsersControllerListSharesErrors[keyof UsersControllerListSharesErrors];
+
+export type UsersControllerListSharesResponses = {
+    200: Array<DocumentShareDto>;
+};
+
+export type UsersControllerListSharesResponse = UsersControllerListSharesResponses[keyof UsersControllerListSharesResponses];
+
+export type UsersControllerRevokeShareData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/users/me/shares/{id}';
+};
+
+export type UsersControllerRevokeShareErrors = {
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type UsersControllerRevokeShareError = UsersControllerRevokeShareErrors[keyof UsersControllerRevokeShareErrors];
+
+export type UsersControllerRevokeShareResponses = {
+    204: void;
+};
+
+export type UsersControllerRevokeShareResponse = UsersControllerRevokeShareResponses[keyof UsersControllerRevokeShareResponses];
+
+export type UsersControllerSetDocumentStatusData = {
+    body: UpdateDocumentStatusDto;
+    path: {
+        id: string;
+        type: string;
+    };
+    query?: never;
+    url: '/users/{id}/documents/{type}/status';
+};
+
+export type UsersControllerSetDocumentStatusErrors = {
+    400: ErrorDto;
+    404: ErrorDto;
+};
+
+export type UsersControllerSetDocumentStatusError = UsersControllerSetDocumentStatusErrors[keyof UsersControllerSetDocumentStatusErrors];
+
+export type UsersControllerSetDocumentStatusResponses = {
+    200: PassportDto;
+};
+
+export type UsersControllerSetDocumentStatusResponse = UsersControllerSetDocumentStatusResponses[keyof UsersControllerSetDocumentStatusResponses];
+
+export type UsersControllerAddDocumentData = {
+    body: AddDocumentDto;
+    path?: never;
+    query?: never;
+    url: '/users/addDocument';
+};
+
+export type UsersControllerAddDocumentErrors = {
+    401: ErrorDto;
+};
+
+export type UsersControllerAddDocumentError = UsersControllerAddDocumentErrors[keyof UsersControllerAddDocumentErrors];
+
+export type UsersControllerAddDocumentResponses = {
+    200: unknown;
+};
+
+export type UsersControllerGetUserData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/users/{id}';
+};
+
+export type UsersControllerGetUserErrors = {
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type UsersControllerGetUserError = UsersControllerGetUserErrors[keyof UsersControllerGetUserErrors];
+
+export type UsersControllerGetUserResponses = {
+    200: UserDto;
+};
+
+export type UsersControllerGetUserResponse = UsersControllerGetUserResponses[keyof UsersControllerGetUserResponses];
+
 export type AuthControllerLoginData = {
     body: LoginDto;
     path?: never;
@@ -295,14 +2361,22 @@ export type AuthControllerSignupData = {
 
 export type AuthControllerSignupErrors = {
     400: ErrorDto;
+    403: ErrorDto;
     409: ErrorDto;
 };
 
 export type AuthControllerSignupError = AuthControllerSignupErrors[keyof AuthControllerSignupErrors];
 
 export type AuthControllerSignupResponses = {
-    201: unknown;
+    201: {
+        verificationRequired?: boolean;
+        userId?: string;
+        access_token?: string;
+        refresh_token?: string;
+    };
 };
+
+export type AuthControllerSignupResponse = AuthControllerSignupResponses[keyof AuthControllerSignupResponses];
 
 export type AuthControllerVerifyEmailData = {
     body: VerifyEmailDto;
@@ -313,7 +2387,7 @@ export type AuthControllerVerifyEmailData = {
 
 export type AuthControllerVerifyEmailErrors = {
     400: ErrorDto;
-    404: ErrorDto;
+    429: ErrorDto;
 };
 
 export type AuthControllerVerifyEmailError = AuthControllerVerifyEmailErrors[keyof AuthControllerVerifyEmailErrors];
@@ -327,6 +2401,29 @@ export type AuthControllerVerifyEmailResponses = {
 
 export type AuthControllerVerifyEmailResponse = AuthControllerVerifyEmailResponses[keyof AuthControllerVerifyEmailResponses];
 
+export type AuthControllerResendOtpData = {
+    body: ResendOtpDto;
+    path?: never;
+    query?: never;
+    url: '/auth/resend-otp';
+};
+
+export type AuthControllerResendOtpErrors = {
+    400: ErrorDto;
+    429: ErrorDto;
+};
+
+export type AuthControllerResendOtpError = AuthControllerResendOtpErrors[keyof AuthControllerResendOtpErrors];
+
+export type AuthControllerResendOtpResponses = {
+    200: {
+        message?: string;
+        expiresInSeconds?: number;
+    };
+};
+
+export type AuthControllerResendOtpResponse = AuthControllerResendOtpResponses[keyof AuthControllerResendOtpResponses];
+
 export type AuthControllerForgotPasswordData = {
     body: ForgotPasswordDto;
     path?: never;
@@ -336,14 +2433,18 @@ export type AuthControllerForgotPasswordData = {
 
 export type AuthControllerForgotPasswordErrors = {
     400: ErrorDto;
-    404: ErrorDto;
+    429: ErrorDto;
 };
 
 export type AuthControllerForgotPasswordError = AuthControllerForgotPasswordErrors[keyof AuthControllerForgotPasswordErrors];
 
 export type AuthControllerForgotPasswordResponses = {
-    201: unknown;
+    201: {
+        message?: string;
+    };
 };
+
+export type AuthControllerForgotPasswordResponse = AuthControllerForgotPasswordResponses[keyof AuthControllerForgotPasswordResponses];
 
 export type AuthControllerConfirmPasswordResetData = {
     body: ConfirmPasswordResetDto;
@@ -354,12 +2455,60 @@ export type AuthControllerConfirmPasswordResetData = {
 
 export type AuthControllerConfirmPasswordResetErrors = {
     400: ErrorDto;
-    404: ErrorDto;
+    429: ErrorDto;
 };
 
 export type AuthControllerConfirmPasswordResetError = AuthControllerConfirmPasswordResetErrors[keyof AuthControllerConfirmPasswordResetErrors];
 
 export type AuthControllerConfirmPasswordResetResponses = {
+    201: {
+        message?: string;
+    };
+};
+
+export type AuthControllerConfirmPasswordResetResponse = AuthControllerConfirmPasswordResetResponses[keyof AuthControllerConfirmPasswordResetResponses];
+
+export type AuthControllerChangePasswordData = {
+    body: ChangePasswordDto;
+    path?: never;
+    query?: never;
+    url: '/auth/password';
+};
+
+export type AuthControllerChangePasswordErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+};
+
+export type AuthControllerChangePasswordError = AuthControllerChangePasswordErrors[keyof AuthControllerChangePasswordErrors];
+
+export type AuthControllerChangePasswordResponses = {
+    200: {
+        message?: string;
+    };
+};
+
+export type AuthControllerChangePasswordResponse = AuthControllerChangePasswordResponses[keyof AuthControllerChangePasswordResponses];
+
+export type AuthControllerRequestEmailChangeData = {
+    body: ChangeEmailDto;
+    path?: never;
+    query?: never;
+    url: '/auth/change-email';
+};
+
+export type AuthControllerRequestEmailChangeResponses = {
+    201: unknown;
+};
+
+export type AuthControllerConfirmEmailChangeData = {
+    body: ConfirmEmailChangeDto;
+    path?: never;
+    query?: never;
+    url: '/auth/confirmEmailChange';
+};
+
+export type AuthControllerConfirmEmailChangeResponses = {
     201: unknown;
 };
 
@@ -430,7 +2579,10 @@ export type AuthControllerRefreshTokenErrors = {
 export type AuthControllerRefreshTokenError = AuthControllerRefreshTokenErrors[keyof AuthControllerRefreshTokenErrors];
 
 export type AuthControllerRefreshTokenResponses = {
-    201: UserDto;
+    201: {
+        access_token?: string;
+        refresh_token?: string;
+    };
 };
 
 export type AuthControllerRefreshTokenResponse = AuthControllerRefreshTokenResponses[keyof AuthControllerRefreshTokenResponses];
@@ -444,29 +2596,48 @@ export type AuthControllerLogoutData = {
 
 export type AuthControllerLogoutErrors = {
     401: ErrorDto;
-    404: ErrorDto;
 };
 
 export type AuthControllerLogoutError = AuthControllerLogoutErrors[keyof AuthControllerLogoutErrors];
 
 export type AuthControllerLogoutResponses = {
-    201: unknown;
+    201: {
+        message?: string;
+    };
 };
+
+export type AuthControllerLogoutResponse = AuthControllerLogoutResponses[keyof AuthControllerLogoutResponses];
 
 export type UploadControllerGetPresignedUrlData = {
     body?: never;
     path?: never;
     query: {
+        fileType: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif' | 'image/heic' | 'image/heif' | 'application/pdf';
+        folder: 'public' | 'private';
+        /**
+         * Original filename. Informational only — the stored object key is generated server-side.
+         */
         filename: string;
-        fileType: string;
-        folder: string;
+        /**
+         * Exact size of the file in bytes. Must be at most 15728640.
+         */
+        fileSize: number;
     };
     url: '/upload/presign';
 };
 
-export type UploadControllerGetPresignedUrlResponses = {
-    200: unknown;
+export type UploadControllerGetPresignedUrlErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
 };
+
+export type UploadControllerGetPresignedUrlError = UploadControllerGetPresignedUrlErrors[keyof UploadControllerGetPresignedUrlErrors];
+
+export type UploadControllerGetPresignedUrlResponses = {
+    200: PresignResDto;
+};
+
+export type UploadControllerGetPresignedUrlResponse = UploadControllerGetPresignedUrlResponses[keyof UploadControllerGetPresignedUrlResponses];
 
 export type UploadControllerDownloadData = {
     body?: never;
@@ -477,9 +2648,18 @@ export type UploadControllerDownloadData = {
     url: '/upload/access';
 };
 
-export type UploadControllerDownloadResponses = {
-    200: unknown;
+export type UploadControllerDownloadErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
 };
+
+export type UploadControllerDownloadError = UploadControllerDownloadErrors[keyof UploadControllerDownloadErrors];
+
+export type UploadControllerDownloadResponses = {
+    200: string;
+};
+
+export type UploadControllerDownloadResponse = UploadControllerDownloadResponses[keyof UploadControllerDownloadResponses];
 
 export type ListingsControllerCreateDraftData = {
     body?: never;
@@ -667,7 +2847,7 @@ export type ListingsControllerMyListingsErrors = {
 export type ListingsControllerMyListingsError = ListingsControllerMyListingsErrors[keyof ListingsControllerMyListingsErrors];
 
 export type ListingsControllerMyListingsResponses = {
-    200: Array<unknown>;
+    200: Array<Listing>;
 };
 
 export type ListingsControllerMyListingsResponse = ListingsControllerMyListingsResponses[keyof ListingsControllerMyListingsResponses];
@@ -710,10 +2890,115 @@ export type ListingsControllerGetAllUnverifiedListingsErrors = {
 export type ListingsControllerGetAllUnverifiedListingsError = ListingsControllerGetAllUnverifiedListingsErrors[keyof ListingsControllerGetAllUnverifiedListingsErrors];
 
 export type ListingsControllerGetAllUnverifiedListingsResponses = {
-    200: Array<unknown>;
+    200: Array<Listing>;
 };
 
 export type ListingsControllerGetAllUnverifiedListingsResponse = ListingsControllerGetAllUnverifiedListingsResponses[keyof ListingsControllerGetAllUnverifiedListingsResponses];
+
+export type ListingsControllerGetAllVerifiedListingsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/listings/allVerified';
+};
+
+export type ListingsControllerGetAllVerifiedListingsErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+};
+
+export type ListingsControllerGetAllVerifiedListingsError = ListingsControllerGetAllVerifiedListingsErrors[keyof ListingsControllerGetAllVerifiedListingsErrors];
+
+export type ListingsControllerGetAllVerifiedListingsResponses = {
+    200: Array<Listing>;
+};
+
+export type ListingsControllerGetAllVerifiedListingsResponse = ListingsControllerGetAllVerifiedListingsResponses[keyof ListingsControllerGetAllVerifiedListingsResponses];
+
+export type ListingsControllerGetFilteredListingsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        propertyType?: 'FLAT_APARTMENT' | 'HOUSE' | 'ROOM_IN_SHARED_HOUSE' | 'STUDIO' | 'OTHER';
+        numOfPeople?: number;
+        monthlyRentMin?: number;
+        monthlyRentMax?: number;
+        sizeSqMeters?: number;
+        amenities?: Array<string>;
+        lat?: number;
+        lng?: number;
+        radius?: number;
+        /**
+         * 1-based page; needs limit
+         */
+        page?: number;
+        limit?: number;
+        /**
+         * Bounding box south edge (map viewport).
+         */
+        minLat?: number;
+        /**
+         * Bounding box north edge (map viewport).
+         */
+        maxLat?: number;
+        /**
+         * Bounding box west edge (map viewport).
+         */
+        minLng?: number;
+        /**
+         * Bounding box east edge (map viewport).
+         */
+        maxLng?: number;
+        /**
+         * Maximum monthly rent per person, in pounds.
+         */
+        maxRent?: number;
+        minBedrooms?: number;
+        billsIncluded?: boolean;
+        /**
+         * City or town, case-insensitive.
+         */
+        city?: string;
+        /**
+         * Free text matched against title, description and address.
+         */
+        text?: string;
+    };
+    url: '/listings/filter';
+};
+
+export type ListingsControllerGetFilteredListingsErrors = {
+    400: ErrorDto;
+};
+
+export type ListingsControllerGetFilteredListingsError = ListingsControllerGetFilteredListingsErrors[keyof ListingsControllerGetFilteredListingsErrors];
+
+export type ListingsControllerGetFilteredListingsResponses = {
+    200: Array<ListingSearchResultDto>;
+};
+
+export type ListingsControllerGetFilteredListingsResponse = ListingsControllerGetFilteredListingsResponses[keyof ListingsControllerGetFilteredListingsResponses];
+
+export type ListingsControllerGetLikedData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/listings/like';
+};
+
+export type ListingsControllerGetLikedErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type ListingsControllerGetLikedError = ListingsControllerGetLikedErrors[keyof ListingsControllerGetLikedErrors];
+
+export type ListingsControllerGetLikedResponses = {
+    200: LikedListingsDto;
+};
+
+export type ListingsControllerGetLikedResponse = ListingsControllerGetLikedResponses[keyof ListingsControllerGetLikedResponses];
 
 export type ListingsControllerVerifyListingData = {
     body?: never;
@@ -732,6 +3017,97 @@ export type ListingsControllerVerifyListingErrors = {
 
 export type ListingsControllerVerifyListingError = ListingsControllerVerifyListingErrors[keyof ListingsControllerVerifyListingErrors];
 
+export type ListingsControllerLikeListingData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/listings/like/{id}';
+};
+
+export type ListingsControllerLikeListingErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type ListingsControllerLikeListingError = ListingsControllerLikeListingErrors[keyof ListingsControllerLikeListingErrors];
+
+export type ListingsControllerLikeListingResponses = {
+    204: void;
+};
+
+export type ListingsControllerLikeListingResponse = ListingsControllerLikeListingResponses[keyof ListingsControllerLikeListingResponses];
+
+export type ListingsControllerUnlikeListingData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/listings/unlike/{id}';
+};
+
+export type ListingsControllerUnlikeListingErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type ListingsControllerUnlikeListingError = ListingsControllerUnlikeListingErrors[keyof ListingsControllerUnlikeListingErrors];
+
+export type ListingsControllerUnlikeListingResponses = {
+    204: void;
+};
+
+export type ListingsControllerUnlikeListingResponse = ListingsControllerUnlikeListingResponses[keyof ListingsControllerUnlikeListingResponses];
+
+export type ConversationControllerSendMessageData = {
+    body: SendMessageDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/conversation/{id}/sendMessage';
+};
+
+export type ConversationControllerSendMessageResponses = {
+    201: unknown;
+};
+
+export type ConversationControllerGetMyConversationsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/conversation';
+};
+
+export type ConversationControllerGetMyConversationsResponses = {
+    200: unknown;
+};
+
+export type ConversationControllerGetConversationData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/conversation/{id}';
+};
+
+export type ConversationControllerGetConversationErrors = {
+    401: ErrorDto;
+};
+
+export type ConversationControllerGetConversationError = ConversationControllerGetConversationErrors[keyof ConversationControllerGetConversationErrors];
+
+export type ConversationControllerGetConversationResponses = {
+    200: ConversationDto;
+};
+
+export type ConversationControllerGetConversationResponse = ConversationControllerGetConversationResponses[keyof ConversationControllerGetConversationResponses];
+
 export type ContactControllerContactData = {
     body: ContactDto;
     path?: never;
@@ -739,6 +3115,1592 @@ export type ContactControllerContactData = {
     url: '/contact';
 };
 
+export type ContactControllerContactErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+};
+
+export type ContactControllerContactError = ContactControllerContactErrors[keyof ContactControllerContactErrors];
+
 export type ContactControllerContactResponses = {
+    201: {
+        [key: string]: unknown;
+    };
+};
+
+export type ContactControllerContactResponse = ContactControllerContactResponses[keyof ContactControllerContactResponses];
+
+export type ContactControllerReportData = {
+    body: ReportDto;
+    path?: never;
+    query?: never;
+    url: '/contact/report';
+};
+
+export type ContactControllerReportResponses = {
     201: unknown;
 };
+
+export type ApplicationControllerCreateApplicationData = {
+    body: CreateApplicationDto;
+    path?: never;
+    query?: never;
+    url: '/application/create';
+};
+
+export type ApplicationControllerCreateApplicationErrors = {
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type ApplicationControllerCreateApplicationError = ApplicationControllerCreateApplicationErrors[keyof ApplicationControllerCreateApplicationErrors];
+
+export type ApplicationControllerCreateApplicationResponses = {
+    201: ApplicationDto;
+};
+
+export type ApplicationControllerCreateApplicationResponse = ApplicationControllerCreateApplicationResponses[keyof ApplicationControllerCreateApplicationResponses];
+
+export type ApplicationControllerJoinApplicationData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query: {
+        /**
+         * Invite secret from the shared link. The application id alone does not authorize joining.
+         */
+        invite: string;
+    };
+    url: '/application/{id}/join';
+};
+
+export type ApplicationControllerJoinApplicationErrors = {
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type ApplicationControllerJoinApplicationError = ApplicationControllerJoinApplicationErrors[keyof ApplicationControllerJoinApplicationErrors];
+
+export type ApplicationControllerJoinApplicationResponses = {
+    200: unknown;
+};
+
+export type ApplicationControllerCreateInviteData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/application/{id}/invite';
+};
+
+export type ApplicationControllerCreateInviteResponses = {
+    201: unknown;
+};
+
+export type ApplicationControllerLeaveApplicationData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/application/{id}/leave';
+};
+
+export type ApplicationControllerLeaveApplicationResponses = {
+    200: unknown;
+};
+
+export type ApplicationControllerSendApplicationData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/application/{id}/send';
+};
+
+export type ApplicationControllerSendApplicationErrors = {
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type ApplicationControllerSendApplicationError = ApplicationControllerSendApplicationErrors[keyof ApplicationControllerSendApplicationErrors];
+
+export type ApplicationControllerSendApplicationResponses = {
+    200: unknown;
+};
+
+export type ApplicationControllerScheduleViewingData = {
+    body: ScheduleViewingDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/application/{id}/viewing';
+};
+
+export type ApplicationControllerScheduleViewingResponses = {
+    200: unknown;
+};
+
+export type ApplicationControllerApproveApplicationData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/application/{id}/approve';
+};
+
+export type ApplicationControllerApproveApplicationErrors = {
+    /**
+     * Not the next qualified household in this listing's first-come queue.
+     */
+    409: unknown;
+};
+
+export type ApplicationControllerApproveApplicationResponses = {
+    /**
+     * The new tenancy's id.
+     */
+    200: {
+        tenancy: string;
+    };
+};
+
+export type ApplicationControllerApproveApplicationResponse = ApplicationControllerApproveApplicationResponses[keyof ApplicationControllerApproveApplicationResponses];
+
+export type ApplicationControllerOfferApplicationData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/application/{id}/offer';
+};
+
+export type ApplicationControllerOfferApplicationErrors = {
+    /**
+     * Not the next qualified household in this listing's first-come queue.
+     */
+    409: unknown;
+};
+
+export type ApplicationControllerOfferApplicationResponses = {
+    201: ApplicationDto;
+};
+
+export type ApplicationControllerOfferApplicationResponse = ApplicationControllerOfferApplicationResponses[keyof ApplicationControllerOfferApplicationResponses];
+
+export type ApplicationControllerAcceptOfferData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/application/{id}/accept-offer';
+};
+
+export type ApplicationControllerAcceptOfferResponses = {
+    200: unknown;
+};
+
+export type ApplicationControllerRejectApplicationData = {
+    body: RejectApplicationDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/application/{id}/reject';
+};
+
+export type ApplicationControllerRejectApplicationResponses = {
+    200: unknown;
+};
+
+export type ApplicationControllerDeleteApplicationData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/application/{id}/delete';
+};
+
+export type ApplicationControllerDeleteApplicationErrors = {
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type ApplicationControllerDeleteApplicationError = ApplicationControllerDeleteApplicationErrors[keyof ApplicationControllerDeleteApplicationErrors];
+
+export type ApplicationControllerDeleteApplicationResponses = {
+    200: unknown;
+};
+
+export type ApplicationControllerGetAllForListingData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/application/listing/{id}';
+};
+
+export type ApplicationControllerGetAllForListingResponses = {
+    200: unknown;
+};
+
+export type ApplicationControllerGetByConversationData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/application/conversation/{id}';
+};
+
+export type ApplicationControllerGetByConversationErrors = {
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type ApplicationControllerGetByConversationError = ApplicationControllerGetByConversationErrors[keyof ApplicationControllerGetByConversationErrors];
+
+export type ApplicationControllerGetByConversationResponses = {
+    200: ApplicationDto;
+};
+
+export type ApplicationControllerGetByConversationResponse = ApplicationControllerGetByConversationResponses[keyof ApplicationControllerGetByConversationResponses];
+
+export type ApplicationControllerGetAllMyApplicationsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/application/mine';
+};
+
+export type ApplicationControllerGetAllMyApplicationsErrors = {
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type ApplicationControllerGetAllMyApplicationsError = ApplicationControllerGetAllMyApplicationsErrors[keyof ApplicationControllerGetAllMyApplicationsErrors];
+
+export type ApplicationControllerGetAllMyApplicationsResponses = {
+    200: Array<ApplicationDto>;
+};
+
+export type ApplicationControllerGetAllMyApplicationsResponse = ApplicationControllerGetAllMyApplicationsResponses[keyof ApplicationControllerGetAllMyApplicationsResponses];
+
+export type ApplicationControllerGetApplicationData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/application/{id}';
+};
+
+export type ApplicationControllerGetApplicationErrors = {
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type ApplicationControllerGetApplicationError = ApplicationControllerGetApplicationErrors[keyof ApplicationControllerGetApplicationErrors];
+
+export type ApplicationControllerGetApplicationResponses = {
+    200: ApplicationDto;
+};
+
+export type ApplicationControllerGetApplicationResponse = ApplicationControllerGetApplicationResponses[keyof ApplicationControllerGetApplicationResponses];
+
+export type TenanciesControllerMineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/tenancies/mine';
+};
+
+export type TenanciesControllerMineResponses = {
+    200: Array<Tenancy>;
+};
+
+export type TenanciesControllerMineResponse = TenanciesControllerMineResponses[keyof TenanciesControllerMineResponses];
+
+export type TenanciesControllerLandlordData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/tenancies/landlord';
+};
+
+export type TenanciesControllerLandlordResponses = {
+    200: Array<Tenancy>;
+};
+
+export type TenanciesControllerLandlordResponse = TenanciesControllerLandlordResponses[keyof TenanciesControllerLandlordResponses];
+
+export type TenanciesControllerGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}';
+};
+
+export type TenanciesControllerGetErrors = {
+    403: ErrorDto;
+    404: ErrorDto;
+};
+
+export type TenanciesControllerGetError = TenanciesControllerGetErrors[keyof TenanciesControllerGetErrors];
+
+export type TenanciesControllerGetResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerGetResponse = TenanciesControllerGetResponses[keyof TenanciesControllerGetResponses];
+
+export type TenanciesControllerCreateData = {
+    body: CreateTenancyDto;
+    path?: never;
+    query?: never;
+    url: '/tenancies';
+};
+
+export type TenanciesControllerCreateErrors = {
+    /**
+     * Application not ACCEPTED, or no student invited.
+     */
+    400: ErrorDto;
+    /**
+     * Listing or application is not yours.
+     */
+    403: ErrorDto;
+    /**
+     * The application already has a tenancy.
+     */
+    409: ErrorDto;
+};
+
+export type TenanciesControllerCreateError = TenanciesControllerCreateErrors[keyof TenanciesControllerCreateErrors];
+
+export type TenanciesControllerCreateResponses = {
+    201: Tenancy;
+};
+
+export type TenanciesControllerCreateResponse = TenanciesControllerCreateResponses[keyof TenanciesControllerCreateResponses];
+
+export type TenanciesControllerAcceptData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/accept';
+};
+
+export type TenanciesControllerAcceptErrors = {
+    403: ErrorDto;
+};
+
+export type TenanciesControllerAcceptError = TenanciesControllerAcceptErrors[keyof TenanciesControllerAcceptErrors];
+
+export type TenanciesControllerAcceptResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerAcceptResponse = TenanciesControllerAcceptResponses[keyof TenanciesControllerAcceptResponses];
+
+export type TenanciesControllerDepositData = {
+    body: UpdateDepositDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/deposit';
+};
+
+export type TenanciesControllerDepositErrors = {
+    400: ErrorDto;
+    403: ErrorDto;
+};
+
+export type TenanciesControllerDepositError = TenanciesControllerDepositErrors[keyof TenanciesControllerDepositErrors];
+
+export type TenanciesControllerDepositResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerDepositResponse = TenanciesControllerDepositResponses[keyof TenanciesControllerDepositResponses];
+
+export type TenanciesControllerDepositReceivedData = {
+    body: DepositReceivedDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/deposit-received';
+};
+
+export type TenanciesControllerDepositReceivedErrors = {
+    403: ErrorDto;
+};
+
+export type TenanciesControllerDepositReceivedError = TenanciesControllerDepositReceivedErrors[keyof TenanciesControllerDepositReceivedErrors];
+
+export type TenanciesControllerDepositReceivedResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerDepositReceivedResponse = TenanciesControllerDepositReceivedResponses[keyof TenanciesControllerDepositReceivedResponses];
+
+export type TenanciesControllerPrescribedInfoData = {
+    body: PrescribedInfoDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/prescribed-info';
+};
+
+export type TenanciesControllerPrescribedInfoErrors = {
+    403: ErrorDto;
+};
+
+export type TenanciesControllerPrescribedInfoError = TenanciesControllerPrescribedInfoErrors[keyof TenanciesControllerPrescribedInfoErrors];
+
+export type TenanciesControllerPrescribedInfoResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerPrescribedInfoResponse = TenanciesControllerPrescribedInfoResponses[keyof TenanciesControllerPrescribedInfoResponses];
+
+export type TenanciesControllerAddDocumentData = {
+    body: AddTenancyDocumentDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/documents';
+};
+
+export type TenanciesControllerAddDocumentErrors = {
+    400: ErrorDto;
+    403: ErrorDto;
+};
+
+export type TenanciesControllerAddDocumentError = TenanciesControllerAddDocumentErrors[keyof TenanciesControllerAddDocumentErrors];
+
+export type TenanciesControllerAddDocumentResponses = {
+    201: Tenancy;
+};
+
+export type TenanciesControllerAddDocumentResponse = TenanciesControllerAddDocumentResponses[keyof TenanciesControllerAddDocumentResponses];
+
+export type NotificationsControllerListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/notifications';
+};
+
+export type NotificationsControllerListErrors = {
+    401: ErrorDto;
+};
+
+export type NotificationsControllerListError = NotificationsControllerListErrors[keyof NotificationsControllerListErrors];
+
+export type NotificationsControllerListResponses = {
+    200: Array<Notification>;
+};
+
+export type NotificationsControllerListResponse = NotificationsControllerListResponses[keyof NotificationsControllerListResponses];
+
+export type NotificationsControllerMarkReadData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/notifications/{id}/read';
+};
+
+export type NotificationsControllerMarkReadErrors = {
+    404: ErrorDto;
+};
+
+export type NotificationsControllerMarkReadError = NotificationsControllerMarkReadErrors[keyof NotificationsControllerMarkReadErrors];
+
+export type NotificationsControllerMarkReadResponses = {
+    200: Notification;
+};
+
+export type NotificationsControllerMarkReadResponse = NotificationsControllerMarkReadResponses[keyof NotificationsControllerMarkReadResponses];
+
+export type FlagsControllerCreateData = {
+    body: CreateFlagDto;
+    path?: never;
+    query?: never;
+    url: '/flags';
+};
+
+export type FlagsControllerCreateErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type FlagsControllerCreateError = FlagsControllerCreateErrors[keyof FlagsControllerCreateErrors];
+
+export type FlagsControllerCreateResponses = {
+    201: Flag;
+};
+
+export type FlagsControllerCreateResponse = FlagsControllerCreateResponses[keyof FlagsControllerCreateResponses];
+
+export type FlagsControllerGetAllData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/flags/all';
+};
+
+export type FlagsControllerGetAllErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type FlagsControllerGetAllError = FlagsControllerGetAllErrors[keyof FlagsControllerGetAllErrors];
+
+export type FlagsControllerGetAllResponses = {
+    200: Flag;
+};
+
+export type FlagsControllerGetAllResponse = FlagsControllerGetAllResponses[keyof FlagsControllerGetAllResponses];
+
+export type FlagsControllerResolveData = {
+    body: ResolveFlagDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/flags/resolve/{id}';
+};
+
+export type FlagsControllerResolveErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type FlagsControllerResolveError = FlagsControllerResolveErrors[keyof FlagsControllerResolveErrors];
+
+export type FlagsControllerResolveResponses = {
+    204: void;
+};
+
+export type FlagsControllerResolveResponse = FlagsControllerResolveResponses[keyof FlagsControllerResolveResponses];
+
+export type FlagsControllerFindOneData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/flags/{id}';
+};
+
+export type FlagsControllerFindOneErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+    404: ErrorDto;
+};
+
+export type FlagsControllerFindOneError = FlagsControllerFindOneErrors[keyof FlagsControllerFindOneErrors];
+
+export type FlagsControllerFindOneResponses = {
+    200: Flag;
+};
+
+export type FlagsControllerFindOneResponse = FlagsControllerFindOneResponses[keyof FlagsControllerFindOneResponses];
+
+export type ContractsControllerCreateData = {
+    body: CreateContractDto;
+    path?: never;
+    query?: never;
+    url: '/contracts';
+};
+
+export type ContractsControllerCreateErrors = {
+    400: ErrorDto;
+    403: ErrorDto;
+};
+
+export type ContractsControllerCreateError = ContractsControllerCreateErrors[keyof ContractsControllerCreateErrors];
+
+export type ContractsControllerCreateResponses = {
+    201: Contract;
+};
+
+export type ContractsControllerCreateResponse = ContractsControllerCreateResponses[keyof ContractsControllerCreateResponses];
+
+export type ContractsControllerCreateDefaultData = {
+    body: DefaultContractDto;
+    path?: never;
+    query?: never;
+    url: '/contracts/default';
+};
+
+export type ContractsControllerCreateDefaultErrors = {
+    400: ErrorDto;
+    403: ErrorDto;
+};
+
+export type ContractsControllerCreateDefaultError = ContractsControllerCreateDefaultErrors[keyof ContractsControllerCreateDefaultErrors];
+
+export type ContractsControllerCreateDefaultResponses = {
+    201: Contract;
+};
+
+export type ContractsControllerCreateDefaultResponse = ContractsControllerCreateDefaultResponses[keyof ContractsControllerCreateDefaultResponses];
+
+export type ContractsControllerDocumentData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query: {
+        /**
+         * Signature from the contract's url.
+         */
+        sig: string;
+    };
+    url: '/contracts/{id}/document';
+};
+
+export type ContractsControllerDocumentErrors = {
+    403: ErrorDto;
+};
+
+export type ContractsControllerDocumentError = ContractsControllerDocumentErrors[keyof ContractsControllerDocumentErrors];
+
+export type ContractsControllerDocumentResponses = {
+    /**
+     * HTML document.
+     */
+    200: unknown;
+};
+
+export type ContractsControllerPrescribedInformationData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query: {
+        /**
+         * Signature from the contract's url.
+         */
+        sig: string;
+    };
+    url: '/contracts/{id}/prescribed-information';
+};
+
+export type ContractsControllerPrescribedInformationErrors = {
+    403: ErrorDto;
+};
+
+export type ContractsControllerPrescribedInformationError = ContractsControllerPrescribedInformationErrors[keyof ContractsControllerPrescribedInformationErrors];
+
+export type ContractsControllerPrescribedInformationResponses = {
+    /**
+     * HTML document.
+     */
+    200: unknown;
+};
+
+export type ContractsControllerInventoryData = {
+    body: InventoryDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/contracts/{id}/inventory';
+};
+
+export type ContractsControllerInventoryErrors = {
+    403: ErrorDto;
+};
+
+export type ContractsControllerInventoryError = ContractsControllerInventoryErrors[keyof ContractsControllerInventoryErrors];
+
+export type ContractsControllerInventoryResponses = {
+    200: Contract;
+};
+
+export type ContractsControllerInventoryResponse = ContractsControllerInventoryResponses[keyof ContractsControllerInventoryResponses];
+
+export type ContractsControllerDeductionsData = {
+    body: DeductionsDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/contracts/{id}/deductions';
+};
+
+export type ContractsControllerDeductionsErrors = {
+    400: ErrorDto;
+};
+
+export type ContractsControllerDeductionsError = ContractsControllerDeductionsErrors[keyof ContractsControllerDeductionsErrors];
+
+export type ContractsControllerDeductionsResponses = {
+    200: Contract;
+};
+
+export type ContractsControllerDeductionsResponse = ContractsControllerDeductionsResponses[keyof ContractsControllerDeductionsResponses];
+
+export type ContractsControllerRespondToDeductionsData = {
+    body: RespondDeductionsDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/contracts/{id}/deductions/respond';
+};
+
+export type ContractsControllerRespondToDeductionsErrors = {
+    400: ErrorDto;
+};
+
+export type ContractsControllerRespondToDeductionsError = ContractsControllerRespondToDeductionsErrors[keyof ContractsControllerRespondToDeductionsErrors];
+
+export type ContractsControllerRespondToDeductionsResponses = {
+    200: Contract;
+};
+
+export type ContractsControllerRespondToDeductionsResponse = ContractsControllerRespondToDeductionsResponses[keyof ContractsControllerRespondToDeductionsResponses];
+
+export type ContractsControllerTemplatesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/contracts/templates';
+};
+
+export type ContractsControllerTemplatesResponses = {
+    200: Array<ContractTemplate>;
+};
+
+export type ContractsControllerTemplatesResponse = ContractsControllerTemplatesResponses[keyof ContractsControllerTemplatesResponses];
+
+export type ContractsControllerCreateTemplateData = {
+    body: CreateContractTemplateDto;
+    path?: never;
+    query?: never;
+    url: '/contracts/templates';
+};
+
+export type ContractsControllerCreateTemplateErrors = {
+    400: ErrorDto;
+};
+
+export type ContractsControllerCreateTemplateError = ContractsControllerCreateTemplateErrors[keyof ContractsControllerCreateTemplateErrors];
+
+export type ContractsControllerCreateTemplateResponses = {
+    201: ContractTemplate;
+};
+
+export type ContractsControllerCreateTemplateResponse = ContractsControllerCreateTemplateResponses[keyof ContractsControllerCreateTemplateResponses];
+
+export type ContractsControllerDeleteTemplateData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/contracts/templates/{id}';
+};
+
+export type ContractsControllerDeleteTemplateErrors = {
+    404: ErrorDto;
+};
+
+export type ContractsControllerDeleteTemplateError = ContractsControllerDeleteTemplateErrors[keyof ContractsControllerDeleteTemplateErrors];
+
+export type ContractsControllerLandlordData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/contracts/landlord';
+};
+
+export type ContractsControllerLandlordResponses = {
+    200: Array<Contract>;
+};
+
+export type ContractsControllerLandlordResponse = ContractsControllerLandlordResponses[keyof ContractsControllerLandlordResponses];
+
+export type ContractsControllerForTenancyData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/contracts/tenancy/{id}';
+};
+
+export type ContractsControllerForTenancyErrors = {
+    403: ErrorDto;
+};
+
+export type ContractsControllerForTenancyError = ContractsControllerForTenancyErrors[keyof ContractsControllerForTenancyErrors];
+
+export type ContractsControllerForTenancyResponses = {
+    200: Array<Contract>;
+};
+
+export type ContractsControllerForTenancyResponse = ContractsControllerForTenancyResponses[keyof ContractsControllerForTenancyResponses];
+
+export type ContractsControllerSendData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/contracts/{id}/send';
+};
+
+export type ContractsControllerSendErrors = {
+    400: ErrorDto;
+};
+
+export type ContractsControllerSendError = ContractsControllerSendErrors[keyof ContractsControllerSendErrors];
+
+export type ContractsControllerSendResponses = {
+    200: Contract;
+};
+
+export type ContractsControllerSendResponse = ContractsControllerSendResponses[keyof ContractsControllerSendResponses];
+
+export type ContractsControllerSignData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/contracts/{id}/sign';
+};
+
+export type ContractsControllerSignErrors = {
+    400: ErrorDto;
+    403: ErrorDto;
+};
+
+export type ContractsControllerSignError = ContractsControllerSignErrors[keyof ContractsControllerSignErrors];
+
+export type ContractsControllerSignResponses = {
+    200: Contract;
+};
+
+export type ContractsControllerSignResponse = ContractsControllerSignResponses[keyof ContractsControllerSignResponses];
+
+export type PaymentsControllerGetPlanData = {
+    body?: never;
+    path: {
+        tenancyId: string;
+    };
+    query?: never;
+    url: '/payments/plan/{tenancyId}';
+};
+
+export type PaymentsControllerGetPlanErrors = {
+    403: ErrorDto;
+};
+
+export type PaymentsControllerGetPlanError = PaymentsControllerGetPlanErrors[keyof PaymentsControllerGetPlanErrors];
+
+export type PaymentsControllerGetPlanResponses = {
+    200: RentPlanViewDto;
+};
+
+export type PaymentsControllerGetPlanResponse = PaymentsControllerGetPlanResponses[keyof PaymentsControllerGetPlanResponses];
+
+export type PaymentsControllerUpdatePlanData = {
+    body: UpdateRentPlanDto;
+    path: {
+        tenancyId: string;
+    };
+    query?: never;
+    url: '/payments/plan/{tenancyId}';
+};
+
+export type PaymentsControllerUpdatePlanErrors = {
+    /**
+     * Frequency not allowed (England: monthly only).
+     */
+    400: ErrorDto;
+};
+
+export type PaymentsControllerUpdatePlanError = PaymentsControllerUpdatePlanErrors[keyof PaymentsControllerUpdatePlanErrors];
+
+export type PaymentsControllerUpdatePlanResponses = {
+    200: RentPlanViewDto;
+};
+
+export type PaymentsControllerUpdatePlanResponse = PaymentsControllerUpdatePlanResponses[keyof PaymentsControllerUpdatePlanResponses];
+
+export type PaymentsControllerMineData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Only payments for this tenancy.
+         */
+        tenancy?: string;
+    };
+    url: '/payments/mine';
+};
+
+export type PaymentsControllerMineResponses = {
+    200: Array<StudentPaymentDto>;
+};
+
+export type PaymentsControllerMineResponse = PaymentsControllerMineResponses[keyof PaymentsControllerMineResponses];
+
+export type PaymentsControllerLandlordData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Defaults to the current month (UTC).
+         */
+        month?: string;
+    };
+    url: '/payments/landlord';
+};
+
+export type PaymentsControllerLandlordResponses = {
+    200: LandlordPaymentsDto;
+};
+
+export type PaymentsControllerLandlordResponse = PaymentsControllerLandlordResponses[keyof PaymentsControllerLandlordResponses];
+
+export type PaymentsControllerReminderScheduleData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/payments/landlord/reminder-schedule';
+};
+
+export type PaymentsControllerReminderScheduleResponses = {
+    200: ReminderScheduleDto;
+};
+
+export type PaymentsControllerReminderScheduleResponse = PaymentsControllerReminderScheduleResponses[keyof PaymentsControllerReminderScheduleResponses];
+
+export type PaymentsControllerUpdateReminderScheduleData = {
+    body: UpdateReminderScheduleDto;
+    path?: never;
+    query?: never;
+    url: '/payments/landlord/reminder-schedule';
+};
+
+export type PaymentsControllerUpdateReminderScheduleResponses = {
+    200: ReminderScheduleDto;
+};
+
+export type PaymentsControllerUpdateReminderScheduleResponse = PaymentsControllerUpdateReminderScheduleResponses[keyof PaymentsControllerUpdateReminderScheduleResponses];
+
+export type PaymentsControllerRemindLateData = {
+    body: RemindLateDto;
+    path?: never;
+    query?: never;
+    url: '/payments/landlord/remind-late';
+};
+
+export type PaymentsControllerRemindLateResponses = {
+    200: RemindLateResponseDto;
+};
+
+export type PaymentsControllerRemindLateResponse = PaymentsControllerRemindLateResponses[keyof PaymentsControllerRemindLateResponses];
+
+export type PaymentsControllerConnectOnboardData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/payments/connect/onboard';
+};
+
+export type PaymentsControllerConnectOnboardErrors = {
+    /**
+     * Stripe Connect is not enabled on Seek's Stripe account.
+     */
+    409: ErrorDto;
+    503: ErrorDto;
+};
+
+export type PaymentsControllerConnectOnboardError = PaymentsControllerConnectOnboardErrors[keyof PaymentsControllerConnectOnboardErrors];
+
+export type PaymentsControllerConnectOnboardResponses = {
+    200: ConnectOnboardResponseDto;
+};
+
+export type PaymentsControllerConnectOnboardResponse = PaymentsControllerConnectOnboardResponses[keyof PaymentsControllerConnectOnboardResponses];
+
+export type PaymentsControllerConnectStatusData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/payments/connect/status';
+};
+
+export type PaymentsControllerConnectStatusResponses = {
+    200: ConnectStatusDto;
+};
+
+export type PaymentsControllerConnectStatusResponse = PaymentsControllerConnectStatusResponses[keyof PaymentsControllerConnectStatusResponses];
+
+export type PaymentsControllerCheckoutData = {
+    body?: never;
+    headers: {
+        platform: string;
+    };
+    path: {
+        id: string;
+    };
+    query?: {
+        /**
+         * Where Stripe sends the payer after paying. {CHECKOUT_SESSION_ID} is replaced by Stripe. Must be on the web app (FRONTEND_URL) or the app scheme (seekapp://, seek://); outside production also http://localhost:* and Expo Go (exp://, exps://). Defaults to the web app, or seekapp:// on mobile.
+         */
+        successUrl?: string;
+        /**
+         * Where Stripe sends the payer if they go back.
+         */
+        cancelUrl?: string;
+    };
+    url: '/payments/{id}/checkout';
+};
+
+export type PaymentsControllerCheckoutErrors = {
+    400: ErrorDto;
+    503: ErrorDto;
+};
+
+export type PaymentsControllerCheckoutError = PaymentsControllerCheckoutErrors[keyof PaymentsControllerCheckoutErrors];
+
+export type PaymentsControllerCheckoutResponses = {
+    200: CheckoutResponseDto;
+};
+
+export type PaymentsControllerCheckoutResponse = PaymentsControllerCheckoutResponses[keyof PaymentsControllerCheckoutResponses];
+
+export type PaymentsControllerConfirmCheckoutData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query: {
+        /**
+         * The Checkout Session id from the success URL.
+         */
+        session_id: string;
+    };
+    url: '/payments/{id}/checkout/confirm';
+};
+
+export type PaymentsControllerConfirmCheckoutErrors = {
+    400: ErrorDto;
+    404: ErrorDto;
+};
+
+export type PaymentsControllerConfirmCheckoutError = PaymentsControllerConfirmCheckoutErrors[keyof PaymentsControllerConfirmCheckoutErrors];
+
+export type PaymentsControllerConfirmCheckoutResponses = {
+    200: PayResponseDto;
+};
+
+export type PaymentsControllerConfirmCheckoutResponse = PaymentsControllerConfirmCheckoutResponses[keyof PaymentsControllerConfirmCheckoutResponses];
+
+export type PaymentsControllerRemindData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/payments/{id}/remind';
+};
+
+export type PaymentsControllerRemindErrors = {
+    403: ErrorDto;
+};
+
+export type PaymentsControllerRemindError = PaymentsControllerRemindErrors[keyof PaymentsControllerRemindErrors];
+
+export type PaymentsControllerRemindResponses = {
+    200: RemindLateResponseDto;
+};
+
+export type PaymentsControllerRemindResponse = PaymentsControllerRemindResponses[keyof PaymentsControllerRemindResponses];
+
+export type PaymentsControllerPayData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/payments/{id}/pay';
+};
+
+export type PaymentsControllerPayErrors = {
+    400: ErrorDto;
+    503: ErrorDto;
+};
+
+export type PaymentsControllerPayError = PaymentsControllerPayErrors[keyof PaymentsControllerPayErrors];
+
+export type PaymentsControllerPayResponses = {
+    200: PayResponseDto;
+};
+
+export type PaymentsControllerPayResponse = PaymentsControllerPayResponses[keyof PaymentsControllerPayResponses];
+
+export type BillsControllerForTenancyData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/bills/tenancy/{id}';
+};
+
+export type BillsControllerForTenancyErrors = {
+    403: ErrorDto;
+};
+
+export type BillsControllerForTenancyError = BillsControllerForTenancyErrors[keyof BillsControllerForTenancyErrors];
+
+export type BillsControllerForTenancyResponses = {
+    200: Array<BillViewDto>;
+};
+
+export type BillsControllerForTenancyResponse = BillsControllerForTenancyResponses[keyof BillsControllerForTenancyResponses];
+
+export type BillsControllerCreateData = {
+    body: CreateBillDto;
+    path?: never;
+    query?: never;
+    url: '/bills';
+};
+
+export type BillsControllerCreateErrors = {
+    400: ErrorDto;
+};
+
+export type BillsControllerCreateError = BillsControllerCreateErrors[keyof BillsControllerCreateErrors];
+
+export type BillsControllerCreateResponses = {
+    201: BillViewDto;
+};
+
+export type BillsControllerCreateResponse = BillsControllerCreateResponses[keyof BillsControllerCreateResponses];
+
+export type BillsControllerMarkPaidData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/bills/{id}/paid';
+};
+
+export type BillsControllerMarkPaidErrors = {
+    404: ErrorDto;
+};
+
+export type BillsControllerMarkPaidError = BillsControllerMarkPaidErrors[keyof BillsControllerMarkPaidErrors];
+
+export type BillsControllerMarkPaidResponses = {
+    200: BillViewDto;
+};
+
+export type BillsControllerMarkPaidResponse = BillsControllerMarkPaidResponses[keyof BillsControllerMarkPaidResponses];
+
+export type RepairsControllerLandlordData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/repairs/landlord';
+};
+
+export type RepairsControllerLandlordResponses = {
+    200: Array<Repair>;
+};
+
+export type RepairsControllerLandlordResponse = RepairsControllerLandlordResponses[keyof RepairsControllerLandlordResponses];
+
+export type RepairsControllerForTenancyData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/repairs/tenancy/{id}';
+};
+
+export type RepairsControllerForTenancyErrors = {
+    403: ErrorDto;
+};
+
+export type RepairsControllerForTenancyError = RepairsControllerForTenancyErrors[keyof RepairsControllerForTenancyErrors];
+
+export type RepairsControllerForTenancyResponses = {
+    200: Array<Repair>;
+};
+
+export type RepairsControllerForTenancyResponse = RepairsControllerForTenancyResponses[keyof RepairsControllerForTenancyResponses];
+
+export type RepairsControllerCreateData = {
+    body: CreateRepairDto;
+    path?: never;
+    query?: never;
+    url: '/repairs';
+};
+
+export type RepairsControllerCreateErrors = {
+    403: ErrorDto;
+};
+
+export type RepairsControllerCreateError = RepairsControllerCreateErrors[keyof RepairsControllerCreateErrors];
+
+export type RepairsControllerCreateResponses = {
+    201: Repair;
+};
+
+export type RepairsControllerCreateResponse = RepairsControllerCreateResponses[keyof RepairsControllerCreateResponses];
+
+export type RepairsControllerUpdateData = {
+    body: UpdateRepairDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/repairs/{id}';
+};
+
+export type RepairsControllerUpdateErrors = {
+    400: ErrorDto;
+    403: ErrorDto;
+};
+
+export type RepairsControllerUpdateError = RepairsControllerUpdateErrors[keyof RepairsControllerUpdateErrors];
+
+export type RepairsControllerUpdateResponses = {
+    200: Repair;
+};
+
+export type RepairsControllerUpdateResponse = RepairsControllerUpdateResponses[keyof RepairsControllerUpdateResponses];
+
+export type LandlordControllerOverviewData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/landlord/overview';
+};
+
+export type LandlordControllerOverviewResponses = {
+    200: unknown;
+};
+
+export type LandlordControllerListingsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/landlord/listings';
+};
+
+export type LandlordControllerListingsResponses = {
+    200: unknown;
+};
+
+export type AiControllerSearchChatData = {
+    body: SearchChatDto;
+    path?: never;
+    query?: never;
+    url: '/ai/search-chat';
+};
+
+export type AiControllerSearchChatErrors = {
+    400: ErrorDto;
+    429: ErrorDto;
+};
+
+export type AiControllerSearchChatError = AiControllerSearchChatErrors[keyof AiControllerSearchChatErrors];
+
+export type AiControllerSearchChatResponses = {
+    200: SearchChatResponseDto;
+};
+
+export type AiControllerSearchChatResponse = AiControllerSearchChatResponses[keyof AiControllerSearchChatResponses];
+
+export type AiControllerAdviceData = {
+    body: AdviceRequestDto;
+    path?: never;
+    query?: never;
+    url: '/ai/advice';
+};
+
+export type AiControllerAdviceErrors = {
+    403: ErrorDto;
+    429: ErrorDto;
+};
+
+export type AiControllerAdviceError = AiControllerAdviceErrors[keyof AiControllerAdviceErrors];
+
+export type AiControllerAdviceResponses = {
+    200: AdviceResponseDto;
+};
+
+export type AiControllerAdviceResponse = AiControllerAdviceResponses[keyof AiControllerAdviceResponses];
+
+export type ConnectorsControllerOverviewData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/connectors';
+};
+
+export type ConnectorsControllerOverviewResponses = {
+    200: ConnectorsOverviewDto;
+};
+
+export type ConnectorsControllerOverviewResponse = ConnectorsControllerOverviewResponses[keyof ConnectorsControllerOverviewResponses];
+
+export type ConnectorsControllerUpdateSettingsData = {
+    body: UpdateConnectorSettingsDto;
+    path?: never;
+    query?: never;
+    url: '/connectors/settings';
+};
+
+export type ConnectorsControllerUpdateSettingsResponses = {
+    200: ConnectorSettingsDto;
+};
+
+export type ConnectorsControllerUpdateSettingsResponse = ConnectorsControllerUpdateSettingsResponses[keyof ConnectorsControllerUpdateSettingsResponses];
+
+export type ConnectorsControllerConnectImapData = {
+    body: ConnectImapDto;
+    path?: never;
+    query?: never;
+    url: '/connectors/imap';
+};
+
+export type ConnectorsControllerConnectImapErrors = {
+    /**
+     * Sign-in failed (production).
+     */
+    400: ErrorDto;
+    503: ErrorDto;
+};
+
+export type ConnectorsControllerConnectImapError = ConnectorsControllerConnectImapErrors[keyof ConnectorsControllerConnectImapErrors];
+
+export type ConnectorsControllerConnectImapResponses = {
+    201: ImapConnectResultDto;
+};
+
+export type ConnectorsControllerConnectImapResponse = ConnectorsControllerConnectImapResponses[keyof ConnectorsControllerConnectImapResponses];
+
+export type ConnectorsControllerAuthUrlData = {
+    body?: never;
+    path: {
+        /**
+         * Canonical lowercase; any casing is accepted.
+         */
+        provider: 'gmail' | 'outlook';
+    };
+    query?: {
+        /**
+         * Where to send the user back after consent.
+         */
+        client?: 'web' | 'mobile';
+        /**
+         * Web path to return to (must start with /).
+         */
+        returnTo?: string;
+    };
+    url: '/connectors/{provider}/auth-url';
+};
+
+export type ConnectorsControllerAuthUrlErrors = {
+    /**
+     * Provider not set up on this server.
+     */
+    503: ErrorDto;
+};
+
+export type ConnectorsControllerAuthUrlError = ConnectorsControllerAuthUrlErrors[keyof ConnectorsControllerAuthUrlErrors];
+
+export type ConnectorsControllerAuthUrlResponses = {
+    200: AuthUrlDto;
+};
+
+export type ConnectorsControllerAuthUrlResponse = ConnectorsControllerAuthUrlResponses[keyof ConnectorsControllerAuthUrlResponses];
+
+export type ConnectorsControllerConfirmData = {
+    body: ConfirmConnectorDto;
+    path: {
+        provider: 'gmail' | 'outlook';
+    };
+    query?: never;
+    url: '/connectors/{provider}/confirm';
+};
+
+export type ConnectorsControllerConfirmErrors = {
+    /**
+     * Expired, already used, or started from another account.
+     */
+    400: ErrorDto;
+};
+
+export type ConnectorsControllerConfirmError = ConnectorsControllerConfirmErrors[keyof ConnectorsControllerConfirmErrors];
+
+export type ConnectorsControllerConfirmResponses = {
+    201: EmailConnectionViewDto;
+};
+
+export type ConnectorsControllerConfirmResponse = ConnectorsControllerConfirmResponses[keyof ConnectorsControllerConfirmResponses];
+
+export type ConnectorsControllerConnectDemoData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/connectors/demo';
+};
+
+export type ConnectorsControllerConnectDemoErrors = {
+    404: ErrorDto;
+};
+
+export type ConnectorsControllerConnectDemoError = ConnectorsControllerConnectDemoErrors[keyof ConnectorsControllerConnectDemoErrors];
+
+export type ConnectorsControllerConnectDemoResponses = {
+    201: SyncResultDto;
+};
+
+export type ConnectorsControllerConnectDemoResponse = ConnectorsControllerConnectDemoResponses[keyof ConnectorsControllerConnectDemoResponses];
+
+export type ConnectorsControllerSyncData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/connectors/{id}/sync';
+};
+
+export type ConnectorsControllerSyncErrors = {
+    404: ErrorDto;
+    502: ErrorDto;
+};
+
+export type ConnectorsControllerSyncError = ConnectorsControllerSyncErrors[keyof ConnectorsControllerSyncErrors];
+
+export type ConnectorsControllerSyncResponses = {
+    201: SyncResultDto;
+};
+
+export type ConnectorsControllerSyncResponse = ConnectorsControllerSyncResponses[keyof ConnectorsControllerSyncResponses];
+
+export type ConnectorsControllerDisconnectData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/connectors/{id}';
+};
+
+export type ConnectorsControllerDisconnectErrors = {
+    404: ErrorDto;
+};
+
+export type ConnectorsControllerDisconnectError = ConnectorsControllerDisconnectErrors[keyof ConnectorsControllerDisconnectErrors];
+
+export type ConnectorsControllerDisconnectResponses = {
+    200: DisconnectResultDto;
+};
+
+export type ConnectorsControllerDisconnectResponse = ConnectorsControllerDisconnectResponses[keyof ConnectorsControllerDisconnectResponses];
+
+export type InboxControllerThreadsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Only threads in this category.
+         */
+        category?: 'LANDLORD' | 'TENANT' | 'APPLICANT' | 'BILLS' | 'DEPOSIT' | 'HOUSEHOLD' | 'UNIVERSITY' | 'OTHER';
+    };
+    url: '/inbox/threads';
+};
+
+export type InboxControllerThreadsResponses = {
+    200: Array<InboxThreadDto>;
+};
+
+export type InboxControllerThreadsResponse = InboxControllerThreadsResponses[keyof InboxControllerThreadsResponses];
+
+export type InboxControllerThreadData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/inbox/threads/{id}';
+};
+
+export type InboxControllerThreadErrors = {
+    403: ErrorDto;
+    404: ErrorDto;
+};
+
+export type InboxControllerThreadError = InboxControllerThreadErrors[keyof InboxControllerThreadErrors];
+
+export type InboxControllerThreadResponses = {
+    200: InboxThreadDetailDto;
+};
+
+export type InboxControllerThreadResponse = InboxControllerThreadResponses[keyof InboxControllerThreadResponses];
+
+export type InboxControllerReplyData = {
+    body: InboxReplyDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/inbox/threads/{id}/reply';
+};
+
+export type InboxControllerReplyErrors = {
+    400: ErrorDto;
+    /**
+     * The mail provider refused the message.
+     */
+    502: ErrorDto;
+};
+
+export type InboxControllerReplyError = InboxControllerReplyErrors[keyof InboxControllerReplyErrors];
+
+export type InboxControllerReplyResponses = {
+    201: InboxThreadDetailDto;
+};
+
+export type InboxControllerReplyResponse = InboxControllerReplyResponses[keyof InboxControllerReplyResponses];

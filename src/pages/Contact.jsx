@@ -3,7 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 export default function ContactPage() {
 	const [name, setName] = useState("");
@@ -28,7 +28,7 @@ export default function ContactPage() {
 		try {
 			setSubmitting(true);
 			try {
-				const res = await axios.post(`${BASE_URL}/contact`, {
+				const res = await axios.post(`${API_BASE}/contact`, {
 					name,
 					email,
 					message

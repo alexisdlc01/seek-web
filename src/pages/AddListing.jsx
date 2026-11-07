@@ -11,7 +11,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { ProgressSpinner } from "primereact/progressspinner";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 const AddListing = () => {
 	const toast = useRef(null);
@@ -54,6 +54,45 @@ const AddListing = () => {
 	};
 	const [propertyType, setPropertyType] = useState(null);
 	const [otherType, setOtherType] = useState("");
+	// Nation, bills and compliance dates (landlord redesign)
+	const [extras, setExtras] = useState({
+		nation: "ENGLAND",
+		billsIncluded: false,
+		gasSafetyExpiry: null,
+		eicrExpiry: null,
+		epcExpiry: null,
+		hmoLicenceExpiry: null,
+		licenceNumber: ""
+	});
+	const extrasPayload = () => ({
+		nation: extras.nation,
+		billsIncluded: extras.billsIncluded,
+		gasSafetyExpiry: extras.gasSafetyExpiry,
+		eicrExpiry: extras.eicrExpiry,
+		epcExpiry: extras.epcExpiry,
+		hmoLicenceExpiry: extras.hmoLicenceExpiry,
+		licenceNumber: extras.licenceNumber?.trim() || null
+	});
+	// "Requirements and rent" step: per-room holding deposit, who can apply and
+	// the plans offered. Rent and security deposit stay whole-property totals.
+	const [holdingDeposit, setHoldingDeposit] = useState(null);
+	const [criteria, setCriteria] = useState({
+		guarantor: "UK_OR_SERVICE",
+		referencesRequired: false
+	});
+	const [paymentPlans, setPaymentPlans] = useState(["MONTHLY"]);
+	const [viewingSlots, setViewingSlots] = useState([]);
+	const [viewingSlotCapacity, setViewingSlotCapacity] = useState(2);
+	const rentStepPayload = () => ({
+		monthlyRent: rent,
+		securityDeposit: deposit,
+		holdingDeposit,
+		billsIncluded: extras.billsIncluded,
+		criteria,
+		paymentPlans: extras.nation === "ENGLAND" ? ["MONTHLY"] : paymentPlans,
+		viewingSlots,
+		viewingSlotCapacity
+	});
 	const bedroomOptions = [...Array(10).keys()].map(i => ({
 		label: i.toString(),
 		value: i
@@ -193,7 +232,7 @@ const AddListing = () => {
 		if (ensuiteBedrooms == null) missing.push("En-suite bedrooms");
 		if (bathrooms == null) missing.push("Bathrooms");
 		if (!description?.trim()) missing.push("Description");
-		if (!rent) missing.push("Monthly rent");
+		if (!rent) missing.push("Rent per room");
 		if (!deposit) missing.push("Security deposit");
 		if (!availabilityDate) missing.push("Available from");
 		if (!registerOfTitle && !registrationNumber) {
@@ -213,15 +252,15 @@ const AddListing = () => {
 				detail: `Please fill in: ${missing.join(", ")}`,
 				life: 5000,
 				style: {
-					background: "#1E1E2F",
-					color: "#fff",
-					borderLeft: "5px solid #F59E0B", // amber accent
+					background: "var(--sk-card)",
+					color: "var(--sk-text)",
+					borderLeft: "5px solid var(--sk-warn)", // amber accent
 					borderRadius: "8px",
-					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+					boxShadow: "0 4px 15px var(--sk-hair)"
 				},
 				content: (
 					<div className="flex items-center space-x-3">
-						<i className="pi pi-exclamation-triangle text-yellow-400 text-xl"></i>
+						<i className="pi pi-exclamation-triangle text-sk-warn text-xl"></i>
 						<div>
 							<p className="font-semibold">
 								Missing Required Fields
@@ -257,10 +296,12 @@ const AddListing = () => {
 			propertyDesc: description,
 			monthlyRent: rent,
 			securityDeposit: deposit,
-			availableFrom: availabilityDate,
+			availableFrom: utcDay(availabilityDate),
 			availableUntil: endAvailabilityDate,
 			registerOfTitleKey: registerOfTitleKeyFromBackend,
 			registrationNumber: registrationNumber,
+			...extrasPayload(),
+			...cleanObject(rentStepPayload()),
 			furnishingStatus: furnishingStatus ? furnishingStatus : null,
 			epcRating: epcRating,
 			amenities: amenities,
@@ -271,7 +312,7 @@ const AddListing = () => {
 		});
 
 		try {
-			await axios.post(`${BASE_URL}/listings/${id}/publish`, finalData, {
+			await axios.post(`${API_BASE}/listings/${id}/publish`, finalData, {
 				withCredentials: true
 			});
 
@@ -281,16 +322,16 @@ const AddListing = () => {
 				detail: "Your property listing is now live.",
 				life: 4000,
 				style: {
-					background: "#1E1E2F",
-					color: "#fff",
-					borderLeft: "5px solid #22C55E",
+					background: "var(--sk-card)",
+					color: "var(--sk-text)",
+					borderLeft: "5px solid var(--sk-ok)",
 					borderRadius: "8px",
-					boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
+					boxShadow: "0 4px 15px var(--sk-hair)",
 					position: "relative"
 				},
 				content: (
 					<div className="flex items-center space-x-3">
-						<i className="pi pi-check-circle text-green-400 text-xl"></i>
+						<i className="pi pi-check-circle text-sk-ok text-xl"></i>
 						<div className="flex-1">
 							<p className="font-semibold">Listing Published!</p>
 							<p className="text-sm listing-flow-text-muted">
@@ -320,15 +361,15 @@ const AddListing = () => {
 				detail,
 				life: 6000,
 				style: {
-					background: "#1E1E2F",
-					color: "#fff",
-					borderLeft: "5px solid #EF4444",
+					background: "var(--sk-card)",
+					color: "var(--sk-text)",
+					borderLeft: "5px solid var(--sk-danger)",
 					borderRadius: "8px",
-					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+					boxShadow: "0 4px 15px var(--sk-hair)"
 				},
 				content: (
 					<div className="flex items-center space-x-3">
-						<i className="pi pi-times-circle text-red-400 text-xl"></i>
+						<i className="pi pi-times-circle text-sk-danger text-xl"></i>
 						<div>
 							<p className="font-semibold">Publish Failed</p>
 							<p className="text-sm listing-flow-text-muted">
@@ -336,7 +377,7 @@ const AddListing = () => {
 							</p>
 							<button
 								onClick={() => toast.current.clear()}
-								className="text-gray-400 hover:text-white transition-colors"
+								className="text-sk-muted hover:text-sk-text transition-colors"
 							>
 								<i className="pi pi-times text-sm"></i>
 							</button>
@@ -434,7 +475,7 @@ const AddListing = () => {
 	useEffect(() => {
 		(async () => {
 			try {
-				const res = await axios.get(`${BASE_URL}/listings/mine/${id}`, {
+				const res = await axios.get(`${API_BASE}/listings/mine/${id}`, {
 					withCredentials: true
 				});
 				if (res.data) setValidListing(true);
@@ -445,39 +486,60 @@ const AddListing = () => {
 			} finally {
 				setLoading(false);
 
-				const res = await axios.get(`${BASE_URL}/listings/mine/${id}`, {
+				const res = await axios.get(`${API_BASE}/listings/mine/${id}`, {
 					withCredentials: true
 				});
-				console.log("data back", res.data);
 				setCurrentListing(res.data);
 				originalListingRef.current = res.data;
 				res.data.propertyTitle ? setTitle(res.data.propertyTitle) : {};
-				res.data.numOfPeople
+				res.data.numOfPeople != null
 					? setNumOfPeople(res.data.numOfPeople)
 					: {};
-				res.data.sizeSqMeters ? setSizeSqM(res.data.sizeSqMeters) : {};
+				res.data.sizeSqMeters != null ? setSizeSqM(res.data.sizeSqMeters) : {};
 				res.data.propertyType
 					? setPropertyType(
 							propertyTypeMap[res.data.propertyType] || null
 						)
 					: {};
-				res.data.bedroomsCount
+				res.data.bedroomsCount != null
 					? setRegularBedrooms(res.data.bedroomsCount)
 					: {};
-				res.data.enSuiteBedroomCount
+				res.data.enSuiteBedroomCount != null
 					? setEnsuiteBedrooms(res.data.enSuiteBedroomCount)
 					: {};
-				res.data.bathrooms ? setBathrooms(res.data.bathrooms) : {};
+				res.data.bathrooms != null ? setBathrooms(res.data.bathrooms) : {};
 				res.data.propertyDesc
 					? setDescription(res.data.propertyDesc)
 					: {};
 
+				setExtras(prev => {
+					const d = v => (v ? new Date(v) : null);
+					return {
+						nation: res.data.nation || prev.nation,
+						billsIncluded: !!res.data.billsIncluded,
+						gasSafetyExpiry: d(res.data.gasSafetyExpiry),
+						eicrExpiry: d(res.data.eicrExpiry),
+						epcExpiry: d(res.data.epcExpiry),
+						hmoLicenceExpiry: d(res.data.hmoLicenceExpiry),
+						licenceNumber: res.data.licenceNumber || ""
+					};
+				});
 				res.data.amenities ? setAmenities(res.data.amenities) : {};
 				res.data.streetAddress ? setStreet(res.data.streetAddress) : {};
 				res.data.cityTown ? setCity(res.data.cityTown) : {};
 				res.data.postcodeZIP ? setPostcode(res.data.postcodeZIP) : {};
 				res.data.country ? setCountry(res.data.country) : {};
 				res.data.monthlyRent ? setRent(res.data.monthlyRent) : {};
+				res.data.holdingDeposit != null
+					? setHoldingDeposit(res.data.holdingDeposit)
+					: {};
+				res.data.criteria ? setCriteria(res.data.criteria) : {};
+				res.data.paymentPlans?.length
+					? setPaymentPlans(res.data.paymentPlans)
+					: {};
+				setViewingSlots(res.data.viewingSlots ?? []);
+				if (res.data.viewingSlotCapacity)
+					setViewingSlotCapacity(res.data.viewingSlotCapacity);
 				res.data.securityDeposit
 					? setDeposit(res.data.securityDeposit)
 					: {};
@@ -543,7 +605,6 @@ const AddListing = () => {
 
 	useEffect(() => {
 		(async () => {
-			console.log("On step:", step);
 			switch (step) {
 				case 2:
 					const step1Data = cleanObject({
@@ -561,20 +622,20 @@ const AddListing = () => {
 						country,
 						monthlyRent: rent,
 						securityDeposit: deposit,
-						availableFrom: availabilityDate,
+						availableFrom: utcDay(availabilityDate),
 						availableUntil: endAvailabilityDate,
 						registerOfTitleKey: registerOfTitleKeyFromBackend,
-						registrationNumber: registrationNumber
+						registrationNumber: registrationNumber,
+						...extrasPayload()
 					});
 
 					const step1Changes = getChangedFields(
 						step1Data,
 						originalListingRef.current || {}
 					);
-					console.log("changes from step 1", step1Changes);
 					if (Object.keys(step1Changes).length > 0) {
 						await axios.patch(
-							`${BASE_URL}/listings/${currentListing._id}/createStep1`,
+							`${API_BASE}/listings/${currentListing._id}/createStep1`,
 							step1Changes,
 							{ withCredentials: true }
 						);
@@ -595,7 +656,7 @@ const AddListing = () => {
 					);
 					if (Object.keys(step2Changes).length > 0) {
 						await axios.patch(
-							`${BASE_URL}/listings/${currentListing._id}/createStep2`,
+							`${API_BASE}/listings/${currentListing._id}/createStep2`,
 							step2Changes,
 							{ withCredentials: true }
 						);
@@ -611,11 +672,12 @@ const AddListing = () => {
 					const uploadedUrls = await Promise.all(
 						newFiles.map(async p => {
 							const res = await axios.get(
-								`${BASE_URL}/upload/presign`,
+								`${API_BASE}/upload/presign`,
 								{
 									params: {
 										filename: p.file.name,
 										fileType: p.file.type,
+										fileSize: p.file.size,
 										folder: "public"
 									},
 									withCredentials: true
@@ -645,7 +707,7 @@ const AddListing = () => {
 
 					if (Object.keys(step4Changes).length > 0) {
 						await axios.patch(
-							`${BASE_URL}/listings/${currentListing._id}/createStep3`,
+							`${API_BASE}/listings/${currentListing._id}/createStep3`,
 							step4Changes,
 							{ withCredentials: true }
 						);
@@ -657,10 +719,13 @@ const AddListing = () => {
 
 					break;
 				case 5:
-					console.log("Actually at the requirements now");
-					console.log(Apprequirements);
 					await axios.patch(
-						`${BASE_URL}/listings/${currentListing._id}/createStep4`,
+						`${API_BASE}/listings/${currentListing._id}/createStep1`,
+						cleanObject(rentStepPayload()),
+						{ withCredentials: true }
+					);
+					await axios.patch(
+						`${API_BASE}/listings/${currentListing._id}/createStep4`,
 						{
 							requirements: Apprequirements
 						},
@@ -684,11 +749,11 @@ const AddListing = () => {
 	return (
 		<div
 			className="min-h-screen py-6 px-2 md:px-4"
-			style={{ background: "#0f0f23" }}
+			style={{ background: "var(--sk-bg)" }}
 		>
 			<Toast ref={toast} position="bottom-right" />
 			<div className="w-[75%] max-w-screen-2xl mx-auto px-2 md:px-4">
-				<h1 className="text-2xl sm:text-3xl font-bold text-[var(--primary-color)] pb-6">
+				<h1 className="text-2xl sm:text-3xl font-bold text-sk-link pb-6">
 					Add New Property
 				</h1>
 
@@ -744,6 +809,8 @@ const AddListing = () => {
 							}
 							numOfPeople={numOfPeople}
 							setNumOfPeople={setNumOfPeople}
+							extras={extras}
+							setExtras={setExtras}
 							next={next}
 						/>
 					</StepperPanel>
@@ -782,12 +849,32 @@ const AddListing = () => {
 						/>
 					</StepperPanel>
 
-					<StepperPanel header="Requirements">
+					<StepperPanel header="Requirements and rent">
 						<ApplicationRequirements
 							back={back}
 							next={next}
 							App2requirements={Apprequirements}
 							setRequirements={setRequirements}
+							numOfPeople={numOfPeople}
+							rent={rent}
+							setRent={setRent}
+							deposit={deposit}
+							setDeposit={setDeposit}
+							holdingDeposit={holdingDeposit}
+							setHoldingDeposit={setHoldingDeposit}
+							criteria={criteria}
+							setCriteria={setCriteria}
+							paymentPlans={paymentPlans}
+							setPaymentPlans={setPaymentPlans}
+							viewingSlots={viewingSlots}
+							setViewingSlots={setViewingSlots}
+							viewingSlotCapacity={viewingSlotCapacity}
+							setViewingSlotCapacity={setViewingSlotCapacity}
+							nation={extras.nation}
+							billsIncluded={extras.billsIncluded}
+							setBillsIncluded={v =>
+								setExtras(prev => ({ ...prev, billsIncluded: v }))
+							}
 						/>
 					</StepperPanel>
 
@@ -840,5 +927,8 @@ const AddListing = () => {
 		</div>
 	);
 };
+
+// The server compares whole UTC days: send the picked calendar day as UTC midnight so local-time offsets never push "today" into yesterday.
+const utcDay = d => d && new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
 
 export default AddListing;

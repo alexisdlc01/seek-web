@@ -16,7 +16,7 @@ import { useSearchParams } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import UserContext from "../context/UserContext.jsx";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 type ChatUser = {
 	_id: string;
@@ -63,7 +63,7 @@ type Conversation = {
 };
 
 export default function ChatPage() {
-	const { user: currentUser } = useContext(UserContext) as { user?: ChatUser };
+	const { user: currentUser } = useContext(UserContext);
 	const [searchParams] = useSearchParams();
 	const requestedId = searchParams.get("conversation") ?? undefined;
 	const [selectedId, setSelectedId] = useState<string | undefined>(requestedId);
@@ -128,7 +128,7 @@ export default function ChatPage() {
 	useEffect(() => {
 		if (!currentUser) return;
 
-		const socket = io(`${BASE_URL}/conversation`, {
+		const socket = io(`${API_BASE}/conversation`, {
 			withCredentials: true,
 			transports: ["websocket"]
 		});
@@ -195,7 +195,7 @@ export default function ChatPage() {
 		if (!application) return;
 		try {
 			const { data } = await axios.post<{ inviteToken: string }>(
-				`${BASE_URL}/application/${application._id}/invite`,
+				`${API_BASE}/application/${application._id}/invite`,
 				{},
 				{ withCredentials: true }
 			);
@@ -233,7 +233,7 @@ export default function ChatPage() {
 		if (!application) return;
 		try {
 			await axios.patch(
-				`${BASE_URL}/application/${application._id}/delete`,
+				`${API_BASE}/application/${application._id}/delete`,
 				{},
 				{ withCredentials: true }
 			);
@@ -284,7 +284,7 @@ export default function ChatPage() {
 		(async () => {
 			try {
 				const { data } = await axios.get<Conversation>(
-					`${BASE_URL}/conversation/${selectedId}`,
+					`${API_BASE}/conversation/${selectedId}`,
 					{ withCredentials: true }
 				);
 				if (cancelled) return;
@@ -338,12 +338,12 @@ export default function ChatPage() {
 
 		try {
 			await axios.post(
-				`${BASE_URL}/conversation/${selectedId}/sendMessage`,
+				`${API_BASE}/conversation/${selectedId}/sendMessage`,
 				{ message },
 				{ withCredentials: true }
 			);
 			const { data } = await axios.get<Conversation>(
-				`${BASE_URL}/conversation/${selectedId}`,
+				`${API_BASE}/conversation/${selectedId}`,
 				{ withCredentials: true }
 			);
 			mergeConversation(data);
@@ -403,28 +403,27 @@ export default function ChatPage() {
 
 	return (
 		<>
-			{/* Outside the fixed page container: `position: fixed` makes it a stacking
-			    context, which would trap the toast under the z-50 navbar. */}
+			{/* Fills the area beside the sidebar (below the 56px top bar on mobile). */}
 			<Toast ref={toast} />
-			<div className="fixed inset-x-0 bottom-0 top-16 bg-[var(--surface-a)]">
+			<div className="h-[calc(100dvh-3.5rem)] bg-sk-bg md:h-dvh">
 				<div className="flex h-full overflow-hidden">
-					<div className="w-1/3 bg-[var(--surface-a)] border-r-1 border-[var(--gray-900)] flex flex-col min-h-0">
+					<div className="w-1/3 bg-sk-bg border-r-1 border-sk-border flex flex-col min-h-0">
 						<div className="flex items-center gap-2 px-4 pt-6 pb-4">
 							<div className="relative flex-1">
-								<i className="pi pi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+								<i className="pi pi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-sk-muted text-sm" />
 								<input
 									value={search}
 									onChange={e => setSearch(e.target.value)}
 									type="text"
 									placeholder="Search conversations"
-									className="w-full rounded-lg text-sm text-white placeholder:text-gray-400"
-									style={{ background: "var(--gray-62)", paddingLeft: "2.5rem" }}
+									className="w-full rounded-lg text-sm text-sk-text placeholder:text-sk-muted"
+									style={{ background: "var(--sk-card2)", paddingLeft: "2.5rem" }}
 								/>
 							</div>
 						</div>
 						<div className="flex-1 overflow-y-auto divide-y divide-[var(--gray-900)]">
 							{isLoading ? (
-								<div className="p-6 text-center text-sm text-gray-400">
+								<div className="p-6 text-center text-sm text-sk-muted">
 									Loading conversations...
 								</div>
 							) : (
@@ -439,7 +438,7 @@ export default function ChatPage() {
 								))
 							)}
 							{!isLoading && visibleChats.length === 0 && (
-								<div className="p-6 text-center text-sm text-gray-400">
+								<div className="p-6 text-center text-sm text-sk-muted">
 									{loadError ?? "No conversations found"}
 								</div>
 							)}
@@ -447,18 +446,18 @@ export default function ChatPage() {
 					</div>
 
 					{/* Chat Panel */}
-					<div className="w-2/3 flex flex-col bg-[var(--surface-a)] min-h-0">
+					<div className="w-2/3 flex flex-col bg-sk-bg min-h-0">
 						{selectedChat ? (
 							<>
 								{/* Header */}
-								<div className="flex items-center justify-between px-6 py-4 border-b-1 border-[var(--gray-900)]">
+								<div className="flex items-center justify-between px-6 py-4 border-b-1 border-sk-border">
 									<div className="flex items-center gap-3">
 										<ConversationAvatar conversation={selectedChat} size={44} />
 										<div className="flex flex-col">
-											<h2 className="text-lg font-semibold text-white">
+											<h2 className="text-lg font-semibold text-sk-text">
 												{selectedChat.name}
 											</h2>
-											<p className="text-sm text-gray-400">
+											<p className="text-sm text-sk-muted">
 												Members: {formatMembers(selectedChat.users)}
 											</p>
 										</div>
@@ -470,14 +469,14 @@ export default function ChatPage() {
 												label="Invite"
 												icon="pi pi-user-plus"
 												onClick={() => void createInvite()}
-												className="px-4 py-1 border border-blue-400 text-blue-400 bg-transparent rounded-full text-sm"
+												className="px-4 py-1 border border-sk-accent text-sk-link bg-transparent rounded-full text-sm"
 											/>
 										)}
 										<Button
 											label="View Status"
 											icon="pi pi-info-circle"
 											onClick={() => setStatusOpen(true)}
-											className="px-4 py-1 border border-[var(--primary-color)] text-[var(--primary-color)] bg-transparent rounded-full text-sm"
+											className="px-4 py-1 border border-sk-accent text-sk-link bg-transparent rounded-full text-sm"
 										/>
 									</div>
 								</div>
@@ -495,10 +494,10 @@ export default function ChatPage() {
 								<div className="flex flex-col flex-1 overflow-hidden min-h-0">
 									<div
 										ref={messagesRef}
-										className="flex-1 px-4 py-4 overflow-y-auto space-y-3 bg-[var(--surface-a)]"
+										className="flex-1 px-4 py-4 overflow-y-auto space-y-3 bg-sk-bg"
 									>
 										{selectedChat.messages.length === 0 ? (
-											<div className="h-full flex items-center justify-center text-sm text-gray-400">
+											<div className="h-full flex items-center justify-center text-sm text-sk-muted">
 												No messages yet
 											</div>
 										) : (
@@ -511,7 +510,7 @@ export default function ChatPage() {
 								</div>
 							</>
 						) : (
-							<div className="h-full flex items-center justify-center text-sm text-gray-400">
+							<div className="h-full flex items-center justify-center text-sm text-sk-muted">
 								Select a conversation to start chatting
 							</div>
 						)}
@@ -538,7 +537,7 @@ function useApplicationForConversation(
 		let cancelled = false;
 		axios
 			.get<ApplicationSummary>(
-				`${BASE_URL}/application/conversation/${conversationId}`,
+				`${API_BASE}/application/conversation/${conversationId}`,
 				{ withCredentials: true }
 			)
 			.then(({ data }) => {
@@ -562,22 +561,22 @@ const STAGE_INFO: Record<
 	NOT_SENT: {
 		label: "Not sent",
 		detail: "The group is still preparing this application.",
-		color: "#94a3b8"
+		color: "var(--sk-muted)"
 	},
 	SENT: {
 		label: "Sent to landlord",
 		detail: "Waiting for the landlord to respond.",
-		color: "#23b7c5"
+		color: "var(--sk-accent)"
 	},
 	ACCEPTED: {
 		label: "Accepted",
 		detail: "The landlord accepted this application.",
-		color: "#10b981"
+		color: "var(--sk-ok)"
 	},
 	REJECTED: {
 		label: "Rejected",
 		detail: "The landlord declined this application.",
-		color: "#ef4444"
+		color: "var(--sk-danger)"
 	}
 };
 
@@ -625,31 +624,31 @@ function ChatStatusDialog({
 			dismissableMask
 			className="chat-status-dialog w-[92vw] max-w-md"
 		>
-			<div className="flex flex-col gap-5 text-white">
+			<div className="flex flex-col gap-5 text-sk-text">
 				<section>
-					<h3 className="text-xs uppercase tracking-wide text-gray-400 mb-2">
+					<h3 className="text-xs uppercase tracking-wide text-sk-muted mb-2">
 						Application status
 					</h3>
 					{stage ? (
-						<div className="flex items-start gap-3 rounded-lg p-3 bg-[var(--gray-62)]">
+						<div className="flex items-start gap-3 rounded-lg p-3 bg-[var(--sk-card2)]">
 							<span
 								className="mt-1.5 shrink-0 rounded-full"
 								style={{ width: 10, height: 10, background: stage.color }}
 							/>
 							<div>
 								<p className="font-semibold">{stage.label}</p>
-								<p className="text-sm text-gray-300">{stage.detail}</p>
+								<p className="text-sm text-sk-text2">{stage.detail}</p>
 							</div>
 						</div>
 					) : (
-						<p className="text-sm text-gray-300">
+						<p className="text-sm text-sk-text2">
 							This chat isn't linked to an application.
 						</p>
 					)}
 				</section>
 
 				<section>
-					<h3 className="text-xs uppercase tracking-wide text-gray-400 mb-2">
+					<h3 className="text-xs uppercase tracking-wide text-sk-muted mb-2">
 						Members ({conversation.users.length})
 					</h3>
 					<ul className="flex flex-col gap-3 max-h-64 overflow-y-auto">
@@ -659,11 +658,11 @@ function ChatStatusDialog({
 								<span className="font-medium">
 									{member.name}
 									{member._id === currentUser?._id && (
-										<span className="text-gray-400 font-normal"> (you)</span>
+										<span className="text-sk-muted font-normal"> (you)</span>
 									)}
 								</span>
 								{application?.owner === member._id && (
-									<span className="ml-auto text-xs text-[var(--primary-color)]">
+									<span className="ml-auto text-xs text-sk-link">
 										Admin
 									</span>
 								)}
@@ -682,13 +681,13 @@ function ChatStatusDialog({
 								<Button
 									label="Cancel"
 									onClick={() => setConfirming(false)}
-									className="px-4 py-1 border border-gray-500 text-gray-200 bg-transparent rounded-full text-sm"
+									className="px-4 py-1 border border-sk-border2 text-sk-text bg-transparent rounded-full text-sm"
 								/>
 								<Button
 									label="Delete"
 									loading={deleting}
 									onClick={() => void handleDelete()}
-									className="px-4 py-1 border border-red-500 bg-red-500 text-white rounded-full text-sm"
+									className="px-4 py-1 border border-sk-danger bg-sk-danger text-sk-on-accent rounded-full text-sm"
 								/>
 							</div>
 						</div>
@@ -697,7 +696,7 @@ function ChatStatusDialog({
 							label="Delete Application"
 							icon="pi pi-trash"
 							onClick={() => setConfirming(true)}
-							className="self-start px-4 py-1 border border-red-500 text-red-400 bg-transparent rounded-full text-sm"
+							className="self-start px-4 py-1 border border-sk-danger text-sk-danger bg-transparent rounded-full text-sm"
 						/>
 					))}
 			</div>
@@ -738,7 +737,7 @@ function MemberAvatar({ user }: { user: ChatUser }) {
 
 // Every conversation the logged-in user is a member of, newest activity first.
 async function fetchConversations(): Promise<Conversation[]> {
-	const { data } = await axios.get<Conversation[]>(`${BASE_URL}/conversation`, {
+	const { data } = await axios.get<Conversation[]>(`${API_BASE}/conversation`, {
 		withCredentials: true
 	});
 
@@ -873,7 +872,7 @@ function DateDivider({ label }: { label: string }) {
 	return (
 		<div className="flex items-center gap-3 px-2">
 			<div className="flex-1 h-px bg-[var(--gray-900)]" />
-			<span className="text-xs text-gray-400 shrink-0">{label}</span>
+			<span className="text-xs text-sk-muted shrink-0">{label}</span>
 			<div className="flex-1 h-px bg-[var(--gray-900)]" />
 		</div>
 	);
@@ -903,27 +902,27 @@ function ChatInput({ send, toast }: ChatInputProps) {
 	};
 
 	return (
-		<div className="border-t-1 border-[var(--gray-900)] p-4 flex items-center gap-3">
+		<div className="border-t-1 border-sk-border p-4 flex items-center gap-3">
 			<button
 				type="button"
 				className="shrink-0 rounded-full p-2.5 flex items-center justify-center"
-				style={{ backgroundColor: "var(--gray-62)" }}
+				style={{ backgroundColor: "var(--sk-card2)" }}
 				aria-label="Attach file"
 			>
-				<i className="pi pi-paperclip text-white text-sm" />
+				<i className="pi pi-paperclip text-sk-text text-sm" />
 			</button>
 			<input
 				value={input}
 				onChange={e => setInput(e.target.value)}
 				onKeyDown={e => e.key === "Enter" && handleSend()}
-				className="w-full rounded-lg px-3 py-2 text-sm text-white placeholder:!text-white"
+				className="w-full rounded-lg px-3 py-2 text-sm text-sk-text placeholder:!text-sk-muted"
 				placeholder="Type a message..."
-				style={{ backgroundColor: "var(--gray-62)" }}
+				style={{ backgroundColor: "var(--sk-card2)" }}
 			/>
 			<Button
 				onClick={() => handleSend()}
 				label="Send"
-				className="px-4 py-1 border border-blue-400 text-blue-400 bg-transparent rounded-full text-sm"
+				className="px-4 py-1 border border-sk-accent text-sk-link bg-transparent rounded-full text-sm"
 			/>
 		</div>
 	);
@@ -940,19 +939,19 @@ function ChatMessage({ data, isMe, showLabel }: ChatMessageProp) {
 		<div className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
 			<div className="max-w-[55%]">
 				{showLabel && (
-					<div className="text-xs mb-1 text-gray-300">{data.sender.name}</div>
+					<div className="text-xs mb-1 text-sk-text2">{data.sender.name}</div>
 				)}
 				<div
 					className={`px-4 py-3 text-sm rounded-xl shadow-sm border ${
 						isMe
-							? "bg-[var(--primary-color)] text-white border-[var(--primary-color)]"
+							? "bg-sk-accent text-sk-on-accent border-sk-accent"
 							: "chat-bubble--received"
 					}`}
 				>
 					<MessageContent data={data} />
 				</div>
 				<div
-					className={`text-xs mt-1 text-gray-400 ${
+					className={`text-xs mt-1 text-sk-muted ${
 						isMe ? "text-right" : ""
 					}`}
 				>
@@ -997,7 +996,7 @@ function MessageContent({ data }: { data: Message }) {
 type AvatarConfig = { icon?: string; initials?: string; color: string };
 
 const AVATAR_CONFIG: Record<string, AvatarConfig> = {
-	c1: { initials: "A&B", color: "#10b981" },
+	c1: { initials: "A&B", color: "var(--sk-ok)" },
 	c2: { icon: "pi pi-building", color: "#1b2f4a" },
 	c3: { initials: "SF", color: "#1b2f4a" },
 	c4: { icon: "pi pi-calendar", color: "#1b2f4a" },
@@ -1075,39 +1074,39 @@ function ConverationsElem({
 			key={converation._id}
 			onClick={() => setSelected(converation._id)}
 			className={`relative flex items-center justify-between gap-4 p-4 px-5 cursor-pointer transition ${
-				isSelected ? "bg-[var(--gray-62)]" : "hover:bg-[var(--gray-62)]"
+				isSelected ? "bg-[var(--sk-card2)]" : "hover:bg-[var(--sk-card2)]"
 			}`}
 		>
 			<div
 				className={`absolute left-0 top-0 bottom-0 w-[3px] ${
-					isSelected ? "bg-[var(--primary-color)]" : "bg-transparent"
+					isSelected ? "bg-sk-accent" : "bg-transparent"
 				}`}
 			/>
 			<div className="flex items-center gap-3 overflow-hidden">
 				<ConversationAvatar conversation={converation} />
 				<div className="overflow-hidden">
-					<p className="font-medium text-base text-white truncate">
+					<p className="font-medium text-base text-sk-text truncate">
 						{converation.name}
 					</p>
 					{lastMessage && (
 						<p className="text-sm truncate">
 							{currentUser && lastMessage.sender._id === currentUser._id && (
-								<span className="text-[var(--primary-color)]">You: </span>
+								<span className="text-sk-link">You: </span>
 							)}
-							<span className="text-gray-300">{lastMessage.data}</span>
+							<span className="text-sk-text2">{lastMessage.data}</span>
 						</p>
 					)}
 				</div>
 			</div>
 			<div className="flex flex-col items-end shrink-0 min-w-[50px] gap-1.5">
-				<p className="text-sm text-gray-400">{formatListTimestamp(lastActivity)}</p>
+				<p className="text-sm text-sk-muted">{formatListTimestamp(lastActivity)}</p>
 				{!!converation.unreadCount && (
 					<span
-						className="flex items-center justify-center rounded-full text-[11px] font-semibold text-white"
+						className="flex items-center justify-center rounded-full text-[11px] font-semibold text-sk-on-accent"
 						style={{
 							width: 18,
 							height: 18,
-							background: "var(--primary-color)"
+							background: "var(--sk-accent)"
 						}}
 					>
 						{converation.unreadCount}

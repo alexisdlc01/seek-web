@@ -10,7 +10,6 @@ type NavbarDesktopProps = {
 }
 
 export default function NavbarDesktop({ user, logout, logo }) {
-	console.log("USER", user);
 	const navigate = useNavigate();
 	const loggedIn = !!user;
 	const { theme, setTheme } = useNavbarTheme();
@@ -73,21 +72,24 @@ export default function NavbarDesktop({ user, logout, logo }) {
 						<>
 							<Button
 								//@ts-ignore
-								label={<span style={{ color: oppositeBackgroundTheme }}>Dashboard</span>}
+								label="Dashboard"
+						style={{ color: oppositeBackgroundTheme }}
 								text
 								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 								onClick={() => navigate("/dashboard")}
 							/>
 							<Button
 								//@ts-ignore
-								label={<span style={{ color: oppositeBackgroundTheme }}>Listings</span>}
+								label="Listings"
+						style={{ color: oppositeBackgroundTheme }}
 								text
 								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 								onClick={() => navigate("/listings")}
 							/>
 							<Button
 								//@ts-ignore
-								label={<span style={{ color: oppositeBackgroundTheme }}>Chat</span>}
+								label="Chat"
+						style={{ color: oppositeBackgroundTheme }}
 								text
 								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 								onClick={() => navigate("/chat")}
@@ -97,21 +99,24 @@ export default function NavbarDesktop({ user, logout, logo }) {
 						<>
 							<Button
 								//@ts-ignore
-								label={<span style={{ color: oppositeBackgroundTheme }}>Home</span>}
+								label="Home"
+						style={{ color: oppositeBackgroundTheme }}
 								text
 								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 								onClick={() => navigate("/")}
 							/>
 							<Button
 								//@ts-ignore
-								label={<span style={{ color: oppositeBackgroundTheme }}>About</span>}
+								label="About"
+						style={{ color: oppositeBackgroundTheme }}
 								text
 								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 								onClick={() => navigate("/about")}
 							/>
 							<Button
 								//@ts-ignore
-								label={<span style={{ color: oppositeBackgroundTheme }}>Help</span>}
+								label="Help"
+						style={{ color: oppositeBackgroundTheme }}
 								text
 								className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 								onClick={() => navigate("/contact")}
@@ -178,19 +183,22 @@ export default function NavbarDesktop({ user, logout, logo }) {
 				// not logged in (keep your login dropdown as before)
 				<>
 					<Button
-						label={<span style={{ color: oppositeBackgroundTheme }}>Home</span>}
+						label="Home"
+						style={{ color: oppositeBackgroundTheme }}
 						text
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/")}
 					/>
 					<Button
-						label={<span style={{ color: oppositeBackgroundTheme }}>About</span>}
+						label="About"
+						style={{ color: oppositeBackgroundTheme }}
 						text
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/about")}
 					/>
 					<Button
-						label={<span style={{ color: oppositeBackgroundTheme }}>Help</span>}
+						label="Help"
+						style={{ color: oppositeBackgroundTheme }}
 						text
 						className={`${baseStyle} ${theme === "dark" ? "after:bg-white" : ""}`}
 						onClick={() => navigate("/contact")}
@@ -199,7 +207,8 @@ export default function NavbarDesktop({ user, logout, logo }) {
 					{/* Existing login dropdown */}
 					<div ref={loginWrapRef} className="relative">
 						<Button
-							label={<span style={{ color: oppositeBackgroundTheme }}>Login</span>}
+							label="Login"
+						style={{ color: oppositeBackgroundTheme }}
 							icon="pi pi-chevron-down"
 							iconPos="right"
 							text

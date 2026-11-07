@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
@@ -33,6 +33,22 @@ import ViewListing from "./components/ViewListing.jsx";
 import ResetPasswordPassword from "./pages/ConfirmResetPassword.jsx";
 import ApplicationRequirements from "./components/addPropertySteps/ApplicationRequirementsStep.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import LandlordLayout from "./layouts/LandlordLayout.jsx";
+import StudentLayout from "./layouts/StudentLayout.jsx";
+import RoleLayout from "./layouts/RoleLayout.jsx";
+import Rent from "./pages/Rent.jsx";
+import Contracts from "./pages/Contracts.jsx";
+import Inbox from "./pages/Inbox.jsx";
+import Connectors from "./pages/Connectors.jsx";
+import StudentFind from "./pages/StudentFind.jsx";
+import StudentJoin from "./pages/StudentJoin.jsx";
+import StudentHome from "./pages/StudentHome.jsx";
+import StudentInbox from "./pages/StudentInbox.jsx";
+import StudentProfile from "./pages/StudentProfile.jsx";
+import StudentConnectors from "./pages/StudentConnectors.jsx";
+import StudentRentPlan from "./pages/StudentRentPlan.jsx";
+import StudentDeposit from "./pages/StudentDeposit.jsx";
+import StudentBills from "./pages/StudentBills.jsx";
 
 const NotFound = () => {
 	const navigate = useNavigate();
@@ -67,7 +83,7 @@ const NotFound = () => {
 	);
 };
 
-function App() {
+function PublicSite() {
 	const location = useLocation();
 
 	return (
@@ -106,67 +122,6 @@ function App() {
 								path="/signin/student"
 								element={<SignInStudent />}
 							/>
-
-							<Route
-								path="/listings"
-								element={
-									<ProtectedRoute
-										allowedRoles={["LANDLORD_AGENCY"]}
-									>
-										<Listings />
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/applicants/:listingId?"
-								element={
-									<ProtectedRoute
-										allowedRoles={["LANDLORD_AGENCY"]}
-									>
-										<Applicants />
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/add-listing/:id"
-								element={
-									<ProtectedRoute
-										allowedRoles={["LANDLORD_AGENCY"]}
-									>
-										<AddListing />
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/view-listing/:id"
-								element={
-									<ProtectedRoute
-										allowedRoles={["LANDLORD_AGENCY"]}
-									>
-										<ViewListing />
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/application"
-								element={
-									<ProtectedRoute
-										allowedRoles={["LANDLORD_AGENCY"]}
-									>
-										<Application />
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/chat"
-								element={
-									<ProtectedRoute
-										allowedRoles={["LANDLORD_AGENCY"]}
-									>
-										<Chat />
-									</ProtectedRoute>
-								}
-							/>
 							<Route
 								path="/resetpassword"
 								element={<ResetPassword />}
@@ -178,29 +133,6 @@ function App() {
 							<Route
 								path="/activationSent"
 								element={<ActivationSent />}
-							/>
-							<Route
-								path="/edit-profile"
-								element={
-									<ProtectedRoute
-										allowedRoles={[
-											"STUDENT",
-											"LANDLORD_AGENCY"
-										]}
-									>
-										<EditProfile />
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/dashboard"
-								element={
-									<ProtectedRoute
-										allowedRoles={["LANDLORD_AGENCY"]}
-									>
-										<Dashboard />
-									</ProtectedRoute>
-								}
 							/>
 							<Route
 								path="/verify-email"
@@ -231,6 +163,70 @@ function App() {
 			</div>
 			<Footer />
 		</>
+	);
+}
+
+const LANDLORD = ["LANDLORD_AGENCY"];
+
+function App() {
+	return (
+		<Routes>
+			{/* Landlord app: sidebar layout */}
+			<Route
+				element={
+					<ProtectedRoute allowedRoles={LANDLORD}>
+						<LandlordLayout />
+					</ProtectedRoute>
+				}
+			>
+				<Route path="/dashboard" element={<Dashboard />} />
+				<Route path="/applicants/:listingId?" element={<Applicants />} />
+				<Route path="/application" element={<Application />} />
+				<Route path="/listings" element={<Listings />} />
+				<Route path="/add-listing/:id" element={<AddListing />} />
+				<Route path="/view-listing/:id" element={<ViewListing />} />
+				<Route path="/rent" element={<Rent />} />
+				<Route path="/contracts" element={<Contracts />} />
+				<Route path="/inbox" element={<Inbox />} />
+				<Route path="/connectors" element={<Connectors />} />
+				<Route path="/chat" element={<Chat />} />
+			</Route>
+
+			{/* Student app: sidebar layout */}
+			<Route
+				path="/student"
+				element={
+					<ProtectedRoute allowedRoles={["STUDENT"]}>
+						<StudentLayout />
+					</ProtectedRoute>
+				}
+			>
+				<Route index element={<Navigate to="find" replace />} />
+				<Route path="find" element={<StudentFind />} />
+				<Route path="home" element={<StudentHome />} />
+				<Route path="home/rent" element={<StudentRentPlan />} />
+				<Route path="home/deposit" element={<StudentDeposit />} />
+				<Route path="home/bills" element={<StudentBills />} />
+				<Route path="inbox" element={<StudentInbox />} />
+				<Route path="profile" element={<StudentProfile />} />
+				<Route path="connectors" element={<StudentConnectors />} />
+				<Route path="join/:id" element={<StudentJoin />} />
+			</Route>
+
+			{/* Shared by both roles */}
+			<Route
+				element={
+					<ProtectedRoute allowedRoles={["STUDENT", "LANDLORD_AGENCY"]}>
+						<RoleLayout />
+					</ProtectedRoute>
+				}
+			>
+				<Route path="/edit-profile" element={<EditProfile />} />
+			</Route>
+
+			{/* Public site, sign-in and everything else */}
+			<Route path="*" element={<PublicSite />} />
+		</Routes>
 	);
 }
 

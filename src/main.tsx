@@ -6,17 +6,15 @@ import "./index.css";
 import { PrimeReactProvider } from "primereact/api";
 import { UserProvider } from "./context/UserContext.jsx";
 import { NavbarThemeProvider } from "./context/NavBarThemeContext.jsx";
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { ListingsProvider } from "./context/ListingsContext.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { API_BASE } from "./lib/landlord.js";
 import { client } from "./client/client.gen.ts";
 
 client.setConfig({
-	baseUrl:
-		// @ts-ignore
-		import.meta.NODE_ENV === "development"
-			? "http://localhost:3000/api"
-			: "https://api.seekapp.uk",
+	baseUrl: API_BASE,
 	credentials: "include"
 });
 
@@ -41,11 +39,13 @@ const RootComponent = () => {
 				<Suspense fallback={<LoadingScreen />}>
 					<BrowserRouter>
 						<UserProvider>
-							<NavbarThemeProvider>
-								<ListingsProvider>
-									<App />
-								</ListingsProvider>
-							</NavbarThemeProvider>
+							<ThemeProvider>
+								<NavbarThemeProvider>
+									<ListingsProvider>
+										<App />
+									</ListingsProvider>
+								</NavbarThemeProvider>
+							</ThemeProvider>
 						</UserProvider>
 					</BrowserRouter>
 				</Suspense>

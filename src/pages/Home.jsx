@@ -23,7 +23,6 @@ export default function LandingPage() {
 	const [isStudent, setIsStudent] = useState(false);
 
 	useEffect(() => {
-		console.log("User state changed:", user);
 		if (user?.role === "LANDLORD_AGENCY") {
 			setIsLandlord(true);
 		} else {
@@ -604,9 +603,9 @@ export default function LandingPage() {
 					) : isStudent ? (
 						<motion.div whileHover={{ scale: 1.05 }}>
 							<Button
-								label="Go to Download"
+								label="Find a home"
 								className="equal-btn student"
-								onClick={() => navigate("/download")}
+								onClick={() => navigate("/student/find")}
 							/>
 						</motion.div>
 					) : isLandlord ? (

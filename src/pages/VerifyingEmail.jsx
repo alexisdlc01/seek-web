@@ -4,7 +4,7 @@ import { useContext, useEffect } from "react";
 import axios from "axios";
 import UserContext from "../context/UserContext.jsx";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 export default function VerifyingEmail() {
 	const [searchParams] = useSearchParams();
@@ -18,7 +18,7 @@ export default function VerifyingEmail() {
 			if (token) {
 				try {
 					const res = await axios.post(
-						`${BASE_URL}/auth/verify-email`,
+						`${API_BASE}/auth/verify-email`,
 						{ token, userId },
 						{
 							withCredentials: true
@@ -27,7 +27,7 @@ export default function VerifyingEmail() {
 					if (res.status !== 400) {
 						try {
 							const res = await axios.get(
-								`${BASE_URL}/auth/currentUser`,
+								`${API_BASE}/auth/currentUser`,
 								{ withCredentials: true }
 							);
 							setUser(res.data);

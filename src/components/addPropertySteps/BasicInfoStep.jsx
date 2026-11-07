@@ -10,7 +10,7 @@ import { Calendar } from "primereact/calendar";
 import axios from "axios";
 import { Tooltip } from "primereact/tooltip";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../../lib/landlord.js";
 
 const BasicInfoStep = ({
 	title,
@@ -57,8 +57,24 @@ const BasicInfoStep = ({
 	setNumOfPeople,
 	registrationNumber,
 	setRegistrationNumber,
+	extras,
+	setExtras,
 	next
 }) => {
+	const setExtra = (key, value) =>
+		setExtras(prev => ({ ...prev, [key]: value }));
+	const nationOptions = [
+		{ label: "England", value: "ENGLAND" },
+		{ label: "Wales", value: "WALES" },
+		{ label: "Scotland", value: "SCOTLAND" },
+		{ label: "Northern Ireland", value: "NORTHERN_IRELAND" }
+	];
+	const complianceDates = [
+		["gasSafetyExpiry", "Gas Safety certificate expires"],
+		["eicrExpiry", "EICR (electrical) expires"],
+		["epcExpiry", "EPC expires"],
+		["hmoLicenceExpiry", "HMO licence expires"]
+	];
 	const [registerInputMode, setRegisterInputMode] = useState("number");
 	// "number" | "document"
 
@@ -91,7 +107,7 @@ const BasicInfoStep = ({
 	];
 
 	return (
-		<div className="listing-flow-surface" style={{ background: "#0f0f23", color: "white" }}>
+		<div className="listing-flow-surface bg-sk-bg text-sk-text">
 			<div className="space-y-4">
 				<div className="flex flex-col"></div>
 
@@ -288,34 +304,6 @@ const BasicInfoStep = ({
 			<div className="space-y-4 mt-3">
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					<div className="flex flex-col">
-						<label htmlFor="rent" className="font-medium mb-2">
-							Monthly Rent (£)
-						</label>
-						<InputNumber
-							id="rent"
-							value={rent}
-							onValueChange={e => setRent(e.value)}
-							mode="currency"
-							currency="GBP"
-							locale="en-GB"
-						/>
-					</div>
-					<div className="flex flex-col">
-						<label htmlFor="deposit" className="font-medium mb-2">
-							Security Deposit (£)
-						</label>
-						<InputNumber
-							id="deposit"
-							value={deposit}
-							onValueChange={e => setDeposit(e.value)}
-							mode="currency"
-							currency="GBP"
-							locale="en-GB"
-						/>
-					</div>
-				</div>
-				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-					<div className="flex flex-col">
 						<label
 							htmlFor="availabilityDate"
 							className="font-medium mb-2"
@@ -325,11 +313,12 @@ const BasicInfoStep = ({
 						<Calendar
 							id="availabilityDate"
 							value={availabilityDate}
+							minDate={new Date()}
 							onChange={e => {
-								console.log("new data", e.value);
 								setAvailabilityDate(e.value);
 							}}
 							showIcon
+							dateFormat="dd/mm/yy"
 							className="listing-flow-calendar"
 							panelClassName="listing-flow-panel"
 						/>
@@ -346,6 +335,7 @@ const BasicInfoStep = ({
 							value={endAvailabilityDate}
 							onChange={e => setEndAvailabilityDate(e.value)}
 							showIcon
+							dateFormat="dd/mm/yy"
 							className="listing-flow-calendar"
 							panelClassName="listing-flow-panel"
 						/>
@@ -370,7 +360,7 @@ const BasicInfoStep = ({
 						optionLabel="label"
 						optionValue="value"
 						optionDisabled={false}
-						className="bg-[#141432] rounded-lg w-fit"
+						className="bg-sk-card2 rounded-lg w-fit"
 					/>
 				</div>
 
@@ -428,11 +418,12 @@ const BasicInfoStep = ({
 								}
 
 								const res = await axios.get(
-									`${BASE_URL}/upload/presign`,
+									`${API_BASE}/upload/presign`,
 									{
 										params: {
 											filename: file.name,
 											fileType: file.type,
+											fileSize: file.size,
 											folder: "private"
 										},
 										withCredentials: true
@@ -451,12 +442,12 @@ const BasicInfoStep = ({
 						/>
 
 						{registerOfTitle && (
-							<div className="mt-2 text-sm text-[#1ba4ae] flex items-center">
+							<div className="mt-2 text-sm text-sk-link flex items-center">
 								<span
 									className="cursor-pointer underline"
 									onClick={async () => {
 										const res = await axios.get(
-											`${BASE_URL}/upload/access`,
+											`${API_BASE}/upload/access`,
 											{
 												params: {
 													key: registerOfTitleKeyFromBackend
@@ -482,6 +473,52 @@ const BasicInfoStep = ({
 						)}
 					</div>
 				)}
+			</div>
+
+
+			<div className="mt-8 space-y-4" data-testid="nation-compliance">
+				<h3 className="text-lg font-semibold">
+					Nation and compliance
+				</h3>
+				<div>
+					<label className="font-medium mb-2 block">Nation</label>
+					<Dropdown
+						value={extras.nation}
+						options={nationOptions}
+						onChange={e => setExtra("nation", e.value)}
+						className="w-full"
+					/>
+					{extras.nation === "ENGLAND" && (
+						<p className="text-xs mt-1 listing-flow-text-muted">
+							England: monthly rent only, deposit capped at 5 weeks.
+						</p>
+					)}
+				</div>
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+					{complianceDates.map(([key, label]) => (
+						<div key={key}>
+							<label className="font-medium mb-2 block">{label}</label>
+							<Calendar
+								value={extras[key]}
+								onChange={e => setExtra(key, e.value)}
+								dateFormat="dd/mm/yy"
+								showIcon
+								showButtonBar
+								className="w-full"
+							/>
+						</div>
+					))}
+					<div>
+						<label className="font-medium mb-2 block">
+							Licence number (HMO or selective)
+						</label>
+						<InputText
+							value={extras.licenceNumber || ""}
+							onChange={e => setExtra("licenceNumber", e.target.value)}
+							className="w-full"
+						/>
+					</div>
+				</div>
 			</div>
 
 			<div className="flex pt-8 justify-end">

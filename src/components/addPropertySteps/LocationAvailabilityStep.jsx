@@ -23,12 +23,7 @@ const LocationAvailabilityStep = ({
 	}, []);
 
 	return (
-		<div className="listing-flow-surface"
-			style={{
-				background: "#0f0f23",
-				color: "white"
-			}}
-		>
+		<div className="listing-flow-surface bg-sk-bg text-sk-text">
 			<div className="space-y-4">
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					<div className="flex flex-col">
@@ -69,8 +64,10 @@ const LocationAvailabilityStep = ({
 						<Calendar
 							id="availabilityDate"
 							value={availabilityDate}
+							minDate={new Date()}
 							onChange={e => setAvailabilityDate(e.value)}
 							showIcon
+							dateFormat="dd/mm/yy"
 							className="listing-flow-calendar"
 							panelClassName="listing-flow-panel"
 						/>
@@ -87,6 +84,7 @@ const LocationAvailabilityStep = ({
 							value={endAvailabilityDate}
 							onChange={e => setEndAvailabilityDate(e.value)}
 							showIcon
+							dateFormat="dd/mm/yy"
 							className="listing-flow-calendar"
 							panelClassName="listing-flow-panel"
 						/>

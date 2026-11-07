@@ -4,7 +4,7 @@ import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { motion } from "framer-motion";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import UserContext from "../context/UserContext.jsx";
 import { Toast } from "primereact/toast";
 import BackgroundBubbles from "../components/BackgroundBubbles";
@@ -14,6 +14,7 @@ export default function SignInStudent() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const navigate = useNavigate();
+	const [params] = useSearchParams();
 	const toast = useRef(null);
 
 	const showError = () => {
@@ -81,7 +82,10 @@ export default function SignInStudent() {
 		const res = await login(fullEmail, password);
 		if (res === "Credentials are not valid." || res === "Unauthorized")
 			showError();
-		else navigate("/download");
+		else {
+			const back = params.get("returnTo");
+			navigate(back && /^\/student\/[^/]/.test(back) ? back : "/student/find");
+		}
 	};
 
 	return (

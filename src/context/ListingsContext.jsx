@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 import axios from "axios";
 import UserContext from "./UserContext.jsx";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 const ListingsContext = createContext(undefined);
 export default ListingsContext;
@@ -23,7 +23,7 @@ export const ListingsProvider = ({ children }) => {
 	useEffect(() => {
 		if (!user || user.role !== "LANDLORD_AGENCY") return;
 		(async () => {
-			const res = await axios.get(`${BASE_URL}/listings/mine`, {
+			const res = await axios.get(`${API_BASE}/listings/mine`, {
 				withCredentials: true
 			});
 			setListings(res.data);
@@ -32,7 +32,7 @@ export const ListingsProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (!user || user.role !== "LANDLORD_AGENCY") return;
-		socketRef.current = io(`${BASE_URL}/listings`, {
+		socketRef.current = io(`${API_BASE}/listings`, {
 			withCredentials: true,
 			transports: ["websocket"]
 		});

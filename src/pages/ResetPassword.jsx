@@ -4,7 +4,7 @@ import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 export default function ResetPassword() {
 	const [email, setEmail] = useState("");
@@ -12,7 +12,7 @@ export default function ResetPassword() {
 	const handleSubmit = async e => {
 		e.preventDefault();
 		await axios.post(
-			`${BASE_URL}/auth/forgot-password`,
+			`${API_BASE}/auth/forgot-password`,
 			{ email },
 			{ withCredentials: true }
 		);

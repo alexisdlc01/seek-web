@@ -29,9 +29,6 @@ const FeaturesStep = ({
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	}, []);
 
-	useEffect(() => {
-		console.log("new amenities", amenities);
-	}, [amenities]);
 
 	const allAmenities = useMemo(() => {
 		return [
@@ -106,12 +103,7 @@ const FeaturesStep = ({
 	};
 
 	return (
-		<div className="listing-flow-surface"
-			style={{
-				background: "#0f0f23",
-				color: "white"
-			}}
-		>
+		<div className="listing-flow-surface bg-sk-bg text-sk-text">
 			<div className="space-y-6">
 				<div>
 					<label className="font-medium mb-4 block">

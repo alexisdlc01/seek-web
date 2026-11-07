@@ -1,327 +1,436 @@
-import { Button } from "primereact/button";
-import { Dropdown } from "primereact/dropdown";
-import { Chart } from "primereact/chart";
-import "chart.js/auto";
 import UserContext from "../context/UserContext.jsx";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Alternative } from "../components/Alternative.tsx";
-import { useContext, useEffect, useState } from "react";
-import { FiAlertCircle } from "react-icons/fi";
-import { SelectItem } from "primereact/selectitem";
-import axios from "axios";
+import { useContext, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Toast } from "primereact/toast";
+import {
+	api,
+	gbp,
+	fmtDay,
+	monthLabel,
+	timeAgo,
+	activityRoute,
+	engineerLink,
+	currentMonth,
+	createDraftListing,
+	errMessage,
+	greeting,
+	remindLate
+} from "../lib/landlord.js";
+import { useLandlordRepairs } from "../components/RepairsPanel.jsx";
 import ListingsContext from "../context/ListingsContext";
-// @ts-ignore
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import {
+	Page,
+	PageHeader,
+	Card,
+	Tile,
+	Table,
+	Tr,
+	Chip,
+	btnPrimary,
+	btnGhost,
+	btnSmPrimary,
+	btnSmGhost,
+	Loading,
+	Empty,
+	ErrorState
+} from "../components/sk.jsx";
 
 /* -------------------- Dashboard -------------------- */
+
+type Overview = {
+	month: string;
+	rentCollectedThisMonth: number;
+	rentExpectedThisMonth: number;
+	latePayments: number;
+	lateAmount: number;
+	seekFeeThisMonth: number;
+	occupancy: { let: number; total: number };
+	applicants: { total: number; qualified: number };
+	autopay: { on: number; total: number };
+	deposits: { protected: number; total: number };
+	compliance: {
+		listing: string;
+		listingTitle: string;
+		tenancy: string | null;
+		kind: string;
+		dueDate: string;
+		severity: "low" | "medium" | "high";
+		message: string;
+	}[];
+	properties: {
+		listingId: string;
+		roomsLet: number;
+		roomsTotal: number;
+		applicationsNextYear: number;
+		rentStatus: "NOT_LET" | "LATE" | "PAID" | "DUE" | "NOT_DUE";
+		rentCollected: number;
+		arrears: number;
+		complianceStatus: "OK" | "DUE_SOON" | "ACTION_NEEDED";
+	}[];
+	todo?: { kind: string; applicationId?: string; listingId?: string; listingTitle?: string; members?: number }[];
+	recentActivity: { kind: string; at: string; title: string; link: string }[];
+};
+
+const SEVERITY_DOT: Record<string, string> = {
+	high: "bg-sk-danger",
+	medium: "bg-sk-warn",
+	low: "bg-sk-muted"
+};
+
+const SEVERITY_ORDER = { high: 0, medium: 1, low: 2 };
 
 export default function Dashboard() {
 	const { listings } = useContext(ListingsContext);
 
-	// Map of listingId -> number of (sent/rejected) applications, fetched per-listing
-	// since the backend has no single "all applications across my listings" endpoint.
-	const [applicationCounts, setApplicationCounts] = useState<
-		Record<string, number>
-	>({});
+	const overview = useQuery<Overview>({
+		queryKey: ["landlord-overview"],
+		queryFn: async () => (await api.get("/landlord/overview")).data
+	});
+	const ov = overview.data;
 
-	useEffect(() => {
-		if (!listings || listings.length === 0) {
-			setApplicationCounts({});
-			return;
+	const toast = useRef<Toast>(null);
+	const payments = useQuery({
+		queryKey: ["landlord-payments", currentMonth()],
+		queryFn: async () => (await api.get("/payments/landlord", { params: { month: currentMonth() } })).data
+	});
+	const tenancies = useQuery({
+		queryKey: ["landlord-tenancies"],
+		queryFn: async () => (await api.get("/tenancies/landlord")).data
+	});
+	const repairs = useLandlordRepairs();
+	const payRows: any[] = payments.data?.rows ?? [];
+	const lateRows = payRows.filter(r => r.status === "LATE");
+	const openRepairs: any[] = (repairs.data ?? []).filter((r: any) => r.status !== "FIXED");
+
+	const remind = async (rows: any[]) => {
+		try {
+			const { sent, skipped } = await remindLate(rows);
+			toast.current?.show({
+				severity: sent ? "success" : "warn",
+				summary: sent ? "Reminder sent" : "No reminder sent",
+				detail: skipped ? `${skipped} already reminded in the last 24 hours.` : "They will see it in their Seek thread.",
+				life: 5000
+			});
+		} catch (err) {
+			toast.current?.show({ severity: "error", summary: "Could not send the reminder", detail: errMessage(err), life: 5000 });
 		}
-		(async () => {
-			const entries = await Promise.all(
-				listings.map(async (listing: any) => {
-					try {
-						const res = await axios.get(
-							`${BASE_URL}/application/listing/${listing._id}`,
-							{ withCredentials: true }
-						);
-						return [listing._id, res.data.length] as const;
-					} catch {
-						return [listing._id, 0] as const;
-					}
-				})
-			);
-			setApplicationCounts(Object.fromEntries(entries));
-		})();
-	}, [listings]);
+	};
 
-	const totalApplications = Object.values(applicationCounts).reduce(
-		(sum, count) => sum + count,
-		0
+	// Month CSV: the KPIs, then one line per payment (/payments/landlord rows).
+	const exportCsv = () => {
+		const cell = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+		const pounds = (p: number | null | undefined) => ((p ?? 0) / 100).toFixed(2);
+		const m = currentMonth();
+		const lines: unknown[][] = [
+			["Seek export", m],
+			["Rent collected", pounds(ov?.rentCollectedThisMonth)],
+			["Rent expected", pounds(ov?.rentExpectedThisMonth)],
+			["Late payments", ov?.latePayments ?? 0],
+			["Late amount", pounds(ov?.lateAmount)],
+			["Seek fee", pounds(ov?.seekFeeThisMonth)],
+			[],
+			["Tenant", "Property", "Amount", "Status", "Fee", "Payout"],
+			...payRows.map(r => [r.tenant?.name, r.property, pounds(r.amount), r.status, pounds(r.fee), pounds(r.payout)])
+		];
+		const blob = new Blob([lines.map(l => l.map(cell).join(",")).join("\n")], { type: "text/csv" });
+		const a = document.createElement("a");
+		a.href = URL.createObjectURL(blob);
+		a.download = `seek-${m}.csv`;
+		a.click();
+		URL.revokeObjectURL(a.href);
+	};
+
+	const addProperty = async () => {
+		try {
+			navigate(`/add-listing/${await createDraftListing()}`);
+		} catch (err) {
+			toast.current?.show({ severity: "error", summary: "Could not start a property", detail: errMessage(err), life: 5000 });
+		}
+	};
+
+	// Per-property figures (rooms let, open queue) come from the overview.
+	const applicationCounts: Record<string, number> = Object.fromEntries(
+		(ov?.properties ?? []).map(p => [p.listingId, p.applicationsNextYear])
 	);
 
-	const topPerformingProperty = (() => {
-		if (!listings || listings.length === 0) return "None";
-		let best: any = null;
-		for (const listing of listings as any[]) {
-			const count = applicationCounts[listing._id] ?? 0;
-			if (!best || count > (applicationCounts[best._id] ?? 0)) {
-				best = listing;
-			}
-		}
-		const bestCount = best ? (applicationCounts[best._id] ?? 0) : 0;
-		return bestCount > 0
-			? best.streetAddress || best.propertyTitle || "Unnamed property"
-			: "None";
-	})();
-
-	const [range, setRange] = useState("All time");
 	const { user } = useContext(UserContext);
 	const navigate = useNavigate();
 
-	const ranges = ["7 days", "30 days", "All time"].map(r => ({
-		label: r,
-		value: r
-	}));
+	const today = new Date().toLocaleDateString("en-GB", {
+		weekday: "long",
+		day: "numeric",
+		month: "long"
+	});
+	const firstName = (user?.name ?? "").split(" ")[0];
 
-	const lineData = {
-		labels: [
-			"14 Feb",
-			"15 Feb",
-			"16 Feb",
-			"17 Feb",
-			"18 Feb",
-			"19 Feb",
-			"20 Feb",
-			"21 Feb",
-			"22 Feb",
-			"23 Feb",
-			"24 Feb",
-			"25 Feb",
-			"26 Feb",
-			"27 Feb"
-		],
-		datasets: [
-			{
-				label: "Sessions",
-				data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				borderColor: "#23b7c5",
-				backgroundColor: "rgba(35,183,197,0.16)",
-				borderWidth: 3,
-				tension: 0.35,
-				pointRadius: 3,
-				pointHoverRadius: 5,
-				pointBackgroundColor: "#23b7c5",
-				pointBorderWidth: 0,
-				fill: true,
-				spanGaps: true
-			}
-		]
-	};
-
-	const lineOptions = {
-		maintainAspectRatio: false,
-		responsive: true,
-		layout: { padding: { top: 24, right: 12, bottom: 12, left: 12 } },
-		elements: { line: { borderCapStyle: "round" } },
-		plugins: {
-			legend: { display: false },
-			tooltip: {
-				enabled: true,
-				mode: "index",
-				intersect: false,
-				backgroundColor: "#0f1523",
-				borderColor: "rgba(230,237,243,0.25)",
-				borderWidth: 1,
-				titleColor: "#dbe7f2",
-				bodyColor: "#dbe7f2",
-				displayColors: false
-			}
-		},
-		scales: {
-			x: {
-				grid: { color: "#626262" },
-				ticks: {
-					color: "#626262",
-					maxRotation: 0,
-					autoSkip: true,
-					font: { size: 12 }
-				}
-			},
-			y: {
-				grid: { color: "#626262" },
-				ticks: {
-					color: "#626262",
-					font: { size: 12 },
-					callback: v => Number(v).toLocaleString()
-				},
-				suggestedMin: 0
-			}
-		}
-	};
+	const offers = (ov?.todo ?? []).filter((t: any) => t.kind === "MAKE_OFFER" && t.applicationId) as any[];
+	type Item = { dot: string; title: string; sub: string; cta: string; to: string; primary: boolean; onClick?: () => void; href?: string };
+	const needsYou: Item[] = ov
+		? [
+				...(offers.length > 0
+					? offers.map(t => ({
+							dot: "bg-sk-accent",
+							title: t.title,
+							sub: `${t.members ?? 1} ${t.members === 1 ? "person" : "people"} · all passports verified`,
+							cta: "Make offer",
+							to: `/application?listing=${t.listingId}&id=${t.applicationId}`,
+							primary: true
+						}))
+					: ov.applicants.qualified > 0
+					? [
+							{
+								dot: "bg-sk-accent",
+								title: `${ov.applicants.qualified} qualified ${ov.applicants.qualified === 1 ? "household" : "households"} waiting`,
+								sub: "Passport complete, ready for a decision",
+								cta: "Review",
+								to: "/applicants",
+								primary: true
+							}
+						]
+					: []),
+				...lateRows.map(r => ({
+					dot: "bg-sk-danger",
+					title: `Rent late: ${r.tenant?.name ?? "Tenant"}, ${r.property ?? "your property"}`,
+					sub: `${gbp(r.amount)} · due ${fmtDay(r.dueDate)}${r.remindersSent ? " · reminded" : ""}`,
+					cta: "Remind",
+					onClick: () => remind([r]),
+					to: `/inbox?tenancy=${r.tenancy}`,
+					primary: false
+				})),
+				...openRepairs.map((r: any) => ({
+					dot: "bg-sk-warn",
+					title: `Repair: ${r.title}, ${r.tenancy?.listing?.propertyTitle ?? r.tenancy?.listing?.streetAddress ?? "your property"}`,
+					sub:
+						r.status === "SCHEDULED" && r.scheduledFor
+							? `Booked ${new Date(r.scheduledFor).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}`
+							: `Reported by ${r.reportedBy?.name ?? "a tenant"}, not booked yet`,
+					cta: "Thread",
+					to: `/inbox?tenancy=${r.tenancy?._id ?? ""}`,
+					primary: false
+				})),
+				...[...ov.compliance]
+					.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity])
+					.map(c => ({
+						dot: SEVERITY_DOT[c.severity],
+						title: `${c.listingTitle}: ${c.message}`,
+						sub: `Due ${fmtDay(c.dueDate)}`,
+						cta: engineerLink(c.kind)?.label ?? "Open",
+						to: "/contracts",
+						href: engineerLink(c.kind)?.href,
+						primary: false,
+						onClick: undefined
+					}))
+			]
+		: [];
 
 	return (
-		<div
-			className="min-h-screen"
-			style={{ background: "var(--surface-ground)" }}
-		>
-			{/* ===================== DESKTOP (unchanged) ===================== */}
-			<div className="block px-6 lg:px-8 py-6">
-				<div className="max-w-7xl mx-auto space-y-6">
-					{/* Header */}
-					<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-						<h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-color)]">
-							Welcome back, {user.name}
-						</h1>
-						<div className="flex gap-3">
-							<div className="relative">
-								<Button
-									label="Applications"
-									icon="pi pi-inbox"
-									className="dashboard-action-button"
-									onClick={() => navigate("/applicants")}
-								/>
-							</div>
-							<div className="relative">
-								<Button
-									label="Messages"
-									icon="pi pi-comments"
-									className="dashboard-action-button"
-									onClick={() => navigate("/chat")}
-								/>
-							</div>
-							<Button
-								icon="pi pi-pencil"
-								rounded
-								outlined
-								className="dashboard-action-button"
-								aria-label="Edit"
-							/>
-						</div>
-					</div>
-
-					<div className="grid gap-6 md:grid-cols-12 items-stretch">
-						{/* Big chart */}
-						<div
-							className="md:col-span-8 rounded-xl border border-[var(--surface-border)] p-4 flex flex-col h-full"
-							style={{ background: "var(--surface-ground)" }}
-						>
-							<div className="flex items-center justify-between mb-3">
-								<p className="font-bold text-white">
-									Portfolio Engagement Trends:
-								</p>
-								<Dropdown
-									value={range}
-									onChange={e => setRange(e.value)}
-									options={ranges}
-									className="listing-flow-dropdown w-36 !rounded-lg"
-									panelClassName="listing-flow-panel"
-								/>
-							</div>
-							<div className="relative flex-1 min-h-0">
-								<Chart
-									type="line"
-									data={lineData}
-									options={{
-										...lineOptions,
-										maintainAspectRatio: false,
-										scales: {
-											...lineOptions.scales,
-											x: {
-												...lineOptions.scales.x,
-												ticks: {
-													...lineOptions.scales.x.ticks,
-													minRotation: 45,
-													maxRotation: 45
-												}
-											}
-										}
-									}}
-									className="w-full h-full"
-									style={{
-										background: "var(--surface-ground)",
-										borderRadius: "8px"
-									}}
-								/>
-							</div>
-						</div>
-						<KpiRail
-							totalApplications={totalApplications}
-							topPerformingProperty={topPerformingProperty}
-						/>
-					</div>
-					<Alternative
-						ok={listings && listings.length > 0}
-						fallback={<ListingsPlaceholder />}
-					>
-						<PropertyAnalytics
-							listings={listings ?? []}
-							applicationCounts={applicationCounts}
-						/>
-					</Alternative>
-				</div>
-			</div>
-		</div>
-	);
-}
-
-function ListingsPlaceholder() {
-	return (
-		<div className="rounded-md py-4 items-center flex flex-col gap-2 w-full" style={{ background: "var(--surface-100)", color: "var(--surface-900)" }}>
-			<h2 className="font-bold text-xl" style={{ color: "var(--surface-900)" }}>No Listings</h2>
-			<FiAlertCircle className="text-[var(--surface-900)]" size={24} />
-			<p style={{ color: "var(--surface-900)" }}>
-				Add Listings to View Listings Specific Data
-			</p>
-		</div>
-	);
-}
-
-/* -------------------- Small helpers -------------------- */
-
-type KPIProps = { title: string; value: string; icon: string; small?: boolean };
-
-type KPIRailProps = {
-	totalApplications: number;
-	topPerformingProperty: string;
-};
-
-function KpiRail({ totalApplications, topPerformingProperty }: KPIRailProps) {
-	return (
-		<div className="md:col-span-4 space-y-6">
-			<Kpi
-				title="Total Applications"
-				value={`${totalApplications}`}
-				icon="pi pi-file"
-			/>
-			<Kpi
-				title="Top Performing Property"
-				value={topPerformingProperty}
-				icon="pi pi-chart-bar"
-			/>
-			<Kpi
-				title="Average Time to Lease"
-				value="N/A"
-				icon="pi pi-clock"
-			/>
-			<Kpi
-				title="Portfolio Occupancy Rate"
-				value="N/A"
-				icon="pi pi-home"
-			/>
-		</div>
-	);
-}
-
-function Kpi({ title, value, icon, small }: KPIProps) {
-	return (
-		<div
-			className="rounded-xl border border-white/70 p-4"
-			style={{ background: "var(--surface-ground)" }}
-		>
-			<div className="flex items-center gap-3">
-				<i className={`${icon} text-xl text-white`} />
-				<p className="text-sm text-white">{title}</p>
-			</div>
-			<p
-				className={`mt-2 font-semibold text-white truncate ${
-					small ? "text-sm" : "text-2xl"
-				}`}
+		<Page>
+			<Toast ref={toast} position="bottom-right" />
+			<PageHeader
+				eyebrow={today}
+				title={firstName ? `${greeting()}, ${firstName}` : greeting()}
 			>
-				{value}
-			</p>
+				<button type="button" className={btnGhost} onClick={exportCsv} disabled={!ov || payments.isLoading}>
+					Export
+				</button>
+				<button type="button" className={btnGhost} onClick={() => navigate("/inbox")}>
+					Messages
+				</button>
+				<button type="button" className={btnPrimary} onClick={addProperty}>
+					Add property
+				</button>
+			</PageHeader>
+
+			{overview.isLoading && <Loading label="Loading your overview" />}
+			{overview.isError && (
+				<ErrorState error={overview.error} onRetry={() => overview.refetch()} />
+			)}
+
+			{ov && (
+				<>
+					<div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+						<Tile
+							label={`Rent collected · ${monthLabel(ov.month).split(" ")[0]}`}
+							value={gbp(ov.rentCollectedThisMonth)}
+							progress={
+								ov.rentExpectedThisMonth
+									? Math.min(100, Math.round((ov.rentCollectedThisMonth / ov.rentExpectedThisMonth) * 100))
+									: 0
+							}
+							sub={`of ${gbp(ov.rentExpectedThisMonth)} expected`}
+						/>
+						<Tile
+							label="Late payments"
+							value={String(ov.latePayments)}
+							sub={ov.latePayments ? `${gbp(ov.lateAmount)} outstanding` : "Nobody is late"}
+							subClass={ov.latePayments ? "font-semibold text-sk-warn" : "text-sk-text2"}
+						/>
+						<Tile
+							label="Occupancy"
+							value={`${ov.occupancy.let} of ${ov.occupancy.total}`}
+							sub={`${ov.autopay.on} of ${ov.autopay.total} tenants on autopay`}
+						/>
+						<Tile
+							label="Qualified applicants"
+							value={String(ov.applicants.qualified)}
+							sub={`${ov.applicants.total} applications in total`}
+						/>
+						<Tile
+							label="Deposits protected"
+							value={`${ov.deposits.protected} of ${ov.deposits.total}`}
+							sub={ov.deposits.protected < ov.deposits.total ? "Some still need protecting" : "All protected"}
+							subClass={ov.deposits.protected < ov.deposits.total ? "font-semibold text-sk-warn" : "text-sk-text2"}
+						/>
+						<Tile
+							label="Seek fee this month"
+							value={gbp(ov.seekFeeThisMonth)}
+							sub="0.5% of rent collected. No fee if rent isn't paid."
+						/>
+					</div>
+
+					<div className="flex flex-wrap items-start gap-6">
+						<Card title="Needs you today" className="min-w-0 flex-[1_1_360px] !gap-1">
+							{needsYou.length === 0 && (
+								<Empty title="You're all caught up">Nothing needs your attention right now.</Empty>
+							)}
+							{needsYou.map(item => (
+								<div
+									key={item.title}
+									className="flex items-center gap-3 border-t border-sk-hair py-3"
+								>
+									<span className={`h-2.5 w-2.5 shrink-0 rounded-full ${item.dot}`} />
+									<div className="flex min-w-0 flex-1 flex-col gap-0.5">
+										<span className="text-sm font-semibold">{item.title}</span>
+										<span className="text-[12.5px] text-sk-muted">{item.sub}</span>
+									</div>
+									{item.onClick ? (
+										<button type="button" className={btnSmGhost} onClick={item.onClick}>
+											{item.cta}
+										</button>
+									) : item.href ? (
+										<a href={item.href} target="_blank" rel="noopener noreferrer" className={btnSmGhost}>
+											{item.cta}
+										</a>
+									) : (
+										<Link to={item.to} className={item.primary ? btnSmPrimary : btnSmGhost}>
+											{item.cta}
+										</Link>
+									)}
+								</div>
+							))}
+						</Card>
+
+						<Card title="Compliance" className="min-w-0 flex-[1_1_360px] !gap-1">
+							{ov.compliance.length === 0 && (
+								<Empty title="Nothing due">Certificates and licences are up to date.</Empty>
+							)}
+							{[...ov.compliance].sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]).map((c, i) => (
+								<div key={i} className="flex items-start gap-3 border-t border-sk-hair py-3">
+									<span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${SEVERITY_DOT[c.severity]}`} />
+									<div className="flex min-w-0 flex-1 flex-col gap-0.5">
+										<span className="text-sm font-semibold">{c.listingTitle}</span>
+										<span className="text-[12.5px] text-sk-text2">{c.message}</span>
+									</div>
+									<span className="shrink-0 text-[12.5px] text-sk-muted">{fmtDay(c.dueDate)}</span>
+								</div>
+							))}
+						</Card>
+					</div>
+
+					<Card title="Recent activity" className="!gap-1">
+						{ov.recentActivity.length === 0 && (
+							<Empty title="No activity yet">Payments, applications and repairs show up here.</Empty>
+						)}
+						{ov.recentActivity.map((a, i) => (
+							<Link
+								key={i}
+								to={activityRoute(a.kind, a.link)}
+								className="flex items-center justify-between gap-3 border-t border-sk-hair py-3 text-sm text-sk-text no-underline hover:underline"
+							>
+								<span className="min-w-0 flex-1 truncate">{a.title}</span>
+								<span className="shrink-0 text-[12.5px] text-sk-muted">{timeAgo(a.at)}</span>
+							</Link>
+						))}
+					</Card>
+				</>
+			)}
+
+			<Card title="Properties" className="min-w-0">
+				<Alternative
+					ok={listings && listings.length > 0}
+					fallback={<ListingsPlaceholder onAdd={addProperty} />}
+				>
+					<Table head={["Property", "Rooms", `Rent · ${monthLabel(currentMonth()).split(" ")[0].slice(0, 3)}`, "Collected", "Arrears", "Compliance", "Next year"]}>
+						{(listings ?? []).map((l: any) => {
+							const name = l.propertyTitle || l.streetAddress || "Untitled listing";
+							const homeTenancies: any[] = (tenancies.data ?? []).filter(
+								(t: any) => t.listing?._id === l._id && t.status === "ACTIVE"
+							);
+							const row = ov?.properties?.find(p => p.listingId === l._id);
+							const let_ = row?.roomsLet ?? 0;
+							const total = row?.roomsTotal ?? l.numOfPeople ?? 0;
+							const endDates = homeTenancies
+								.map((t: any) => t.endDate)
+								.filter(Boolean)
+								.sort();
+							const apps = row?.applicationsNextYear ?? 0;
+							return (
+								<Tr key={l._id}>
+									<td className="py-3 pr-2 font-semibold">
+										<Link
+											to={`/applicants/${l._id}`}
+											className="text-sk-text no-underline hover:underline"
+										>
+											{name}
+										</Link>
+									</td>
+									<td className="px-2 py-3">{l.isDraft || !total ? "-" : `${let_} of ${total}`}</td>
+									<td className="px-2 py-3">
+										{!row || row.rentStatus === "NOT_LET" ? "-" : row.rentStatus === "PAID" ? "All paid" : row.rentStatus === "LATE" ? "Late" : row.rentStatus === "NOT_DUE" ? "Not due yet" : "Due"}
+									</td>
+									<td className="px-2 py-3">{row ? gbp(row.rentCollected) : "-"}</td>
+									<td className={`px-2 py-3 ${row?.arrears ? "font-semibold text-sk-warn" : ""}`}>{row ? (row.arrears ? gbp(row.arrears) : "None") : "-"}</td>
+									<td className="px-2 py-3">
+										{!row ? "-" : row.complianceStatus === "OK" ? <Chip tone="ok">Up to date</Chip> : row.complianceStatus === "DUE_SOON" ? <Chip tone="warn">Due soon</Chip> : <Chip tone="warn">Action needed</Chip>}
+									</td>
+									<td className="px-2 py-3">
+										{l.isDraft ? (
+											<Chip tone="muted">Draft</Chip>
+										) : !l.isVerified ? (
+											<Chip tone="warn">Awaiting verification</Chip>
+										) : total && let_ < total ? (
+											<Chip tone="accent">Listed · {apps} {apps === 1 ? "application" : "applications"}</Chip>
+										) : endDates.length ? (
+											<Chip tone="ok">Ends {new Date(endDates[0]).toLocaleDateString("en-GB", { month: "short", year: "numeric" })}</Chip>
+										) : (
+											<Chip tone="muted">Not listed</Chip>
+										)}
+									</td>
+								</Tr>
+							);
+						})}
+					</Table>
+				</Alternative>
+			</Card>
+
+			{listings && listings.length > 0 && (
+				<PropertyAnalytics
+					listings={listings}
+					applicationCounts={applicationCounts}
+				/>
+			)}
+		</Page>
+	);
+}
+
+function ListingsPlaceholder({ onAdd }: { onAdd: () => void }) {
+	return (
+		<div className="flex flex-col items-center gap-2 rounded-xl bg-sk-hair py-6">
+			<h2 className="font-display text-lg font-semibold">No properties yet</h2>
+			<p className="text-sm text-sk-muted">Add a property to see its applicants and rent here.</p>
+			<button type="button" className={btnSmPrimary} onClick={onAdd}>Add a property</button>
 		</div>
 	);
 }
@@ -340,11 +449,6 @@ function PropertyAnalytics({
 	);
 	const selected = listings.find(listing => listing._id === selectedId);
 
-	const properties: SelectItem[] = listings.map(listing => ({
-		label: listing.streetAddress || "No address set",
-		value: listing._id
-	}));
-
 	const applicationsCount = selected
 		? (applicationCounts[selected._id] ?? 0)
 		: 0;
@@ -360,119 +464,29 @@ function PropertyAnalytics({
 		: 0;
 
 	return (
-		<div className="rounded-xl border border-[var(--surface-border)] p-4 mt-10">
-			<p className="font-bold text-2xl text-white">
-				Property Analytics
-			</p>
-			<div className="grid gap-6 md:grid-cols-12 mt-4">
-				<div className="md:col-span-9">
-					<div
-						className="rounded-2xl p-6"
-						style={{
-							background: "var(--surface-ground)",
-						}}
-					>
-						<div className="flex items-center gap-3">
-							<Dropdown
-								value={selectedId}
-								onChange={e => setSelectedId(e.value)}
-								options={properties}
-								className="mr-auto w-full md:w-96 listing-flow-dropdown !rounded-lg"
-								panelClassName="listing-flow-panel"
-								placeholder="Select a property"
-							/>
-						</div>
-
-						<div className="mt-4 grid gap-5 md:grid-cols-12">
-							<div className="md:col-span-7">
-								<div
-									className="h-54 rounded-xl"
-									style={{
-										background: "var(--gray-62)",
-										// backgroundImage: `url(`${selected.photos[0]}`)`
-									}}
-								/>
-							</div>
-
-							<div className="md:col-span-5 flex flex-col gap-4">
-								<div className="grid md:grid-cols-2 gap-4">
-									<div className="metric-tile">
-										<div className="metric-label text-lg md:text-xl font-semibold">
-											<i className="pi pi-file mr-2 text-lg md:text-xl" />
-											Applications
-										</div>
-										<div className="metric-value text-2xl md:text-3xl font-semibold">
-											{applicationsCount}
-										</div>
-									</div>
-									<div className="metric-tile">
-										<div className="metric-label text-lg md:text-xl font-semibold">
-											<i className="pi pi-bookmark mr-2 text-lg md:text-xl" />
-											Saves
-										</div>
-										<div className="metric-value text-2xl md:text-3xl font-semibold">
-											{savesCount}
-										</div>
-									</div>
-									<div className="metric-tile">
-										<div className="metric-label text-lg md:text-xl font-semibold">
-											<i className="pi pi-share-alt mr-2 text-lg md:text-xl" />
-											Shares
-										</div>
-										<div className="metric-value text-2xl md:text-3xl font-semibold">
-											N/A
-										</div>
-									</div>
-									<div className="metric-tile">
-										<div className="metric-label text-lg md:text-xl font-semibold">
-											<i className="pi pi-bolt mr-2 text-lg md:text-xl" />
-											Performance
-										</div>
-										<div className="metric-value text-2xl md:text-3xl font-semibold">
-											{(applicationsCount / savesCount || 0)}
-										</div>
-									</div>
-								</div>
-
-								<div className="self-start">
-									<span className="font-semibold text-[var(--primary-color-text)]">
-										Time on market: {timeOnMarketDays}d
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<aside className="md:col-span-3">
-					<div
-						className="rounded-2xl p-6 border border-[var(--surface-border)] h-full"
-						style={{ background: "var(--gray-62)" }}
-					>
-						<p className="text-lg font-semibold text-[var(--text-color)]">
-							Go even further with{" "}
-							<span className="text-[var(--primary-color)]">
-								SEEKPerformance
-							</span>
-						</p>
-						<p className="mt-3 text-sm leading-6 text-[var(white)]">
-							SEEKPerformance takes you beyond your portfolio’s
-							limits with a comprehensive, data-driven view of the
-							market to sharpen your competitive edge.
-						</p>
-						<button
-							// className="mt-5 w-full md:w-auto rounded-xl px-4 py-2 font-medium border border-[var(--surface-border)]"
-							className="listing-flow-action-button px-4 py-2.5"
-							style={{
-								background: "var(--primary-color-text)",
-								color: "var(white)"
-							}}
-						>
-							Coming soon
-						</button>
-					</div>
-				</aside>
+		<Card title="Property analytics">
+			<select
+				value={selectedId}
+				onChange={e => setSelectedId(e.target.value)}
+				aria-label="Property"
+				className="h-11 w-full rounded-xl border border-sk-border2 bg-sk-card2 px-3 text-sm text-sk-text md:w-96"
+			>
+				{listings.map(l => (
+					<option key={l._id} value={l._id}>
+						{l.streetAddress || "No address set"}
+					</option>
+				))}
+			</select>
+			<div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
+				<Tile label="Applications" value={String(applicationsCount)} className="!bg-sk-card2" />
+				<Tile label="Saves" value={String(savesCount)} className="!bg-sk-card2" />
+				<Tile label="Time on market" value={`${timeOnMarketDays}d`} className="!bg-sk-card2" />
+				<Tile
+					label="Applications per save"
+					value={savesCount ? (applicationsCount / savesCount).toFixed(1) : "0"}
+					className="!bg-sk-card2"
+				/>
 			</div>
-		</div>
+		</Card>
 	);
 }

@@ -10,7 +10,7 @@ import UserContext from "../context/UserContext.jsx";
 import { Toast } from "primereact/toast";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 export default function SignUpLandlord() {
 	const navigate = useNavigate();
@@ -197,7 +197,7 @@ export default function SignUpLandlord() {
 							}}
 							type="button"
 							onClick={() => {
-								window.location.href = `${BASE_URL}/auth/google`;
+								window.location.href = `${API_BASE}/auth/google`;
 							}}
 						/>
 					</motion.div>

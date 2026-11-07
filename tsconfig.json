@@ -10,6 +10,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "strictFunctionTypes": true, // makes the generated client's @ts-expect-error used (TS2578)
     "strict": false, // Set to false initially to minimize manual code fixes
     "allowJs": true,
     "esModuleInterop": true

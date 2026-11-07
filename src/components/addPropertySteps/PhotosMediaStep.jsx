@@ -3,7 +3,7 @@ import { Button } from "primereact/button";
 import React, { useEffect } from "react";
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../../lib/landlord.js";
 
 const PhotosMediaStep = ({
 	photos,
@@ -26,15 +26,12 @@ const PhotosMediaStep = ({
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	}, []);
 
-	useEffect(() => {
-		console.log("here", photos);
-	}, [photos]);
 
 	return (
-		<div className="listing-flow-surface" style={{ background: "#0f0f23", color: "white" }}>
+		<div className="listing-flow-surface bg-sk-bg text-sk-text">
 			<div className="space-y-6">
 				<div>
-					<label className="font-medium text-white">Photos</label>
+					<label className="font-medium text-sk-text">Photos</label>
 					<div
 						className="border-2 border-dashed p-8 rounded text-center cursor-pointer mt-2"
 						onClick={() => fileInputRef.current?.click()}
@@ -84,7 +81,7 @@ const PhotosMediaStep = ({
 					</div>
 				</div>
 				<div className="flex flex-col">
-					<label htmlFor="videoLink" className="font-medium mb-2 text-white">
+					<label htmlFor="videoLink" className="font-medium mb-2 text-sk-text">
 						Video Tour Link (Optional)
 					</label>
 					<InputText
@@ -95,7 +92,7 @@ const PhotosMediaStep = ({
 					/>
 				</div>
 				<div className="flex flex-col">
-					<label htmlFor="floorPlan" className="font-medium mb-2 text-white">
+					<label htmlFor="floorPlan" className="font-medium mb-2 text-sk-text">
 						Floor Plan Image, PDF Only (Optional)
 					</label>
 					<Button
@@ -118,11 +115,12 @@ const PhotosMediaStep = ({
 								return;
 							}
 							const res = await axios.get(
-								`${BASE_URL}/upload/presign`,
+								`${API_BASE}/upload/presign`,
 								{
 									params: {
 										filename: file.name,
 										fileType: file.type,
+										fileSize: file.size,
 										folder: "public"
 									},
 									withCredentials: true
@@ -139,7 +137,7 @@ const PhotosMediaStep = ({
 						}}
 					/>
 					{floorPlan && (
-						<div className="mt-2 text-sm text-[#1ba4ae] flex items-center">
+						<div className="mt-2 text-sm text-sk-link flex items-center">
 							<span
 								className={"cursor-pointer underline text-blue"}
 								onClick={e => {

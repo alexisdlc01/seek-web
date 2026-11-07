@@ -6,7 +6,7 @@ import { Tag } from "primereact/tag";
 import { Dialog } from "primereact/dialog";
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { API_BASE } from "../lib/landlord.js";
 
 const ListingsDataTable = () => {
 	const [listings, setListings] = useState([]);
@@ -16,10 +16,9 @@ const ListingsDataTable = () => {
 
 	useEffect(() => {
 		(async () => {
-			const res = await axios.get(`${BASE_URL}/listings/allUnverified`, {
+			const res = await axios.get(`${API_BASE}/listings/allUnverified`, {
 				withCredentials: true
 			});
-			console.log(res.data);
 			setListings(res.data);
 		})();
 	}, []);
@@ -71,7 +70,7 @@ const ListingsDataTable = () => {
 					setVisible(true);
 					try {
 						const res = await axios.get(
-							`${BASE_URL}/users/${listing.landlord}`,
+							`${API_BASE}/users/${listing.landlord}`,
 							{
 								withCredentials: true
 							}
@@ -91,7 +90,7 @@ const ListingsDataTable = () => {
 				text
 				onClick={async () => {
 					await axios.patch(
-						`${BASE_URL}/listings/verify/${listing._id}`,
+						`${API_BASE}/listings/verify/${listing._id}`,
 						{},
 						{ withCredentials: true }
 					);
@@ -210,7 +209,7 @@ const ListingsDataTable = () => {
 									onClick={async () => {
 										try {
 											const res = await axios.get(
-												`${BASE_URL}/upload/access`,
+												`${API_BASE}/upload/access`,
 												{
 													params: {
 														key: selectedListing.registerOfTitleKey

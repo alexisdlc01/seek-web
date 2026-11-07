@@ -55,16 +55,16 @@ const ReviewPublishStep = ({
 
 	const Section = ({ title, children }) => (
 		<div className="bg-[#626262] rounded-xl p-6 mb-6">
-			<h2 className="text-xl font-semibold mb-4 text-white">{title}</h2>
-			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-white/90">
+			<h2 className="text-xl font-semibold mb-4 text-sk-text">{title}</h2>
+			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sk-text2">
 				{children}
 			</div>
 		</div>
 	);
 
 	return (
-		<div className="text-white">
-			<div className="text-white p-3 bg-[#21b8c4] rounded-lg mb-6 font-medium">
+		<div className="text-sk-text">
+			<div className="text-sk-on-accent p-3 bg-sk-accent rounded-lg mb-6 font-medium">
 				<i className="pi pi-check mr-2"></i>
 				Please review your listing details carefully before publishing.
 			</div>

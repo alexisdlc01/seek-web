@@ -4,8 +4,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserContext from "../context/UserContext.jsx";
 import { Card, ErrorState, Loading, Page, PageHeader, btnPrimary } from "../components/sk.jsx";
 import { AdviceCard, Modal, Notice } from "../components/StudentBits.jsx";
-import { api, errMessage, fmtDate } from "../lib/landlord.js";
+import { api, errMessage, fmtDate, openFile } from "../lib/landlord.js";
 import { initials, usePassport } from "../lib/student.js";
+import { StudentVerificationCard, VerifiedStudentBadge } from "../components/StudentVerification.jsx";
 
 const DOC_TYPES = [
 	["PASSPORT", "Passport"],
@@ -29,6 +30,7 @@ const STATUS = {
 	REJECTED: ["Rejected", "text-sk-danger"],
 	MISSING: ["Missing", "text-sk-danger"]
 };
+const ASK = { GUARANTOR_AGREEMENT: "Invite guarantor", LANDLORD_REFERENCE: "Request reference", AGENT_REFERENCE: "Request reference", RECOMMENDATION: "Request reference" };
 const ACCEPT = "application/pdf,image/jpeg,image/png,image/webp,image/heic,image/heif";
 const MAX_BYTES = 15 * 1024 * 1024;
 
@@ -111,12 +113,49 @@ function AddDocumentModal({ initialType, onClose, onDone }) {
 	);
 }
 
+function RequestReferenceModal({ type, onClose, onDone }) {
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
+	const [error, setError] = useState("");
+	const send = useMutation({
+		mutationFn: () => api.post("/users/me/passport/references", { type, name: name.trim(), email: email.trim() }),
+		onSuccess: () => onDone({ tone: "ok", text: `Email sent to ${name.trim()}. Replies come to you.` }),
+		onError: (e) => setError(e?.response?.status === 503 ? "We couldn't send the email, so nothing was saved. Please try again." : errMessage(e, "We couldn't send this request."))
+	});
+	const field = "w-full rounded-[10px] border border-sk-border2 bg-sk-card px-3 py-2.5 text-sm text-sk-text outline-none focus:border-sk-accent";
+	return (
+		<Modal title={ASK[type]} onClose={onClose}>
+			<form
+				className="flex flex-col gap-3"
+				onSubmit={(e) => {
+					e.preventDefault();
+					send.mutate();
+				}}
+			>
+				<label className="flex flex-col gap-1.5 text-sm font-semibold">
+					Name
+					<input required value={name} onChange={(e) => setName(e.target.value)} className={field} />
+				</label>
+				<label className="flex flex-col gap-1.5 text-sm font-semibold">
+					Email
+					<input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
+				</label>
+				{error && <div role="alert" className="rounded-xl bg-sk-warn-bg p-3 text-sm text-sk-warn">{error}</div>}
+				<button type="submit" disabled={send.isPending} className={`${btnPrimary} disabled:opacity-60`}>
+					{send.isPending ? "Sending…" : "Send request"}
+				</button>
+			</form>
+		</Modal>
+	);
+}
+
 export default function StudentProfile() {
 	const qc = useQueryClient();
 	const { user } = useContext(UserContext);
 	const passportQ = usePassport();
 	const sharesQ = useQuery({ queryKey: ["shares"], queryFn: async () => (await api.get("/users/me/shares")).data });
 	const [adding, setAdding] = useState(null); // null | { type? }
+	const [asking, setAsking] = useState(null); // null | type
 	const [notice, setNotice] = useState(null);
 
 	const stop = useMutation({
@@ -147,6 +186,7 @@ export default function StudentProfile() {
 				<div className="flex flex-[1_1_220px] flex-col gap-0.5">
 					<span className="text-lg font-semibold">{user?.name}</span>
 					<span className="text-[13.5px] text-sk-text2">{user?.email}</span>
+					{user?.studentVerified && <VerifiedStudentBadge university={user.university} className="mt-1 self-start" />}
 				</div>
 				{p && (
 					<div className="flex flex-[1_1_280px] flex-col gap-2">
@@ -174,10 +214,21 @@ export default function StudentProfile() {
 												{it.label}
 												{!it.required && <span className="text-sk-muted"> · optional</span>}
 											</span>
+											{it.source === "university email" && it.detail && <span className="text-[12.5px] text-sk-muted">{it.detail} confirmed</span>}
 											{it.expiresAt && <span className="text-[12.5px] text-sk-muted">Valid to {fmtDate(it.expiresAt)}</span>}
 										</span>
 										<span className="flex shrink-0 items-center gap-2">
 											{it.status === "MISSING" || it.status === "EXPIRED" || it.status === "REJECTED" ? (
+												<>
+												{ASK[it.type] && (
+													<button
+														type="button"
+														onClick={() => setAsking(it.type)}
+														className="h-9 cursor-pointer rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] font-semibold text-sk-text"
+													>
+														{ASK[it.type]}
+													</button>
+												)}
 												<button
 													type="button"
 													onClick={() => setAdding({ type: it.type })}
@@ -185,10 +236,11 @@ export default function StudentProfile() {
 												>
 													{it.status === "MISSING" ? "Add" : "Replace"}
 												</button>
+												</>
 											) : (
 												<>
-													{it.url && <a href={it.url} target="_blank" rel="noreferrer" className="text-[13px] font-semibold text-sk-link">Open</a>}
-													<span className={`font-semibold ${tone}`}>{label}</span>
+													{(it.url || it.key) && <button type="button" onClick={() => openFile(it)} className="cursor-pointer border-none bg-transparent p-0 text-[13px] font-semibold text-sk-link">Open</button>}
+													<span className={`font-semibold ${tone}`}>{it.source === "request" ? `Pending · ${it.detail ?? ""}` : label}</span>
 												</>
 											)}
 										</span>
@@ -202,6 +254,7 @@ export default function StudentProfile() {
 			)}
 
 			<div className="flex flex-wrap gap-5">
+				<StudentVerificationCard className="flex-[1_1_360px]" />
 				<Card title="Who can see this" className="flex-[1_1_360px] !gap-2.5">
 					{sharesQ.isLoading && <Loading label="Loading shares" />}
 					{sharesQ.isError && <ErrorState error={sharesQ.error} onRetry={() => sharesQ.refetch()} />}
@@ -233,6 +286,17 @@ export default function StudentProfile() {
 				</Link>
 			</div>
 
+			{asking && (
+				<RequestReferenceModal
+					type={asking}
+					onClose={() => setAsking(null)}
+					onDone={(n) => {
+						setAsking(null);
+						setNotice(n);
+						qc.invalidateQueries({ queryKey: ["passport"] });
+					}}
+				/>
+			)}
 			{adding && (
 				<AddDocumentModal
 					initialType={adding.type}

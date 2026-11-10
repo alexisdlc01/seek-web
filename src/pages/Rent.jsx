@@ -137,8 +137,14 @@ export default function Rent() {
 									{bank?.last4 ? ` to ${bank.bankName ? `${bank.bankName} ` : ""}ending ${bank.last4}` : ""}
 								</span>
 							)}
+							{(d.payoutsOnHold || d.held > 0) && (
+								<span className="rounded-lg bg-sk-warn-bg px-2.5 py-2 text-[12.5px] font-semibold text-sk-warn">
+									{gbp(d.held)} held by Seek: payouts aren't set up yet, so card payments can't reach you.{" "}
+									<Link to="/edit-profile" className="underline">Finish payouts in Edit profile</Link>
+								</span>
+							)}
 							<span className="mt-0.5 border-t border-sk-border pt-2 text-[12.5px] text-sk-text2">
-								{gbp(d.collected)} rent{d.holdingDepositsCollected ? ` + ${gbp(d.holdingDepositsCollected)} holding deposits` : ""} − {gbp(d.seekFee)} Seek fee (0.5% of rent collected). No fee if rent isn't paid.
+								{gbp(d.collected)} rent{d.holdingDepositsCollected ? ` + ${gbp(d.holdingDepositsCollected)} holding deposits` : ""} − {gbp(d.seekFee)} Seek fee (1% of rent collected). No fee if rent isn't paid.
 							</span>
 						</div>
 					</div>
@@ -161,7 +167,7 @@ export default function Rent() {
 												{r.kind === "HOLDING_DEPOSIT" ? "Holding deposit" : PLAN_LABEL[r.plan] ?? (nationOf(r.tenancy) === "ENGLAND" ? "Monthly" : "-")}
 											</td>
 											<td>{r.autopay === true ? "Autopay" : r.autopay === false ? "Reminder" : "-"}</td>
-											<td className="font-semibold">{periodText(r)}</td>
+											<td className="font-semibold">{periodText(r)}{r.holdingDepositCredit > 0 && <><br /><span className="text-[12.5px] font-normal text-sk-ok">Holding deposit {gbp(r.holdingDepositCredit)} applied to first rent</span></>}</td>
 											<td><Chip tone={st.tone}>{st.label}</Chip>{r.refundDue && <Chip tone="warn" className="ml-1.5">Refund due (7 days)</Chip>}</td>
 											<td>
 												{r.status === "PAID" ? `${gbp(r.payout)} · ${fmtDay(r.nextPayout)}` : r.nextPayout ? fmtDay(r.nextPayout) : "-"}
@@ -229,7 +235,7 @@ export default function Rent() {
 								))}
 							</div>
 							<span className="text-[12.5px] text-sk-text2">
-								Sent by push, email and in the Seek thread. Tenants choose how many days before (3 by default). You're notified at each payment.
+								Sent by email and in the Seek thread. Tenants choose how many days before (3 by default). You're notified at each payment.
 							</span>
 						</Card>
 					</div>

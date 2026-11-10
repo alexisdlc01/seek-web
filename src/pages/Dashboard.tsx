@@ -286,7 +286,7 @@ export default function Dashboard() {
 						<Tile
 							label="Seek fee this month"
 							value={gbp(ov.seekFeeThisMonth)}
-							sub="0.5% of rent collected. No fee if rent isn't paid."
+							sub="1% of rent collected. No fee if rent isn't paid."
 						/>
 					</div>
 

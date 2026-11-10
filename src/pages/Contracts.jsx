@@ -70,11 +70,30 @@ function DepositForm({ tenancy, onDone }) {
 	);
 }
 
+function EnergyForm({ tenancy }) {
+	const qc = useQueryClient();
+	const [energy, setEnergy] = useState(tenancy.energyAllowance != null ? String(tenancy.energyAllowance / 100) : "");
+	const save = useMutation({
+		mutationFn: () => api.patch(`/tenancies/${tenancy._id}/energy-allowance`, { energyAllowance: energy === "" ? null : Math.round(Number(energy) * 100) }),
+		onSuccess: () => qc.invalidateQueries({ queryKey: ["landlord-tenancies"] })
+	});
+	return (
+		<form className="flex flex-wrap items-end gap-2" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
+			<label className="flex flex-col gap-1 text-[12.5px] text-sk-muted">
+				Energy allowance (£/month)
+				<input type="number" min={0} step="0.01" value={energy} onChange={(e) => setEnergy(e.target.value)} className="h-10 rounded-[10px] border border-sk-border2 bg-sk-bg px-3 text-[13.5px] text-sk-text" />
+			</label>
+			<button type="submit" className={btnSmPrimary} disabled={save.isPending}>{save.isPending ? "Saving…" : "Save allowance"}</button>
+			{save.isError && <span role="alert" className="text-[12.5px] text-sk-warn">{errMessage(save.error)}</span>}
+		</form>
+	);
+}
+
 const INVENTORY_START = { room: "", item: "", condition: "" };
 
 function InventoryForm({ contract, onDone }) {
 	const qc = useQueryClient();
-	const [rows, setRows] = useState(contract.inventory?.items?.length ? contract.inventory.items.map(({ room, item, condition }) => ({ room, item, condition })) : [{ ...INVENTORY_START }]);
+	const [rows, setRows] = useState(contract.inventory?.items?.length ? contract.inventory.items.map(({ room, item, condition, photoUrls }) => ({ room, item, condition, photoUrls })) : [{ ...INVENTORY_START }]);
 	const save = useMutation({
 		mutationFn: () => api.put(`/contracts/${contract._id}/inventory`, { items: rows.filter((r) => r.room.trim() && r.item.trim() && r.condition.trim()) }),
 		onSuccess: () => {
@@ -319,6 +338,7 @@ function TenancyCard({ tenancy: t, contracts, templates }) {
 		["Deposit", gbp(t.depositAmount * count), `${count} × ${gbp(t.depositAmount)}${t.depositScheme ? ` · ${SCHEME_LABEL[t.depositScheme]}` : ""} · ${weeks.toFixed(1)} weeks each${overCap ? ` · over the ${rules.capShort} cap` : ""}`, overCap ? "warn" : ""],
 		["Protected", isProtected ? fmtDay(t.depositProtectedAt) : "Not yet", isProtected ? `Ref ${t.depositReference || "-"}` : rules.protectBy ? `Protect within ${rules.window}: due ${fmtDay(rules.protectBy)}` : `Protect within ${rules.window}. The clock starts when it is received`, isProtected ? "ok" : "warn"],
 		["Prescribed information", t.prescribedInfoSentAt ? "Sent" : "Not sent", t.prescribedInfoSentAt ? fmtDay(t.prescribedInfoSentAt) : t.depositReceivedAt ? "Give it to the tenants once the deposit is received" : "Sent after the deposit is received", t.prescribedInfoSentAt ? "ok" : ""],
+		...(t.listing?.billsIncluded ? [["Energy allowance", t.energyAllowance != null ? `${gbp(t.energyAllowance)} / month` : "Not set", "Fair-use limit for the household", ""]] : []),
 		["Rent", gbp(t.monthlyRent * count), `${count} × ${gbp(t.monthlyRent)} pcm · ${t.periodic ? "Periodic tenancy" : `Until ${fmtDate(t.endDate)}`}`, ""]
 	];
 	return (
@@ -346,6 +366,8 @@ function TenancyCard({ tenancy: t, contracts, templates }) {
 			) : (
 				<div><button type="button" className={btnSmGhost} onClick={() => setEditing(true)}>Edit deposit details</button></div>
 			)}
+
+			{t.listing?.billsIncluded && <EnergyForm key={t.energyAllowance} tenancy={t} />}
 
 			{(t.compliance ?? []).map((c, i) => (
 				<div key={i} className={`rounded-xl bg-sk-warn-bg p-3 text-[13px] ${SEVERITY_TEXT[c.severity]}`}>

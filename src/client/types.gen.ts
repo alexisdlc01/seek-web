@@ -4,8 +4,11 @@ export type ClientOptions = {
     baseUrl: string;
 };
 
-export type DeleteAccountResultDto = {
-    deletedAt: string;
+export type StudentEmailDto = {
+    /**
+     * University address. Only @st-andrews.ac.uk for now.
+     */
+    email: string;
 };
 
 export type ErrorDto = {
@@ -21,6 +24,19 @@ export type ErrorDto = {
      * Error type
      */
     error?: string;
+};
+
+export type StudentEmailCodeDto = {
+    code: string;
+};
+
+export type StudentVerificationResultDto = {
+    studentVerified: boolean;
+    university: string;
+};
+
+export type DeleteAccountResultDto = {
+    deletedAt: string;
 };
 
 export type TeamMemberDto = {
@@ -105,6 +121,14 @@ export type UserDto = {
     dateOfBirth?: string;
     universityDetails?: string;
     role: 'SUPERUSER' | 'STUDENT' | 'LANDLORD_AGENCY';
+    /**
+     * Proved a university email address (student badge).
+     */
+    studentVerified: boolean;
+    /**
+     * University behind the badge, e.g. "University of St Andrews".
+     */
+    university: string | null;
     profilePicUrl: string;
     isVerified: boolean;
     lastSeen: string;
@@ -185,6 +209,18 @@ export type UpdateUserProfileDto = {
     stripeAccountId?: string;
 };
 
+export type RequestReferenceDto = {
+    /**
+     * GUARANTOR_AGREEMENT invites a UK guarantor; the others ask a previous landlord, letting agent or academic for a reference.
+     */
+    type: 'GUARANTOR_AGREEMENT' | 'LANDLORD_REFERENCE' | 'AGENT_REFERENCE' | 'RECOMMENDATION';
+    /**
+     * Guarantor or referee name.
+     */
+    name: string;
+    email: string;
+};
+
 export type PassportItemDto = {
     type: 'IDENTIFICATION' | 'PROOF_OF_INCOME' | 'GUARANTOR_AGREEMENT' | 'LANDLORD_REFERENCE' | 'CHARACTER_REFERENCE' | 'PASSPORT' | 'VISA' | 'RIGHT_TO_RENT' | 'STUDENT_STATUS' | 'CAS_LETTER' | 'PROOF_OF_FUNDS' | 'AGENT_REFERENCE' | 'RECOMMENDATION';
     label: string;
@@ -204,6 +240,18 @@ export type PassportItemDto = {
     key?: {
         [key: string]: unknown;
     } | null;
+    /**
+     * Where the item came from. Student status can come from a confirmed university email; "request" means Seek emailed a guarantor or referee and is waiting on their reply (status PENDING).
+     */
+    source?: 'document' | 'university email' | 'request';
+    /**
+     * E.g. the confirmed university email, or the name of the guarantor or referee asked. Only for the owner or a viewer with an active share.
+     */
+    detail?: string | null;
+    /**
+     * When Seek emailed the guarantor or referee (source "request" only).
+     */
+    requestedAt?: string | null;
 };
 
 export type PassportSectionDto = {
@@ -259,6 +307,18 @@ export type DocumentShareDto = {
     active: boolean;
 };
 
+export type PendingDocumentDto = {
+    userId: string;
+    name: string | null;
+    email: string;
+    type: 'IDENTIFICATION' | 'PROOF_OF_INCOME' | 'GUARANTOR_AGREEMENT' | 'LANDLORD_REFERENCE' | 'CHARACTER_REFERENCE' | 'PASSPORT' | 'VISA' | 'RIGHT_TO_RENT' | 'STUDENT_STATUS' | 'CAS_LETTER' | 'PROOF_OF_FUNDS' | 'AGENT_REFERENCE' | 'RECOMMENDATION';
+    uploadedAt: string | null;
+    /**
+     * Signed link to open the file, valid 60 seconds. Null if the file has no private key.
+     */
+    url: string | null;
+};
+
 export type UpdateDocumentStatusDto = {
     status: 'PENDING' | 'VERIFIED' | 'EXPIRED' | 'REJECTED';
     expiresAt?: string | null;
@@ -276,6 +336,12 @@ export type AddDocumentDto = {
      */
     label?: string;
     expiresAt?: string;
+};
+
+export type PresignResDto = {
+    uploadUrl: string;
+    fileUrl: string;
+    key: string;
 };
 
 export type LoginDto = {
@@ -324,12 +390,6 @@ export type ConfirmEmailChangeDto = {
      * Token from the confirmation email.
      */
     token: string;
-};
-
-export type PresignResDto = {
-    uploadUrl: string;
-    fileUrl: string;
-    key: string;
 };
 
 export type Step4ItemDto = {
@@ -862,6 +922,17 @@ export type UpdateDepositDto = {
      * Correct the deposit per tenant, in pence.
      */
     depositAmount?: number;
+    /**
+     * Energy fair-use allowance for the household, in pence per month. null removes it.
+     */
+    energyAllowance?: number | null;
+};
+
+export type UpdateEnergyAllowanceDto = {
+    /**
+     * Energy fair-use allowance for the household, in pence per month. null removes it.
+     */
+    energyAllowance: number | null;
 };
 
 export type DepositReceivedDto = {
@@ -933,10 +1004,19 @@ export type Flag = {
     createdBy: string;
     text: string;
     resolutionDate?: string;
+    /**
+     * Seek support's reply to the reporter.
+     */
+    supportResponse?: string | null;
+    createdAt: string;
 };
 
 export type ResolveFlagDto = {
     status: string;
+    /**
+     * Reply shown to the reporter.
+     */
+    supportResponse?: string;
 };
 
 export type CreateContractDto = {
@@ -1121,6 +1201,10 @@ export type StudentPaymentDto = {
      */
     amount: number;
     /**
+     * Paid holding deposit counted toward this rent (Tenant Fees Act), pence. `amount` is already reduced by it.
+     */
+    holdingDepositCredit?: number;
+    /**
      * Months of rent this payment covers.
      */
     coversMonths: number;
@@ -1173,6 +1257,10 @@ export type RentPlanViewDto = {
     restrictionReason: string | null;
     mode: 'stripe' | 'simulated' | 'unavailable';
     /**
+     * True once a card is saved for autopay (Stripe charges it off-session).
+     */
+    autopayCardSaved: boolean;
+    /**
      * Next payments due (up to 3).
      */
     upcoming: Array<StudentPaymentDto>;
@@ -1218,13 +1306,17 @@ export type LandlordPaymentRowDto = {
      */
     refundDue: boolean;
     /**
-     * Seek's 0.5% fee on this payment, pence.
+     * Seek's 1% fee on this payment, pence.
      */
     fee: number;
     /**
      * What the landlord receives for this payment, pence.
      */
     payout: number;
+    /**
+     * The tenant's paid holding deposit counted toward this rent, pence (0 if none). `amount` is already reduced by it.
+     */
+    holdingDepositCredit: number;
     /**
      * Estimated payout date for this payment: two working days after it is paid or due. Null once it is late or failed, or while it is held.
      */
@@ -1945,6 +2037,53 @@ export type AppControllerGetHelloResponses = {
     200: unknown;
 };
 
+export type UsersControllerSendStudentEmailCodeData = {
+    body: StudentEmailDto;
+    path?: never;
+    query?: never;
+    url: '/users/me/student-email';
+};
+
+export type UsersControllerSendStudentEmailCodeErrors = {
+    /**
+     * Not an accepted university domain (only @st-andrews.ac.uk for now).
+     */
+    400: ErrorDto;
+};
+
+export type UsersControllerSendStudentEmailCodeError = UsersControllerSendStudentEmailCodeErrors[keyof UsersControllerSendStudentEmailCodeErrors];
+
+export type UsersControllerSendStudentEmailCodeResponses = {
+    /**
+     * Code sent.
+     */
+    204: void;
+};
+
+export type UsersControllerSendStudentEmailCodeResponse = UsersControllerSendStudentEmailCodeResponses[keyof UsersControllerSendStudentEmailCodeResponses];
+
+export type UsersControllerVerifyStudentEmailData = {
+    body: StudentEmailCodeDto;
+    path?: never;
+    query?: never;
+    url: '/users/me/student-email/verify';
+};
+
+export type UsersControllerVerifyStudentEmailErrors = {
+    /**
+     * Wrong, expired or used-up code, or an address that can't be verified on this account.
+     */
+    400: ErrorDto;
+};
+
+export type UsersControllerVerifyStudentEmailError = UsersControllerVerifyStudentEmailErrors[keyof UsersControllerVerifyStudentEmailErrors];
+
+export type UsersControllerVerifyStudentEmailResponses = {
+    200: StudentVerificationResultDto;
+};
+
+export type UsersControllerVerifyStudentEmailResponse = UsersControllerVerifyStudentEmailResponses[keyof UsersControllerVerifyStudentEmailResponses];
+
 export type UsersControllerDeleteMeData = {
     body?: never;
     path?: never;
@@ -2208,6 +2347,32 @@ export type UsersControllerSetUsernameResponses = {
 
 export type UsersControllerSetUsernameResponse = UsersControllerSetUsernameResponses[keyof UsersControllerSetUsernameResponses];
 
+export type UsersControllerRequestReferenceData = {
+    body: RequestReferenceDto;
+    path?: never;
+    query?: never;
+    url: '/users/me/passport/references';
+};
+
+export type UsersControllerRequestReferenceErrors = {
+    /**
+     * Invalid type, name or email, or your own address.
+     */
+    400: ErrorDto;
+    /**
+     * The email could not be sent; nothing was saved.
+     */
+    503: ErrorDto;
+};
+
+export type UsersControllerRequestReferenceError = UsersControllerRequestReferenceErrors[keyof UsersControllerRequestReferenceErrors];
+
+export type UsersControllerRequestReferenceResponses = {
+    200: PassportDto;
+};
+
+export type UsersControllerRequestReferenceResponse = UsersControllerRequestReferenceResponses[keyof UsersControllerRequestReferenceResponses];
+
 export type UsersControllerGetPassportData = {
     body?: never;
     path?: never;
@@ -2267,6 +2432,25 @@ export type UsersControllerRevokeShareResponses = {
 };
 
 export type UsersControllerRevokeShareResponse = UsersControllerRevokeShareResponses[keyof UsersControllerRevokeShareResponses];
+
+export type UsersControllerListPendingDocumentsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/users/documents/pending';
+};
+
+export type UsersControllerListPendingDocumentsErrors = {
+    403: ErrorDto;
+};
+
+export type UsersControllerListPendingDocumentsError = UsersControllerListPendingDocumentsErrors[keyof UsersControllerListPendingDocumentsErrors];
+
+export type UsersControllerListPendingDocumentsResponses = {
+    200: Array<PendingDocumentDto>;
+};
+
+export type UsersControllerListPendingDocumentsResponse = UsersControllerListPendingDocumentsResponses[keyof UsersControllerListPendingDocumentsResponses];
 
 export type UsersControllerSetDocumentStatusData = {
     body: UpdateDocumentStatusDto;
@@ -2330,6 +2514,59 @@ export type UsersControllerGetUserResponses = {
 
 export type UsersControllerGetUserResponse = UsersControllerGetUserResponses[keyof UsersControllerGetUserResponses];
 
+export type UploadControllerGetPresignedUrlData = {
+    body?: never;
+    path?: never;
+    query: {
+        fileType: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif' | 'image/heic' | 'image/heif' | 'application/pdf';
+        folder: 'public' | 'private';
+        /**
+         * Original filename. Informational only — the stored object key is generated server-side.
+         */
+        filename: string;
+        /**
+         * Exact size of the file in bytes. Must be at most 15728640.
+         */
+        fileSize: number;
+    };
+    url: '/upload/presign';
+};
+
+export type UploadControllerGetPresignedUrlErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+};
+
+export type UploadControllerGetPresignedUrlError = UploadControllerGetPresignedUrlErrors[keyof UploadControllerGetPresignedUrlErrors];
+
+export type UploadControllerGetPresignedUrlResponses = {
+    200: PresignResDto;
+};
+
+export type UploadControllerGetPresignedUrlResponse = UploadControllerGetPresignedUrlResponses[keyof UploadControllerGetPresignedUrlResponses];
+
+export type UploadControllerDownloadData = {
+    body?: never;
+    path?: never;
+    query: {
+        key: string;
+    };
+    url: '/upload/access';
+};
+
+export type UploadControllerDownloadErrors = {
+    400: ErrorDto;
+    401: ErrorDto;
+};
+
+export type UploadControllerDownloadError = UploadControllerDownloadErrors[keyof UploadControllerDownloadErrors];
+
+export type UploadControllerDownloadResponses = {
+    200: string;
+};
+
+export type UploadControllerDownloadResponse = UploadControllerDownloadResponses[keyof UploadControllerDownloadResponses];
+
 export type AuthControllerLoginData = {
     body: LoginDto;
     path?: never;
@@ -2339,6 +2576,10 @@ export type AuthControllerLoginData = {
 
 export type AuthControllerLoginErrors = {
     401: ErrorDto;
+    /**
+     * Landlord account signing in from the mobile app (platform: mobile).
+     */
+    403: ErrorDto;
 };
 
 export type AuthControllerLoginError = AuthControllerLoginErrors[keyof AuthControllerLoginErrors];
@@ -2607,59 +2848,6 @@ export type AuthControllerLogoutResponses = {
 };
 
 export type AuthControllerLogoutResponse = AuthControllerLogoutResponses[keyof AuthControllerLogoutResponses];
-
-export type UploadControllerGetPresignedUrlData = {
-    body?: never;
-    path?: never;
-    query: {
-        fileType: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif' | 'image/heic' | 'image/heif' | 'application/pdf';
-        folder: 'public' | 'private';
-        /**
-         * Original filename. Informational only — the stored object key is generated server-side.
-         */
-        filename: string;
-        /**
-         * Exact size of the file in bytes. Must be at most 15728640.
-         */
-        fileSize: number;
-    };
-    url: '/upload/presign';
-};
-
-export type UploadControllerGetPresignedUrlErrors = {
-    400: ErrorDto;
-    401: ErrorDto;
-};
-
-export type UploadControllerGetPresignedUrlError = UploadControllerGetPresignedUrlErrors[keyof UploadControllerGetPresignedUrlErrors];
-
-export type UploadControllerGetPresignedUrlResponses = {
-    200: PresignResDto;
-};
-
-export type UploadControllerGetPresignedUrlResponse = UploadControllerGetPresignedUrlResponses[keyof UploadControllerGetPresignedUrlResponses];
-
-export type UploadControllerDownloadData = {
-    body?: never;
-    path?: never;
-    query: {
-        key: string;
-    };
-    url: '/upload/access';
-};
-
-export type UploadControllerDownloadErrors = {
-    400: ErrorDto;
-    401: ErrorDto;
-};
-
-export type UploadControllerDownloadError = UploadControllerDownloadErrors[keyof UploadControllerDownloadErrors];
-
-export type UploadControllerDownloadResponses = {
-    200: string;
-};
-
-export type UploadControllerDownloadResponse = UploadControllerDownloadResponses[keyof UploadControllerDownloadResponses];
 
 export type ListingsControllerCreateDraftData = {
     body?: never;
@@ -3538,6 +3726,28 @@ export type TenanciesControllerDepositResponses = {
 
 export type TenanciesControllerDepositResponse = TenanciesControllerDepositResponses[keyof TenanciesControllerDepositResponses];
 
+export type TenanciesControllerEnergyAllowanceData = {
+    body: UpdateEnergyAllowanceDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/energy-allowance';
+};
+
+export type TenanciesControllerEnergyAllowanceErrors = {
+    400: ErrorDto;
+    403: ErrorDto;
+};
+
+export type TenanciesControllerEnergyAllowanceError = TenanciesControllerEnergyAllowanceErrors[keyof TenanciesControllerEnergyAllowanceErrors];
+
+export type TenanciesControllerEnergyAllowanceResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerEnergyAllowanceResponse = TenanciesControllerEnergyAllowanceResponses[keyof TenanciesControllerEnergyAllowanceResponses];
+
 export type TenanciesControllerDepositReceivedData = {
     body: DepositReceivedDto;
     path: {
@@ -3706,6 +3916,22 @@ export type FlagsControllerResolveResponses = {
 };
 
 export type FlagsControllerResolveResponse = FlagsControllerResolveResponses[keyof FlagsControllerResolveResponses];
+
+export type FlagsControllerMineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/flags/mine';
+};
+
+export type FlagsControllerMineResponses = {
+    /**
+     * The caller's own reports, newest first.
+     */
+    200: Array<Flag>;
+};
+
+export type FlagsControllerMineResponse = FlagsControllerMineResponses[keyof FlagsControllerMineResponses];
 
 export type FlagsControllerFindOneData = {
     body?: never;
@@ -4143,6 +4369,10 @@ export type PaymentsControllerConnectOnboardErrors = {
      * Stripe Connect is not enabled on Seek's Stripe account.
      */
     409: ErrorDto;
+    /**
+     * Stripe rejected the request (details in the server log).
+     */
+    502: ErrorDto;
     503: ErrorDto;
 };
 

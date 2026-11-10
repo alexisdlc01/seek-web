@@ -58,7 +58,7 @@ export default function EditProfile() {
 		setAvatarUrl(data.fileUrl || URL.createObjectURL(f)); // instant preview
 	};
 
-	const dirty = displayName !== initialName || avatarKey !== initialKey;
+	const dirty = displayName !== initialName || avatarKey !== initialKey || removePicture;
 	const canSave = displayName.trim().length > 0 && dirty && !saving;
 
 	const save = async () => {
@@ -86,6 +86,7 @@ export default function EditProfile() {
 			);
 			setInitialName(displayName);
 			setInitialKey(avatarKey);
+			setRemovePicture(false);
 			setUser(prev => ({
 				...prev,
 				name: displayName,
@@ -207,7 +208,7 @@ export default function EditProfile() {
 
 						<Card title="Seek fee">
 							<span className="font-display text-[26px] font-semibold">
-								0.5%
+								1%
 								<span className="font-sans text-sm font-normal text-sk-muted"> of rent collected</span>
 							</span>
 							<span className="text-[13px] leading-snug text-sk-text2">

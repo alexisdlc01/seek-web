@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import DeclineDialog from "../components/DeclineDialog";
 import ListingsContext from "../context/ListingsContext.jsx";
 import { Chip, Page, PageHeader, btnSmGhost, btnSmPrimary } from "../components/sk.jsx";
+import { VerifiedStudentBadge } from "../components/StudentVerification.jsx";
 import { API_BASE, fmtDate, gbp, timeAgo } from "../lib/landlord.js";
 
 type Applicant = {
@@ -12,6 +13,8 @@ type Applicant = {
 	name: string;
 	email?: string;
 	profilePicUrl?: string;
+	studentVerified?: boolean;
+	university?: string | null;
 };
 
 type ApplicationStage = "NOT_SENT" | "SENT" | "VIEWED" | "OFFERED" | "ACCEPTED" | "SIGNED" | "REJECTED";
@@ -228,6 +231,7 @@ export default function Applicants() {
 		const count = applicants.length || application.applicants.length;
 		const members = application.members ?? [];
 		const passportsReady = members.filter(m => m.passport?.ready).length;
+		const verified = applicants.filter(a => a.studentVerified);
 
 		return (
 			<article
@@ -252,6 +256,11 @@ export default function Applicants() {
 					<Chip tone={application.qualified ? "ok" : "warn"}>
 						Passports {passportsReady} of {members.length || count}
 					</Chip>
+					{verified.length > 0 && (
+						count === 1
+							? <VerifiedStudentBadge university={verified[0].university} />
+							: <Chip tone="ok">{verified.length} of {count} verified students</Chip>
+					)}
 					{application.viewingAt && (
 						<Chip tone="accent">Viewing {formatViewing(application.viewingAt)}</Chip>
 					)}

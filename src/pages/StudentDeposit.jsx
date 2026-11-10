@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserContext from "../context/UserContext.jsx";
 import { Card, ErrorState, Loading, Page, PageHeader } from "../components/sk.jsx";
 import { AdviceCard, Notice } from "../components/StudentBits.jsx";
-import { DEPOSIT_SCHEMES, api, depositRules, errMessage, fmtDate, gbp } from "../lib/landlord.js";
+import { DEPOSIT_SCHEMES, api, depositRules, errMessage, fmtDate, gbp, openFile } from "../lib/landlord.js";
 import { idOf, useMyTenancy } from "../lib/student.js";
 
 const linkCls = "flex h-9 items-center rounded-[10px] border border-sk-border2 px-3 text-[13px] font-semibold text-sk-text no-underline";
@@ -131,10 +131,10 @@ export default function StudentDeposit() {
 									<span className="text-sm font-semibold">{certificate.title || "Deposit certificate"}</span>
 									<span className="text-[12.5px] text-sk-muted">Saved {fmtDate(certificate.addedAt)}</span>
 								</span>
-								{certificate.url && (
-									<a href={certificate.url} target="_blank" rel="noreferrer" className="flex h-9 items-center rounded-[10px] border border-sk-border2 px-3 text-[13px] font-semibold text-sk-text no-underline">
+								{(certificate.url || certificate.key) && (
+									<button type="button" onClick={() => openFile(certificate)} className="flex h-9 cursor-pointer items-center rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] font-semibold text-sk-text no-underline">
 										Open
-									</a>
+									</button>
 								)}
 							</div>
 						) : (

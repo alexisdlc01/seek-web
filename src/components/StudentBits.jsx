@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, errMessage, gbp } from "../lib/landlord.js";
+import { api, errMessage } from "../lib/landlord.js";
 import { studentLink } from "../lib/student.js";
 
 /**
@@ -169,10 +169,12 @@ export function useCheckoutReturn() {
 						? { tone: "ok", text: "Paid. Your receipt is in your inbox." }
 						: { tone: "warn", text: "We haven't received this payment yet. It shows as paid as soon as it clears." }
 				);
+			})
+			.catch((e) => setNotice({ tone: "warn", text: errMessage(e, "We couldn't confirm this payment.") }))
+			.finally(() => {
 				qc.invalidateQueries({ queryKey: ["my-payments"] });
 				qc.invalidateQueries({ queryKey: ["rent-plan"] });
-			})
-			.catch((e) => setNotice({ tone: "warn", text: errMessage(e, "We couldn't confirm this payment.") }));
+			});
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return notice;

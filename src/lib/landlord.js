@@ -182,3 +182,6 @@ export const openAttachment = async file => {
 		throw err;
 	}
 };
+
+// Student-side: same, but a failure shows an alert instead of rejecting.
+export const openFile = file => openAttachment(file).catch(e => window.alert(errMessage(e, "We couldn't open this document.")));

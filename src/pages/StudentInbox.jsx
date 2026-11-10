@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ErrorState, Loading } from "../components/sk.jsx";
 import { AdviceCard } from "../components/StudentBits.jsx";
-import { api, errMessage } from "../lib/landlord.js";
+import { api, errMessage, openFile } from "../lib/landlord.js";
 
 const FILTERS = [
 	["All", undefined],
@@ -139,10 +139,10 @@ export default function StudentInbox() {
 										{m.subject && <span className="text-[13px] font-semibold">{m.subject}</span>}
 										<span className="whitespace-pre-line text-sm leading-normal">{m.text}</span>
 										{(m.attachments ?? []).map((a) =>
-											a.url ? (
-												<a key={a.name} href={a.url} target="_blank" rel="noreferrer" className="self-start rounded-lg bg-sk-tint px-2.5 py-1.5 text-[12.5px] font-semibold text-sk-link no-underline">
+											(a.url || a.key) ? (
+												<button key={a.name} type="button" onClick={() => openFile(a)} className="cursor-pointer self-start rounded-lg border-none bg-sk-tint px-2.5 py-1.5 text-[12.5px] font-semibold text-sk-link">
 													{a.name}{a.filedAs ? ` · saved to ${a.filedAs}` : ""}
-												</a>
+												</button>
 											) : (
 												<span key={a.name} className="self-start rounded-lg bg-sk-tint px-2.5 py-1.5 text-[12.5px] font-semibold text-sk-link">
 													{a.name}{a.filedAs ? ` · saved to ${a.filedAs}` : ""}

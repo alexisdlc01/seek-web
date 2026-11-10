@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserContext from "../context/UserContext.jsx";
 import { Card, ErrorState, Loading, Page, PageHeader, btnGhost, btnPrimary } from "../components/sk.jsx";
 import { AdviceCard, Modal, Notice, PayNowButton, useCheckoutReturn } from "../components/StudentBits.jsx";
-import { api, errMessage, fmtDate, fmtDay, gbp, greeting } from "../lib/landlord.js";
+import { api, errMessage, fmtDate, fmtDay, gbp, greeting, openFile } from "../lib/landlord.js";
 import { PLAN_LABEL, idOf, useMyApplications, useMyTenancy } from "../lib/student.js";
 
 const DOC_LABEL = {
@@ -318,7 +318,7 @@ export default function StudentHome() {
 					<span className="text-[13px] text-sk-muted">Next rent{next ? ` · ${fmtDay(next.dueDate)}` : ""}</span>
 					<span className="font-display text-[28px] font-semibold">{gbp(next?.amount ?? tenancy.monthlyRent)}</span>
 					<span className={`text-[12.5px] ${next?.status === "LATE" || next?.status === "FAILED" ? "text-sk-warn" : "text-sk-ok"}`}>
-						{plan?.plan ? `${PLAN_LABEL[plan.plan.frequency]} ${plan.plan.autopay ? "autopay on" : "· reminder before it's due"}` : "No rent plan yet"}
+						{plan?.plan ? `${PLAN_LABEL[plan.plan.frequency]} ${plan.plan.autopay ? (plan.autopayCardSaved ? "autopay on" : "· autopay starts after you pay once by card") : "· reminder before it's due"}` : "No rent plan yet"}
 						{lastPaid ? ` · ${new Date(lastPaid.dueDate).toLocaleDateString("en-GB", { month: "long" })} paid` : ""}
 						{next?.status === "LATE" ? " · overdue" : ""}
 					</span>
@@ -366,10 +366,10 @@ export default function StudentHome() {
 										Sign
 									</button>
 								)}
-								{c.url && (
-									<a href={c.url} target="_blank" rel="noreferrer" className="flex h-9 items-center rounded-[10px] border border-sk-border2 px-3 text-[13px] font-semibold text-sk-text no-underline">
+								{(c.url || c.key) && (
+									<button type="button" onClick={() => openFile(c)} className="flex h-9 cursor-pointer items-center rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] font-semibold text-sk-text no-underline">
 										Open
-									</a>
+									</button>
 								)}
 							</div>
 						))}
@@ -380,10 +380,10 @@ export default function StudentHome() {
 									<span className="truncate text-sm font-semibold">{d.title || DOC_LABEL[d.type] || d.type}</span>
 									<span className="text-[12.5px] text-sk-muted">{SOURCE_LABEL[d.source] ?? "Saved"}{d.addedAt ? ` ${fmtDate(d.addedAt)}` : ""}</span>
 								</div>
-								{d.url && (
-									<a href={d.url} target="_blank" rel="noreferrer" className="flex h-9 items-center rounded-[10px] border border-sk-border2 px-3 text-[13px] font-semibold text-sk-text no-underline">
+								{(d.url || d.key) && (
+									<button type="button" onClick={() => openFile(d)} className="flex h-9 cursor-pointer items-center rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] font-semibold text-sk-text no-underline">
 										Open
-									</a>
+									</button>
 								)}
 							</div>
 						))}

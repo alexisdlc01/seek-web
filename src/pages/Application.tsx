@@ -24,6 +24,7 @@ import {
 } from "../components/sk.jsx";
 import DeclineDialog from "../components/DeclineDialog";
 import { AdviceCard } from "../components/StudentBits.jsx";
+import { VerifiedStudentBadge } from "../components/StudentVerification.jsx";
 import axios from "axios";
 import { api, errMessage, fmtDate, fmtDateTime, openAttachment } from "../lib/landlord.js";
 
@@ -60,7 +61,7 @@ type ApplicationData = {
 	criteria?: { key?: string; label: string; passed: boolean; detail?: string }[];
 	owner: string;
 	conversation?: string | { _id?: string };
-	applicantUsers?: { _id: string; name: string; email?: string }[];
+	applicantUsers?: { _id: string; name: string; email?: string; studentVerified?: boolean; university?: string | null }[];
 	members: Member[];
 };
 
@@ -268,6 +269,7 @@ function ApplicationCard({
 	const [viewingInput, setViewingInput] = useState("");
 
 	const names = data.members.map(m => m.name).join(" and ") || "Applicant";
+	const verifiedOf = (m: Member) => data.applicantUsers?.find(u => u._id === m.user && u.studentVerified);
 	const notReady = data.members.filter(m => !m.passport?.ready);
 	const criteria = data.criteria ?? [];
 	const failed = criteria.filter(c => !c.passed);
@@ -360,6 +362,12 @@ function ApplicationCard({
 						<Tr key={m.user}>
 							<td className="py-3 pr-2">
 								<span className="font-semibold">{m.name}</span>
+								{verifiedOf(m) && (
+									<>
+										<br />
+										<VerifiedStudentBadge university={verifiedOf(m)?.university} className="mt-1" />
+									</>
+								)}
 								{m.user === data.owner && (
 									<>
 										<br />

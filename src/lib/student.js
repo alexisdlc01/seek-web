@@ -14,15 +14,23 @@ const STUDENT_ROUTES = {
 };
 export const studentLink = (link = "") => STUDENT_ROUTES[link] ?? link;
 
-/** The student's current tenancy (active first), or null when they have none. */
+/** Active tenancy running now or starting next (earliest start not yet ended). */
+export const pickTenancy = (list = []) => {
+	const now = Date.now();
+	const active = list.filter((t) => t.status === "ACTIVE");
+	const current = active
+		.filter((t) => !t.endDate || new Date(t.endDate).getTime() >= now)
+		.sort((a, b) => new Date(a.startDate) - new Date(b.startDate))[0];
+	return current ?? active[0] ?? list[0] ?? null;
+};
+
+/** The student's current tenancy, or null when they have none. */
 export const useMyTenancy = () => {
 	const q = useQuery({
 		queryKey: ["student-tenancies"],
 		queryFn: async () => (await api.get("/tenancies/mine")).data
 	});
-	const list = q.data ?? [];
-	const tenancy = list.find((t) => t.status === "ACTIVE") ?? list[0] ?? null;
-	return { ...q, tenancy };
+	return { ...q, tenancy: pickTenancy(q.data ?? []) };
 };
 
 /** Seek Passport: GET /users/me/passport (sections, completed/total, ready). */

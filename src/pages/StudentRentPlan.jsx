@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Card, ErrorState, Loading, Page, PageHeader, btnPrimary } from "../components/sk.jsx";
-import { AdviceCard, Notice, PayNowButton } from "../components/StudentBits.jsx";
+import { Card, ErrorState, Loading, Page, PageHeader, btnGhost, btnPrimary } from "../components/sk.jsx";
+import { AdviceCard, Modal, Notice, PayNowButton } from "../components/StudentBits.jsx";
 import { api, errMessage, fmtDate, gbp } from "../lib/landlord.js";
 import { PLAN_LABEL, useMyTenancy } from "../lib/student.js";
 
@@ -30,9 +30,11 @@ export default function StudentRentPlan() {
 	const qc = useQueryClient();
 	const { tenancy, isLoading, isError, error, refetch } = useMyTenancy();
 	const tid = tenancy?._id;
+	const paidQ = useQuery({ queryKey: ["my-payments"], enabled: !!tid, queryFn: async () => (await api.get("/payments/mine")).data });
 	const planQ = useQuery({ queryKey: ["rent-plan", tid], enabled: !!tid, queryFn: async () => (await api.get(`/payments/plan/${tid}`)).data });
 	const [form, setForm] = useState(null);
 	const [notice, setNotice] = useState(null);
+	const [receipt, setReceipt] = useState(null);
 
 	useEffect(() => {
 		const p = planQ.data?.plan;
@@ -71,6 +73,7 @@ export default function StudentRentPlan() {
 	const rent = data?.monthlyRent ?? tenancy.monthlyRent;
 	const set = (patch) => setForm((f) => ({ ...f, ...patch }));
 	const upcoming = data?.upcoming ?? [];
+	const history = (paidQ.data ?? []).filter((p) => p.status === "PAID").sort((a, b) => new Date(b.paidAt) - new Date(a.paidAt));
 
 	return (
 		<Page className="!gap-[22px]">
@@ -127,6 +130,7 @@ export default function StudentRentPlan() {
 									</button>
 								))}
 							</div>
+							{form.autopay && !data?.autopayCardSaved && <span className="text-[12.5px] text-sk-warn">Autopay starts after you pay once by card. Until then, pay each rent yourself.</span>}
 							<Toggle checked={form.notifyEveryPayment} onChange={(v) => set({ notifyEveryPayment: v })}>Notify me every payment</Toggle>
 							<label className="flex min-h-9 items-center gap-2.5 text-sm">
 								Remind me
@@ -159,6 +163,7 @@ export default function StudentRentPlan() {
 											Due {fmtDate(p.dueDate)}
 											{p.coversMonths > 1 ? ` · covers ${p.coversMonths} months` : ""}
 										</span>
+										{p.holdingDepositCredit > 0 && <span className="text-[12.5px] text-sk-ok">Holding deposit {gbp(p.holdingDepositCredit)} applied to first rent</span>}
 									</span>
 									<span className={`text-[13px] font-semibold ${STATUS[p.status]?.tone ?? ""}`}>{STATUS[p.status]?.text ?? p.status}</span>
 								</div>
@@ -167,9 +172,35 @@ export default function StudentRentPlan() {
 						))}
 						{data?.mode === "simulated" && <span className="text-[12px] text-sk-muted">Test mode: payments are simulated and no card is charged.</span>}
 					</Card>
+					{history.length > 0 && (
+						<Card title="Payment history" className="!gap-3">
+							{history.map((p) => (
+								<div key={p._id} className="flex items-center justify-between gap-2 border-b border-sk-hair pb-3 text-sm last:border-none last:pb-0">
+									<span className="flex flex-col">
+										<span className="font-semibold">{gbp(p.amount)}</span>
+										<span className="text-[12.5px] text-sk-muted">{p.kind === "HOLDING_DEPOSIT" ? "Holding deposit" : "Rent"} · paid {fmtDate(p.paidAt)}</span>
+										{p.holdingDepositCredit > 0 && <span className="text-[12.5px] text-sk-ok">Holding deposit {gbp(p.holdingDepositCredit)} applied to first rent</span>}
+									</span>
+									<button type="button" onClick={() => setReceipt(p)} className="cursor-pointer border-none bg-transparent p-0 text-[13px] font-semibold text-sk-link">Receipt</button>
+								</div>
+							))}
+						</Card>
+					)}
 					<AdviceCard topic="rent" tenancyId={tid} />
 				</aside>
 			</div>
+			{receipt && (
+				<Modal title="Receipt" onClose={() => setReceipt(null)}>
+					<style>{"@media print{body *{visibility:hidden}#receipt,#receipt *{visibility:visible}#receipt{position:fixed;inset:0;padding:24px;background:#fff;color:#000}}"}</style>
+					<dl id="receipt" className="flex flex-col gap-2 text-sm">
+						<div className="flex justify-between gap-3"><dt className="text-sk-muted">Amount paid</dt><dd className="font-semibold">{gbp(receipt.amount)}</dd></div>
+						<div className="flex justify-between gap-3"><dt className="text-sk-muted">Paid on</dt><dd>{fmtDate(receipt.paidAt)}</dd></div>
+						<div className="flex justify-between gap-3"><dt className="text-sk-muted">For</dt><dd>{receipt.kind === "HOLDING_DEPOSIT" ? "Holding deposit" : "Rent"} · due {fmtDate(receipt.dueDate)}</dd></div>
+						<div className="flex justify-between gap-3"><dt className="text-sk-muted">Reference</dt><dd className="break-all font-mono text-[12.5px]">{receipt._id}</dd></div>
+					</dl>
+					<button type="button" onClick={() => window.print()} className={`${btnGhost} self-start`}>Print</button>
+				</Modal>
+			)}
 		</Page>
 	);
 }

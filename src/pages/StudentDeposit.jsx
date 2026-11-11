@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserContext from "../context/UserContext.jsx";
 import { Card, ErrorState, Loading, Page, PageHeader } from "../components/sk.jsx";
 import { AdviceCard, Notice } from "../components/StudentBits.jsx";
-import { DEPOSIT_SCHEMES, api, depositRules, errMessage, fmtDate, gbp, openFile } from "../lib/landlord.js";
+import { DEPOSIT_SCHEMES, api, depositRules, errMessage, fmtDate, gbp, openFile, safeUrl } from "../lib/landlord.js";
 import { idOf, useMyTenancy } from "../lib/student.js";
 
 const linkCls = "flex h-9 items-center rounded-[10px] border border-sk-border2 px-3 text-[13px] font-semibold text-sk-text no-underline";
@@ -141,7 +141,7 @@ export default function StudentDeposit() {
 							<span className="text-sm text-sk-text2">No certificate yet. Ask your landlord for it, or connect your email and Seek files it here when it arrives.</span>
 						)}
 						{prescribed && (
-							<a href={prescribed.prescribedInformationUrl} target="_blank" rel="noreferrer" className={`${linkCls} self-start`}>Open prescribed information</a>
+							<a href={safeUrl(prescribed.prescribedInformationUrl)} target="_blank" rel="noreferrer" className={`${linkCls} self-start`}>Open prescribed information</a>
 						)}
 					</Card>
 				</div>

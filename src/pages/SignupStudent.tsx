@@ -17,6 +17,7 @@ export default function SignUpStudent() {
 	const [name, setName] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
+	const prefix = email.trim().replace(/@st-andrews\.ac\.uk$/i, "");
 	const navigate = useNavigate();
 	const toast = useRef(null);
 
@@ -59,7 +60,7 @@ export default function SignUpStudent() {
 			showError("A valid St Andrews email prefix is required.");
 			return false;
 		}
-		if (!regex.test(email)) {
+		if (!regex.test(prefix)) {
 			showError(
 				"Please enter only your email prefix (before @st-andrews.ac.uk)"
 			);
@@ -93,7 +94,7 @@ export default function SignUpStudent() {
 		if (!validateName()) return;
 		if (!validateEmail()) return;
 		if (!validatePasswords()) return;
-		await signup(name, `${email}@st-andrews.ac.uk`, password, "STUDENT");
+		await signup(name, `${prefix}@st-andrews.ac.uk`, password, "STUDENT");
 		navigate("/activationSent");
 	};
 

@@ -194,7 +194,7 @@ function ContractRow({ contract, depositTotal }) {
 				<span className="basis-full text-[12.5px] text-sk-muted">
 					{contract.templateKind === "WALES_STANDARD_OCCUPATION" ? "Seek contract · standard occupation contract (Wales)" : "Seek contract · assured periodic tenancy (England)"}
 					{contract.prescribedInformationUrl && (
-						<> · <button type="button" onClick={() => window.open(contract.prescribedInformationUrl, "_blank", "noopener")} className="cursor-pointer border-none bg-transparent p-0 text-[12.5px] text-sk-link underline">Deposit prescribed information</button></>
+						<> · <button type="button" onClick={() => openDocument({ url: contract.prescribedInformationUrl })} className="cursor-pointer border-none bg-transparent p-0 text-[12.5px] text-sk-link underline">Deposit prescribed information</button></>
 					)}
 				</span>
 			)}

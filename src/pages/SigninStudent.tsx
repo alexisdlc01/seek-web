@@ -50,7 +50,8 @@ export default function SignInStudent() {
 
 	const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault();
-		if (!validateEmailPrefix(email) || email.includes("@")) {
+		const prefix = email.trim().replace(/@st-andrews\.ac\.uk$/i, "");
+		if (!validateEmailPrefix(prefix) || prefix.includes("@")) {
 			toast.current?.show({
 				severity: "error",
 				summary: "Sign-In Failed",
@@ -80,7 +81,7 @@ export default function SignInStudent() {
 			});
 			return;
 		}
-		const fullEmail = `${email}@st-andrews.ac.uk`;
+		const fullEmail = `${prefix}@st-andrews.ac.uk`;
 		const res = await login(fullEmail, password);
 		if (res === "Credentials are not valid." || res === "Unauthorized")
 			showError();

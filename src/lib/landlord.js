@@ -162,12 +162,27 @@ export const engineerLink = kind =>
 			? { label: "Book Gas Safe engineer", href: "https://www.gassaferegister.co.uk/find-an-engineer/" }
 			: null;
 
+// Stored links can come from another user or a synced email: only web links
+// open (http just for local dev). Returns null for anything else (javascript:, data:).
+export const safeUrl = url => {
+	let u;
+	try { u = new URL(url, window.location.origin); } catch { return null; }
+	const ok = u.protocol === "https:" || (u.protocol === "http:" && ["localhost", "127.0.0.1"].includes(u.hostname));
+	return ok ? u.href : null;
+};
+
+export const openUrl = url => {
+	const href = safeUrl(url);
+	if (!href) throw new Error("This link can't be opened.");
+	window.open(href, "_blank", "noopener");
+};
+
 // Private files are opened through a short-lived signed URL (GET /upload/access).
 // The tab is opened inside the click (Safari blocks pop-ups opened after an
 // await), then pointed at the URL. Rejects on failure: callers show the error.
 export const openAttachment = async file => {
 	if (!file.key) {
-		if (file.url) window.open(file.url, "_blank", "noopener");
+		if (file.url) openUrl(file.url);
 		return;
 	}
 	const w = window.open("", "_blank");

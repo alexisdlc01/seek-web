@@ -5,7 +5,7 @@ import DownloadCTA from "../components/DownloadCTA.jsx";
 import JoinMailingList from "../components/JoinMailingList.jsx";
 import { motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
-import { AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
 
 const PhonePlaceholder = ({

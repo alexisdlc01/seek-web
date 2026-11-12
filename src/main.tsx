@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import "primereact/resources/themes/lara-light-blue/theme.css";
 import "./index.css";
 import { PrimeReactProvider } from "primereact/api";
 import { UserProvider } from "./context/UserContext.jsx";

@@ -232,8 +232,7 @@
   --listing-text-soft: #9fb0c7;
   --listing-accent: #2ed2de;
 
-  /* Fallbacks: previously only defined in the external theme.css linked in
-     index.html (seekcss-52dz.onrender.com), which is currently suspended (503). */
+  /* Not defined by the bundled PrimeReact theme (formerly set by an external theme.css). */
   --gray-62: #1b2138;
   --gray-900: rgba(255, 255, 255, 0.08);
 }

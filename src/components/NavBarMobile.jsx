@@ -35,7 +35,6 @@ export default function NavbarMobile({ user, logout, logo }) {
 	}, []);
 
 	const backgroundTheme = theme === "dark" ? "#0F0F23" : "white";
-	const textColor = theme === "dark" ? "white" : "#0F0F23";
 
 	const items = loggedIn
 		? [
@@ -104,7 +103,6 @@ export default function NavbarMobile({ user, logout, logo }) {
 				root: {
 					className: `flex justify-between items-center !border-none !shadow-none py-3 transition-colors duration-500 ease-in-out ${theme === "dark" ? "bg-black text-white" : "bg-white text-black"}`
 				},
-				menu: { className: "flex justify-center w-full gap-3" },
 				button: {
 					className:
 						"absolute right-4 top-1/2 -translate-y-1/2 md:static md:left-auto md:translate-y-0 md:ml-0 !border-none !shadow-none !bg-transparent !outline-none hover:!bg-transparent focus:!ring-0 focus:!shadow-none"

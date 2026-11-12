@@ -18,7 +18,7 @@ export default function LandingPage() {
 	const videoRef = useRef(null);
 	const { setTheme } = useNavbarTheme();
 	const navigate = useNavigate();
-	const { user, logout } = useContext(UserContext);
+	const { user } = useContext(UserContext);
 	const [isLandlord, setIsLandlord] = useState(false);
 	const [isStudent, setIsStudent] = useState(false);
 
@@ -89,7 +89,7 @@ export default function LandingPage() {
 		[1, MIN_BRIGHTNESS]
 	);
 
-	const makeSection = (offset, xFrom, xTo) => {
+	const useSection = (offset, xFrom, xTo) => {
 		const fadeInEnd = offset + FADE_IN_DURATION;
 		const holdEnd = fadeInEnd + HOLD_DURATION;
 		const fadeOutEnd = holdEnd + FADE_IN_DURATION;
@@ -100,13 +100,17 @@ export default function LandingPage() {
 			[0, 1, 1, 0]
 		);
 
-		const x = isMobile
-			? useTransform(scrollY, [0, 1], [0, 0])
-			: useTransform(scrollY, [offset, fadeInEnd], [xFrom, xTo]);
+		const x = useTransform(
+			scrollY,
+			isMobile ? [0, 1] : [offset, fadeInEnd],
+			isMobile ? [0, 0] : [xFrom, xTo]
+		);
 
-		const scale = isMobile
-			? useTransform(scrollY, [0, 1], [1, 1])
-			: useTransform(scrollY, [offset, fadeInEnd], [0.9, 1.1]);
+		const scale = useTransform(
+			scrollY,
+			isMobile ? [0, 1] : [offset, fadeInEnd],
+			isMobile ? [1, 1] : [0.9, 1.1]
+		);
 
 		return { opacity, x, scale };
 	};
@@ -142,10 +146,10 @@ export default function LandingPage() {
 	const section1Opacity = useTransform(scrollY, [0, HERO_SCROLL_END], [1, 0]);
 	const section1Y = useTransform(scrollY, [0, HERO_SCROLL_END], [0, -50]);
 
-	const blur1 = makeSection(BLUR1_OFFSET, -100, 0);
-	const blur2 = makeSection(BLUR2_OFFSET, 100, 0);
-	const blur3 = makeSection(BLUR3_OFFSET, -100, 0);
-	const blur4 = makeSection(BLUR4_OFFSET, 100, 0);
+	const blur1 = useSection(BLUR1_OFFSET, -100, 0);
+	const blur2 = useSection(BLUR2_OFFSET, 100, 0);
+	const blur3 = useSection(BLUR3_OFFSET, -100, 0);
+	const blur4 = useSection(BLUR4_OFFSET, 100, 0);
 
 	// Progress bar
 	const progressX = useSpring(scrollYProgress, {

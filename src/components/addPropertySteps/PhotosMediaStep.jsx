@@ -140,7 +140,7 @@ const PhotosMediaStep = ({
 						<div className="mt-2 text-sm text-sk-link flex items-center">
 							<span
 								className={"cursor-pointer underline text-blue"}
-								onClick={e => {
+								onClick={() => {
 									window.open(floorPlanUrl, "_blank");
 								}}
 							>

@@ -606,7 +606,7 @@ const AddListing = () => {
 	useEffect(() => {
 		(async () => {
 			switch (step) {
-				case 2:
+				case 2: {
 					const step1Data = cleanObject({
 						propertyTitle: title,
 						numOfPeople: parseInt(numOfPeople),
@@ -641,7 +641,8 @@ const AddListing = () => {
 						);
 					}
 					break;
-				case 3:
+				}
+				case 3: {
 					const step2Data = cleanObject({
 						furnishingStatus: furnishingStatus
 							? furnishingStatus
@@ -662,7 +663,8 @@ const AddListing = () => {
 						);
 					}
 					break;
-				case 4:
+				}
+				case 4: {
 					const existingUrls = photos
 						.filter(p => p.url.startsWith("https://"))
 						.map(p => p.url);
@@ -718,6 +720,7 @@ const AddListing = () => {
 					};
 
 					break;
+				}
 				case 5:
 					await axios.patch(
 						`${API_BASE}/listings/${currentListing._id}/createStep1`,

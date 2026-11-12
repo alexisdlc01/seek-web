@@ -28,7 +28,7 @@ export default function ContactPage() {
 		try {
 			setSubmitting(true);
 			try {
-				const res = await axios.post(`${API_BASE}/contact`, {
+				await axios.post(`${API_BASE}/contact`, {
 					name,
 					email,
 					message

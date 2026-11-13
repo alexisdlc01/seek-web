@@ -8,13 +8,32 @@ import { studentLink } from "../lib/student.js";
  * Seek AI advice card (POST /ai/advice). topic: deposit | bills | contract |
  * guarantor | inbox | rent. Renders nothing until there is something to say.
  */
-export function AdviceCard({ topic, tenancyId = undefined, applicationId = undefined, threadId = undefined, className = "", showActions = true }) {
+export function AdviceCard({ topic, tenancyId = undefined, applicationId = undefined, threadId = undefined, className = "", showActions = true, askable = false }) {
+	const [draft, setDraft] = useState("");
+	const [asked, setAsked] = useState(null);
+	const [noAnswer, setNoAnswer] = useState(false);
 	const q = useQuery({
 		queryKey: ["ai-advice", topic, tenancyId ?? null, applicationId ?? null, threadId ?? null],
 		staleTime: 5 * 60_000,
 		retry: false,
 		queryFn: async () => (await api.post("/ai/advice", { topic, tenancyId, applicationId, threadId }, { timeout: 15_000 })).data
 	});
+
+	const ask = useMutation({
+		mutationFn: async (question) => (await api.post("/ai/advice", { topic, tenancyId, question }, { timeout: 30_000 })).data,
+		onSuccess: (d) => {
+			// Not an AI answer: the card is the generic one, so say so instead of showing it as the reply.
+			if (d.source !== "ai") return setNoAnswer(true);
+			setNoAnswer(false);
+			setAsked(d);
+			setDraft("");
+		}
+	});
+	const send = (e) => {
+		e.preventDefault();
+		const question = draft.trim();
+		if (question && !ask.isPending) ask.mutate(question);
+	};
 
 	if (q.isLoading)
 		return (
@@ -24,7 +43,7 @@ export function AdviceCard({ topic, tenancyId = undefined, applicationId = undef
 			</div>
 		);
 	if (!q.data) return null;
-	const a = q.data;
+	const a = asked ?? q.data;
 	return (
 		<div className={`flex flex-col gap-2 rounded-xl bg-sk-card2 p-3 ${className}`} data-testid={`ai-advice-${topic}`}>
 			<div className="flex items-start gap-2.5">
@@ -34,6 +53,24 @@ export function AdviceCard({ topic, tenancyId = undefined, applicationId = undef
 					<span className="whitespace-pre-line">{a.advice}</span>
 				</span>
 			</div>
+			{askable && (
+				<form onSubmit={send} className="flex gap-2">
+					<input
+						value={draft}
+						onChange={(e) => setDraft(e.target.value)}
+						maxLength={500}
+						disabled={ask.isPending}
+						aria-label="Ask about your deposit"
+						placeholder="e.g. Can my landlord keep part of it?"
+						className="h-10 min-w-0 flex-1 rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] text-sk-text"
+					/>
+					<button type="submit" disabled={ask.isPending || !draft.trim()} className="h-10 cursor-pointer rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] font-semibold text-sk-text disabled:cursor-default disabled:opacity-60">
+						{ask.isPending ? "Asking…" : "Ask"}
+					</button>
+				</form>
+			)}
+			{noAnswer && !ask.isPending && <span role="alert" className="text-[13px] text-sk-muted">Seek couldn't answer that from your tenancy details. Ask your landlord.</span>}
+			{ask.isError && <span role="alert" className="text-[13px] text-sk-muted">{errMessage(ask.error)}</span>}
 			{showActions && a.actions?.length > 0 && (
 				<div className="flex flex-wrap gap-2 pl-[52px]">
 					{a.actions.map((act) => {

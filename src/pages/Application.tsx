@@ -73,6 +73,11 @@ function Cell({ item }: { item?: PassportItem }) {
 		return <span className="font-semibold text-sk-muted">Missing</span>;
 	if (item.status === "VERIFIED")
 		return <span className="font-semibold text-sk-ok">Verified</span>;
+	// Identity documents: Seek never checks them, the landlord does through the share.
+	if (item.status === "PROVIDED")
+		return <span className="font-semibold text-sk-text2">Provided — landlord checks</span>;
+	if (item.status === "REJECTED" || item.status === "EXPIRED")
+		return <span className="font-semibold text-sk-danger">{item.status === "REJECTED" ? "Rejected" : "Expired"}</span>;
 	return <span className="font-semibold text-sk-warn">Checking</span>;
 }
 

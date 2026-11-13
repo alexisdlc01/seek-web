@@ -62,9 +62,11 @@ const ViewListing = () => {
 				</p>
 				<div className="flex flex-wrap gap-2 mt-2">
 					{listing.isVerified ? (
-						<Tag value="Verified" severity="success" />
+						<Tag value="Live" severity="success" />
+					) : listing.moderationStatus === "NEEDS_CHANGES" ? (
+						<Tag value="Needs changes" severity="danger" />
 					) : (
-						<Tag value="Pending Verification" severity="warning" />
+						<Tag value="Being checked" severity="warning" />
 					)}
 					{listing.isDraft && <Tag value="Draft" severity="danger" />}
 				</div>

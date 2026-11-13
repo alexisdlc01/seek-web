@@ -23,7 +23,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import { AnimatePresence, motion } from "framer-motion";
 import Download from "./pages/Download.jsx";
 import ProtectedRoute from "./pages/ProtectedRoute.jsx";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import UserContext from "./context/UserContext.jsx";
 import { ProgressSpinner } from "primereact/progressspinner";
 import EditProfile from "./pages/EditProfile.jsx";
@@ -53,6 +53,15 @@ import StudentBills from "./pages/StudentBills.jsx";
 const NotFound = () => {
 	const navigate = useNavigate();
 	const { loading } = useContext(UserContext);
+
+	useEffect(() => {
+		document.title = "Page not found | Seek";
+		const meta = document.createElement("meta");
+		meta.name = "robots";
+		meta.content = "noindex";
+		document.head.appendChild(meta);
+		return () => meta.remove();
+	}, []);
 
 	if (loading) {
 		// full-page spinner before any route renders

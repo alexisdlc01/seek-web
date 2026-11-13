@@ -35,6 +35,7 @@ const ListingsDataTable = () => {
 					}}
 				>
 					<img
+						loading="lazy"
 						src={listing.photos[0]}
 						alt={listing.propertyTitle}
 						style={{
@@ -51,10 +52,13 @@ const ListingsDataTable = () => {
 
 	const statusBodyTemplate = listing => (
 		<Tag
-			value={listing.isVerified ? "Verified" : "Unverified"}
+			value={listing.moderationStatus ?? (listing.isVerified ? "Verified" : "Unverified")}
 			severity={listing.isVerified ? "success" : "warning"}
 		/>
 	);
+
+	const reasonsBodyTemplate = listing =>
+		listing.moderationReasons?.length ? listing.moderationReasons.join("; ") : "-";
 
 	const rentBodyTemplate = listing =>
 		`£${listing.monthlyRent?.toLocaleString()}`;
@@ -63,6 +67,7 @@ const ListingsDataTable = () => {
 		<div className="flex gap-2">
 			<Button
 				icon="pi pi-eye"
+				aria-label="View listing"
 				rounded
 				text
 				onClick={async () => {
@@ -83,19 +88,23 @@ const ListingsDataTable = () => {
 				}}
 			/>
 
+			{/* No staff approval: this only runs the automatic check again. */}
 			<Button
-				icon="pi pi-check"
-				severity="success"
+				icon="pi pi-refresh"
 				rounded
 				text
+				tooltip="Re-run the automatic check"
+				aria-label="Re-run the automatic check"
 				onClick={async () => {
-					await axios.patch(
+					const res = await axios.patch(
 						`${API_BASE}/listings/verify/${listing._id}`,
 						{},
 						{ withCredentials: true }
 					);
 					setListings(prevState =>
-						prevState.filter(l => l._id !== listing._id)
+						res.data?.isVerified
+							? prevState.filter(l => l._id !== listing._id)
+							: prevState.map(l => (l._id === listing._id ? res.data : l))
 					);
 				}}
 			/>
@@ -104,6 +113,7 @@ const ListingsDataTable = () => {
 
 	return (
 		<div className="card">
+			<h2 className="m-4 text-lg font-semibold">Listings - automatic moderation</h2>
 			<DataTable
 				value={listings}
 				paginator
@@ -115,7 +125,8 @@ const ListingsDataTable = () => {
 				<Column field="streetAddress" header="Address"></Column>
 				<Column field="cityTown" header="City"></Column>
 				<Column header="Rent" body={rentBodyTemplate}></Column>
-				<Column header="Status" body={statusBodyTemplate}></Column>
+				<Column header="Moderation" body={statusBodyTemplate}></Column>
+				<Column header="Reasons" body={reasonsBodyTemplate}></Column>
 				<Column header="Actions" body={actionBodyTemplate}></Column>
 			</DataTable>
 
@@ -129,6 +140,7 @@ const ListingsDataTable = () => {
 				{landlord && (
 					<div className="flex items-center gap-3 mt-4 p-3 border rounded-lg">
 						<img
+							loading="lazy"
 							src={landlord.profilePic}
 							alt={landlord.name}
 							style={{
@@ -248,6 +260,7 @@ const ListingsDataTable = () => {
 						<div className="flex flex-wrap gap-2 mt-2">
 							{selectedListing.photos.map((photo, idx) => (
 								<img
+									loading="lazy"
 									key={idx}
 									src={photo}
 									alt="Property"

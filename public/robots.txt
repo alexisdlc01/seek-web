@@ -1,0 +1,23 @@
+User-agent: *
+Disallow: /dashboard
+Disallow: /student
+Disallow: /superuser
+Disallow: /applicants
+Disallow: /application$
+Disallow: /add-listing
+Disallow: /view-listing
+Disallow: /edit-profile
+Disallow: /inbox
+Disallow: /chat
+Disallow: /rent
+Disallow: /contracts
+Disallow: /connectors
+Disallow: /listings
+Disallow: /signin
+Disallow: /signup
+Disallow: /resetpassword
+Disallow: /confirmResetPassword
+Disallow: /activationSent
+Disallow: /verify-email
+
+Sitemap: https://www.seekapp.uk/sitemap.xml

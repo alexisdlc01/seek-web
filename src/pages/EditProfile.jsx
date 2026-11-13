@@ -142,7 +142,7 @@ export default function EditProfile() {
 									{user?.companyName ? `${user.companyName} · ` : ""}{user?.email}
 								</span>
 								{isLandlord && user?.isVerified && (
-									<span className="mt-1 w-fit rounded-md bg-sk-ok-bg px-2 py-[3px] text-xs font-semibold text-sk-ok">Identity verified</span>
+									<span className="mt-1 w-fit rounded-md bg-sk-ok-bg px-2 py-[3px] text-xs font-semibold text-sk-ok">Email verified</span>
 								)}
 							</div>
 							<div className="flex flex-wrap gap-2">
@@ -519,11 +519,9 @@ function RegistrationsCard({ user, setUser }) {
 		setBusy(true);
 		setError("");
 		try {
-			await patchMe({ registrations: next.map(({ kind: k, number: n }) => ({ kind: k, number: n })) });
-			setUser(prev => ({
-				...prev,
-				registrations: next.map(r => ({ ...r, verified: r.verified ?? false }))
-			}));
+			const saved = await patchMe({ registrations: next.map(({ kind: k, number: n }) => ({ kind: k, number: n })) });
+			// The server sets each number's format status (DECLARED or INVALID_FORMAT).
+			setUser(prev => ({ ...prev, registrations: saved?.registrations ?? next }));
 			setNumber("");
 		} catch (e) {
 			setError(errMessage(e));
@@ -539,8 +537,8 @@ function RegistrationsCard({ user, setUser }) {
 				<div key={`${r.kind}-${r.number}`} className="flex items-center justify-between gap-2.5 border-b border-sk-hair pb-2.5 text-sm">
 					<span>{kindLabel(r.kind)}</span>
 					<span className="flex items-center gap-2">
-						<span className={`font-semibold ${r.verified ? "text-sk-ok" : "text-sk-text2"}`}>
-							{r.number} {r.verified ? "✓" : "(not verified yet)"}
+						<span className={`font-semibold ${r.status === "INVALID_FORMAT" ? "text-sk-warn" : "text-sk-text2"}`}>
+							{r.number} {r.status === "INVALID_FORMAT" ? "(format looks wrong: check the number)" : r.status ? "· Declared" : ""}
 						</span>
 						<button
 							type="button"

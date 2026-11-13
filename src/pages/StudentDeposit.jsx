@@ -146,7 +146,7 @@ export default function StudentDeposit() {
 					</Card>
 				</div>
 				<aside className="flex min-w-0 flex-[1_1_300px] flex-col gap-4">
-					<AdviceCard topic="deposit" tenancyId={tenancy._id} />
+					<AdviceCard topic="deposit" tenancyId={tenancy._id} askable />
 				</aside>
 			</div>
 		</Page>

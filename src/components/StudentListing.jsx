@@ -132,7 +132,7 @@ export function ApplyModal({ id, onClose }) {
 		l?.criteria?.maxHousehold && `Up to ${l.criteria.maxHousehold} people`
 	].filter(Boolean);
 	const sharedItems = (p?.sections ?? []).flatMap((s) => s.items).filter((i) => i.status !== "MISSING");
-	const missing = (p?.sections ?? []).flatMap((s) => s.items).filter((i) => i.required && i.status !== "VERIFIED");
+	const missing = (p?.sections ?? []).flatMap((s) => s.items).filter((i) => i.required && i.status !== "VERIFIED" && i.status !== "PROVIDED");
 	// Documents the landlord requires (backend rule); any one of a document's types satisfies it.
 	const haveTypes = new Set((p?.sections ?? []).flatMap((s) => s.items).filter((i) => i.status !== "MISSING").map((i) => i.type));
 	const missingDocs = (l?.requiredDocuments ?? []).filter((d) => !d.types.some((t) => haveTypes.has(t))).map((d) => d.label);

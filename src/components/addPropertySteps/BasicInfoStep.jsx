@@ -463,6 +463,7 @@ const BasicInfoStep = ({
 									rounded
 									size="small"
 									className="ml-2"
+									aria-label="Remove register of title"
 									onClick={() => setRegisterOfTitle(null)}
 								/>
 							</div>

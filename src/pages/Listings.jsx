@@ -69,7 +69,9 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 	const status = prop.isDraft
 		? { tone: "warning", label: `Draft · step ${Math.min((prop.draftStep ?? 0) + 1, WIZARD_STEPS)} of ${WIZARD_STEPS}` }
 		: !prop.isVerified
-			? { tone: "warning", label: "Awaiting verification" }
+			? prop.moderationStatus === "NEEDS_CHANGES"
+				? { tone: "danger", label: "Needs changes" }
+				: { tone: "warning", label: "Being checked" }
 			: f.isLet
 				? { tone: "info", label: `Let · ${f.letNow} of ${prop.numOfPeople}` }
 				: { tone: "success", label: "Taking applications" };
@@ -91,7 +93,7 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 		>
 			<div className="relative h-[150px] bg-sk-card2">
 				{prop.photos?.[0] ? (
-					<img src={prop.photos[0]} alt="" className="h-full w-full object-cover" />
+					<img loading="lazy" src={prop.photos[0]} alt="" className="h-full w-full object-cover" />
 				) : (
 					<div className="flex h-full items-center justify-center text-[13px] text-sk-muted">No photos yet</div>
 				)}
@@ -116,6 +118,10 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 					<span className="text-[13px] text-sk-text2">
 						Add photos and requirements to publish. Seek AI can write the description from your photos.
 					</span>
+				) : !prop.isVerified && prop.moderationReasons?.length ? (
+					<ul className="m-0 flex list-disc flex-col gap-1 pl-4 text-[13px] text-sk-danger">
+						{prop.moderationReasons.map(reason => <li key={reason}>{reason}</li>)}
+					</ul>
 				) : (
 					<>
 						<div className="flex flex-wrap gap-1.5">
@@ -153,6 +159,8 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 								<i className="pi pi-trash" />
 							</button>
 						</>
+					) : prop.moderationStatus === "NEEDS_CHANGES" ? (
+						<button type="button" className={btnPrimary} onClick={edit}>Fix listing</button>
 					) : !prop.isVerified ? (
 						<button
 							type="button"
@@ -253,7 +261,7 @@ export default function Listings() {
 		["all", "All", () => true],
 		["live", "Taking applications", p => p.isVerified && !isLetNow(p)],
 		["let", "Let", p => isLetNow(p)],
-		["review", "Awaiting verification", p => !p.isDraft && !p.isVerified],
+		["review", "Needs changes or being checked", p => !p.isDraft && !p.isVerified],
 		["draft", "Drafts", p => p.isDraft]
 	];
 	const [filter, setFilter] = useState("all");

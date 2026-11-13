@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 import { API_BASE } from "../lib/landlord.js";
 
 export default function ContactPage() {
+	useEffect(() => {
+		document.title = "Contact | Seek";
+	}, []);
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [message, setMessage] = useState("");

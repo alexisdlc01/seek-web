@@ -111,6 +111,8 @@ export default function Inbox() {
 	if (t?.canReplyBySeek) options.push(["seek", "Seek message"]);
 	if (t?.canReplyByEmail) options.push(["email", t.replyFrom ? `Email from ${t.replyFrom}` : "Email"]);
 
+	const receiveOnly = !!t?.canReplyBySeek && !t?.canReplyByEmail && connected?.canSend === false;
+
 	return (
 		<div className="flex flex-col gap-5 p-4 md:p-8">
 			<div className="flex flex-wrap items-center justify-between gap-3">
@@ -202,7 +204,7 @@ export default function Inbox() {
 								</div>
 								<div className="flex gap-2">
 									{t.tenancyId && (
-										<Link to="/contracts" className="inline-flex h-10 items-center rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] font-semibold text-sk-text no-underline">
+										<Link to={`/contracts?tenancy=${t.tenancyId}`} className="inline-flex h-10 items-center rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] font-semibold text-sk-text no-underline">
 											Open tenancy
 										</Link>
 									)}
@@ -271,7 +273,7 @@ export default function Inbox() {
 									if (text.trim() && !reply.isPending) reply.mutate();
 								}}
 							>
-								{options.length > 1 && (
+								{(options.length > 1 || receiveOnly) && (
 									<div role="radiogroup" aria-label="Send as" className="flex flex-wrap gap-1.5 text-[12.5px]">
 										{options.map(([v, l]) => (
 											<button
@@ -285,10 +287,15 @@ export default function Inbox() {
 												{l}
 											</button>
 										))}
+										{receiveOnly && (
+											<button type="button" disabled title="This mailbox can receive only" className="h-[34px] cursor-not-allowed rounded-full border border-sk-border2 bg-transparent px-3 text-sk-muted opacity-60">
+												Email
+											</button>
+										)}
 									</div>
 								)}
 								{options.length === 0 && (
-									<span className="text-[12.5px] text-sk-muted">You can't reply to this thread. Connect a mailbox to reply by email.</span>
+									<span className="text-[12.5px] text-sk-muted">{connected?.canSend === false ? "This mailbox can only receive. Reply from your mail app." : "You can't reply to this thread. Connect a mailbox to reply by email."}</span>
 								)}
 								{sendError && <span role="alert" className="text-[12.5px] text-sk-warn">{sendError}</span>}
 								<div className="flex gap-2">

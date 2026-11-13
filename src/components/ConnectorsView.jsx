@@ -21,6 +21,23 @@ const RETURN_MESSAGES = {
 	exchange_failed: "We couldn't finish connecting. Please try again."
 };
 
+function Matches({ id }) {
+	const [open, setOpen] = useState(false);
+	const q = useQuery({ queryKey: ["connector-matches", id], enabled: open, queryFn: async () => (await api.get(`/connectors/${id}/matches`)).data });
+	return (
+		<div className="flex flex-col gap-1.5">
+			<button type="button" aria-expanded={open} className={`${btnSmGhost} self-start`} onClick={() => setOpen(!open)}>{open ? "Hide matched so far" : "Matched so far"}</button>
+			{open && q.isLoading && <span className="text-[12.5px] text-sk-muted">Loading…</span>}
+			{open && q.isError && <span role="alert" className="text-[12.5px] text-sk-warn">{errMessage(q.error)}</span>}
+			{open && q.data && (q.data.length ? (
+				<ul className="m-0 flex list-none flex-col gap-1 p-0 text-[12.5px]">
+					{q.data.map((m) => <li key={m.email} className="truncate"><span className="font-semibold">{m.name}</span> <span className="text-sk-muted">{m.email}</span></li>)}
+				</ul>
+			) : <span className="text-[12.5px] text-sk-muted">No contacts matched yet.</span>)}
+		</div>
+	);
+}
+
 export default function ConnectorsView({ title, intro, scopeLabel, scopeHint, options, privacy, next }) {
 	const qc = useQueryClient();
 	const [params, setParams] = useSearchParams();
@@ -122,6 +139,7 @@ export default function ConnectorsView({ title, intro, scopeLabel, scopeHint, op
 										{c.lastSyncAt ? `Last sync ${timeAgo(c.lastSyncAt)}` : "Not synced yet"} · {c.emailCount} {c.emailCount === 1 ? "email" : "emails"} matched to {c.contactCount} {c.contactCount === 1 ? "contact" : "contacts"}
 									</span>
 									{c.lastError && <span className="text-[12.5px] text-sk-warn">{c.lastError}</span>}
+									<Matches id={c.id} />
 									<div className="flex gap-2">
 										<button
 											type="button"

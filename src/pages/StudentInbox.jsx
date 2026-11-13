@@ -64,6 +64,7 @@ export default function StudentInbox() {
 
 	const canReply = cur && (cur.canReplyBySeek || cur.canReplyByEmail);
 	const replyFrom = cur?.replyFrom ?? connected?.emailAddress;
+	const receiveOnly = !!cur?.canReplyBySeek && !cur?.canReplyByEmail && connected?.canSend === false;
 
 	return (
 		<div className="flex min-h-full flex-wrap">
@@ -182,6 +183,11 @@ export default function StudentInbox() {
 												{label}
 											</button>
 										))}
+									</div>
+								)}
+								{receiveOnly && (
+									<div className="flex flex-wrap gap-1.5 text-[13px]">
+										<button type="button" disabled title="This mailbox can receive only" className="cursor-not-allowed rounded-full border border-sk-border2 bg-transparent px-3 py-1.5 text-sk-muted opacity-60">Email</button>
 									</div>
 								)}
 								<div className="flex gap-2.5">

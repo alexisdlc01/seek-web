@@ -175,7 +175,7 @@ const ReviewPublishStep = ({
 			</Section>
 			<Section title="Requirements">
 				{appRequirements.map(req => (
-					<>
+					<React.Fragment key={req.id}>
 						<div>
 							<p>
 								<strong>{req.name}</strong>
@@ -183,7 +183,7 @@ const ReviewPublishStep = ({
 							<p>{req.required ? "requried" : "optional"}</p>
 						</div>
 						<p>{req.desc}</p>
-					</>
+					</React.Fragment>
 				))}
 			</Section>
 			<br />

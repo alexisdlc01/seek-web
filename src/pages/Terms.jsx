@@ -1,4 +1,9 @@
+import { useEffect } from "react";
+
 export default function Terms() {
+	useEffect(() => {
+		document.title = "Terms & Conditions | Seek";
+	}, []);
 	return (
 		<div className="min-h-screen bg-[var(--surface-a)] text-[var(--text-color)] px-4 py-16">
 			<div className="max-w-3xl mx-auto space-y-8">

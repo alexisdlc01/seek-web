@@ -26,6 +26,8 @@ const DOC_TYPES = [
 const STATUS = {
 	VERIFIED: ["Verified", "text-sk-ok"],
 	PENDING: ["Checking", "text-sk-warn"],
+	// Identity documents: Seek never checks them, the landlord does through the share.
+	PROVIDED: ["Provided — landlord checks", "text-sk-text2"],
 	EXPIRED: ["Expired", "text-sk-danger"],
 	REJECTED: ["Rejected", "text-sk-danger"],
 	MISSING: ["Missing", "text-sk-danger"]
@@ -216,6 +218,7 @@ export default function StudentProfile() {
 											</span>
 											{it.source === "university email" && it.detail && <span className="text-[12.5px] text-sk-muted">{it.detail} confirmed</span>}
 											{it.expiresAt && <span className="text-[12.5px] text-sk-muted">Valid to {fmtDate(it.expiresAt)}</span>}
+											{it.status === "REJECTED" && it.reason && <span className="text-[12.5px] text-sk-danger">{it.reason}</span>}
 										</span>
 										<span className="flex shrink-0 items-center gap-2">
 											{it.status === "MISSING" || it.status === "EXPIRED" || it.status === "REJECTED" ? (

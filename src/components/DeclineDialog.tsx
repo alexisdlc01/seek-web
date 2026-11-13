@@ -50,6 +50,7 @@ export default function DeclineDialog({
 				rows={4}
 				className="w-full"
 				placeholder="Reason (optional)"
+				aria-label="Reason for declining"
 			/>
 		</Dialog>
 	);

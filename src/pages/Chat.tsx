@@ -416,6 +416,7 @@ export default function ChatPage() {
 									onChange={e => setSearch(e.target.value)}
 									type="text"
 									placeholder="Search conversations"
+									aria-label="Search conversations"
 									className="w-full rounded-lg text-sm text-sk-text placeholder:text-sk-muted"
 									style={{ background: "var(--sk-card2)", paddingLeft: "2.5rem" }}
 								/>
@@ -917,6 +918,7 @@ function ChatInput({ send, toast }: ChatInputProps) {
 				onKeyDown={e => e.key === "Enter" && handleSend()}
 				className="w-full rounded-lg px-3 py-2 text-sm text-sk-text placeholder:!text-sk-muted"
 				placeholder="Type a message..."
+				aria-label="Message"
 				style={{ backgroundColor: "var(--sk-card2)" }}
 			/>
 			<Button

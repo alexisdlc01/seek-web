@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AiControllerAdviceData, AiControllerAdviceErrors, AiControllerAdviceResponses, AiControllerSearchChatData, AiControllerSearchChatErrors, AiControllerSearchChatResponses, AppControllerGetHelloData, AppControllerGetHelloResponses, ApplicationControllerAcceptOfferData, ApplicationControllerAcceptOfferResponses, ApplicationControllerApproveApplicationData, ApplicationControllerApproveApplicationErrors, ApplicationControllerApproveApplicationResponses, ApplicationControllerCreateApplicationData, ApplicationControllerCreateApplicationErrors, ApplicationControllerCreateApplicationResponses, ApplicationControllerCreateInviteData, ApplicationControllerCreateInviteResponses, ApplicationControllerDeleteApplicationData, ApplicationControllerDeleteApplicationErrors, ApplicationControllerDeleteApplicationResponses, ApplicationControllerGetAllForListingData, ApplicationControllerGetAllForListingResponses, ApplicationControllerGetAllMyApplicationsData, ApplicationControllerGetAllMyApplicationsErrors, ApplicationControllerGetAllMyApplicationsResponses, ApplicationControllerGetApplicationData, ApplicationControllerGetApplicationErrors, ApplicationControllerGetApplicationResponses, ApplicationControllerGetByConversationData, ApplicationControllerGetByConversationErrors, ApplicationControllerGetByConversationResponses, ApplicationControllerJoinApplicationData, ApplicationControllerJoinApplicationErrors, ApplicationControllerJoinApplicationResponses, ApplicationControllerLeaveApplicationData, ApplicationControllerLeaveApplicationResponses, ApplicationControllerOfferApplicationData, ApplicationControllerOfferApplicationErrors, ApplicationControllerOfferApplicationResponses, ApplicationControllerRejectApplicationData, ApplicationControllerRejectApplicationResponses, ApplicationControllerScheduleViewingData, ApplicationControllerScheduleViewingResponses, ApplicationControllerSendApplicationData, ApplicationControllerSendApplicationErrors, ApplicationControllerSendApplicationResponses, AuthControllerChangePasswordData, AuthControllerChangePasswordErrors, AuthControllerChangePasswordResponses, AuthControllerConfirmEmailChangeData, AuthControllerConfirmEmailChangeResponses, AuthControllerConfirmPasswordResetData, AuthControllerConfirmPasswordResetErrors, AuthControllerConfirmPasswordResetResponses, AuthControllerCurrentUserData, AuthControllerCurrentUserErrors, AuthControllerCurrentUserResponses, AuthControllerForgotPasswordData, AuthControllerForgotPasswordErrors, AuthControllerForgotPasswordResponses, AuthControllerGoogleAuthCallbackData, AuthControllerGoogleAuthCallbackErrors, AuthControllerGoogleAuthCallbackResponses, AuthControllerGoogleAuthData, AuthControllerGoogleAuthErrors, AuthControllerGoogleAuthResponses, AuthControllerLoginData, AuthControllerLoginErrors, AuthControllerLoginResponses, AuthControllerLogoutData, AuthControllerLogoutErrors, AuthControllerLogoutResponses, AuthControllerRefreshTokenData, AuthControllerRefreshTokenErrors, AuthControllerRefreshTokenResponses, AuthControllerRequestEmailChangeData, AuthControllerRequestEmailChangeResponses, AuthControllerResendOtpData, AuthControllerResendOtpErrors, AuthControllerResendOtpResponses, AuthControllerSignupData, AuthControllerSignupErrors, AuthControllerSignupResponses, AuthControllerVerifyEmailData, AuthControllerVerifyEmailErrors, AuthControllerVerifyEmailResponses, BillsControllerCreateData, BillsControllerCreateErrors, BillsControllerCreateResponses, BillsControllerForTenancyData, BillsControllerForTenancyErrors, BillsControllerForTenancyResponses, BillsControllerMarkPaidData, BillsControllerMarkPaidErrors, BillsControllerMarkPaidResponses, ConnectorsControllerAuthUrlData, ConnectorsControllerAuthUrlErrors, ConnectorsControllerAuthUrlResponses, ConnectorsControllerConfirmData, ConnectorsControllerConfirmErrors, ConnectorsControllerConfirmResponses, ConnectorsControllerConnectDemoData, ConnectorsControllerConnectDemoErrors, ConnectorsControllerConnectDemoResponses, ConnectorsControllerConnectImapData, ConnectorsControllerConnectImapErrors, ConnectorsControllerConnectImapResponses, ConnectorsControllerDisconnectData, ConnectorsControllerDisconnectErrors, ConnectorsControllerDisconnectResponses, ConnectorsControllerOverviewData, ConnectorsControllerOverviewResponses, ConnectorsControllerSyncData, ConnectorsControllerSyncErrors, ConnectorsControllerSyncResponses, ConnectorsControllerUpdateSettingsData, ConnectorsControllerUpdateSettingsResponses, ContactControllerContactData, ContactControllerContactErrors, ContactControllerContactResponses, ContactControllerReportData, ContactControllerReportResponses, ContractsControllerCreateData, ContractsControllerCreateDefaultData, ContractsControllerCreateDefaultErrors, ContractsControllerCreateDefaultResponses, ContractsControllerCreateErrors, ContractsControllerCreateResponses, ContractsControllerCreateTemplateData, ContractsControllerCreateTemplateErrors, ContractsControllerCreateTemplateResponses, ContractsControllerDeductionsData, ContractsControllerDeductionsErrors, ContractsControllerDeductionsResponses, ContractsControllerDeleteTemplateData, ContractsControllerDeleteTemplateErrors, ContractsControllerDocumentData, ContractsControllerDocumentErrors, ContractsControllerDocumentResponses, ContractsControllerForTenancyData, ContractsControllerForTenancyErrors, ContractsControllerForTenancyResponses, ContractsControllerInventoryData, ContractsControllerInventoryErrors, ContractsControllerInventoryResponses, ContractsControllerLandlordData, ContractsControllerLandlordResponses, ContractsControllerPrescribedInformationData, ContractsControllerPrescribedInformationErrors, ContractsControllerPrescribedInformationResponses, ContractsControllerRespondToDeductionsData, ContractsControllerRespondToDeductionsErrors, ContractsControllerRespondToDeductionsResponses, ContractsControllerSendData, ContractsControllerSendErrors, ContractsControllerSendResponses, ContractsControllerSignData, ContractsControllerSignErrors, ContractsControllerSignResponses, ContractsControllerTemplatesData, ContractsControllerTemplatesResponses, ConversationControllerGetConversationData, ConversationControllerGetConversationErrors, ConversationControllerGetConversationResponses, ConversationControllerGetMyConversationsData, ConversationControllerGetMyConversationsResponses, ConversationControllerSendMessageData, ConversationControllerSendMessageResponses, FlagsControllerCreateData, FlagsControllerCreateErrors, FlagsControllerCreateResponses, FlagsControllerFindOneData, FlagsControllerFindOneErrors, FlagsControllerFindOneResponses, FlagsControllerGetAllData, FlagsControllerGetAllErrors, FlagsControllerGetAllResponses, FlagsControllerMineData, FlagsControllerMineResponses, FlagsControllerResolveData, FlagsControllerResolveErrors, FlagsControllerResolveResponses, InboxControllerReplyData, InboxControllerReplyErrors, InboxControllerReplyResponses, InboxControllerThreadData, InboxControllerThreadErrors, InboxControllerThreadResponses, InboxControllerThreadsData, InboxControllerThreadsResponses, LandlordControllerListingsData, LandlordControllerListingsResponses, LandlordControllerOverviewData, LandlordControllerOverviewResponses, ListingsControllerCreateDraftData, ListingsControllerCreateDraftErrors, ListingsControllerCreateDraftResponses, ListingsControllerCreateStep1Data, ListingsControllerCreateStep1Errors, ListingsControllerCreateStep1Responses, ListingsControllerCreateStep2Data, ListingsControllerCreateStep2Errors, ListingsControllerCreateStep2Responses, ListingsControllerCreateStep3Data, ListingsControllerCreateStep3Errors, ListingsControllerCreateStep3Responses, ListingsControllerCreateStep4Data, ListingsControllerCreateStep4Responses, ListingsControllerDeleteListingData, ListingsControllerDeleteListingErrors, ListingsControllerDeleteListingResponses, ListingsControllerGetAllUnverifiedListingsData, ListingsControllerGetAllUnverifiedListingsErrors, ListingsControllerGetAllUnverifiedListingsResponses, ListingsControllerGetAllVerifiedListingsData, ListingsControllerGetAllVerifiedListingsErrors, ListingsControllerGetAllVerifiedListingsResponses, ListingsControllerGetByIdData, ListingsControllerGetByIdErrors, ListingsControllerGetByIdResponses, ListingsControllerGetFilteredListingsData, ListingsControllerGetFilteredListingsErrors, ListingsControllerGetFilteredListingsResponses, ListingsControllerGetLikedData, ListingsControllerGetLikedErrors, ListingsControllerGetLikedResponses, ListingsControllerGetListingData, ListingsControllerGetListingErrors, ListingsControllerGetListingResponses, ListingsControllerLikeListingData, ListingsControllerLikeListingErrors, ListingsControllerLikeListingResponses, ListingsControllerMyListingsData, ListingsControllerMyListingsErrors, ListingsControllerMyListingsResponses, ListingsControllerPublishData, ListingsControllerPublishErrors, ListingsControllerPublishResponses, ListingsControllerUnlikeListingData, ListingsControllerUnlikeListingErrors, ListingsControllerUnlikeListingResponses, ListingsControllerVerifyListingData, ListingsControllerVerifyListingErrors, NotificationsControllerListData, NotificationsControllerListErrors, NotificationsControllerListResponses, NotificationsControllerMarkReadData, NotificationsControllerMarkReadErrors, NotificationsControllerMarkReadResponses, PaymentsControllerCheckoutData, PaymentsControllerCheckoutErrors, PaymentsControllerCheckoutResponses, PaymentsControllerConfirmCheckoutData, PaymentsControllerConfirmCheckoutErrors, PaymentsControllerConfirmCheckoutResponses, PaymentsControllerConnectOnboardData, PaymentsControllerConnectOnboardErrors, PaymentsControllerConnectOnboardResponses, PaymentsControllerConnectStatusData, PaymentsControllerConnectStatusResponses, PaymentsControllerGetPlanData, PaymentsControllerGetPlanErrors, PaymentsControllerGetPlanResponses, PaymentsControllerLandlordData, PaymentsControllerLandlordResponses, PaymentsControllerMineData, PaymentsControllerMineResponses, PaymentsControllerPayData, PaymentsControllerPayErrors, PaymentsControllerPayResponses, PaymentsControllerRemindData, PaymentsControllerRemindErrors, PaymentsControllerReminderScheduleData, PaymentsControllerReminderScheduleResponses, PaymentsControllerRemindLateData, PaymentsControllerRemindLateResponses, PaymentsControllerRemindResponses, PaymentsControllerUpdatePlanData, PaymentsControllerUpdatePlanErrors, PaymentsControllerUpdatePlanResponses, PaymentsControllerUpdateReminderScheduleData, PaymentsControllerUpdateReminderScheduleResponses, RepairsControllerCreateData, RepairsControllerCreateErrors, RepairsControllerCreateResponses, RepairsControllerForTenancyData, RepairsControllerForTenancyErrors, RepairsControllerForTenancyResponses, RepairsControllerLandlordData, RepairsControllerLandlordResponses, RepairsControllerUpdateData, RepairsControllerUpdateErrors, RepairsControllerUpdateResponses, TenanciesControllerAcceptData, TenanciesControllerAcceptErrors, TenanciesControllerAcceptResponses, TenanciesControllerAddDocumentData, TenanciesControllerAddDocumentErrors, TenanciesControllerAddDocumentResponses, TenanciesControllerCreateData, TenanciesControllerCreateErrors, TenanciesControllerCreateResponses, TenanciesControllerDepositData, TenanciesControllerDepositErrors, TenanciesControllerDepositReceivedData, TenanciesControllerDepositReceivedErrors, TenanciesControllerDepositReceivedResponses, TenanciesControllerDepositResponses, TenanciesControllerEnergyAllowanceData, TenanciesControllerEnergyAllowanceErrors, TenanciesControllerEnergyAllowanceResponses, TenanciesControllerGetData, TenanciesControllerGetErrors, TenanciesControllerGetResponses, TenanciesControllerLandlordData, TenanciesControllerLandlordResponses, TenanciesControllerMineData, TenanciesControllerMineResponses, TenanciesControllerPrescribedInfoData, TenanciesControllerPrescribedInfoErrors, TenanciesControllerPrescribedInfoResponses, UploadControllerDownloadData, UploadControllerDownloadErrors, UploadControllerDownloadResponses, UploadControllerGetPresignedUrlData, UploadControllerGetPresignedUrlErrors, UploadControllerGetPresignedUrlResponses, UsersControllerAcceptTeamInviteData, UsersControllerAcceptTeamInviteErrors, UsersControllerAcceptTeamInviteResponses, UsersControllerAddDocumentData, UsersControllerAddDocumentErrors, UsersControllerAddDocumentResponses, UsersControllerCreateData, UsersControllerCreateErrors, UsersControllerCreateResponses, UsersControllerDeleteMeData, UsersControllerDeleteMeErrors, UsersControllerDeleteMeResponses, UsersControllerDocumentTypesData, UsersControllerDocumentTypesErrors, UsersControllerDocumentTypesResponses, UsersControllerGetAllUsersData, UsersControllerGetAllUsersErrors, UsersControllerGetAllUsersResponses, UsersControllerGetPassportData, UsersControllerGetPassportErrors, UsersControllerGetPassportResponses, UsersControllerGetUserData, UsersControllerGetUserErrors, UsersControllerGetUserResponses, UsersControllerInviteTeamMemberData, UsersControllerInviteTeamMemberErrors, UsersControllerInviteTeamMemberResponses, UsersControllerLeaveTeamData, UsersControllerLeaveTeamErrors, UsersControllerLeaveTeamResponses, UsersControllerListPendingDocumentsData, UsersControllerListPendingDocumentsErrors, UsersControllerListPendingDocumentsResponses, UsersControllerListSharesData, UsersControllerListSharesErrors, UsersControllerListSharesResponses, UsersControllerListTeamData, UsersControllerListTeamInvitesData, UsersControllerListTeamInvitesResponses, UsersControllerListTeamResponses, UsersControllerRemoveTeamMemberData, UsersControllerRemoveTeamMemberErrors, UsersControllerRequestReferenceData, UsersControllerRequestReferenceErrors, UsersControllerRequestReferenceResponses, UsersControllerRevokeShareData, UsersControllerRevokeShareErrors, UsersControllerRevokeShareResponses, UsersControllerSendStudentEmailCodeData, UsersControllerSendStudentEmailCodeErrors, UsersControllerSendStudentEmailCodeResponses, UsersControllerSetDocumentStatusData, UsersControllerSetDocumentStatusErrors, UsersControllerSetDocumentStatusResponses, UsersControllerSetProfilePicData, UsersControllerSetProfilePicErrors, UsersControllerSetProfilePicResponses, UsersControllerSetUsernameData, UsersControllerSetUsernameErrors, UsersControllerSetUsernameResponses, UsersControllerUpdateCurrentUserData, UsersControllerUpdateCurrentUserErrors, UsersControllerUpdateCurrentUserResponses, UsersControllerVerifyStudentEmailData, UsersControllerVerifyStudentEmailErrors, UsersControllerVerifyStudentEmailResponses } from './types.gen';
+import type { AiControllerAdviceData, AiControllerAdviceErrors, AiControllerAdviceResponses, AiControllerSearchChatData, AiControllerSearchChatErrors, AiControllerSearchChatResponses, AppControllerGetHelloData, AppControllerGetHelloResponses, ApplicationControllerAcceptOfferData, ApplicationControllerAcceptOfferResponses, ApplicationControllerApproveApplicationData, ApplicationControllerApproveApplicationErrors, ApplicationControllerApproveApplicationResponses, ApplicationControllerCreateApplicationData, ApplicationControllerCreateApplicationErrors, ApplicationControllerCreateApplicationResponses, ApplicationControllerCreateInviteData, ApplicationControllerCreateInviteResponses, ApplicationControllerDeleteApplicationData, ApplicationControllerDeleteApplicationErrors, ApplicationControllerDeleteApplicationResponses, ApplicationControllerGetAllForListingData, ApplicationControllerGetAllForListingResponses, ApplicationControllerGetAllMyApplicationsData, ApplicationControllerGetAllMyApplicationsErrors, ApplicationControllerGetAllMyApplicationsResponses, ApplicationControllerGetApplicationData, ApplicationControllerGetApplicationErrors, ApplicationControllerGetApplicationResponses, ApplicationControllerGetByConversationData, ApplicationControllerGetByConversationErrors, ApplicationControllerGetByConversationResponses, ApplicationControllerJoinApplicationData, ApplicationControllerJoinApplicationErrors, ApplicationControllerJoinApplicationResponses, ApplicationControllerLeaveApplicationData, ApplicationControllerLeaveApplicationResponses, ApplicationControllerOfferApplicationData, ApplicationControllerOfferApplicationErrors, ApplicationControllerOfferApplicationResponses, ApplicationControllerRejectApplicationData, ApplicationControllerRejectApplicationResponses, ApplicationControllerScheduleViewingData, ApplicationControllerScheduleViewingResponses, ApplicationControllerSendApplicationData, ApplicationControllerSendApplicationErrors, ApplicationControllerSendApplicationResponses, AuthControllerChangePasswordData, AuthControllerChangePasswordErrors, AuthControllerChangePasswordResponses, AuthControllerConfirmEmailChangeData, AuthControllerConfirmEmailChangeResponses, AuthControllerConfirmPasswordResetData, AuthControllerConfirmPasswordResetErrors, AuthControllerConfirmPasswordResetResponses, AuthControllerCurrentUserData, AuthControllerCurrentUserErrors, AuthControllerCurrentUserResponses, AuthControllerForgotPasswordData, AuthControllerForgotPasswordErrors, AuthControllerForgotPasswordResponses, AuthControllerGoogleAuthCallbackData, AuthControllerGoogleAuthCallbackErrors, AuthControllerGoogleAuthCallbackResponses, AuthControllerGoogleAuthData, AuthControllerGoogleAuthErrors, AuthControllerGoogleAuthResponses, AuthControllerLoginData, AuthControllerLoginErrors, AuthControllerLoginResponses, AuthControllerLogoutData, AuthControllerLogoutErrors, AuthControllerLogoutResponses, AuthControllerRefreshTokenData, AuthControllerRefreshTokenErrors, AuthControllerRefreshTokenResponses, AuthControllerRequestEmailChangeData, AuthControllerRequestEmailChangeResponses, AuthControllerResendOtpData, AuthControllerResendOtpErrors, AuthControllerResendOtpResponses, AuthControllerSignupData, AuthControllerSignupErrors, AuthControllerSignupResponses, AuthControllerVerifyEmailData, AuthControllerVerifyEmailErrors, AuthControllerVerifyEmailResponses, BillsControllerCreateData, BillsControllerCreateErrors, BillsControllerCreateResponses, BillsControllerForTenancyData, BillsControllerForTenancyErrors, BillsControllerForTenancyResponses, BillsControllerMarkPaidData, BillsControllerMarkPaidErrors, BillsControllerMarkPaidResponses, ConnectorsControllerAuthUrlData, ConnectorsControllerAuthUrlErrors, ConnectorsControllerAuthUrlResponses, ConnectorsControllerConfirmData, ConnectorsControllerConfirmErrors, ConnectorsControllerConfirmResponses, ConnectorsControllerConnectDemoData, ConnectorsControllerConnectDemoErrors, ConnectorsControllerConnectDemoResponses, ConnectorsControllerConnectImapData, ConnectorsControllerConnectImapErrors, ConnectorsControllerConnectImapResponses, ConnectorsControllerDisconnectData, ConnectorsControllerDisconnectErrors, ConnectorsControllerDisconnectResponses, ConnectorsControllerMatchesData, ConnectorsControllerMatchesErrors, ConnectorsControllerMatchesResponses, ConnectorsControllerOverviewData, ConnectorsControllerOverviewResponses, ConnectorsControllerSyncData, ConnectorsControllerSyncErrors, ConnectorsControllerSyncResponses, ConnectorsControllerUpdateSettingsData, ConnectorsControllerUpdateSettingsResponses, ContactControllerContactData, ContactControllerContactErrors, ContactControllerContactResponses, ContactControllerReportData, ContactControllerReportResponses, ContractsControllerCreateData, ContractsControllerCreateDefaultData, ContractsControllerCreateDefaultErrors, ContractsControllerCreateDefaultResponses, ContractsControllerCreateErrors, ContractsControllerCreateResponses, ContractsControllerCreateTemplateData, ContractsControllerCreateTemplateErrors, ContractsControllerCreateTemplateResponses, ContractsControllerDeductionsData, ContractsControllerDeductionsErrors, ContractsControllerDeductionsResponses, ContractsControllerDeleteTemplateData, ContractsControllerDeleteTemplateErrors, ContractsControllerDocumentData, ContractsControllerDocumentErrors, ContractsControllerDocumentResponses, ContractsControllerForTenancyData, ContractsControllerForTenancyErrors, ContractsControllerForTenancyResponses, ContractsControllerInventoryData, ContractsControllerInventoryErrors, ContractsControllerInventoryResponses, ContractsControllerLandlordData, ContractsControllerLandlordResponses, ContractsControllerPrescribedInformationData, ContractsControllerPrescribedInformationErrors, ContractsControllerPrescribedInformationResponses, ContractsControllerRemindData, ContractsControllerRemindErrors, ContractsControllerRemindResponses, ContractsControllerRespondToDeductionsData, ContractsControllerRespondToDeductionsErrors, ContractsControllerRespondToDeductionsResponses, ContractsControllerSendData, ContractsControllerSendErrors, ContractsControllerSendResponses, ContractsControllerSignData, ContractsControllerSignErrors, ContractsControllerSignResponses, ContractsControllerTemplatesData, ContractsControllerTemplatesResponses, ConversationControllerGetConversationData, ConversationControllerGetConversationErrors, ConversationControllerGetConversationResponses, ConversationControllerGetMyConversationsData, ConversationControllerGetMyConversationsResponses, ConversationControllerSendMessageData, ConversationControllerSendMessageResponses, FlagsControllerCreateData, FlagsControllerCreateErrors, FlagsControllerCreateResponses, FlagsControllerFindOneData, FlagsControllerFindOneErrors, FlagsControllerFindOneResponses, FlagsControllerGetAllData, FlagsControllerGetAllErrors, FlagsControllerGetAllResponses, FlagsControllerLiftSuspensionData, FlagsControllerLiftSuspensionResponses, FlagsControllerMineData, FlagsControllerMineResponses, FlagsControllerResolveData, FlagsControllerResolveErrors, FlagsControllerResolveResponses, InboxControllerReplyData, InboxControllerReplyErrors, InboxControllerReplyResponses, InboxControllerThreadData, InboxControllerThreadErrors, InboxControllerThreadResponses, InboxControllerThreadsData, InboxControllerThreadsResponses, LandlordControllerListingsData, LandlordControllerListingsResponses, LandlordControllerOverviewData, LandlordControllerOverviewResponses, ListingsControllerCreateDraftData, ListingsControllerCreateDraftErrors, ListingsControllerCreateDraftResponses, ListingsControllerCreateStep1Data, ListingsControllerCreateStep1Errors, ListingsControllerCreateStep1Responses, ListingsControllerCreateStep2Data, ListingsControllerCreateStep2Errors, ListingsControllerCreateStep2Responses, ListingsControllerCreateStep3Data, ListingsControllerCreateStep3Errors, ListingsControllerCreateStep3Responses, ListingsControllerCreateStep4Data, ListingsControllerCreateStep4Responses, ListingsControllerDeleteListingData, ListingsControllerDeleteListingErrors, ListingsControllerDeleteListingResponses, ListingsControllerGetAllUnverifiedListingsData, ListingsControllerGetAllUnverifiedListingsErrors, ListingsControllerGetAllUnverifiedListingsResponses, ListingsControllerGetAllVerifiedListingsData, ListingsControllerGetAllVerifiedListingsErrors, ListingsControllerGetAllVerifiedListingsResponses, ListingsControllerGetByIdData, ListingsControllerGetByIdErrors, ListingsControllerGetByIdResponses, ListingsControllerGetFilteredListingsData, ListingsControllerGetFilteredListingsErrors, ListingsControllerGetFilteredListingsResponses, ListingsControllerGetLikedData, ListingsControllerGetLikedErrors, ListingsControllerGetLikedResponses, ListingsControllerGetListingData, ListingsControllerGetListingErrors, ListingsControllerGetListingResponses, ListingsControllerLikeListingData, ListingsControllerLikeListingErrors, ListingsControllerLikeListingResponses, ListingsControllerMyListingsData, ListingsControllerMyListingsErrors, ListingsControllerMyListingsResponses, ListingsControllerPublishData, ListingsControllerPublishErrors, ListingsControllerPublishResponses, ListingsControllerUnlikeListingData, ListingsControllerUnlikeListingErrors, ListingsControllerUnlikeListingResponses, ListingsControllerVerifyListingData, ListingsControllerVerifyListingErrors, ListingsControllerVerifyListingResponses, NotificationsControllerListData, NotificationsControllerListErrors, NotificationsControllerListResponses, NotificationsControllerMarkReadData, NotificationsControllerMarkReadErrors, NotificationsControllerMarkReadResponses, PaymentsControllerCheckoutData, PaymentsControllerCheckoutErrors, PaymentsControllerCheckoutResponses, PaymentsControllerConfirmCheckoutData, PaymentsControllerConfirmCheckoutErrors, PaymentsControllerConfirmCheckoutResponses, PaymentsControllerConnectOnboardData, PaymentsControllerConnectOnboardErrors, PaymentsControllerConnectOnboardResponses, PaymentsControllerConnectStatusData, PaymentsControllerConnectStatusResponses, PaymentsControllerGetPlanData, PaymentsControllerGetPlanErrors, PaymentsControllerGetPlanResponses, PaymentsControllerLandlordData, PaymentsControllerLandlordResponses, PaymentsControllerMineData, PaymentsControllerMineResponses, PaymentsControllerPayData, PaymentsControllerPayErrors, PaymentsControllerPayResponses, PaymentsControllerRemindData, PaymentsControllerRemindErrors, PaymentsControllerReminderScheduleData, PaymentsControllerReminderScheduleResponses, PaymentsControllerRemindLateData, PaymentsControllerRemindLateResponses, PaymentsControllerRemindResponses, PaymentsControllerUpdatePlanData, PaymentsControllerUpdatePlanErrors, PaymentsControllerUpdatePlanResponses, PaymentsControllerUpdateReminderScheduleData, PaymentsControllerUpdateReminderScheduleResponses, RepairsControllerCreateData, RepairsControllerCreateErrors, RepairsControllerCreateResponses, RepairsControllerForTenancyData, RepairsControllerForTenancyErrors, RepairsControllerForTenancyResponses, RepairsControllerLandlordData, RepairsControllerLandlordResponses, RepairsControllerUpdateData, RepairsControllerUpdateErrors, RepairsControllerUpdateResponses, TenanciesControllerAcceptData, TenanciesControllerAcceptErrors, TenanciesControllerAcceptResponses, TenanciesControllerAddDocumentData, TenanciesControllerAddDocumentErrors, TenanciesControllerAddDocumentResponses, TenanciesControllerCreateData, TenanciesControllerCreateErrors, TenanciesControllerCreateResponses, TenanciesControllerDepositData, TenanciesControllerDepositErrors, TenanciesControllerDepositReceivedData, TenanciesControllerDepositReceivedErrors, TenanciesControllerDepositReceivedResponses, TenanciesControllerDepositResponses, TenanciesControllerEnergyAllowanceData, TenanciesControllerEnergyAllowanceErrors, TenanciesControllerEnergyAllowanceResponses, TenanciesControllerGetData, TenanciesControllerGetErrors, TenanciesControllerGetResponses, TenanciesControllerLandlordData, TenanciesControllerLandlordResponses, TenanciesControllerMineData, TenanciesControllerMineResponses, TenanciesControllerPrescribedInfoData, TenanciesControllerPrescribedInfoErrors, TenanciesControllerPrescribedInfoResponses, UploadControllerDownloadData, UploadControllerDownloadErrors, UploadControllerDownloadResponses, UploadControllerGetPresignedUrlData, UploadControllerGetPresignedUrlErrors, UploadControllerGetPresignedUrlResponses, UsersControllerAcceptTeamInviteData, UsersControllerAcceptTeamInviteErrors, UsersControllerAcceptTeamInviteResponses, UsersControllerAddDocumentData, UsersControllerAddDocumentErrors, UsersControllerAddDocumentResponses, UsersControllerCreateData, UsersControllerCreateErrors, UsersControllerCreateResponses, UsersControllerDeleteMeData, UsersControllerDeleteMeErrors, UsersControllerDeleteMeResponses, UsersControllerDocumentTypesData, UsersControllerDocumentTypesErrors, UsersControllerDocumentTypesResponses, UsersControllerGetAllUsersData, UsersControllerGetAllUsersErrors, UsersControllerGetAllUsersResponses, UsersControllerGetPassportData, UsersControllerGetPassportErrors, UsersControllerGetPassportResponses, UsersControllerGetUserData, UsersControllerGetUserErrors, UsersControllerGetUserResponses, UsersControllerInviteTeamMemberData, UsersControllerInviteTeamMemberErrors, UsersControllerInviteTeamMemberResponses, UsersControllerLeaveTeamData, UsersControllerLeaveTeamErrors, UsersControllerLeaveTeamResponses, UsersControllerListPendingDocumentsData, UsersControllerListPendingDocumentsErrors, UsersControllerListPendingDocumentsResponses, UsersControllerListSharesData, UsersControllerListSharesErrors, UsersControllerListSharesResponses, UsersControllerListTeamData, UsersControllerListTeamInvitesData, UsersControllerListTeamInvitesResponses, UsersControllerListTeamResponses, UsersControllerRemoveTeamMemberData, UsersControllerRemoveTeamMemberErrors, UsersControllerRequestReferenceData, UsersControllerRequestReferenceErrors, UsersControllerRequestReferenceResponses, UsersControllerRevokeShareData, UsersControllerRevokeShareErrors, UsersControllerRevokeShareResponses, UsersControllerSendStudentEmailCodeData, UsersControllerSendStudentEmailCodeErrors, UsersControllerSendStudentEmailCodeResponses, UsersControllerSetDocumentStatusData, UsersControllerSetDocumentStatusErrors, UsersControllerSetDocumentStatusResponses, UsersControllerSetProfilePicData, UsersControllerSetProfilePicErrors, UsersControllerSetProfilePicResponses, UsersControllerSetUsernameData, UsersControllerSetUsernameErrors, UsersControllerSetUsernameResponses, UsersControllerUpdateCurrentUserData, UsersControllerUpdateCurrentUserErrors, UsersControllerUpdateCurrentUserResponses, UsersControllerVerifyStudentEmailData, UsersControllerVerifyStudentEmailErrors, UsersControllerVerifyStudentEmailResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -210,7 +210,7 @@ export const usersControllerRevokeShare = <ThrowOnError extends boolean = false>
 });
 
 /**
- * Seek Passport uploads waiting for a check, oldest first (Seek staff). Record the result with PATCH users/{id}/documents/{type}/status.
+ * Seek Passport uploads waiting for the automatic check, oldest first (Seek staff, monitoring only).
  */
 export const usersControllerListPendingDocuments = <ThrowOnError extends boolean = false>(options?: Options<UsersControllerListPendingDocumentsData, ThrowOnError>) => (options?.client ?? client).get<UsersControllerListPendingDocumentsResponses, UsersControllerListPendingDocumentsErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -219,7 +219,7 @@ export const usersControllerListPendingDocuments = <ThrowOnError extends boolean
 });
 
 /**
- * Record the result of a document check (Seek staff).
+ * Run the automatic check again on a document (Seek staff). Only status PENDING is accepted; identity documents are refused.
  */
 export const usersControllerSetDocumentStatus = <ThrowOnError extends boolean = false>(options: Options<UsersControllerSetDocumentStatusData, ThrowOnError>) => (options.client ?? client).patch<UsersControllerSetDocumentStatusResponses, UsersControllerSetDocumentStatusErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -256,6 +256,233 @@ export const uploadControllerGetPresignedUrl = <ThrowOnError extends boolean = f
 export const uploadControllerDownload = <ThrowOnError extends boolean = false>(options: Options<UploadControllerDownloadData, ThrowOnError>) => (options.client ?? client).get<UploadControllerDownloadResponses, UploadControllerDownloadErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/upload/access',
+    ...options
+});
+
+/**
+ * Your connected mailboxes and the providers this server can connect.
+ */
+export const connectorsControllerOverview = <ThrowOnError extends boolean = false>(options?: Options<ConnectorsControllerOverviewData, ThrowOnError>) => (options?.client ?? client).get<ConnectorsControllerOverviewResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/connectors',
+    ...options
+});
+
+/**
+ * Choose what mailboxes import (housing only or all emails) and whether attachments are filed automatically.
+ */
+export const connectorsControllerUpdateSettings = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerUpdateSettingsData, ThrowOnError>) => (options.client ?? client).patch<ConnectorsControllerUpdateSettingsResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/connectors/settings',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Connect any mailbox over IMAP with an app password (stored encrypted), then sync it.
+ *
+ * Outside production, a server that cannot be signed in to falls back to the demo mailbox (mode: demo).
+ */
+export const connectorsControllerConnectImap = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerConnectImapData, ThrowOnError>) => (options.client ?? client).post<ConnectorsControllerConnectImapResponses, ConnectorsControllerConnectImapErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/connectors/imap',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * OAuth consent URL for Gmail or Outlook (read housing emails, reply from your address).
+ */
+export const connectorsControllerAuthUrl = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerAuthUrlData, ThrowOnError>) => (options.client ?? client).get<ConnectorsControllerAuthUrlResponses, ConnectorsControllerAuthUrlErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/connectors/{provider}/auth-url',
+    ...options
+});
+
+/**
+ * Mobile: activate the mailbox from the OAuth redirect (status=pending&nonce=...) for the signed-in user.
+ */
+export const connectorsControllerConfirm = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerConfirmData, ThrowOnError>) => (options.client ?? client).post<ConnectorsControllerConfirmResponses, ConnectorsControllerConfirmErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/connectors/{provider}/confirm',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Connect the demo mailbox (sample housing emails). Not available in production.
+ */
+export const connectorsControllerConnectDemo = <ThrowOnError extends boolean = false>(options?: Options<ConnectorsControllerConnectDemoData, ThrowOnError>) => (options?.client ?? client).post<ConnectorsControllerConnectDemoResponses, ConnectorsControllerConnectDemoErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/connectors/demo',
+    ...options
+});
+
+/**
+ * Fetch new housing emails and file their attachments.
+ */
+export const connectorsControllerSync = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerSyncData, ThrowOnError>) => (options.client ?? client).post<ConnectorsControllerSyncResponses, ConnectorsControllerSyncErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/connectors/{id}/sync',
+    ...options
+});
+
+/**
+ * Housing contacts matched in this mailbox (up to 50, newest first). No message content.
+ */
+export const connectorsControllerMatches = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerMatchesData, ThrowOnError>) => (options.client ?? client).get<ConnectorsControllerMatchesResponses, ConnectorsControllerMatchesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/connectors/{id}/matches',
+    ...options
+});
+
+/**
+ * Disconnect a mailbox and delete the emails stored from it.
+ */
+export const connectorsControllerDisconnect = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerDisconnectData, ThrowOnError>) => (options.client ?? client).delete<ConnectorsControllerDisconnectResponses, ConnectorsControllerDisconnectErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/connectors/{id}',
+    ...options
+});
+
+/**
+ * Tenancies the student lives in, with compliance status.
+ */
+export const tenanciesControllerMine = <ThrowOnError extends boolean = false>(options?: Options<TenanciesControllerMineData, ThrowOnError>) => (options?.client ?? client).get<TenanciesControllerMineResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/tenancies/mine',
+    ...options
+});
+
+/**
+ * The landlord's tenancies, with compliance status.
+ */
+export const tenanciesControllerLandlord = <ThrowOnError extends boolean = false>(options?: Options<TenanciesControllerLandlordData, ThrowOnError>) => (options?.client ?? client).get<TenanciesControllerLandlordResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/tenancies/landlord',
+    ...options
+});
+
+/**
+ * One tenancy: listing, people, deposit, documents, compliance.
+ */
+export const tenanciesControllerGet = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerGetData, ThrowOnError>) => (options.client ?? client).get<TenanciesControllerGetResponses, TenanciesControllerGetErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/tenancies/{id}',
+    ...options
+});
+
+/**
+ * Create a tenancy for one of your listings. From an ACCEPTED application its applicants become the tenants and rent is scheduled. By hand, the students are invited (PENDING_ACCEPTANCE) and rent starts once all have accepted.
+ */
+export const tenanciesControllerCreate = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerCreateData, ThrowOnError>) => (options.client ?? client).post<TenanciesControllerCreateResponses, TenanciesControllerCreateErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/tenancies',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Accept a tenancy you were invited to. Rent is scheduled when every invited student has accepted.
+ */
+export const tenanciesControllerAccept = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerAcceptData, ThrowOnError>) => (options.client ?? client).post<TenanciesControllerAcceptResponses, TenanciesControllerAcceptErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/tenancies/{id}/accept',
+    ...options
+});
+
+/**
+ * Record where the deposit is protected.
+ */
+export const tenanciesControllerDeposit = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerDepositData, ThrowOnError>) => (options.client ?? client).patch<TenanciesControllerDepositResponses, TenanciesControllerDepositErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/tenancies/{id}/deposit',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Set or remove the household's monthly energy fair-use allowance.
+ */
+export const tenanciesControllerEnergyAllowance = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerEnergyAllowanceData, ThrowOnError>) => (options.client ?? client).patch<TenanciesControllerEnergyAllowanceResponses, TenanciesControllerEnergyAllowanceErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/tenancies/{id}/energy-allowance',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Record the day the deposit was received. The 30-day protection deadline runs from it.
+ */
+export const tenanciesControllerDepositReceived = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerDepositReceivedData, ThrowOnError>) => (options.client ?? client).patch<TenanciesControllerDepositReceivedResponses, TenanciesControllerDepositReceivedErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/tenancies/{id}/deposit-received',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Record that the tenants were sent the deposit scheme's prescribed information.
+ */
+export const tenanciesControllerPrescribedInfo = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerPrescribedInfoData, ThrowOnError>) => (options.client ?? client).post<TenanciesControllerPrescribedInfoResponses, TenanciesControllerPrescribedInfoErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/tenancies/{id}/prescribed-info',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Add a document (agreement, certificate, inventory...) to the tenancy.
+ */
+export const tenanciesControllerAddDocument = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerAddDocumentData, ThrowOnError>) => (options.client ?? client).post<TenanciesControllerAddDocumentResponses, TenanciesControllerAddDocumentErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/tenancies/{id}/documents',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * The signed-in user's latest notifications, newest first.
+ */
+export const notificationsControllerList = <ThrowOnError extends boolean = false>(options?: Options<NotificationsControllerListData, ThrowOnError>) => (options?.client ?? client).get<NotificationsControllerListResponses, NotificationsControllerListErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/notifications',
+    ...options
+});
+
+/**
+ * Mark a notification as read.
+ */
+export const notificationsControllerMarkRead = <ThrowOnError extends boolean = false>(options: Options<NotificationsControllerMarkReadData, ThrowOnError>) => (options.client ?? client).patch<NotificationsControllerMarkReadResponses, NotificationsControllerMarkReadErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/notifications/{id}/read',
     ...options
 });
 
@@ -480,7 +707,10 @@ export const listingsControllerGetLiked = <ThrowOnError extends boolean = false>
     ...options
 });
 
-export const listingsControllerVerifyListing = <ThrowOnError extends boolean = false>(options: Options<ListingsControllerVerifyListingData, ThrowOnError>) => (options.client ?? client).patch<unknown, ListingsControllerVerifyListingErrors, ThrowOnError>({
+/**
+ * Run the automatic check again on a listing (Seek staff). Never approves a listing by hand.
+ */
+export const listingsControllerVerifyListing = <ThrowOnError extends boolean = false>(options: Options<ListingsControllerVerifyListingData, ThrowOnError>) => (options.client ?? client).patch<ListingsControllerVerifyListingResponses, ListingsControllerVerifyListingErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/listings/verify/{id}',
     ...options
@@ -657,138 +887,6 @@ export const applicationControllerGetApplication = <ThrowOnError extends boolean
     ...options
 });
 
-/**
- * Tenancies the student lives in, with compliance status.
- */
-export const tenanciesControllerMine = <ThrowOnError extends boolean = false>(options?: Options<TenanciesControllerMineData, ThrowOnError>) => (options?.client ?? client).get<TenanciesControllerMineResponses, unknown, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/tenancies/mine',
-    ...options
-});
-
-/**
- * The landlord's tenancies, with compliance status.
- */
-export const tenanciesControllerLandlord = <ThrowOnError extends boolean = false>(options?: Options<TenanciesControllerLandlordData, ThrowOnError>) => (options?.client ?? client).get<TenanciesControllerLandlordResponses, unknown, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/tenancies/landlord',
-    ...options
-});
-
-/**
- * One tenancy: listing, people, deposit, documents, compliance.
- */
-export const tenanciesControllerGet = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerGetData, ThrowOnError>) => (options.client ?? client).get<TenanciesControllerGetResponses, TenanciesControllerGetErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/tenancies/{id}',
-    ...options
-});
-
-/**
- * Create a tenancy for one of your listings. From an ACCEPTED application its applicants become the tenants and rent is scheduled. By hand, the students are invited (PENDING_ACCEPTANCE) and rent starts once all have accepted.
- */
-export const tenanciesControllerCreate = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerCreateData, ThrowOnError>) => (options.client ?? client).post<TenanciesControllerCreateResponses, TenanciesControllerCreateErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/tenancies',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Accept a tenancy you were invited to. Rent is scheduled when every invited student has accepted.
- */
-export const tenanciesControllerAccept = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerAcceptData, ThrowOnError>) => (options.client ?? client).post<TenanciesControllerAcceptResponses, TenanciesControllerAcceptErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/tenancies/{id}/accept',
-    ...options
-});
-
-/**
- * Record where the deposit is protected.
- */
-export const tenanciesControllerDeposit = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerDepositData, ThrowOnError>) => (options.client ?? client).patch<TenanciesControllerDepositResponses, TenanciesControllerDepositErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/tenancies/{id}/deposit',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Set or remove the household's monthly energy fair-use allowance.
- */
-export const tenanciesControllerEnergyAllowance = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerEnergyAllowanceData, ThrowOnError>) => (options.client ?? client).patch<TenanciesControllerEnergyAllowanceResponses, TenanciesControllerEnergyAllowanceErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/tenancies/{id}/energy-allowance',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Record the day the deposit was received. The 30-day protection deadline runs from it.
- */
-export const tenanciesControllerDepositReceived = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerDepositReceivedData, ThrowOnError>) => (options.client ?? client).patch<TenanciesControllerDepositReceivedResponses, TenanciesControllerDepositReceivedErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/tenancies/{id}/deposit-received',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Record that the tenants were sent the deposit scheme's prescribed information.
- */
-export const tenanciesControllerPrescribedInfo = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerPrescribedInfoData, ThrowOnError>) => (options.client ?? client).post<TenanciesControllerPrescribedInfoResponses, TenanciesControllerPrescribedInfoErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/tenancies/{id}/prescribed-info',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Add a document (agreement, certificate, inventory...) to the tenancy.
- */
-export const tenanciesControllerAddDocument = <ThrowOnError extends boolean = false>(options: Options<TenanciesControllerAddDocumentData, ThrowOnError>) => (options.client ?? client).post<TenanciesControllerAddDocumentResponses, TenanciesControllerAddDocumentErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/tenancies/{id}/documents',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * The signed-in user's latest notifications, newest first.
- */
-export const notificationsControllerList = <ThrowOnError extends boolean = false>(options?: Options<NotificationsControllerListData, ThrowOnError>) => (options?.client ?? client).get<NotificationsControllerListResponses, NotificationsControllerListErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/notifications',
-    ...options
-});
-
-/**
- * Mark a notification as read.
- */
-export const notificationsControllerMarkRead = <ThrowOnError extends boolean = false>(options: Options<NotificationsControllerMarkReadData, ThrowOnError>) => (options.client ?? client).patch<NotificationsControllerMarkReadResponses, NotificationsControllerMarkReadErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/notifications/{id}/read',
-    ...options
-});
-
 export const flagsControllerCreate = <ThrowOnError extends boolean = false>(options: Options<FlagsControllerCreateData, ThrowOnError>) => (options.client ?? client).post<FlagsControllerCreateResponses, FlagsControllerCreateErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/flags',
@@ -813,6 +911,12 @@ export const flagsControllerResolve = <ThrowOnError extends boolean = false>(opt
         'Content-Type': 'application/json',
         ...options.headers
     }
+});
+
+export const flagsControllerLiftSuspension = <ThrowOnError extends boolean = false>(options: Options<FlagsControllerLiftSuspensionData, ThrowOnError>) => (options.client ?? client).patch<FlagsControllerLiftSuspensionResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/flags/lift-suspension/{userId}',
+    ...options
 });
 
 export const flagsControllerMine = <ThrowOnError extends boolean = false>(options?: Options<FlagsControllerMineData, ThrowOnError>) => (options?.client ?? client).get<FlagsControllerMineResponses, unknown, ThrowOnError>({
@@ -965,6 +1069,15 @@ export const contractsControllerForTenancy = <ThrowOnError extends boolean = fal
 export const contractsControllerSend = <ThrowOnError extends boolean = false>(options: Options<ContractsControllerSendData, ThrowOnError>) => (options.client ?? client).post<ContractsControllerSendResponses, ContractsControllerSendErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/contracts/{id}/send',
+    ...options
+});
+
+/**
+ * Email the signing link again to tenants who have not signed a sent contract (once per 24 hours).
+ */
+export const contractsControllerRemind = <ThrowOnError extends boolean = false>(options: Options<ContractsControllerRemindData, ThrowOnError>) => (options.client ?? client).post<ContractsControllerRemindResponses, ContractsControllerRemindErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/contracts/{id}/remind',
     ...options
 });
 
@@ -1223,92 +1336,6 @@ export const aiControllerAdvice = <ThrowOnError extends boolean = false>(options
         'Content-Type': 'application/json',
         ...options.headers
     }
-});
-
-/**
- * Your connected mailboxes and the providers this server can connect.
- */
-export const connectorsControllerOverview = <ThrowOnError extends boolean = false>(options?: Options<ConnectorsControllerOverviewData, ThrowOnError>) => (options?.client ?? client).get<ConnectorsControllerOverviewResponses, unknown, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/connectors',
-    ...options
-});
-
-/**
- * Choose what mailboxes import (housing only or all emails) and whether attachments are filed automatically.
- */
-export const connectorsControllerUpdateSettings = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerUpdateSettingsData, ThrowOnError>) => (options.client ?? client).patch<ConnectorsControllerUpdateSettingsResponses, unknown, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/connectors/settings',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Connect any mailbox over IMAP with an app password (stored encrypted), then sync it.
- *
- * Outside production, a server that cannot be signed in to falls back to the demo mailbox (mode: demo).
- */
-export const connectorsControllerConnectImap = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerConnectImapData, ThrowOnError>) => (options.client ?? client).post<ConnectorsControllerConnectImapResponses, ConnectorsControllerConnectImapErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/connectors/imap',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * OAuth consent URL for Gmail or Outlook (read housing emails, reply from your address).
- */
-export const connectorsControllerAuthUrl = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerAuthUrlData, ThrowOnError>) => (options.client ?? client).get<ConnectorsControllerAuthUrlResponses, ConnectorsControllerAuthUrlErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/connectors/{provider}/auth-url',
-    ...options
-});
-
-/**
- * Mobile: activate the mailbox from the OAuth redirect (status=pending&nonce=...) for the signed-in user.
- */
-export const connectorsControllerConfirm = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerConfirmData, ThrowOnError>) => (options.client ?? client).post<ConnectorsControllerConfirmResponses, ConnectorsControllerConfirmErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/connectors/{provider}/confirm',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Connect the demo mailbox (sample housing emails). Not available in production.
- */
-export const connectorsControllerConnectDemo = <ThrowOnError extends boolean = false>(options?: Options<ConnectorsControllerConnectDemoData, ThrowOnError>) => (options?.client ?? client).post<ConnectorsControllerConnectDemoResponses, ConnectorsControllerConnectDemoErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/connectors/demo',
-    ...options
-});
-
-/**
- * Fetch new housing emails and file their attachments.
- */
-export const connectorsControllerSync = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerSyncData, ThrowOnError>) => (options.client ?? client).post<ConnectorsControllerSyncResponses, ConnectorsControllerSyncErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/connectors/{id}/sync',
-    ...options
-});
-
-/**
- * Disconnect a mailbox and delete the emails stored from it.
- */
-export const connectorsControllerDisconnect = <ThrowOnError extends boolean = false>(options: Options<ConnectorsControllerDisconnectData, ThrowOnError>) => (options.client ?? client).delete<ConnectorsControllerDisconnectResponses, ConnectorsControllerDisconnectErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/connectors/{id}',
-    ...options
 });
 
 /**

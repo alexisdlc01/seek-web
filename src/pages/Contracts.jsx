@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, Chip, Empty, ErrorState, Loading, Page, PageHeader, btnSmGhost, btnSmPrimary } from "../components/sk.jsx";
 import { DEPOSIT_SCHEMES, api, engineerLink, errMessage, fmtDate, depositRules, fmtDay, gbp, openAttachment } from "../lib/landlord.js";
@@ -166,6 +167,11 @@ function ContractRow({ contract, depositTotal }) {
 		mutationFn: () => api.post(`/contracts/${contract._id}/send`),
 		onSuccess: () => qc.invalidateQueries({ queryKey: ["landlord-contracts"] })
 	});
+	const remind = useMutation({
+		mutationFn: () => api.post(`/contracts/${contract._id}/remind`),
+		onSuccess: () => qc.invalidateQueries({ queryKey: ["landlord-contracts"] })
+	});
+	const reminded = remind.isSuccess || remind.error?.response?.status === 429 || (!!contract.lastRemindedAt && Date.now() - new Date(contract.lastRemindedAt).getTime() < 24 * 3_600_000); // once per 24h
 	const total = contract.tenancy?.tenants?.length ?? 0;
 	return (
 		<div className="flex flex-wrap items-center justify-between gap-2.5 rounded-xl border border-sk-border p-3">
@@ -181,12 +187,19 @@ function ContractRow({ contract, depositTotal }) {
 							: `Added ${fmtDay(contract.createdAt)}`}
 				</span>
 				{send.isError && <span role="alert" className="text-[12.5px] text-sk-warn">{errMessage(send.error)}</span>}
+				{remind.isError && <span role="alert" className="text-[12.5px] text-sk-warn">{errMessage(remind.error)}</span>}
+				{remind.isSuccess && <span role="status" className="text-[12.5px] text-sk-ok">Reminder sent to tenants who haven't signed.</span>}
 			</div>
 			<div className="flex items-center gap-2">
 				<Chip tone={CONTRACT_TONE[contract.status]}>{CONTRACT_LABEL[contract.status]}</Chip>
 				{contract.status === "DRAFT" && (
 					<button type="button" className={btnSmPrimary} disabled={send.isPending} onClick={() => send.mutate()}>
 						{send.isPending ? "Sending…" : "Send for e-signature"}
+					</button>
+				)}
+				{contract.status === "SENT" && (
+					<button type="button" className={btnSmGhost} disabled={remind.isPending || reminded} onClick={() => remind.mutate()}>
+						{remind.isPending ? "Sending…" : contract.lastRemindedAt && reminded ? `Reminded ${fmtDay(contract.lastRemindedAt)}` : "Remind tenants"}
 					</button>
 				)}
 			</div>
@@ -397,6 +410,8 @@ function TenancyCard({ tenancy: t, contracts, templates }) {
 }
 
 export default function Contracts() {
+	const [params, setParams] = useSearchParams();
+	const only = params.get("tenancy");
 	const tenancies = useQuery({
 		queryKey: ["landlord-tenancies"],
 		queryFn: async () => (await api.get("/tenancies/landlord")).data
@@ -414,7 +429,8 @@ export default function Contracts() {
 		queryFn: async () => (await api.get("/landlord/overview")).data
 	});
 
-	const list = tenancies.data ?? [];
+	const all = tenancies.data ?? [];
+	const list = only ? all.filter((t) => t._id === only) : all;
 	const protectedTotal = list.filter((t) => t.depositProtectedAt).reduce((n, t) => n + t.depositAmount * Math.max(1, t.tenants.length), 0);
 	const calendar = [...(overview.data?.compliance ?? [])].sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
@@ -430,6 +446,12 @@ export default function Contracts() {
 					{(tenancies.isLoading || contracts.isLoading) && <Loading label="Loading tenancies" />}
 					{tenancies.isError && <ErrorState error={tenancies.error} onRetry={() => tenancies.refetch()} />}
 					{contracts.isError && <ErrorState error={contracts.error} onRetry={() => contracts.refetch()} />}
+					{only && (
+						<div className="flex items-center justify-between gap-3 rounded-xl bg-sk-card2 px-3 py-2 text-[13px] text-sk-text2">
+							Showing one tenancy
+							<button type="button" onClick={() => setParams({})} className="cursor-pointer border-none bg-transparent text-[13px] font-semibold text-sk-link">Show all</button>
+						</div>
+					)}
 					{tenancies.data && list.length === 0 && (
 						<Empty title="No tenancies yet">Once a household moves in, its contract and deposit appear here.</Empty>
 					)}

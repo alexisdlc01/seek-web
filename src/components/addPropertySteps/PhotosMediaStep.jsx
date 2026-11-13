@@ -71,6 +71,7 @@ const PhotosMediaStep = ({
 								<Button
 									type="button"
 									icon="pi pi-times"
+									aria-label="Remove photo"
 									className="absolute right-1 !p-1 !min-w-0 w-6 h-6"
 									rounded
 									severity="danger"
@@ -152,6 +153,7 @@ const PhotosMediaStep = ({
 								rounded
 								size="small"
 								className="ml-2"
+								aria-label="Remove file"
 								onClick={() => setFloorPlan(null)}
 							/>
 						</div>

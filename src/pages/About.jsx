@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 export default function AboutPage() {
+	useEffect(() => {
+		document.title = "About | Seek";
+	}, []);
 	const [openSection, setOpenSection] = useState(null);
 	const navigate = useNavigate();
 

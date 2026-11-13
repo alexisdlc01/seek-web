@@ -91,7 +91,14 @@ export type CreateUserDto = {
 export type RegistrationDto = {
     kind: 'HMO_LICENCE' | 'SELECTIVE_LICENCE' | 'PRS_DATABASE' | 'RENT_SMART_WALES' | 'LANDLORD_REGISTRATION_SCOTLAND' | 'LANDLORD_REGISTRATION_NI' | 'OTHER';
     number: string;
+    /**
+     * Always false: Seek does not check numbers against the registers. Use status.
+     */
     verified: boolean;
+    /**
+     * Format check only: DECLARED or INVALID_FORMAT.
+     */
+    status: 'DECLARED' | 'INVALID_FORMAT';
 };
 
 export type NotificationPrefsDto = {
@@ -224,7 +231,7 @@ export type RequestReferenceDto = {
 export type PassportItemDto = {
     type: 'IDENTIFICATION' | 'PROOF_OF_INCOME' | 'GUARANTOR_AGREEMENT' | 'LANDLORD_REFERENCE' | 'CHARACTER_REFERENCE' | 'PASSPORT' | 'VISA' | 'RIGHT_TO_RENT' | 'STUDENT_STATUS' | 'CAS_LETTER' | 'PROOF_OF_FUNDS' | 'AGENT_REFERENCE' | 'RECOMMENDATION';
     label: string;
-    status: 'PENDING' | 'VERIFIED' | 'EXPIRED' | 'REJECTED' | 'MISSING';
+    status: 'PENDING' | 'VERIFIED' | 'EXPIRED' | 'REJECTED' | 'PROVIDED' | 'MISSING';
     required: boolean;
     expiresAt: string | null;
     uploadedAt: string | null;
@@ -252,6 +259,10 @@ export type PassportItemDto = {
      * When Seek emailed the guarantor or referee (source "request" only).
      */
     requestedAt?: string | null;
+    /**
+     * Status REJECTED only: what to fix, from the automatic review. Only for the owner or a viewer with an active share.
+     */
+    reason?: string | null;
 };
 
 export type PassportSectionDto = {
@@ -320,8 +331,10 @@ export type PendingDocumentDto = {
 };
 
 export type UpdateDocumentStatusDto = {
-    status: 'PENDING' | 'VERIFIED' | 'EXPIRED' | 'REJECTED';
-    expiresAt?: string | null;
+    /**
+     * Only PENDING is accepted: it runs the automatic check again.
+     */
+    status: 'PENDING' | 'VERIFIED' | 'EXPIRED' | 'REJECTED' | 'PROVIDED';
 };
 
 export type AddDocumentDto = {
@@ -342,6 +355,360 @@ export type PresignResDto = {
     uploadUrl: string;
     fileUrl: string;
     key: string;
+};
+
+export type ProviderAvailabilityDto = {
+    provider: 'GMAIL' | 'OUTLOOK' | 'DEMO' | 'IMAP';
+    label: string;
+    available: boolean;
+    /**
+     * Why the provider cannot be connected on this server.
+     */
+    reason?: string;
+};
+
+export type ConnectorSettingsDto = {
+    /**
+     * Connected mailboxes only ever import housing-related emails.
+     */
+    scope: 'housing';
+    /**
+     * File leases, certificates and bills found in attachments automatically.
+     */
+    autoFileAttachments: boolean;
+    /**
+     * Students: add landlord and character references found in emails to the Seek Passport.
+     */
+    addReferencesToProfile: boolean;
+    /**
+     * Read utility bills from emails so they can be split.
+     */
+    readUtilityBills: boolean;
+    /**
+     * File signed tenancy agreements in the tenancy, where every tenant sees them.
+     */
+    copySignedContracts: boolean;
+    /**
+     * Let Seek AI suggest replies in the inbox (the user always presses send).
+     */
+    aiDraftReplies: boolean;
+};
+
+export type MatchedContactDto = {
+    name: string;
+    email: string;
+    category: 'LANDLORD' | 'TENANT' | 'APPLICANT' | 'BILLS' | 'DEPOSIT' | 'HOUSEHOLD' | 'UNIVERSITY' | 'OTHER';
+    emailCount: number;
+};
+
+export type EmailConnectionViewDto = {
+    id: string;
+    provider: 'GMAIL' | 'OUTLOOK' | 'DEMO' | 'IMAP';
+    label: string;
+    emailAddress: string;
+    status: 'CONNECTED' | 'ERROR' | 'DISCONNECTED';
+    /**
+     * Replies can be sent from this mailbox. False for IMAP (read-only).
+     */
+    canSend: boolean;
+    /**
+     * Only housing emails are synced (your connector settings scope is housing).
+     */
+    housingOnly: boolean;
+    lastSyncAt: string | null;
+    lastError: string | null;
+    /**
+     * Housing emails stored from this mailbox.
+     */
+    emailCount: number;
+    /**
+     * Distinct senders and recipients matched.
+     */
+    contactCount: number;
+    matchedContacts: Array<MatchedContactDto>;
+};
+
+export type ConnectorsOverviewDto = {
+    providers: Array<ProviderAvailabilityDto>;
+    settings: ConnectorSettingsDto;
+    connections: Array<EmailConnectionViewDto>;
+};
+
+export type UpdateConnectorSettingsDto = {
+    scope?: 'housing';
+    autoFileAttachments?: boolean;
+    addReferencesToProfile?: boolean;
+    readUtilityBills?: boolean;
+    copySignedContracts?: boolean;
+    aiDraftReplies?: boolean;
+};
+
+export type ConnectImapDto = {
+    host: string;
+    /**
+     * IMAP over TLS port (usually 993).
+     */
+    port: number;
+    /**
+     * Usually your email address.
+     */
+    username: string;
+    /**
+     * An app password from your email provider, not your normal password. Stored encrypted.
+     */
+    appPassword: string;
+};
+
+export type ImapConnectResultDto = {
+    /**
+     * Emails looked at.
+     */
+    scanned: number;
+    /**
+     * Housing emails stored.
+     */
+    imported: number;
+    /**
+     * Emails dropped because they are not about housing.
+     */
+    skipped: number;
+    /**
+     * Attachments filed into tenancy documents or bills.
+     */
+    filed: number;
+    connection: EmailConnectionViewDto;
+    /**
+     * demo: the IMAP sign-in failed outside production, so the demo mailbox was connected instead.
+     */
+    mode: 'imap' | 'demo';
+    /**
+     * Why the demo mailbox was used.
+     */
+    notice?: string;
+};
+
+export type AuthUrlDto = {
+    provider: 'GMAIL' | 'OUTLOOK';
+    /**
+     * Open this URL to grant read and send access to the mailbox.
+     */
+    url: string;
+};
+
+export type ConfirmConnectorDto = {
+    /**
+     * The nonce from the seekapp://connectors?status=pending redirect.
+     */
+    nonce: string;
+};
+
+export type SyncResultDto = {
+    /**
+     * Emails looked at.
+     */
+    scanned: number;
+    /**
+     * Housing emails stored.
+     */
+    imported: number;
+    /**
+     * Emails dropped because they are not about housing.
+     */
+    skipped: number;
+    /**
+     * Attachments filed into tenancy documents or bills.
+     */
+    filed: number;
+    connection: EmailConnectionViewDto;
+};
+
+export type ConnectionMatchDto = {
+    name: string;
+    email: string;
+    lastMessageAt: string | null;
+};
+
+export type DisconnectResultDto = {
+    id: string;
+    status: 'DISCONNECTED';
+    /**
+     * Stored emails deleted with the connection.
+     */
+    removedEmails: number;
+};
+
+export type TenancyDocument = {
+    _id: string;
+    type: 'TENANCY_AGREEMENT' | 'DEPOSIT_CERTIFICATE' | 'GAS_SAFETY' | 'EPC' | 'EICR' | 'INVENTORY' | 'COUNCIL_TAX_EXEMPTION' | 'HOW_TO_RENT' | 'OTHER';
+    title: string;
+    url: string;
+    key?: string;
+    source: 'EMAIL' | 'UPLOAD' | 'SEEK';
+    addedAt: string;
+};
+
+export type Tenancy = {
+    _id: string;
+    listing: string;
+    landlord: string;
+    tenants: Array<string>;
+    /**
+     * Students invited to a hand-made tenancy who have not accepted yet. They move to tenants on accept.
+     */
+    pendingTenants: Array<string>;
+    application?: string | null;
+    startDate: string;
+    endDate: string | null;
+    /**
+     * Rolling (periodic) tenancy, the default under the Renters' Rights Act.
+     */
+    periodic: boolean;
+    /**
+     * Rent per tenant per month, in pence.
+     */
+    monthlyRent: number;
+    /**
+     * Deposit per tenant, in pence.
+     */
+    depositAmount: number;
+    /**
+     * Energy fair-use allowance for the whole household, in pence per month. Usage above it is split between the tenants.
+     */
+    energyAllowance: number | null;
+    depositScheme: 'DPS' | 'TDS' | 'MYDEPOSITS' | 'SAFEDEPOSITS_SCOTLAND' | 'LPS_SCOTLAND' | 'MYDEPOSITS_SCOTLAND';
+    depositReference?: string;
+    depositProtectedAt: string | null;
+    /**
+     * When the deposit reached the landlord. It must be protected within 30 days of this date.
+     */
+    depositReceivedAt: string | null;
+    /**
+     * When the landlord gave tenants the deposit's prescribed information.
+     */
+    prescribedInfoSentAt: string | null;
+    documents: Array<TenancyDocument>;
+    status: 'PENDING_ACCEPTANCE' | 'ACTIVE' | 'ENDED';
+    createdAt: string;
+};
+
+export type CreateTenancyDto = {
+    /**
+     * Listing id (must be yours).
+     */
+    listing: string;
+    /**
+     * Student user ids to invite, for a tenancy made by hand. Each must accept before rent is scheduled. Ignored when application is given.
+     */
+    tenants?: Array<string>;
+    /**
+     * ACCEPTED application on your listing this tenancy comes from. Its applicants become the tenants.
+     */
+    application?: string;
+    startDate: string;
+    endDate?: string;
+    periodic?: boolean;
+    /**
+     * Rent per tenant per month, in pence.
+     */
+    monthlyRent: number;
+    /**
+     * Deposit per tenant, in pence.
+     */
+    depositAmount?: number;
+    /**
+     * Energy fair-use allowance for the household, in pence per month.
+     */
+    energyAllowance?: number;
+    depositScheme?: 'DPS' | 'TDS' | 'MYDEPOSITS' | 'SAFEDEPOSITS_SCOTLAND' | 'LPS_SCOTLAND' | 'MYDEPOSITS_SCOTLAND';
+    depositReference?: string;
+    depositProtectedAt?: string;
+    /**
+     * When the deposit was received.
+     */
+    depositReceivedAt?: string;
+};
+
+export type UpdateDepositDto = {
+    depositScheme: 'DPS' | 'TDS' | 'MYDEPOSITS' | 'SAFEDEPOSITS_SCOTLAND' | 'LPS_SCOTLAND' | 'MYDEPOSITS_SCOTLAND';
+    depositReference: string;
+    /**
+     * Defaults to now.
+     */
+    depositProtectedAt?: string;
+    /**
+     * When the deposit was received.
+     */
+    depositReceivedAt?: string;
+    /**
+     * Correct the deposit per tenant, in pence.
+     */
+    depositAmount?: number;
+    /**
+     * Energy fair-use allowance for the household, in pence per month. null removes it.
+     */
+    energyAllowance?: number | null;
+};
+
+export type UpdateEnergyAllowanceDto = {
+    /**
+     * Energy fair-use allowance for the household, in pence per month. null removes it.
+     */
+    energyAllowance: number | null;
+};
+
+export type DepositReceivedDto = {
+    /**
+     * Defaults to now.
+     */
+    receivedAt?: string;
+};
+
+export type PrescribedInfoDto = {
+    /**
+     * Defaults to now.
+     */
+    sentAt?: string;
+};
+
+export type AddTenancyDocumentDto = {
+    type: 'TENANCY_AGREEMENT' | 'DEPOSIT_CERTIFICATE' | 'GAS_SAFETY' | 'EPC' | 'EICR' | 'INVENTORY' | 'COUNCIL_TAX_EXEMPTION' | 'HOW_TO_RENT' | 'OTHER';
+    title: string;
+    url: string;
+    /**
+     * Private upload key from /upload/presign.
+     */
+    key?: string;
+    source?: 'EMAIL' | 'UPLOAD' | 'SEEK';
+};
+
+export type Notification = {
+    _id: string;
+    user: string;
+    kind: 'RENT_RECEIPT' | 'RENT_REMINDER' | 'RENT_LATE' | 'PAYMENT_RECEIVED' | 'PAYMENT_FAILED' | 'NEW_QUALIFIED_HOUSEHOLD' | 'COMPLIANCE_DUE' | 'CONTRACT_SENT' | 'CONTRACT_SIGNED' | 'INVENTORY_RECORDED' | 'DEPOSIT_DEDUCTIONS' | 'REPAIR_REPORTED' | 'REPAIR_UPDATED' | 'TENANCY_CREATED' | 'TENANCY_INVITE' | 'VIEWING_SCHEDULED' | 'OFFER_MADE' | 'OFFER_EXPIRED' | 'APPLICATION_REJECTED' | 'LISTING_NEEDS_CHANGES' | 'REPORT_ACTIONED';
+    title: string;
+    body?: string;
+    /**
+     * seek-web path to open, e.g. /student/home/rent. Same route as `target`.
+     */
+    link?: string;
+    /**
+     * Typed destination: a logical `screen` plus the `id` it is about. Clients route on `screen`;
+     * `link` is the seek-web path and `mobile` the seek-mobile path (students only).
+     *
+     * | kind | student screen → web / mobile | landlord screen → web |
+     * |---|---|---|
+     * | PAYMENTS | rent → /student/home/rent / /(app)/(tabs)/rent | landlord-rent → /rent |
+     * | COMPLIANCE | deposit → /student/home/deposit / /(app)/deposit | dashboard → /dashboard |
+     * | TENANCY | home → /student/home / /(app)/(tabs)/my-home | contracts → /contracts |
+     * | CONTRACTS | contract → /student/home / /(app)/contract | contracts → /contracts |
+     * | REPAIRS | repairs → /student/home / /(app)/repairs | dashboard → /dashboard |
+     * | APPLICATION | applications → /student/home / /(app)/(tabs)/applied | application → /application?listing=<listing>&id=<id> (or /applicants) |
+     */
+    target?: {
+        [key: string]: unknown;
+    };
+    readAt: string | null;
+    createdAt: string;
 };
 
 export type LoginDto = {
@@ -519,6 +886,14 @@ export type Listing = {
     floorPlanImage: string;
     requirements: Array<string>;
     isVerified: boolean;
+    /**
+     * Automatic check result; null until the listing is first checked.
+     */
+    moderationStatus?: 'APPROVED' | 'NEEDS_CHANGES' | 'PENDING';
+    /**
+     * What the landlord must fix before the listing goes live.
+     */
+    moderationReasons?: Array<string>;
     isDraft: boolean;
     lastUpdated: string;
     likedBy: Array<string>;
@@ -616,6 +991,14 @@ export type ListingSearchResultDto = {
     floorPlanImage: string;
     requirements: Array<string>;
     isVerified: boolean;
+    /**
+     * Automatic check result; null until the listing is first checked.
+     */
+    moderationStatus?: 'APPROVED' | 'NEEDS_CHANGES' | 'PENDING';
+    /**
+     * What the landlord must fix before the listing goes live.
+     */
+    moderationReasons?: Array<string>;
     isDraft: boolean;
     lastUpdated: string;
     likedBy: Array<string>;
@@ -816,180 +1199,6 @@ export type RejectApplicationDto = {
     reason?: string;
 };
 
-export type TenancyDocument = {
-    _id: string;
-    type: 'TENANCY_AGREEMENT' | 'DEPOSIT_CERTIFICATE' | 'GAS_SAFETY' | 'EPC' | 'EICR' | 'INVENTORY' | 'COUNCIL_TAX_EXEMPTION' | 'HOW_TO_RENT' | 'OTHER';
-    title: string;
-    url: string;
-    key?: string;
-    source: 'EMAIL' | 'UPLOAD' | 'SEEK';
-    addedAt: string;
-};
-
-export type Tenancy = {
-    _id: string;
-    listing: string;
-    landlord: string;
-    tenants: Array<string>;
-    /**
-     * Students invited to a hand-made tenancy who have not accepted yet. They move to tenants on accept.
-     */
-    pendingTenants: Array<string>;
-    application?: string | null;
-    startDate: string;
-    endDate: string | null;
-    /**
-     * Rolling (periodic) tenancy, the default under the Renters' Rights Act.
-     */
-    periodic: boolean;
-    /**
-     * Rent per tenant per month, in pence.
-     */
-    monthlyRent: number;
-    /**
-     * Deposit per tenant, in pence.
-     */
-    depositAmount: number;
-    /**
-     * Energy fair-use allowance for the whole household, in pence per month. Usage above it is split between the tenants.
-     */
-    energyAllowance: number | null;
-    depositScheme: 'DPS' | 'TDS' | 'MYDEPOSITS' | 'SAFEDEPOSITS_SCOTLAND' | 'LPS_SCOTLAND' | 'MYDEPOSITS_SCOTLAND';
-    depositReference?: string;
-    depositProtectedAt: string | null;
-    /**
-     * When the deposit reached the landlord. It must be protected within 30 days of this date.
-     */
-    depositReceivedAt: string | null;
-    /**
-     * When the landlord gave tenants the deposit's prescribed information.
-     */
-    prescribedInfoSentAt: string | null;
-    documents: Array<TenancyDocument>;
-    status: 'PENDING_ACCEPTANCE' | 'ACTIVE' | 'ENDED';
-    createdAt: string;
-};
-
-export type CreateTenancyDto = {
-    /**
-     * Listing id (must be yours).
-     */
-    listing: string;
-    /**
-     * Student user ids to invite, for a tenancy made by hand. Each must accept before rent is scheduled. Ignored when application is given.
-     */
-    tenants?: Array<string>;
-    /**
-     * ACCEPTED application on your listing this tenancy comes from. Its applicants become the tenants.
-     */
-    application?: string;
-    startDate: string;
-    endDate?: string;
-    periodic?: boolean;
-    /**
-     * Rent per tenant per month, in pence.
-     */
-    monthlyRent: number;
-    /**
-     * Deposit per tenant, in pence.
-     */
-    depositAmount?: number;
-    /**
-     * Energy fair-use allowance for the household, in pence per month.
-     */
-    energyAllowance?: number;
-    depositScheme?: 'DPS' | 'TDS' | 'MYDEPOSITS' | 'SAFEDEPOSITS_SCOTLAND' | 'LPS_SCOTLAND' | 'MYDEPOSITS_SCOTLAND';
-    depositReference?: string;
-    depositProtectedAt?: string;
-    /**
-     * When the deposit was received.
-     */
-    depositReceivedAt?: string;
-};
-
-export type UpdateDepositDto = {
-    depositScheme: 'DPS' | 'TDS' | 'MYDEPOSITS' | 'SAFEDEPOSITS_SCOTLAND' | 'LPS_SCOTLAND' | 'MYDEPOSITS_SCOTLAND';
-    depositReference: string;
-    /**
-     * Defaults to now.
-     */
-    depositProtectedAt?: string;
-    /**
-     * When the deposit was received.
-     */
-    depositReceivedAt?: string;
-    /**
-     * Correct the deposit per tenant, in pence.
-     */
-    depositAmount?: number;
-    /**
-     * Energy fair-use allowance for the household, in pence per month. null removes it.
-     */
-    energyAllowance?: number | null;
-};
-
-export type UpdateEnergyAllowanceDto = {
-    /**
-     * Energy fair-use allowance for the household, in pence per month. null removes it.
-     */
-    energyAllowance: number | null;
-};
-
-export type DepositReceivedDto = {
-    /**
-     * Defaults to now.
-     */
-    receivedAt?: string;
-};
-
-export type PrescribedInfoDto = {
-    /**
-     * Defaults to now.
-     */
-    sentAt?: string;
-};
-
-export type AddTenancyDocumentDto = {
-    type: 'TENANCY_AGREEMENT' | 'DEPOSIT_CERTIFICATE' | 'GAS_SAFETY' | 'EPC' | 'EICR' | 'INVENTORY' | 'COUNCIL_TAX_EXEMPTION' | 'HOW_TO_RENT' | 'OTHER';
-    title: string;
-    url: string;
-    /**
-     * Private upload key from /upload/presign.
-     */
-    key?: string;
-    source?: 'EMAIL' | 'UPLOAD' | 'SEEK';
-};
-
-export type Notification = {
-    _id: string;
-    user: string;
-    kind: 'RENT_RECEIPT' | 'RENT_REMINDER' | 'RENT_LATE' | 'PAYMENT_RECEIVED' | 'PAYMENT_FAILED' | 'NEW_QUALIFIED_HOUSEHOLD' | 'COMPLIANCE_DUE' | 'CONTRACT_SENT' | 'CONTRACT_SIGNED' | 'INVENTORY_RECORDED' | 'DEPOSIT_DEDUCTIONS' | 'REPAIR_REPORTED' | 'REPAIR_UPDATED' | 'TENANCY_CREATED' | 'TENANCY_INVITE' | 'VIEWING_SCHEDULED' | 'OFFER_MADE' | 'OFFER_EXPIRED' | 'APPLICATION_REJECTED';
-    title: string;
-    body?: string;
-    /**
-     * seek-web path to open, e.g. /student/home/rent. Same route as `target`.
-     */
-    link?: string;
-    /**
-     * Typed destination: a logical `screen` plus the `id` it is about. Clients route on `screen`;
-     * `link` is the seek-web path and `mobile` the seek-mobile path (students only).
-     *
-     * | kind | student screen → web / mobile | landlord screen → web |
-     * |---|---|---|
-     * | PAYMENTS | rent → /student/home/rent / /(app)/(tabs)/rent | landlord-rent → /rent |
-     * | COMPLIANCE | deposit → /student/home/deposit / /(app)/deposit | dashboard → /dashboard |
-     * | TENANCY | home → /student/home / /(app)/(tabs)/my-home | contracts → /contracts |
-     * | CONTRACTS | contract → /student/home / /(app)/contract | contracts → /contracts |
-     * | REPAIRS | repairs → /student/home / /(app)/repairs | dashboard → /dashboard |
-     * | APPLICATION | applications → /student/home / /(app)/(tabs)/applied | application → /application?listing=<listing>&id=<id> (or /applicants) |
-     */
-    target?: {
-        [key: string]: unknown;
-    };
-    readAt: string | null;
-    createdAt: string;
-};
-
 export type CreateFlagDto = {
     text: string;
     category: 'INNAPPROPRIATE_BEHAVIOUR' | 'OTHER';
@@ -1008,6 +1217,12 @@ export type Flag = {
      * Seek support's reply to the reporter.
      */
     supportResponse?: string | null;
+    /**
+     * Automatic AI triage (admins only): category, severity and a short summary.
+     */
+    triage?: {
+        [key: string]: unknown;
+    } | null;
     createdAt: string;
 };
 
@@ -1092,6 +1307,10 @@ export type Contract = {
     signatures: Array<ContractSignature>;
     sentAt: string | null;
     signedAt: string | null;
+    /**
+     * Last signing reminder sent to the tenants.
+     */
+    lastRemindedAt: string | null;
     /**
      * Set when the contract is Seek's built-in agreement.
      */
@@ -1752,176 +1971,6 @@ export type AdviceResponseDto = {
     suggestedReply?: string | null;
 };
 
-export type ProviderAvailabilityDto = {
-    provider: 'GMAIL' | 'OUTLOOK' | 'DEMO' | 'IMAP';
-    label: string;
-    available: boolean;
-    /**
-     * Why the provider cannot be connected on this server.
-     */
-    reason?: string;
-};
-
-export type ConnectorSettingsDto = {
-    /**
-     * Connected mailboxes only ever import housing-related emails.
-     */
-    scope: 'housing';
-    /**
-     * File leases, certificates and bills found in attachments automatically.
-     */
-    autoFileAttachments: boolean;
-    /**
-     * Students: add landlord and character references found in emails to the Seek Passport.
-     */
-    addReferencesToProfile: boolean;
-    /**
-     * Read utility bills from emails so they can be split.
-     */
-    readUtilityBills: boolean;
-    /**
-     * File signed tenancy agreements in the tenancy, where every tenant sees them.
-     */
-    copySignedContracts: boolean;
-    /**
-     * Let Seek AI suggest replies in the inbox (the user always presses send).
-     */
-    aiDraftReplies: boolean;
-};
-
-export type MatchedContactDto = {
-    name: string;
-    email: string;
-    category: 'LANDLORD' | 'TENANT' | 'APPLICANT' | 'BILLS' | 'DEPOSIT' | 'HOUSEHOLD' | 'UNIVERSITY' | 'OTHER';
-    emailCount: number;
-};
-
-export type EmailConnectionViewDto = {
-    id: string;
-    provider: 'GMAIL' | 'OUTLOOK' | 'DEMO' | 'IMAP';
-    label: string;
-    emailAddress: string;
-    status: 'CONNECTED' | 'ERROR' | 'DISCONNECTED';
-    /**
-     * Only housing emails are synced (your connector settings scope is housing).
-     */
-    housingOnly: boolean;
-    lastSyncAt: string | null;
-    lastError: string | null;
-    /**
-     * Housing emails stored from this mailbox.
-     */
-    emailCount: number;
-    /**
-     * Distinct senders and recipients matched.
-     */
-    contactCount: number;
-    matchedContacts: Array<MatchedContactDto>;
-};
-
-export type ConnectorsOverviewDto = {
-    providers: Array<ProviderAvailabilityDto>;
-    settings: ConnectorSettingsDto;
-    connections: Array<EmailConnectionViewDto>;
-};
-
-export type UpdateConnectorSettingsDto = {
-    scope?: 'housing';
-    autoFileAttachments?: boolean;
-    addReferencesToProfile?: boolean;
-    readUtilityBills?: boolean;
-    copySignedContracts?: boolean;
-    aiDraftReplies?: boolean;
-};
-
-export type ConnectImapDto = {
-    host: string;
-    /**
-     * IMAP over TLS port (usually 993).
-     */
-    port: number;
-    /**
-     * Usually your email address.
-     */
-    username: string;
-    /**
-     * An app password from your email provider, not your normal password. Stored encrypted.
-     */
-    appPassword: string;
-};
-
-export type ImapConnectResultDto = {
-    /**
-     * Emails looked at.
-     */
-    scanned: number;
-    /**
-     * Housing emails stored.
-     */
-    imported: number;
-    /**
-     * Emails dropped because they are not about housing.
-     */
-    skipped: number;
-    /**
-     * Attachments filed into tenancy documents or bills.
-     */
-    filed: number;
-    connection: EmailConnectionViewDto;
-    /**
-     * demo: the IMAP sign-in failed outside production, so the demo mailbox was connected instead.
-     */
-    mode: 'imap' | 'demo';
-    /**
-     * Why the demo mailbox was used.
-     */
-    notice?: string;
-};
-
-export type AuthUrlDto = {
-    provider: 'GMAIL' | 'OUTLOOK';
-    /**
-     * Open this URL to grant read and send access to the mailbox.
-     */
-    url: string;
-};
-
-export type ConfirmConnectorDto = {
-    /**
-     * The nonce from the seekapp://connectors?status=pending redirect.
-     */
-    nonce: string;
-};
-
-export type SyncResultDto = {
-    /**
-     * Emails looked at.
-     */
-    scanned: number;
-    /**
-     * Housing emails stored.
-     */
-    imported: number;
-    /**
-     * Emails dropped because they are not about housing.
-     */
-    skipped: number;
-    /**
-     * Attachments filed into tenancy documents or bills.
-     */
-    filed: number;
-    connection: EmailConnectionViewDto;
-};
-
-export type DisconnectResultDto = {
-    id: string;
-    status: 'DISCONNECTED';
-    /**
-     * Stored emails deleted with the connection.
-     */
-    removedEmails: number;
-};
-
 export type InboxThreadDto = {
     /**
      * seek-<conversationId> or email-<threadKey>.
@@ -2567,6 +2616,446 @@ export type UploadControllerDownloadResponses = {
 
 export type UploadControllerDownloadResponse = UploadControllerDownloadResponses[keyof UploadControllerDownloadResponses];
 
+export type ConnectorsControllerOverviewData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/connectors';
+};
+
+export type ConnectorsControllerOverviewResponses = {
+    200: ConnectorsOverviewDto;
+};
+
+export type ConnectorsControllerOverviewResponse = ConnectorsControllerOverviewResponses[keyof ConnectorsControllerOverviewResponses];
+
+export type ConnectorsControllerUpdateSettingsData = {
+    body: UpdateConnectorSettingsDto;
+    path?: never;
+    query?: never;
+    url: '/connectors/settings';
+};
+
+export type ConnectorsControllerUpdateSettingsResponses = {
+    200: ConnectorSettingsDto;
+};
+
+export type ConnectorsControllerUpdateSettingsResponse = ConnectorsControllerUpdateSettingsResponses[keyof ConnectorsControllerUpdateSettingsResponses];
+
+export type ConnectorsControllerConnectImapData = {
+    body: ConnectImapDto;
+    path?: never;
+    query?: never;
+    url: '/connectors/imap';
+};
+
+export type ConnectorsControllerConnectImapErrors = {
+    /**
+     * Sign-in failed (production).
+     */
+    400: ErrorDto;
+    503: ErrorDto;
+};
+
+export type ConnectorsControllerConnectImapError = ConnectorsControllerConnectImapErrors[keyof ConnectorsControllerConnectImapErrors];
+
+export type ConnectorsControllerConnectImapResponses = {
+    201: ImapConnectResultDto;
+};
+
+export type ConnectorsControllerConnectImapResponse = ConnectorsControllerConnectImapResponses[keyof ConnectorsControllerConnectImapResponses];
+
+export type ConnectorsControllerAuthUrlData = {
+    body?: never;
+    path: {
+        /**
+         * Canonical lowercase; any casing is accepted.
+         */
+        provider: 'gmail' | 'outlook';
+    };
+    query?: {
+        /**
+         * Where to send the user back after consent.
+         */
+        client?: 'web' | 'mobile';
+        /**
+         * Web path to return to (must start with /).
+         */
+        returnTo?: string;
+    };
+    url: '/connectors/{provider}/auth-url';
+};
+
+export type ConnectorsControllerAuthUrlErrors = {
+    /**
+     * Provider not set up on this server.
+     */
+    503: ErrorDto;
+};
+
+export type ConnectorsControllerAuthUrlError = ConnectorsControllerAuthUrlErrors[keyof ConnectorsControllerAuthUrlErrors];
+
+export type ConnectorsControllerAuthUrlResponses = {
+    200: AuthUrlDto;
+};
+
+export type ConnectorsControllerAuthUrlResponse = ConnectorsControllerAuthUrlResponses[keyof ConnectorsControllerAuthUrlResponses];
+
+export type ConnectorsControllerConfirmData = {
+    body: ConfirmConnectorDto;
+    path: {
+        provider: 'gmail' | 'outlook';
+    };
+    query?: never;
+    url: '/connectors/{provider}/confirm';
+};
+
+export type ConnectorsControllerConfirmErrors = {
+    /**
+     * Expired, already used, or started from another account.
+     */
+    400: ErrorDto;
+};
+
+export type ConnectorsControllerConfirmError = ConnectorsControllerConfirmErrors[keyof ConnectorsControllerConfirmErrors];
+
+export type ConnectorsControllerConfirmResponses = {
+    201: EmailConnectionViewDto;
+};
+
+export type ConnectorsControllerConfirmResponse = ConnectorsControllerConfirmResponses[keyof ConnectorsControllerConfirmResponses];
+
+export type ConnectorsControllerConnectDemoData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/connectors/demo';
+};
+
+export type ConnectorsControllerConnectDemoErrors = {
+    404: ErrorDto;
+};
+
+export type ConnectorsControllerConnectDemoError = ConnectorsControllerConnectDemoErrors[keyof ConnectorsControllerConnectDemoErrors];
+
+export type ConnectorsControllerConnectDemoResponses = {
+    201: SyncResultDto;
+};
+
+export type ConnectorsControllerConnectDemoResponse = ConnectorsControllerConnectDemoResponses[keyof ConnectorsControllerConnectDemoResponses];
+
+export type ConnectorsControllerSyncData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/connectors/{id}/sync';
+};
+
+export type ConnectorsControllerSyncErrors = {
+    404: ErrorDto;
+    502: ErrorDto;
+};
+
+export type ConnectorsControllerSyncError = ConnectorsControllerSyncErrors[keyof ConnectorsControllerSyncErrors];
+
+export type ConnectorsControllerSyncResponses = {
+    201: SyncResultDto;
+};
+
+export type ConnectorsControllerSyncResponse = ConnectorsControllerSyncResponses[keyof ConnectorsControllerSyncResponses];
+
+export type ConnectorsControllerMatchesData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/connectors/{id}/matches';
+};
+
+export type ConnectorsControllerMatchesErrors = {
+    403: ErrorDto;
+    404: ErrorDto;
+};
+
+export type ConnectorsControllerMatchesError = ConnectorsControllerMatchesErrors[keyof ConnectorsControllerMatchesErrors];
+
+export type ConnectorsControllerMatchesResponses = {
+    200: Array<ConnectionMatchDto>;
+};
+
+export type ConnectorsControllerMatchesResponse = ConnectorsControllerMatchesResponses[keyof ConnectorsControllerMatchesResponses];
+
+export type ConnectorsControllerDisconnectData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/connectors/{id}';
+};
+
+export type ConnectorsControllerDisconnectErrors = {
+    404: ErrorDto;
+};
+
+export type ConnectorsControllerDisconnectError = ConnectorsControllerDisconnectErrors[keyof ConnectorsControllerDisconnectErrors];
+
+export type ConnectorsControllerDisconnectResponses = {
+    200: DisconnectResultDto;
+};
+
+export type ConnectorsControllerDisconnectResponse = ConnectorsControllerDisconnectResponses[keyof ConnectorsControllerDisconnectResponses];
+
+export type TenanciesControllerMineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/tenancies/mine';
+};
+
+export type TenanciesControllerMineResponses = {
+    200: Array<Tenancy>;
+};
+
+export type TenanciesControllerMineResponse = TenanciesControllerMineResponses[keyof TenanciesControllerMineResponses];
+
+export type TenanciesControllerLandlordData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/tenancies/landlord';
+};
+
+export type TenanciesControllerLandlordResponses = {
+    200: Array<Tenancy>;
+};
+
+export type TenanciesControllerLandlordResponse = TenanciesControllerLandlordResponses[keyof TenanciesControllerLandlordResponses];
+
+export type TenanciesControllerGetData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}';
+};
+
+export type TenanciesControllerGetErrors = {
+    403: ErrorDto;
+    404: ErrorDto;
+};
+
+export type TenanciesControllerGetError = TenanciesControllerGetErrors[keyof TenanciesControllerGetErrors];
+
+export type TenanciesControllerGetResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerGetResponse = TenanciesControllerGetResponses[keyof TenanciesControllerGetResponses];
+
+export type TenanciesControllerCreateData = {
+    body: CreateTenancyDto;
+    path?: never;
+    query?: never;
+    url: '/tenancies';
+};
+
+export type TenanciesControllerCreateErrors = {
+    /**
+     * Application not ACCEPTED, or no student invited.
+     */
+    400: ErrorDto;
+    /**
+     * Listing or application is not yours.
+     */
+    403: ErrorDto;
+    /**
+     * The application already has a tenancy.
+     */
+    409: ErrorDto;
+};
+
+export type TenanciesControllerCreateError = TenanciesControllerCreateErrors[keyof TenanciesControllerCreateErrors];
+
+export type TenanciesControllerCreateResponses = {
+    201: Tenancy;
+};
+
+export type TenanciesControllerCreateResponse = TenanciesControllerCreateResponses[keyof TenanciesControllerCreateResponses];
+
+export type TenanciesControllerAcceptData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/accept';
+};
+
+export type TenanciesControllerAcceptErrors = {
+    403: ErrorDto;
+};
+
+export type TenanciesControllerAcceptError = TenanciesControllerAcceptErrors[keyof TenanciesControllerAcceptErrors];
+
+export type TenanciesControllerAcceptResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerAcceptResponse = TenanciesControllerAcceptResponses[keyof TenanciesControllerAcceptResponses];
+
+export type TenanciesControllerDepositData = {
+    body: UpdateDepositDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/deposit';
+};
+
+export type TenanciesControllerDepositErrors = {
+    400: ErrorDto;
+    403: ErrorDto;
+};
+
+export type TenanciesControllerDepositError = TenanciesControllerDepositErrors[keyof TenanciesControllerDepositErrors];
+
+export type TenanciesControllerDepositResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerDepositResponse = TenanciesControllerDepositResponses[keyof TenanciesControllerDepositResponses];
+
+export type TenanciesControllerEnergyAllowanceData = {
+    body: UpdateEnergyAllowanceDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/energy-allowance';
+};
+
+export type TenanciesControllerEnergyAllowanceErrors = {
+    400: ErrorDto;
+    403: ErrorDto;
+};
+
+export type TenanciesControllerEnergyAllowanceError = TenanciesControllerEnergyAllowanceErrors[keyof TenanciesControllerEnergyAllowanceErrors];
+
+export type TenanciesControllerEnergyAllowanceResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerEnergyAllowanceResponse = TenanciesControllerEnergyAllowanceResponses[keyof TenanciesControllerEnergyAllowanceResponses];
+
+export type TenanciesControllerDepositReceivedData = {
+    body: DepositReceivedDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/deposit-received';
+};
+
+export type TenanciesControllerDepositReceivedErrors = {
+    403: ErrorDto;
+};
+
+export type TenanciesControllerDepositReceivedError = TenanciesControllerDepositReceivedErrors[keyof TenanciesControllerDepositReceivedErrors];
+
+export type TenanciesControllerDepositReceivedResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerDepositReceivedResponse = TenanciesControllerDepositReceivedResponses[keyof TenanciesControllerDepositReceivedResponses];
+
+export type TenanciesControllerPrescribedInfoData = {
+    body: PrescribedInfoDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/prescribed-info';
+};
+
+export type TenanciesControllerPrescribedInfoErrors = {
+    403: ErrorDto;
+};
+
+export type TenanciesControllerPrescribedInfoError = TenanciesControllerPrescribedInfoErrors[keyof TenanciesControllerPrescribedInfoErrors];
+
+export type TenanciesControllerPrescribedInfoResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerPrescribedInfoResponse = TenanciesControllerPrescribedInfoResponses[keyof TenanciesControllerPrescribedInfoResponses];
+
+export type TenanciesControllerAddDocumentData = {
+    body: AddTenancyDocumentDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/documents';
+};
+
+export type TenanciesControllerAddDocumentErrors = {
+    400: ErrorDto;
+    403: ErrorDto;
+};
+
+export type TenanciesControllerAddDocumentError = TenanciesControllerAddDocumentErrors[keyof TenanciesControllerAddDocumentErrors];
+
+export type TenanciesControllerAddDocumentResponses = {
+    201: Tenancy;
+};
+
+export type TenanciesControllerAddDocumentResponse = TenanciesControllerAddDocumentResponses[keyof TenanciesControllerAddDocumentResponses];
+
+export type NotificationsControllerListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/notifications';
+};
+
+export type NotificationsControllerListErrors = {
+    401: ErrorDto;
+};
+
+export type NotificationsControllerListError = NotificationsControllerListErrors[keyof NotificationsControllerListErrors];
+
+export type NotificationsControllerListResponses = {
+    200: Array<Notification>;
+};
+
+export type NotificationsControllerListResponse = NotificationsControllerListResponses[keyof NotificationsControllerListResponses];
+
+export type NotificationsControllerMarkReadData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/notifications/{id}/read';
+};
+
+export type NotificationsControllerMarkReadErrors = {
+    404: ErrorDto;
+};
+
+export type NotificationsControllerMarkReadError = NotificationsControllerMarkReadErrors[keyof NotificationsControllerMarkReadErrors];
+
+export type NotificationsControllerMarkReadResponses = {
+    200: Notification;
+};
+
+export type NotificationsControllerMarkReadResponse = NotificationsControllerMarkReadResponses[keyof NotificationsControllerMarkReadResponses];
+
 export type AuthControllerLoginData = {
     body: LoginDto;
     path?: never;
@@ -3205,6 +3694,12 @@ export type ListingsControllerVerifyListingErrors = {
 
 export type ListingsControllerVerifyListingError = ListingsControllerVerifyListingErrors[keyof ListingsControllerVerifyListingErrors];
 
+export type ListingsControllerVerifyListingResponses = {
+    200: Listing;
+};
+
+export type ListingsControllerVerifyListingResponse = ListingsControllerVerifyListingResponses[keyof ListingsControllerVerifyListingResponses];
+
 export type ListingsControllerLikeListingData = {
     body?: never;
     path: {
@@ -3605,253 +4100,6 @@ export type ApplicationControllerGetApplicationResponses = {
 
 export type ApplicationControllerGetApplicationResponse = ApplicationControllerGetApplicationResponses[keyof ApplicationControllerGetApplicationResponses];
 
-export type TenanciesControllerMineData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/tenancies/mine';
-};
-
-export type TenanciesControllerMineResponses = {
-    200: Array<Tenancy>;
-};
-
-export type TenanciesControllerMineResponse = TenanciesControllerMineResponses[keyof TenanciesControllerMineResponses];
-
-export type TenanciesControllerLandlordData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/tenancies/landlord';
-};
-
-export type TenanciesControllerLandlordResponses = {
-    200: Array<Tenancy>;
-};
-
-export type TenanciesControllerLandlordResponse = TenanciesControllerLandlordResponses[keyof TenanciesControllerLandlordResponses];
-
-export type TenanciesControllerGetData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/tenancies/{id}';
-};
-
-export type TenanciesControllerGetErrors = {
-    403: ErrorDto;
-    404: ErrorDto;
-};
-
-export type TenanciesControllerGetError = TenanciesControllerGetErrors[keyof TenanciesControllerGetErrors];
-
-export type TenanciesControllerGetResponses = {
-    200: Tenancy;
-};
-
-export type TenanciesControllerGetResponse = TenanciesControllerGetResponses[keyof TenanciesControllerGetResponses];
-
-export type TenanciesControllerCreateData = {
-    body: CreateTenancyDto;
-    path?: never;
-    query?: never;
-    url: '/tenancies';
-};
-
-export type TenanciesControllerCreateErrors = {
-    /**
-     * Application not ACCEPTED, or no student invited.
-     */
-    400: ErrorDto;
-    /**
-     * Listing or application is not yours.
-     */
-    403: ErrorDto;
-    /**
-     * The application already has a tenancy.
-     */
-    409: ErrorDto;
-};
-
-export type TenanciesControllerCreateError = TenanciesControllerCreateErrors[keyof TenanciesControllerCreateErrors];
-
-export type TenanciesControllerCreateResponses = {
-    201: Tenancy;
-};
-
-export type TenanciesControllerCreateResponse = TenanciesControllerCreateResponses[keyof TenanciesControllerCreateResponses];
-
-export type TenanciesControllerAcceptData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/tenancies/{id}/accept';
-};
-
-export type TenanciesControllerAcceptErrors = {
-    403: ErrorDto;
-};
-
-export type TenanciesControllerAcceptError = TenanciesControllerAcceptErrors[keyof TenanciesControllerAcceptErrors];
-
-export type TenanciesControllerAcceptResponses = {
-    200: Tenancy;
-};
-
-export type TenanciesControllerAcceptResponse = TenanciesControllerAcceptResponses[keyof TenanciesControllerAcceptResponses];
-
-export type TenanciesControllerDepositData = {
-    body: UpdateDepositDto;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/tenancies/{id}/deposit';
-};
-
-export type TenanciesControllerDepositErrors = {
-    400: ErrorDto;
-    403: ErrorDto;
-};
-
-export type TenanciesControllerDepositError = TenanciesControllerDepositErrors[keyof TenanciesControllerDepositErrors];
-
-export type TenanciesControllerDepositResponses = {
-    200: Tenancy;
-};
-
-export type TenanciesControllerDepositResponse = TenanciesControllerDepositResponses[keyof TenanciesControllerDepositResponses];
-
-export type TenanciesControllerEnergyAllowanceData = {
-    body: UpdateEnergyAllowanceDto;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/tenancies/{id}/energy-allowance';
-};
-
-export type TenanciesControllerEnergyAllowanceErrors = {
-    400: ErrorDto;
-    403: ErrorDto;
-};
-
-export type TenanciesControllerEnergyAllowanceError = TenanciesControllerEnergyAllowanceErrors[keyof TenanciesControllerEnergyAllowanceErrors];
-
-export type TenanciesControllerEnergyAllowanceResponses = {
-    200: Tenancy;
-};
-
-export type TenanciesControllerEnergyAllowanceResponse = TenanciesControllerEnergyAllowanceResponses[keyof TenanciesControllerEnergyAllowanceResponses];
-
-export type TenanciesControllerDepositReceivedData = {
-    body: DepositReceivedDto;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/tenancies/{id}/deposit-received';
-};
-
-export type TenanciesControllerDepositReceivedErrors = {
-    403: ErrorDto;
-};
-
-export type TenanciesControllerDepositReceivedError = TenanciesControllerDepositReceivedErrors[keyof TenanciesControllerDepositReceivedErrors];
-
-export type TenanciesControllerDepositReceivedResponses = {
-    200: Tenancy;
-};
-
-export type TenanciesControllerDepositReceivedResponse = TenanciesControllerDepositReceivedResponses[keyof TenanciesControllerDepositReceivedResponses];
-
-export type TenanciesControllerPrescribedInfoData = {
-    body: PrescribedInfoDto;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/tenancies/{id}/prescribed-info';
-};
-
-export type TenanciesControllerPrescribedInfoErrors = {
-    403: ErrorDto;
-};
-
-export type TenanciesControllerPrescribedInfoError = TenanciesControllerPrescribedInfoErrors[keyof TenanciesControllerPrescribedInfoErrors];
-
-export type TenanciesControllerPrescribedInfoResponses = {
-    200: Tenancy;
-};
-
-export type TenanciesControllerPrescribedInfoResponse = TenanciesControllerPrescribedInfoResponses[keyof TenanciesControllerPrescribedInfoResponses];
-
-export type TenanciesControllerAddDocumentData = {
-    body: AddTenancyDocumentDto;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/tenancies/{id}/documents';
-};
-
-export type TenanciesControllerAddDocumentErrors = {
-    400: ErrorDto;
-    403: ErrorDto;
-};
-
-export type TenanciesControllerAddDocumentError = TenanciesControllerAddDocumentErrors[keyof TenanciesControllerAddDocumentErrors];
-
-export type TenanciesControllerAddDocumentResponses = {
-    201: Tenancy;
-};
-
-export type TenanciesControllerAddDocumentResponse = TenanciesControllerAddDocumentResponses[keyof TenanciesControllerAddDocumentResponses];
-
-export type NotificationsControllerListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/notifications';
-};
-
-export type NotificationsControllerListErrors = {
-    401: ErrorDto;
-};
-
-export type NotificationsControllerListError = NotificationsControllerListErrors[keyof NotificationsControllerListErrors];
-
-export type NotificationsControllerListResponses = {
-    200: Array<Notification>;
-};
-
-export type NotificationsControllerListResponse = NotificationsControllerListResponses[keyof NotificationsControllerListResponses];
-
-export type NotificationsControllerMarkReadData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/notifications/{id}/read';
-};
-
-export type NotificationsControllerMarkReadErrors = {
-    404: ErrorDto;
-};
-
-export type NotificationsControllerMarkReadError = NotificationsControllerMarkReadErrors[keyof NotificationsControllerMarkReadErrors];
-
-export type NotificationsControllerMarkReadResponses = {
-    200: Notification;
-};
-
-export type NotificationsControllerMarkReadResponse = NotificationsControllerMarkReadResponses[keyof NotificationsControllerMarkReadResponses];
-
 export type FlagsControllerCreateData = {
     body: CreateFlagDto;
     path?: never;
@@ -3916,6 +4164,22 @@ export type FlagsControllerResolveResponses = {
 };
 
 export type FlagsControllerResolveResponse = FlagsControllerResolveResponses[keyof FlagsControllerResolveResponses];
+
+export type FlagsControllerLiftSuspensionData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/flags/lift-suspension/{userId}';
+};
+
+export type FlagsControllerLiftSuspensionResponses = {
+    /**
+     * Suspension lifted. The account's listings stay offline until resubmitted.
+     */
+    200: unknown;
+};
 
 export type FlagsControllerMineData = {
     body?: never;
@@ -4214,6 +4478,29 @@ export type ContractsControllerSendResponses = {
 };
 
 export type ContractsControllerSendResponse = ContractsControllerSendResponses[keyof ContractsControllerSendResponses];
+
+export type ContractsControllerRemindData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/contracts/{id}/remind';
+};
+
+export type ContractsControllerRemindErrors = {
+    400: ErrorDto;
+    403: ErrorDto;
+    429: ErrorDto;
+};
+
+export type ContractsControllerRemindError = ContractsControllerRemindErrors[keyof ContractsControllerRemindErrors];
+
+export type ContractsControllerRemindResponses = {
+    200: Contract;
+};
+
+export type ContractsControllerRemindResponse = ContractsControllerRemindResponses[keyof ContractsControllerRemindResponses];
 
 export type ContractsControllerSignData = {
     body?: never;
@@ -4698,177 +4985,6 @@ export type AiControllerAdviceResponses = {
 };
 
 export type AiControllerAdviceResponse = AiControllerAdviceResponses[keyof AiControllerAdviceResponses];
-
-export type ConnectorsControllerOverviewData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/connectors';
-};
-
-export type ConnectorsControllerOverviewResponses = {
-    200: ConnectorsOverviewDto;
-};
-
-export type ConnectorsControllerOverviewResponse = ConnectorsControllerOverviewResponses[keyof ConnectorsControllerOverviewResponses];
-
-export type ConnectorsControllerUpdateSettingsData = {
-    body: UpdateConnectorSettingsDto;
-    path?: never;
-    query?: never;
-    url: '/connectors/settings';
-};
-
-export type ConnectorsControllerUpdateSettingsResponses = {
-    200: ConnectorSettingsDto;
-};
-
-export type ConnectorsControllerUpdateSettingsResponse = ConnectorsControllerUpdateSettingsResponses[keyof ConnectorsControllerUpdateSettingsResponses];
-
-export type ConnectorsControllerConnectImapData = {
-    body: ConnectImapDto;
-    path?: never;
-    query?: never;
-    url: '/connectors/imap';
-};
-
-export type ConnectorsControllerConnectImapErrors = {
-    /**
-     * Sign-in failed (production).
-     */
-    400: ErrorDto;
-    503: ErrorDto;
-};
-
-export type ConnectorsControllerConnectImapError = ConnectorsControllerConnectImapErrors[keyof ConnectorsControllerConnectImapErrors];
-
-export type ConnectorsControllerConnectImapResponses = {
-    201: ImapConnectResultDto;
-};
-
-export type ConnectorsControllerConnectImapResponse = ConnectorsControllerConnectImapResponses[keyof ConnectorsControllerConnectImapResponses];
-
-export type ConnectorsControllerAuthUrlData = {
-    body?: never;
-    path: {
-        /**
-         * Canonical lowercase; any casing is accepted.
-         */
-        provider: 'gmail' | 'outlook';
-    };
-    query?: {
-        /**
-         * Where to send the user back after consent.
-         */
-        client?: 'web' | 'mobile';
-        /**
-         * Web path to return to (must start with /).
-         */
-        returnTo?: string;
-    };
-    url: '/connectors/{provider}/auth-url';
-};
-
-export type ConnectorsControllerAuthUrlErrors = {
-    /**
-     * Provider not set up on this server.
-     */
-    503: ErrorDto;
-};
-
-export type ConnectorsControllerAuthUrlError = ConnectorsControllerAuthUrlErrors[keyof ConnectorsControllerAuthUrlErrors];
-
-export type ConnectorsControllerAuthUrlResponses = {
-    200: AuthUrlDto;
-};
-
-export type ConnectorsControllerAuthUrlResponse = ConnectorsControllerAuthUrlResponses[keyof ConnectorsControllerAuthUrlResponses];
-
-export type ConnectorsControllerConfirmData = {
-    body: ConfirmConnectorDto;
-    path: {
-        provider: 'gmail' | 'outlook';
-    };
-    query?: never;
-    url: '/connectors/{provider}/confirm';
-};
-
-export type ConnectorsControllerConfirmErrors = {
-    /**
-     * Expired, already used, or started from another account.
-     */
-    400: ErrorDto;
-};
-
-export type ConnectorsControllerConfirmError = ConnectorsControllerConfirmErrors[keyof ConnectorsControllerConfirmErrors];
-
-export type ConnectorsControllerConfirmResponses = {
-    201: EmailConnectionViewDto;
-};
-
-export type ConnectorsControllerConfirmResponse = ConnectorsControllerConfirmResponses[keyof ConnectorsControllerConfirmResponses];
-
-export type ConnectorsControllerConnectDemoData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/connectors/demo';
-};
-
-export type ConnectorsControllerConnectDemoErrors = {
-    404: ErrorDto;
-};
-
-export type ConnectorsControllerConnectDemoError = ConnectorsControllerConnectDemoErrors[keyof ConnectorsControllerConnectDemoErrors];
-
-export type ConnectorsControllerConnectDemoResponses = {
-    201: SyncResultDto;
-};
-
-export type ConnectorsControllerConnectDemoResponse = ConnectorsControllerConnectDemoResponses[keyof ConnectorsControllerConnectDemoResponses];
-
-export type ConnectorsControllerSyncData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/connectors/{id}/sync';
-};
-
-export type ConnectorsControllerSyncErrors = {
-    404: ErrorDto;
-    502: ErrorDto;
-};
-
-export type ConnectorsControllerSyncError = ConnectorsControllerSyncErrors[keyof ConnectorsControllerSyncErrors];
-
-export type ConnectorsControllerSyncResponses = {
-    201: SyncResultDto;
-};
-
-export type ConnectorsControllerSyncResponse = ConnectorsControllerSyncResponses[keyof ConnectorsControllerSyncResponses];
-
-export type ConnectorsControllerDisconnectData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/connectors/{id}';
-};
-
-export type ConnectorsControllerDisconnectErrors = {
-    404: ErrorDto;
-};
-
-export type ConnectorsControllerDisconnectError = ConnectorsControllerDisconnectErrors[keyof ConnectorsControllerDisconnectErrors];
-
-export type ConnectorsControllerDisconnectResponses = {
-    200: DisconnectResultDto;
-};
-
-export type ConnectorsControllerDisconnectResponse = ConnectorsControllerDisconnectResponses[keyof ConnectorsControllerDisconnectResponses];
 
 export type InboxControllerThreadsData = {
     body?: never;

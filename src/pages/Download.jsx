@@ -282,6 +282,8 @@ function CommunicationSecurity() {
 					>
 						<img
 							src="/7.png"
+							loading="lazy"
+							decoding="async"
 							alt="App screen"
 							className="rounded-3xl border border-slate-600 shadow-2xl w-28 sm:w-36 md:w-40 h-auto"
 						/>
@@ -411,6 +413,9 @@ const FloatingDownload = () => {
 };
 
 const Download = () => {
+	useEffect(() => {
+		document.title = "Download | Seek";
+	}, []);
 	return (
 		<div className="relative overflow-hidden scroll-smooth min-h-screen bg-[var(--surface-a)]">
 			<BackgroundBubbles count={20} />

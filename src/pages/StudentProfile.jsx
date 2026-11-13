@@ -26,7 +26,7 @@ const DOC_TYPES = [
 const STATUS = {
 	VERIFIED: ["Verified", "text-sk-ok"],
 	PENDING: ["Checking", "text-sk-warn"],
-	// Identity documents: Seek never checks them, the landlord does through the share.
+	// Seek does not review documents: the landlord checks them through the share.
 	PROVIDED: ["Provided — landlord checks", "text-sk-text2"],
 	EXPIRED: ["Expired", "text-sk-danger"],
 	REJECTED: ["Rejected", "text-sk-danger"],

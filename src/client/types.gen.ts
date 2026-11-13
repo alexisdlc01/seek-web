@@ -330,13 +330,6 @@ export type PendingDocumentDto = {
     url: string | null;
 };
 
-export type UpdateDocumentStatusDto = {
-    /**
-     * Only PENDING is accepted: it runs the automatic check again.
-     */
-    status: 'PENDING' | 'VERIFIED' | 'EXPIRED' | 'REJECTED' | 'PROVIDED';
-};
-
 export type AddDocumentDto = {
     documentType: 'IDENTIFICATION' | 'PROOF_OF_INCOME' | 'GUARANTOR_AGREEMENT' | 'LANDLORD_REFERENCE' | 'CHARACTER_REFERENCE' | 'PASSPORT' | 'VISA' | 'RIGHT_TO_RENT' | 'STUDENT_STATUS' | 'CAS_LETTER' | 'PROOF_OF_FUNDS' | 'AGENT_REFERENCE' | 'RECOMMENDATION';
     url: string;
@@ -2086,6 +2079,17 @@ export type AppControllerGetHelloResponses = {
     200: unknown;
 };
 
+export type AppControllerHealthData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/health';
+};
+
+export type AppControllerHealthResponses = {
+    200: unknown;
+};
+
 export type UsersControllerSendStudentEmailCodeData = {
     body: StudentEmailDto;
     path?: never;
@@ -2500,29 +2504,6 @@ export type UsersControllerListPendingDocumentsResponses = {
 };
 
 export type UsersControllerListPendingDocumentsResponse = UsersControllerListPendingDocumentsResponses[keyof UsersControllerListPendingDocumentsResponses];
-
-export type UsersControllerSetDocumentStatusData = {
-    body: UpdateDocumentStatusDto;
-    path: {
-        id: string;
-        type: string;
-    };
-    query?: never;
-    url: '/users/{id}/documents/{type}/status';
-};
-
-export type UsersControllerSetDocumentStatusErrors = {
-    400: ErrorDto;
-    404: ErrorDto;
-};
-
-export type UsersControllerSetDocumentStatusError = UsersControllerSetDocumentStatusErrors[keyof UsersControllerSetDocumentStatusErrors];
-
-export type UsersControllerSetDocumentStatusResponses = {
-    200: PassportDto;
-};
-
-export type UsersControllerSetDocumentStatusResponse = UsersControllerSetDocumentStatusResponses[keyof UsersControllerSetDocumentStatusResponses];
 
 export type UsersControllerAddDocumentData = {
     body: AddDocumentDto;

@@ -129,7 +129,7 @@ export default function StudentFind() {
 			setChat([...messages, { role: "assistant", content: data.reply }]);
 			setSelected(data.listings?.[0]?.id ?? null);
 		},
-		onError: (e) => setNotice(errMessage(e, "Seek AI couldn't search right now."))
+		onError: (e) => setNotice(errMessage(e, "Search isn't available right now."))
 	});
 	const send = (raw) => {
 		const text = raw.trim().slice(0, 2000);
@@ -178,7 +178,7 @@ export default function StudentFind() {
 				<form onSubmit={sendAsk} className="flex items-center gap-2.5">
 					<div className="flex h-[52px] flex-1 items-center gap-2.5 rounded-[14px] border border-sk-accent bg-sk-card pl-4 pr-2">
 						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sk-link)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z" /></svg>
-						<label htmlFor="ask" className="sr-only">Ask Seek AI</label>
+						<label htmlFor="ask" className="sr-only">Search homes</label>
 						<input
 							id="ask"
 							value={ask}
@@ -188,7 +188,7 @@ export default function StudentFind() {
 							className="min-w-0 flex-1 border-none bg-transparent text-[15px] text-sk-text outline-none"
 						/>
 						<button type="submit" disabled={searchChat.isPending} className="h-[38px] cursor-pointer rounded-[10px] border-none bg-sk-accent px-3.5 text-[13.5px] font-semibold text-sk-on-accent disabled:opacity-60">
-							{searchChat.isPending ? "Asking…" : chat.length ? "Send" : "Ask Seek AI"}
+							{searchChat.isPending ? "Asking…" : chat.length ? "Send" : "Search"}
 						</button>
 					</div>
 				</form>
@@ -210,9 +210,9 @@ export default function StudentFind() {
 			<div className="flex min-h-0 flex-1 flex-col md:flex-row">
 				<section aria-label="Homes" className="flex min-w-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-[18px] md:px-6">
 					{chat.length > 0 && (
-						<section aria-label="Seek AI conversation" className="flex flex-col gap-2 rounded-2xl bg-sk-card2 p-3.5">
+						<section aria-label="Search conversation" className="flex flex-col gap-2 rounded-2xl bg-sk-card2 p-3.5">
 							<div className="flex items-center justify-between">
-								<span className="text-xs font-bold text-sk-link">Seek AI</span>
+								<span className="text-xs font-bold text-sk-link">{ai?.source === "ai" ? "Seek AI" : "Seek search"}</span>
 								<button type="button" onClick={clearAi} className="cursor-pointer border-none bg-transparent text-[13px] font-semibold text-sk-link">
 									Clear
 								</button>
@@ -226,7 +226,7 @@ export default function StudentFind() {
 										{m.content}
 									</li>
 								))}
-								{searchChat.isPending && <li className="self-start text-[13px] text-sk-muted">Seek AI is searching…</li>}
+								{searchChat.isPending && <li className="self-start text-[13px] text-sk-muted">Searching…</li>}
 							</ol>
 							{!searchChat.isPending && ai?.suggestions?.length > 0 && (
 								<div className="flex flex-wrap gap-2" aria-label="Suggested replies">
@@ -244,7 +244,7 @@ export default function StudentFind() {
 							)}
 							{ai?.relaxed?.length > 0 && (
 								<span className="text-[12.5px] text-sk-muted">
-									Nothing matched everything, so Seek AI relaxed: {ai.relaxed.map((r) => (r === "billsIncluded" ? "bills included" : r === "minBedrooms" ? "bedrooms" : r)).join(", ")}.
+									Nothing matched everything, so we relaxed: {ai.relaxed.map((r) => (r === "billsIncluded" ? "bills included" : r === "minBedrooms" ? "bedrooms" : r)).join(", ")}.
 								</span>
 							)}
 						</section>
@@ -254,7 +254,7 @@ export default function StudentFind() {
 
 					<div className="flex flex-wrap items-center justify-between gap-2">
 						<h1 className="font-display text-xl font-semibold">
-							{ai ? `${homes.length} homes match · sorted by AI match` : listingsQ.isLoading || !bounds ? "Finding homes on the map…" : `${homes.length} homes in this map area`}
+							{ai ? `${homes.length} homes match · sorted by match` : listingsQ.isLoading || !bounds ? "Finding homes on the map…" : `${homes.length} homes in this map area`}
 						</h1>
 						{p && (
 							<Link to="/student/profile" className="rounded-[10px] bg-sk-tint px-3 py-2 text-[13px] font-semibold text-sk-link no-underline">
@@ -266,7 +266,7 @@ export default function StudentFind() {
 					{listingsQ.isError && !ai && <ErrorState error={listingsQ.error} onRetry={() => listingsQ.refetch()} />}
 					{!listingsQ.isLoading && bounds && homes.length === 0 && !listingsQ.isError && (
 						<div className="rounded-2xl border border-dashed border-sk-border2 p-6 text-center text-sm text-sk-text2">
-							No homes here with these filters. Move the map, remove a filter or ask Seek AI.
+							No homes here with these filters. Move the map, remove a filter or try a new search.
 						</div>
 					)}
 

@@ -6,10 +6,7 @@ import { Card, Empty, ErrorState, Loading, Table, Tr, btnSmGhost } from "../comp
 import { errMessage, fmtDate } from "../lib/landlord.js";
 import { flagsControllerGetAllOptions, flagsControllerLiftSuspensionMutation, usersControllerListPendingDocumentsOptions } from "../client/@tanstack/react-query.gen";
 
-// Identity documents are never checked by Seek: the landlord checks them.
-const LANDLORD_CHECKED = ["PASSPORT", "IDENTIFICATION", "VISA", "RIGHT_TO_RENT"];
-
-// Monitoring only: documents are checked automatically, nobody verifies or rejects them here.
+// Monitoring only: Seek does not review documents, the landlord checks them.
 const DocumentsLog = () => {
 	const q = useQuery(usersControllerListPendingDocumentsOptions());
 
@@ -27,7 +24,7 @@ const DocumentsLog = () => {
 							<td>{d.email}</td>
 							<td>{d.type}</td>
 							<td>{fmtDate(d.uploadedAt)}</td>
-							<td>{LANDLORD_CHECKED.includes(d.type) ? "Provided — landlord checks" : "Waiting for the automatic check"}</td>
+							<td>Provided — landlord checks</td>
 							<td>
 								{d.url ? <a href={d.url} target="_blank" rel="noopener noreferrer" className={btnSmGhost}>Open</a> : "No file"}
 							</td>

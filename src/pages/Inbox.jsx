@@ -236,13 +236,13 @@ export default function Inbox() {
 									</div>
 								))}
 
-								{advice.isLoading && <Loading label="Seek AI is reading this thread" />}
+								{advice.isLoading && <Loading label="Loading tips" />}
 								{t.tenancyId && <RepairsPanel tenancyId={t.tenancyId} />}
 
 								{advice.data && (
 									<div className="flex flex-wrap items-center gap-2.5 self-stretch rounded-xl border border-sk-accent/40 bg-sk-tint p-3" data-testid="ai-advice">
 										<span className="flex-[1_1_260px] text-[13px] text-sk-text2">
-											<strong className="text-sk-link">Seek AI · {advice.data.title}</strong>
+											<strong className="text-sk-link">{advice.data.source === "ai" ? "Seek AI" : "Seek tips"} · {advice.data.title}</strong>
 											<br />
 											{advice.data.advice}
 										</span>

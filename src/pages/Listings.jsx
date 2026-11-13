@@ -116,7 +116,7 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 				</span>
 				{prop.isDraft ? (
 					<span className="text-[13px] text-sk-text2">
-						Add photos and requirements to publish. Seek AI can write the description from your photos.
+						Add photos and requirements to publish.
 					</span>
 				) : !prop.isVerified && prop.moderationReasons?.length ? (
 					<ul className="m-0 flex list-disc flex-col gap-1 pl-4 text-[13px] text-sk-danger">

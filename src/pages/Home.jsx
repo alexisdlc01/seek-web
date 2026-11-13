@@ -287,7 +287,7 @@ export default function LandingPage() {
 						</h2>
 
 						<p className="text-base md:text-lg drop-shadow mb-4">
-							Our AI-optimized system, combined with powerful
+							Our matching system, combined with powerful
 							filters, precisely matches students with their ideal
 							properties.
 						</p>

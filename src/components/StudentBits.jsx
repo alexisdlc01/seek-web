@@ -5,7 +5,7 @@ import { api, errMessage } from "../lib/landlord.js";
 import { studentLink } from "../lib/student.js";
 
 /**
- * Seek AI advice card (POST /ai/advice). topic: deposit | bills | contract |
+ * Seek tips card (POST /ai/advice). topic: deposit | bills | contract |
  * guarantor | inbox | rent. Renders nothing until there is something to say.
  */
 export function AdviceCard({ topic, tenancyId = undefined, applicationId = undefined, threadId = undefined, className = "", showActions = true, askable = false }) {
@@ -39,7 +39,7 @@ export function AdviceCard({ topic, tenancyId = undefined, applicationId = undef
 		return (
 			<div role="status" className={`flex items-center gap-2.5 rounded-xl bg-sk-card2 p-3 text-[13px] text-sk-muted ${className}`}>
 				<span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-sk-border2 border-t-sk-accent" />
-				Seek AI is thinking…
+				Loading tips…
 			</div>
 		);
 	if (!q.data) return null;
@@ -47,13 +47,13 @@ export function AdviceCard({ topic, tenancyId = undefined, applicationId = undef
 	return (
 		<div className={`flex flex-col gap-2 rounded-xl bg-sk-card2 p-3 ${className}`} data-testid={`ai-advice-${topic}`}>
 			<div className="flex items-start gap-2.5">
-				<span className="shrink-0 pt-px text-xs font-bold text-sk-link">Seek AI</span>
+				<span className="shrink-0 pt-px text-xs font-bold text-sk-link">{a.source === "ai" ? "Seek AI" : "Seek tips"}</span>
 				<span className="flex flex-col gap-1 text-[13.5px] leading-snug text-sk-text2">
 					<strong className="text-sk-text">{a.title}</strong>
 					<span className="whitespace-pre-line">{a.advice}</span>
 				</span>
 			</div>
-			{askable && (
+			{askable && a.source === "ai" && (
 				<form onSubmit={send} className="flex gap-2">
 					<input
 						value={draft}

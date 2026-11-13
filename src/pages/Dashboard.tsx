@@ -173,7 +173,7 @@ export default function Dashboard() {
 					? offers.map(t => ({
 							dot: "bg-sk-accent",
 							title: t.title,
-							sub: `${t.members ?? 1} ${t.members === 1 ? "person" : "people"} · all passports verified`,
+							sub: `${t.members ?? 1} ${t.members === 1 ? "person" : "people"} · all passports ready`,
 							cta: "Make offer",
 							to: `/application?listing=${t.listingId}&id=${t.applicationId}`,
 							primary: true

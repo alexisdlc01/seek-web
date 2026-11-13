@@ -178,7 +178,7 @@ export function ApplyModal({ id, onClose }) {
 							<span className="text-[13px] font-semibold text-sk-ok">Ready · you qualify for the landlord's queue</span>
 						) : (
 							<span className="text-[13px] text-sk-warn">
-								Missing: {missing.map((m) => m.label).join(", ") || p.missingRequired.join(", ")}. You can send now, but your household joins the qualified queue only once every required document is verified.{" "}
+								Missing: {missing.map((m) => m.label).join(", ") || p.missingRequired.join(", ")}. You can send now, but your household joins the qualified queue only once every required document is provided.{" "}
 								<Link to="/student/profile" className="font-semibold text-sk-link">Complete passport</Link>
 							</span>
 						)}

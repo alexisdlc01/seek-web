@@ -141,8 +141,10 @@ export default function NavbarDesktop({ user, logout, logo }) {
 									{user && (
 										<Avatar
 											label={user.name
-												?.split(" ")
+												?.split(/\s+/)
+												.filter(Boolean)
 												.map(n => n[0])
+												.filter((_, i, a) => i === 0 || i === a.length - 1)
 												.join("")
 												.toUpperCase()}
 											className="bg-[#3182ce] text-white font-bold"

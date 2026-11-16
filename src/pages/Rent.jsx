@@ -194,7 +194,7 @@ export default function Rent() {
 						<Card title="Plans you offer" className="min-w-0 flex-[1_1_360px]">
 							{nations.length === 0 && <Empty title="No live properties">Plans show once a property is listed.</Empty>}
 							{nations.map((n) => {
-								const england = n === "ENGLAND";
+								const monthlyOnly = n !== "SCOTLAND";
 								const homes = listings.filter((l) => !l.isDraft && (l.nation || "ENGLAND") === n);
 								const offered = new Set(homes.flatMap((l) => l.paymentPlans ?? []));
 								return (
@@ -202,9 +202,9 @@ export default function Rent() {
 										<span className="text-sm font-semibold">
 											{homes.length} {homes.length === 1 ? "property" : "properties"} in {NATION_NAME[n] ?? n}
 										</span>
-										{england ? (
+										{monthlyOnly ? (
 											<span className="text-[12.5px] text-sk-text2">
-												Monthly only. Rent in advance is capped at one month.
+												{n === "ENGLAND" ? "Monthly only. Rent in advance is capped at one month." : "Monthly only. Paying ahead isn't available here yet."}
 											</span>
 										) : (
 											<div className="flex flex-wrap gap-2">

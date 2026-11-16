@@ -89,7 +89,7 @@ const AddListing = () => {
 		holdingDeposit,
 		billsIncluded: extras.billsIncluded,
 		criteria,
-		paymentPlans: extras.nation === "ENGLAND" ? ["MONTHLY"] : paymentPlans,
+		paymentPlans: extras.nation !== "SCOTLAND" ? ["MONTHLY"] : paymentPlans,
 		viewingSlots,
 		viewingSlotCapacity
 	});

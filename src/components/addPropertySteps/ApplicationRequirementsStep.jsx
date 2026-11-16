@@ -47,11 +47,11 @@ const ApplicationRequirements = ({
 	const people = Math.max(1, Number(numOfPeople) || 1);
 	const perRoomRent = rent ? Math.round(rent / people) : null;
 	const perRoomDeposit = deposit ? Math.round(deposit / people) : null;
-	const england = nation === "ENGLAND";
+	const monthlyOnly = nation !== "SCOTLAND";
 	// Holding deposit max one week, security deposit max five weeks.
 	const weekly = perRoomRent ? Math.floor((perRoomRent * 12) / 52) : 0;
 	const depositCap = perRoomRent ? (nation === "SCOTLAND" ? perRoomRent * 2 : Math.floor(((perRoomRent * 12) / 52) * 5)) : 0; // same as backend compliance.ts
-	const plans = england ? ["MONTHLY"] : paymentPlans?.length ? paymentPlans : ["MONTHLY"];
+	const plans = monthlyOnly ? ["MONTHLY"] : paymentPlans?.length ? paymentPlans : ["MONTHLY"];
 	const togglePlan = plan => {
 		if (plan === "MONTHLY") return;
 		setPaymentPlans(plans.includes(plan) ? plans.filter(p => p !== plan) : [...plans, plan]);
@@ -325,7 +325,7 @@ const ApplicationRequirements = ({
 						<div className="flex flex-wrap gap-2" role="group" aria-label="Plans you offer">
 							{PLAN_OPTIONS.map(([v, l]) => {
 								const on = plans.includes(v);
-								const locked = v === "MONTHLY" || (england && v !== "MONTHLY");
+								const locked = v === "MONTHLY" || (monthlyOnly && v !== "MONTHLY");
 								return (
 									<button
 										key={v}
@@ -341,7 +341,7 @@ const ApplicationRequirements = ({
 							})}
 						</div>
 						<span className="text-xs text-sk-muted">
-							England: rent in advance is capped at one month for new tenancies, so only monthly is available. Half-year and full-year stay available for properties in Wales and Scotland.
+							Only properties in Scotland can offer half-year and full-year plans. In England the law caps rent in advance at one month; elsewhere paying ahead isn't available yet. Those homes are monthly only.
 						</span>
 					</div>
 

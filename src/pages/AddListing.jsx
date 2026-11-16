@@ -465,10 +465,22 @@ const AddListing = () => {
 		return changed;
 	};
 
+	// Optional fields the owner can empty: null must reach the API to clear the stored value.
+	const CLEARABLE = [
+		"availableUntil",
+		"gasSafetyExpiry",
+		"eicrExpiry",
+		"epcExpiry",
+		"hmoLicenceExpiry",
+		"licenceNumber"
+	];
 	const cleanObject = obj =>
 		Object.fromEntries(
 			Object.entries(obj).filter(
-				([, v]) => v !== null && v !== undefined && !Number.isNaN(v)
+				([k, v]) =>
+					(v !== null || CLEARABLE.includes(k)) &&
+					v !== undefined &&
+					!Number.isNaN(v)
 			)
 		);
 

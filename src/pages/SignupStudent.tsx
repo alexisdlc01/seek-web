@@ -94,7 +94,8 @@ export default function SignUpStudent() {
 		if (!validateName()) return;
 		if (!validateEmail()) return;
 		if (!validatePasswords()) return;
-		await signup(name, `${prefix}@st-andrews.ac.uk`, password, "STUDENT");
+		const error = await signup(name, `${prefix}@st-andrews.ac.uk`, password, "STUDENT");
+		if (error) return showError(error);
 		navigate("/activationSent");
 	};
 

@@ -87,6 +87,7 @@ export const UserProvider = ({ children }) => {
 		}
 	};
 
+	// Returns an error message when the account was not created, undefined otherwise.
 	const signup = async (name, email, password, role) => {
 		try {
 			await axios.post(
@@ -101,6 +102,12 @@ export const UserProvider = ({ children }) => {
 					withCredentials: true
 				}
 			);
+		} catch (err) {
+			const message = err.response?.data?.message;
+			return (Array.isArray(message) ? message.join(" ") : message) || "Sign-up failed. Please try again.";
+		}
+		try {
+			// No session yet while email verification is pending: a 401 here is expected.
 			const res = await axios.get(`${API_BASE}/auth/currentUser`, {
 				withCredentials: true
 			});

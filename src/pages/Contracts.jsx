@@ -216,12 +216,16 @@ function ContractRow({ contract, depositTotal }) {
 					<div className="flex flex-wrap items-center gap-2 text-[12.5px] text-sk-text2">
 						<span>{contract.inventory?.items?.length ? `Inventory: ${contract.inventory.items.length} items recorded` : "No check-in inventory yet"}</span>
 						<button type="button" className={btnSmGhost} onClick={() => setPanel(panel === "inventory" ? null : "inventory")}>{contract.inventory?.items?.length ? "Edit inventory" : "Record inventory"}</button>
-						{contract.deductions ? (
+						{contract.deductions && (
 							<Chip tone={DEDUCTION_TONE[contract.deductions.status]}>
 								Deductions {gbp(contract.deductions.total)} · {contract.deductions.status.toLowerCase()}
 							</Chip>
-						) : (
-							<button type="button" className={btnSmGhost} onClick={() => setPanel(panel === "deductions" ? null : "deductions")}>Propose deductions</button>
+						)}
+						{/* A disputed proposal can be corrected and sent again; the API clears earlier answers. */}
+						{(!contract.deductions || contract.deductions.status === "DISPUTED") && (
+							<button type="button" className={btnSmGhost} onClick={() => setPanel(panel === "deductions" ? null : "deductions")}>
+								{contract.deductions ? "Propose new deductions" : "Propose deductions"}
+							</button>
 						)}
 					</div>
 					{panel === "inventory" && <InventoryForm contract={contract} onDone={() => setPanel(null)} />}

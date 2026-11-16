@@ -212,8 +212,11 @@ function ApplicationsCard({ apps, loading, payments, setNotice, title }) {
 export default function StudentHome() {
 	const qc = useQueryClient();
 	const { user } = useContext(UserContext);
-	const { tenancy, isLoading, isError, error, refetch } = useMyTenancy();
+	const { tenancy, data: myTenancies, isLoading, isError, error, refetch } = useMyTenancy();
 	const tid = tenancy?._id;
+	const invitedTo = (t) => t.status === "PENDING_ACCEPTANCE" && (t.pendingTenants ?? []).some((p) => idOf(p) === user?._id);
+	// A follow-on tenancy (renewal) the user can still accept while another one is current.
+	const followOn = tenancy?.status === "ACTIVE" ? (myTenancies ?? []).find((t) => t._id !== tid && invitedTo(t)) : null;
 	const [reporting, setReporting] = useState(false);
 	const [notice, setNotice] = useState(null);
 	const returned = useCheckoutReturn();
@@ -226,7 +229,7 @@ export default function StudentHome() {
 	const appsQ = useMyApplications();
 
 	const acceptTenancy = useMutation({
-		mutationFn: () => api.post(`/tenancies/${tid}/accept`),
+		mutationFn: (id = tid) => api.post(`/tenancies/${id}/accept`),
 		onSuccess: () => {
 			qc.invalidateQueries({ queryKey: ["student-tenancies"] });
 			setNotice({ tone: "ok", text: "You've joined the tenancy. Rent starts once everyone has accepted." });
@@ -303,6 +306,15 @@ export default function StudentHome() {
 
 			<Notice notice={returned} />
 			<Notice notice={notice} />
+
+			{followOn && (
+				<Card title="Your landlord has set up your next tenancy" className="!gap-2.5">
+					<span className="text-sm text-sk-text2">Starts {fmtDay(followOn.startDate)}. Accept to join it; rent for it starts once every tenant has accepted.</span>
+					<button type="button" onClick={() => acceptTenancy.mutate(followOn._id)} disabled={acceptTenancy.isPending} className={`${btnPrimary} self-start disabled:opacity-60`}>
+						{acceptTenancy.isPending ? "Accepting…" : "Accept tenancy"}
+					</button>
+				</Card>
+			)}
 
 			{tenancy.status === "PENDING_ACCEPTANCE" && (tenancy.pendingTenants ?? []).some((t) => idOf(t) === user?._id) && (
 				<Card title="Your landlord has set up this tenancy" className="!gap-2.5">

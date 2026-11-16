@@ -91,7 +91,8 @@ export default function SignUpLandlord() {
 		if (!validateName()) return;
 		if (!validateEmail()) return;
 		if (!validatePasswords()) return;
-		await signup(name, email, password, "LANDLORD_AGENCY");
+		const error = await signup(name, email, password, "LANDLORD_AGENCY");
+		if (error) return showError(error);
 		navigate("/activationSent");
 	};
 

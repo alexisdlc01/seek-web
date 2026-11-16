@@ -110,8 +110,10 @@ export default function EditProfile() {
 
 	const isLandlord = user?.role !== "STUDENT";
 	const initials = (user?.name ?? "")
-		.split(" ")
+		.split(/\s+/)
+		.filter(Boolean)
 		.map(n => n[0])
+		.filter((_, i, a) => i === 0 || i === a.length - 1)
 		.join("")
 		.toUpperCase();
 

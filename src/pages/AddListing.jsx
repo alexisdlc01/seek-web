@@ -773,7 +773,17 @@ const AddListing = () => {
 					Add New Property
 				</h1>
 
-				<Stepper ref={stepperRef} linear className="listing-flow-stepper">
+				{/* Not "linear" (it blocks every header click): tabs before the current step navigate back, forward jumps are swallowed. */}
+				<div
+					onClickCapture={e => {
+						const header = e.target.closest(".p-stepper-header");
+						if (!header) return;
+						const idx = [...header.parentElement.children].filter(c => c.classList.contains("p-stepper-header")).indexOf(header);
+						if (idx >= step - 1) return e.stopPropagation();
+						setStep(idx + 1);
+					}}
+				>
+				<Stepper ref={stepperRef} className="listing-flow-stepper">
 					<StepperPanel header="Basics">
 						<BasicInfoStep
 							title={title}
@@ -939,6 +949,7 @@ const AddListing = () => {
 						/>
 					</StepperPanel>
 				</Stepper>
+				</div>
 			</div>
 		</div>
 	);

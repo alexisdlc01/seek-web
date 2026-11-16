@@ -16,6 +16,7 @@ import Chat from "./pages/Chat";
 import Application from "./pages/Application";
 import ActivationSent from "./pages/ActivationSent";
 import VerifyingEmail from "./pages/VerifyingEmail.jsx";
+import ConfirmEmailChange from "./pages/ConfirmEmailChange.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import { Button } from "primereact/button";
@@ -146,6 +147,10 @@ function PublicSite() {
 							<Route
 								path="/verify-email"
 								element={<VerifyingEmail />}
+							/>
+							<Route
+								path="/confirmEmailChange"
+								element={<ConfirmEmailChange />}
 							/>
 							<Route
 								path="/superuser"

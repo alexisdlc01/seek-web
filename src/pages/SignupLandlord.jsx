@@ -3,14 +3,11 @@ import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
-import { Divider } from "primereact/divider";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import { Toast } from "primereact/toast";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
-
-import { API_BASE } from "../lib/landlord.js";
 
 export default function SignUpLandlord() {
 	const navigate = useNavigate();
@@ -178,44 +175,6 @@ export default function SignUpLandlord() {
 						}}
 					/>
 				</motion.div>
-
-				<Divider layout="horizontal">
-					<span className="text-sm text-[var(--text-color-secondary)]">
-						or sign up with
-					</span>
-				</Divider>
-
-				<div className="flex flex-col gap-2">
-					<motion.div whileHover={{ scale: 1.02 }}>
-						<Button
-							label="Sign up with Google"
-							icon="pi pi-google"
-							className="w-full border border-gray-300 text-gray-800 bg-white"
-							style={{
-								backgroundColor: "var(--surface-0)",
-								color: "#1f2937",
-								border: "1px solid var(--surface-border)"
-							}}
-							type="button"
-							onClick={() => {
-								window.location.href = `${API_BASE}/auth/google`;
-							}}
-						/>
-					</motion.div>
-					<motion.div whileHover={{ scale: 1.02 }}>
-						<Button
-							label="Sign up with Apple"
-							icon="pi pi-apple"
-							className="w-full border border-gray-300 text-gray-800 bg-white"
-							style={{
-								backgroundColor: "var(--surface-0)",
-								color: "#1f2937",
-								border: "1px solid var(--surface-border)"
-							}}
-							type="button"
-						/>
-					</motion.div>
-				</div>
 
 				<motion.p
 					initial={{ opacity: 0, y: 10 }}

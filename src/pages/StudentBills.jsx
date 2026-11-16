@@ -233,6 +233,7 @@ export default function StudentBills() {
 										{gbp(b.amount)} total · your share {gbp(b.myShare)}
 										{b.shares?.length ? ` · ${b.shares.filter((x) => x.paid).length} of ${b.shares.length} paid` : ""}
 										{b.paidByName ? ` · paid upfront by ${b.paidByName}` : ""}
+										{b.source === "EMAIL" && b.addedByName ? ` · From ${b.addedByName.split(" ")[0]}'s inbox` : ""}
 										{b.dueDate ? ` · due ${fmtDate(b.dueDate)}` : ""}
 									</span>
 								</span>

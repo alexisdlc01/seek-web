@@ -460,9 +460,9 @@ function ApplicationCard({
 						<span className="text-sm text-sk-text2">
 							{data.viewingAt ? `Viewing booked for ${fmtDateTime(data.viewingAt)}` : "No viewing booked yet."}
 						</span>
-						{viewingSlots?.length ? (
+						{viewingSlots?.some(slot => new Date(slot).getTime() > Date.now()) ? (
 							<div className="flex flex-wrap gap-2">
-								{viewingSlots.map(slot => (
+								{viewingSlots.filter(slot => new Date(slot).getTime() > Date.now()).map(slot => (
 									<button
 										key={slot}
 										type="button"

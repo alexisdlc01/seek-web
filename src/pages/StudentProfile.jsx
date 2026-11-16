@@ -68,7 +68,7 @@ function AddDocumentModal({ initialType, onClose, onDone }) {
 		onSuccess: (stored) =>
 			onDone(
 				stored
-					? { tone: "ok", text: "Document added. Seek checks it, usually within a day." }
+					? { tone: "ok", text: "Document saved. Landlords you share your passport with can see it." }
 					: { tone: "warn", text: "Document recorded, but file storage isn't configured on this local server, so the file itself wasn't saved." }
 			),
 		onError: (e) => setError(errMessage(e, e.message || "We couldn't add this document."))

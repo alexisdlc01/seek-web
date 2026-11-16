@@ -297,7 +297,7 @@ const AddListing = () => {
 			monthlyRent: rent,
 			securityDeposit: deposit,
 			availableFrom: utcDay(availabilityDate),
-			availableUntil: endAvailabilityDate,
+			availableUntil: utcDay(endAvailabilityDate),
 			registerOfTitleKey: registerOfTitleKeyFromBackend,
 			registrationNumber: registrationNumber,
 			...extrasPayload(),
@@ -472,7 +472,8 @@ const AddListing = () => {
 		"eicrExpiry",
 		"epcExpiry",
 		"hmoLicenceExpiry",
-		"licenceNumber"
+		"licenceNumber",
+		"holdingDeposit"
 	];
 	const cleanObject = obj =>
 		Object.fromEntries(
@@ -635,7 +636,7 @@ const AddListing = () => {
 						monthlyRent: rent,
 						securityDeposit: deposit,
 						availableFrom: utcDay(availabilityDate),
-						availableUntil: endAvailabilityDate,
+						availableUntil: utcDay(endAvailabilityDate),
 						registerOfTitleKey: registerOfTitleKeyFromBackend,
 						registrationNumber: registrationNumber,
 						...extrasPayload()

@@ -94,7 +94,7 @@ const PhotosMediaStep = ({
 				</div>
 				<div className="flex flex-col">
 					<label htmlFor="floorPlan" className="font-medium mb-2 text-sk-text">
-						Floor Plan Image, PDF Only (Optional)
+						Floor Plan Image Only (Optional)
 					</label>
 					<Button
 						type="button"
@@ -107,14 +107,11 @@ const PhotosMediaStep = ({
 					<input
 						type="file"
 						ref={floorPlanInputRef}
-						accept=".*/*"
+						accept="image/*"
 						className="hidden"
 						onChange={async e => {
 							const file = e.target.files[0];
-							if (file) {
-								alert("Please upload a file");
-								return;
-							}
+							if (!file) return;
 							const res = await axios.get(
 								`${API_BASE}/upload/presign`,
 								{

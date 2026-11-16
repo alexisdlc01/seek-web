@@ -8,7 +8,8 @@ export default function Connectors() {
 			scopeLabel="Only my Seek contacts"
 			scopeHint="Tenants, applicants, guarantors and deposit schemes linked to your properties."
 			options={[
-				["copySignedContracts", "Copy signed contracts to the tenant's app"]
+				["copySignedContracts", "Copy signed contracts to the tenant's app"],
+				["aiDraftReplies", "Suggest replies (keyword-based; nothing is sent until you click send)"]
 			]}
 			privacy={[
 				"Other emails are never opened or stored.",

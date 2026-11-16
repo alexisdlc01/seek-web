@@ -69,7 +69,7 @@ export function ListingDetailModal({ id, saved, onToggleSave, onApply, onClose }
 							["Furnishing", l.furnishingStatus],
 							["EPC", l.epcRating],
 							["Holding deposit", l.holdingDeposit ? `${pounds(l.holdingDeposit)} each` : null],
-							["Viewings", l.viewingSlots?.length ? `${l.viewingSlots.length} times offered` : null],
+							["Viewings", (n => n ? `${n} times offered` : null)((l.viewingSlots ?? []).filter(slot => new Date(slot).getTime() > Date.now()).length)],
 							["Deposit", l.securityDeposit ? `${pounds(l.securityDeposit)} total` : null]
 						]
 							.filter(([, v]) => v != null && v !== "")

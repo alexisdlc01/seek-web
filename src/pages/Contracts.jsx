@@ -128,6 +128,7 @@ function DeductionsForm({ contract, depositTotal, onDone }) {
 	const [rows, setRows] = useState([{ description: "", amount: "" }]);
 	const items = rows.filter((r) => r.description.trim() && Number(r.amount) > 0).map((r) => ({ description: r.description.trim(), amount: Math.round(Number(r.amount) * 100) }));
 	const total = items.reduce((n, i) => n + i.amount, 0);
+	const incomplete = rows.some((r) => !!r.description.trim() !== (Number(r.amount) > 0)); // a half-filled line must not silently turn into "return everything"
 	const save = useMutation({
 		mutationFn: () => api.post(`/contracts/${contract._id}/deductions`, { items }),
 		onSuccess: () => {
@@ -138,7 +139,7 @@ function DeductionsForm({ contract, depositTotal, onDone }) {
 	const set = (i, k, v) => setRows((cur) => cur.map((r, j) => (j === i ? { ...r, [k]: v } : r)));
 	const input = "h-10 min-w-0 rounded-[10px] border border-sk-border2 bg-sk-bg px-3 text-[13.5px] text-sk-text";
 	return (
-		<form className="flex flex-col gap-2 rounded-xl bg-sk-card2 p-3" onSubmit={(e) => { e.preventDefault(); if (items.length) save.mutate(); }}>
+		<form className="flex flex-col gap-2 rounded-xl bg-sk-card2 p-3" onSubmit={(e) => { e.preventDefault(); if (!incomplete) save.mutate(); }}>
 			{rows.map((r, i) => (
 				<div key={i} className="flex flex-wrap gap-2">
 					<input aria-label="What for" placeholder="What for" value={r.description} onChange={(e) => set(i, "description", e.target.value)} className={`${input} flex-[2]`} />
@@ -151,7 +152,7 @@ function DeductionsForm({ contract, depositTotal, onDone }) {
 			{save.isError && <span role="alert" className="text-[12.5px] text-sk-warn">{errMessage(save.error)}</span>}
 			<div className="flex gap-2">
 				<button type="button" className={btnSmGhost} onClick={() => setRows((cur) => [...cur, { description: "", amount: "" }])}>Add line</button>
-				<button type="submit" className={btnSmPrimary} disabled={save.isPending || !items.length || total > depositTotal}>{save.isPending ? "Sending…" : "Propose deductions"}</button>
+				<button type="submit" className={btnSmPrimary} disabled={save.isPending || incomplete || total > depositTotal}>{save.isPending ? "Sending…" : items.length ? "Propose deductions" : "Return the whole deposit"}</button>
 				<button type="button" className={btnSmGhost} onClick={onDone}>Cancel</button>
 			</div>
 		</form>

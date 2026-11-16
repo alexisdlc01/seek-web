@@ -109,6 +109,17 @@ export default function Inbox() {
 		onError: (e) => setSendError(errMessage(e, "We couldn't send that message."))
 	});
 
+	// Same filing as the automatic one, started by hand (only for an email tied to a tenancy).
+	const fileAttachment = useMutation({
+		mutationFn: async ({ messageId, index }) => (await api.post(`/inbox/messages/${messageId}/attachments/${index}/file`)).data,
+		onSuccess: () => {
+			setSendError("");
+			qc.invalidateQueries({ queryKey: ["inbox-thread", selectedId] });
+			qc.invalidateQueries({ queryKey: ["inbox-threads"] });
+		},
+		onError: (e) => setSendError(errMessage(e, "We couldn't file this attachment."))
+	});
+
 	// Opening a thread marks it read; refresh the list badge once.
 	useEffect(() => {
 		if (t) qc.invalidateQueries({ queryKey: ["inbox-threads"] });
@@ -231,14 +242,19 @@ export default function Inbox() {
 											<span>{m.timeLabel}</span>
 										</div>
 										<p className="whitespace-pre-wrap text-[13.5px] leading-normal">{m.text}</p>
-										{(m.attachments ?? []).map((a) => (
-											<div key={a.name} className="flex items-center gap-2.5 rounded-[10px] bg-sk-bg px-2.5 py-2 text-[13px]">
+										{(m.attachments ?? []).map((a, index) => (
+											<div key={`${a.name}-${index}`} className="flex items-center gap-2.5 rounded-[10px] bg-sk-bg px-2.5 py-2 text-[13px]">
 												{a.key || a.url ? (
 													<button type="button" onClick={() => openAttachment(a).catch((e) => setSendError(errMessage(e, "We couldn't open this file.")))} className="flex-1 cursor-pointer border-none bg-transparent p-0 text-left text-[13px] font-semibold text-sk-text">{a.name}</button>
 												) : (
 													<span className="flex-1 font-semibold text-sk-text">{a.name}</span>
 												)}
 												{a.filedAs && <span className="text-xs font-semibold text-sk-ok">Filed to {a.filedAs}</span>}
+												{!a.filedAs && t.tenancyId && !m.me && (
+													<button type="button" disabled={fileAttachment.isPending} onClick={() => fileAttachment.mutate({ messageId: m.id, index })} className="cursor-pointer border-none bg-transparent p-0 text-xs font-semibold text-sk-link">
+														{fileAttachment.isPending ? "Filing…" : "File in tenancy documents"}
+													</button>
+												)}
 											</div>
 										))}
 									</div>

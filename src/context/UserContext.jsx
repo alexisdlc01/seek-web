@@ -66,7 +66,7 @@ export const UserProvider = ({ children }) => {
 			}
 		} catch (err) {
 			// invalid credentials
-			return err.response.data.message;
+			return err.response?.data?.message || "Sign-in failed. Please try again.";
 		}
 	};
 

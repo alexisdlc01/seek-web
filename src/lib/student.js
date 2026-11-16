@@ -21,7 +21,8 @@ export const pickTenancy = (list = []) => {
 	const current = active
 		.filter((t) => !t.endDate || new Date(t.endDate).getTime() >= now)
 		.sort((a, b) => new Date(a.startDate) - new Date(b.startDate))[0];
-	return current ?? active[0] ?? list[0] ?? null;
+	// A new invite must beat an ended tenancy, or the student cannot accept it.
+	return current ?? list.find((t) => t.status === "PENDING_ACCEPTANCE") ?? active[0] ?? list[0] ?? null;
 };
 
 /** The student's current tenancy, or null when they have none. */

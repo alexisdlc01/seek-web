@@ -19,11 +19,11 @@ export default function SignInStudent() {
 	const [params] = useSearchParams();
 	const toast = useRef(null);
 
-	const showError = () => {
+	const showError = (message = "Your email or password didn’t match our records.") => {
 		toast.current?.show({
 			severity: "error",
 			summary: "Sign-In Failed",
-			detail: "Your email or password didn’t match our records. Please try again.",
+			detail: message,
 			life: 4000,
 			style: {
 				background: "#1E1E2F",
@@ -38,7 +38,7 @@ export default function SignInStudent() {
 					<div>
 						<p className="font-semibold">Sign-In Failed</p>
 						<p className="text-sm text-[var(--text-color-secondary)]">
-							Your email or password didn’t match our records.
+							{message}
 						</p>
 					</div>
 				</div>
@@ -83,8 +83,10 @@ export default function SignInStudent() {
 		}
 		const fullEmail = `${prefix}@st-andrews.ac.uk`;
 		const res = await login(fullEmail, password);
+		// login() returns undefined on success, the error message otherwise
 		if (res === "Credentials are not valid." || res === "Unauthorized")
 			showError();
+		else if (res) showError(String(res));
 		else {
 			const back = params.get("returnTo");
 			navigate(back && /^\/student\/[^/]/.test(back) ? back : "/student/find");

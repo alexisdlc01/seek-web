@@ -59,8 +59,11 @@ export default function Rent() {
 	});
 	const remindOne = async r => {
 		try {
-			await api.post(`/payments/${r.payment}/remind`);
-			toast.current?.show({ severity: "success", summary: "Reminder sent", detail: `${r.tenant?.name ?? "The tenant"} will see it in their Seek thread.`, life: 5000 });
+			const { data } = await api.post(`/payments/${r.payment}/remind`);
+			const sent = data?.reminded > 0;
+			toast.current?.show(sent
+				? { severity: "success", summary: "Reminder sent", detail: `${r.tenant?.name ?? "The tenant"} will see it in their Seek thread.`, life: 5000 }
+				: { severity: "warn", summary: "No reminder sent", detail: "Already reminded in the last 24 hours.", life: 5000 });
 			q.refetch();
 		} catch (err) {
 			toast.current?.show({ severity: "error", summary: "No reminder sent", detail: errMessage(err), life: 5000 });

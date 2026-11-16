@@ -49,12 +49,20 @@ export default function Inbox() {
 
 	// Keep a valid selection as the list changes.
 	useEffect(() => {
-		if (!visible.length) return;
+		if (!visible.length) {
+			setSelectedId(null);
+			return;
+		}
 		if (!visible.some((t) => t.id === selectedId)) {
 			const wanted = wantedTenancy && visible.find((t) => t.tenancyId === wantedTenancy);
 			setSelectedId((wanted || visible[0]).id);
 		}
 	}, [visible, selectedId, wantedTenancy]);
+
+	// A draft belongs to its thread: never carry it to another one.
+	useEffect(() => {
+		setText("");
+	}, [selectedId]);
 
 	const thread = useQuery({
 		queryKey: ["inbox-thread", selectedId],

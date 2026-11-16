@@ -56,6 +56,7 @@ type ApplicationData = {
 	sentAt?: string | null;
 	viewingAt?: string | null;
 	offerExpiresAt?: string | null;
+	offerExpiredAt?: string | null;
 	readiness: number;
 	qualified: boolean;
 	criteria?: { key?: string; label: string; passed: boolean; detail?: string }[];
@@ -104,7 +105,9 @@ export default function ApplicationPage() {
 	const application = q.data?.find(a => a._id === applicationId);
 	// First-come queue of qualified households: only the first one can get the offer.
 	const offerOpen = !!q.data?.some(a => a.stage === "OFFERED" && !!a.offerExpiresAt && new Date(a.offerExpiresAt).getTime() > Date.now());
-	const nextInLine = offerOpen ? undefined : q.data?.find(a => ["SENT", "VIEWED"].includes(a.stage) && a.qualified);
+	// Like the backend, a household whose offer lapsed goes behind the others.
+	const inLine = q.data?.filter(a => ["SENT", "VIEWED"].includes(a.stage) && a.qualified);
+	const nextInLine = offerOpen ? undefined : inLine?.find(a => !a.offerExpiredAt) ?? inLine?.[0];
 	const canOffer = !!application && nextInLine?._id === application._id;
 	const listing = listings?.find(l => l._id === listingId);
 	const property = listing?.streetAddress || listing?.propertyTitle || "this property";

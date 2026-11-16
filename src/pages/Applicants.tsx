@@ -32,6 +32,7 @@ type Application = {
 	viewingAt?: string | null;
 	holdingDeposit?: number | null;
 	offerExpiresAt?: string | null;
+	offerExpiredAt?: string | null;
 	sentAt?: string | null;
 	members?: {
 		user: string;
@@ -216,13 +217,20 @@ export default function Applicants() {
 			.filter(a => a.stage === "OFFERED" && !!a.offerExpiresAt && new Date(a.offerExpiresAt).getTime() > Date.now())
 			.map(getListingId)
 	);
+	// Like the backend, a household whose offer lapsed goes behind the others;
+	// it is first only when every qualified household has lapsed.
+	const lapsedFirst = new Map<string, string>();
 	for (const a of applications) {
 		const lid = getListingId(a);
-		if (["SENT", "VIEWED"].includes(a.stage) && a.qualified && !seenListings.has(lid)) {
-			seenListings.add(lid);
-			firstInLine.add(a._id);
+		if (!["SENT", "VIEWED"].includes(a.stage) || !a.qualified || seenListings.has(lid)) continue;
+		if (a.offerExpiredAt) {
+			if (!lapsedFirst.has(lid)) lapsedFirst.set(lid, a._id);
+			continue;
 		}
+		seenListings.add(lid);
+		firstInLine.add(a._id);
 	}
+	for (const [lid, id] of lapsedFirst) if (!seenListings.has(lid)) firstInLine.add(id);
 	const rejectedCount = applications.filter(a => a.stage === "REJECTED").length;
 
 	const renderApplicationCard = (application: Application) => {

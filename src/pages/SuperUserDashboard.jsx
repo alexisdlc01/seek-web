@@ -43,7 +43,10 @@ const FlagsLog = () => {
 	// Upholding an appeal is the one decision left to a person; listings still need a new automatic check.
 	const lift = useMutation({
 		...flagsControllerLiftSuspensionMutation(),
-		onSuccess: () => toast.current?.show({ severity: "success", summary: "Suspension lifted", life: 4000 }),
+		onSuccess: () => {
+			q.refetch();
+			toast.current?.show({ severity: "success", summary: "Suspension lifted", life: 4000 });
+		},
 		onError: err => toast.current?.show({ severity: "error", summary: "Could not lift", detail: errMessage(err), life: 5000 })
 	});
 	return (

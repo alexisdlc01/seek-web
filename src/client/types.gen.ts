@@ -1154,6 +1154,10 @@ export type ApplicationDto = {
      */
     offerExpiresAt?: string | null;
     /**
+     * When the last offer lapsed unaccepted; a lapsed household goes to the back of the offer queue.
+     */
+    offerExpiredAt?: string | null;
+    /**
      * Holding deposit per room in whole pounds, recorded with the offer.
      */
     holdingDeposit?: number | null;

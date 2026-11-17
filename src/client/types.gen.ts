@@ -210,10 +210,6 @@ export type UpdateUserProfileDto = {
      */
     registrations?: Array<RegistrationInputDto>;
     notificationPrefs?: NotificationPrefsInputDto;
-    /**
-     * Stripe Connect account (acct_...) that receives rent payouts. Landlords only. Empty string clears it.
-     */
-    stripeAccountId?: string;
 };
 
 export type RequestReferenceDto = {
@@ -537,6 +533,19 @@ export type TenancyDocument = {
     url: string;
     key?: string;
     source: 'EMAIL' | 'UPLOAD' | 'SEEK';
+    stage?: 'CHECK_IN' | 'CHECK_OUT';
+    /**
+     * False when a tenancy agreement came from a tenant-controlled mailbox and has not been confirmed by the landlord.
+     */
+    confirmedByLandlord: boolean;
+    /**
+     * Account that uploaded or imported the document.
+     */
+    uploadedBy?: string;
+    /**
+     * Role of the uploader, used to distinguish tenant evidence from landlord documents.
+     */
+    uploaderRole?: 'SUPERUSER' | 'STUDENT' | 'LANDLORD_AGENCY';
     addedAt: string;
 };
 
@@ -575,6 +584,10 @@ export type Tenancy = {
      * When the deposit reached the landlord. It must be protected within 30 days of this date.
      */
     depositReceivedAt: string | null;
+    /**
+     * Instructions for paying this tenancy by bank transfer.
+     */
+    bankTransferInstructions?: string;
     /**
      * When the landlord gave tenants the deposit's prescribed information.
      */
@@ -619,6 +632,10 @@ export type CreateTenancyDto = {
      * When the deposit was received.
      */
     depositReceivedAt?: string;
+    /**
+     * Instructions for paying this tenancy by bank transfer.
+     */
+    bankTransferInstructions?: string;
 };
 
 export type UpdateDepositDto = {
@@ -649,6 +666,13 @@ export type UpdateEnergyAllowanceDto = {
     energyAllowance: number | null;
 };
 
+export type UpdateBankTransferInstructionsDto = {
+    /**
+     * Instructions for paying this tenancy by bank transfer.
+     */
+    bankTransferInstructions: string;
+};
+
 export type DepositReceivedDto = {
     /**
      * Defaults to now.
@@ -672,6 +696,10 @@ export type AddTenancyDocumentDto = {
      */
     key?: string;
     source?: 'EMAIL' | 'UPLOAD' | 'SEEK';
+    /**
+     * Inventory stage; defaults to check-in.
+     */
+    stage?: 'CHECK_IN' | 'CHECK_OUT';
 };
 
 export type Notification = {
@@ -1058,9 +1086,28 @@ export type SendMessageDto = {
     message: string;
 };
 
+export type PublicUserDto = {
+    _id: string;
+    name: string;
+    username?: string;
+    role: 'SUPERUSER' | 'STUDENT' | 'LANDLORD_AGENCY';
+    /**
+     * Proved a university email address (student badge).
+     */
+    studentVerified: boolean;
+    /**
+     * University behind the badge, e.g. "University of St Andrews".
+     */
+    university: string | null;
+    profilePicUrl: string;
+    isVerified: boolean;
+    lastSeen: string;
+    companyName?: string;
+};
+
 export type MessageDto = {
     _id: string;
-    sender: UserDto;
+    sender: PublicUserDto;
     messageType: 'Text' | 'Image';
     data: string;
     createdAt: string;
@@ -1077,7 +1124,7 @@ export type ConversationDto = {
     createdAt: string;
     groupDescription: string;
     avatar: string;
-    users: Array<UserDto>;
+    users: Array<PublicUserDto>;
     messages: Array<MessageDto>;
 };
 
@@ -1224,7 +1271,7 @@ export type Flag = {
 };
 
 export type ResolveFlagDto = {
-    status: string;
+    status: 'ACCOUNT_SUSPENDED' | 'NO_ACTION';
     /**
      * Reply shown to the reporter.
      */
@@ -1462,6 +1509,10 @@ export type RentPlanViewDto = {
      * Rent per tenant per month, in pence.
      */
     monthlyRent: number;
+    /**
+     * Landlord's instructions for paying by bank transfer.
+     */
+    bankTransferInstructions?: string;
     nation: string;
     /**
      * England: MONTHLY only.
@@ -1480,6 +1531,23 @@ export type RentPlanViewDto = {
      * Next payments due (up to 3).
      */
     upcoming: Array<StudentPaymentDto>;
+};
+
+export type RentPlanPreviewItemDto = {
+    dueDate: string;
+    /**
+     * In pence, after any holding deposit credit.
+     */
+    amount: number;
+    /**
+     * Months of rent this payment covers.
+     */
+    coversMonths: number;
+    /**
+     * Holding deposit taken off this payment, in pence.
+     */
+    holdingDepositCredit: number;
+    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE';
 };
 
 export type UpdateRentPlanDto = {
@@ -1769,6 +1837,10 @@ export type BillViewDto = {
      * Tenant who fronted the whole bill (a shared extra); the others owe them their share.
      */
     paidBy: string | null;
+    /**
+     * Mailbox owner whose synced inbox this bill came from (EMAIL bills only).
+     */
+    addedBy: string | null;
     status: 'DUE' | 'PAID';
     source: 'EMAIL' | 'MANUAL';
     paidAt: string | null;
@@ -1776,6 +1848,10 @@ export type BillViewDto = {
      * Name of the tenant in paidBy.
      */
     paidByName: string | null;
+    /**
+     * Name of the user in addedBy.
+     */
+    addedByName: string | null;
     shares: Array<BillShareDto>;
     /**
      * The signed-in tenant's share, in pence (0 if they don't share it).
@@ -1807,6 +1883,9 @@ export type CreateBillDto = {
      * Tenant ids. Defaults to every tenant.
      */
     splitBetween?: Array<string>;
+    /**
+     * Accepted but ignored: client-created bills are always MANUAL.
+     */
     source?: 'EMAIL' | 'MANUAL';
 };
 
@@ -2937,6 +3016,27 @@ export type TenanciesControllerEnergyAllowanceResponses = {
 
 export type TenanciesControllerEnergyAllowanceResponse = TenanciesControllerEnergyAllowanceResponses[keyof TenanciesControllerEnergyAllowanceResponses];
 
+export type TenanciesControllerBankTransferInstructionsData = {
+    body: UpdateBankTransferInstructionsDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/bank-transfer-instructions';
+};
+
+export type TenanciesControllerBankTransferInstructionsErrors = {
+    403: ErrorDto;
+};
+
+export type TenanciesControllerBankTransferInstructionsError = TenanciesControllerBankTransferInstructionsErrors[keyof TenanciesControllerBankTransferInstructionsErrors];
+
+export type TenanciesControllerBankTransferInstructionsResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerBankTransferInstructionsResponse = TenanciesControllerBankTransferInstructionsResponses[keyof TenanciesControllerBankTransferInstructionsResponses];
+
 export type TenanciesControllerDepositReceivedData = {
     body: DepositReceivedDto;
     path: {
@@ -3000,6 +3100,29 @@ export type TenanciesControllerAddDocumentResponses = {
 };
 
 export type TenanciesControllerAddDocumentResponse = TenanciesControllerAddDocumentResponses[keyof TenanciesControllerAddDocumentResponses];
+
+export type TenanciesControllerConfirmDocumentData = {
+    body?: never;
+    path: {
+        id: string;
+        docId: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/documents/{docId}/confirm';
+};
+
+export type TenanciesControllerConfirmDocumentErrors = {
+    403: ErrorDto;
+    404: ErrorDto;
+};
+
+export type TenanciesControllerConfirmDocumentError = TenanciesControllerConfirmDocumentErrors[keyof TenanciesControllerConfirmDocumentErrors];
+
+export type TenanciesControllerConfirmDocumentResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerConfirmDocumentResponse = TenanciesControllerConfirmDocumentResponses[keyof TenanciesControllerConfirmDocumentResponses];
 
 export type NotificationsControllerListData = {
     body?: never;
@@ -4554,6 +4677,32 @@ export type PaymentsControllerUpdatePlanResponses = {
 
 export type PaymentsControllerUpdatePlanResponse = PaymentsControllerUpdatePlanResponses[keyof PaymentsControllerUpdatePlanResponses];
 
+export type PaymentsControllerPreviewPlanData = {
+    body?: never;
+    path: {
+        tenancyId: string;
+    };
+    query: {
+        frequency: 'MONTHLY' | 'SIX_MONTHS' | 'YEARLY';
+    };
+    url: '/payments/plan/{tenancyId}/preview';
+};
+
+export type PaymentsControllerPreviewPlanErrors = {
+    /**
+     * Frequency not allowed (England: monthly only).
+     */
+    400: ErrorDto;
+};
+
+export type PaymentsControllerPreviewPlanError = PaymentsControllerPreviewPlanErrors[keyof PaymentsControllerPreviewPlanErrors];
+
+export type PaymentsControllerPreviewPlanResponses = {
+    200: Array<RentPlanPreviewItemDto>;
+};
+
+export type PaymentsControllerPreviewPlanResponse = PaymentsControllerPreviewPlanResponses[keyof PaymentsControllerPreviewPlanResponses];
+
 export type PaymentsControllerMineData = {
     body?: never;
     path?: never;
@@ -5035,3 +5184,33 @@ export type InboxControllerReplyResponses = {
 };
 
 export type InboxControllerReplyResponse = InboxControllerReplyResponses[keyof InboxControllerReplyResponses];
+
+export type InboxControllerFileAttachmentData = {
+    body?: never;
+    path: {
+        messageId: string;
+        index: number;
+    };
+    query?: never;
+    url: '/inbox/messages/{messageId}/attachments/{index}/file';
+};
+
+export type InboxControllerFileAttachmentErrors = {
+    400: ErrorDto;
+    /**
+     * Not a member of the email's tenancy, or a team member without inbox access.
+     */
+    403: ErrorDto;
+    /**
+     * Not one of your own synced emails.
+     */
+    404: ErrorDto;
+};
+
+export type InboxControllerFileAttachmentError = InboxControllerFileAttachmentErrors[keyof InboxControllerFileAttachmentErrors];
+
+export type InboxControllerFileAttachmentResponses = {
+    201: InboxAttachmentDto;
+};
+
+export type InboxControllerFileAttachmentResponse = InboxControllerFileAttachmentResponses[keyof InboxControllerFileAttachmentResponses];

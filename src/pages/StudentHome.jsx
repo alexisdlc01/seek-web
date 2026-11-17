@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserContext from "../context/UserContext.jsx";
-import { Card, ErrorState, Loading, Page, PageHeader, btnGhost, btnPrimary } from "../components/sk.jsx";
+import { Card, Chip, ErrorState, Loading, Page, PageHeader, btnGhost, btnPrimary } from "../components/sk.jsx";
 import { AdviceCard, Modal, Notice, PayNowButton, useCheckoutReturn } from "../components/StudentBits.jsx";
 import { api, errMessage, fmtDate, fmtDay, gbp, greeting, openFile } from "../lib/landlord.js";
 import { PLAN_LABEL, idOf, useMyApplications, useMyTenancy } from "../lib/student.js";
@@ -172,7 +172,7 @@ function ApplicationRow({ a, holding, setNotice }) {
 			{a.stage === "OFFERED" && (
 				<div className="flex flex-col gap-1.5 rounded-xl bg-sk-card2 p-3">
 					<span className="text-[13px] text-sk-text2">
-						{a.offerExpiresAt ? `Accept by ${fmtDate(a.offerExpiresAt)}. ` : ""}
+						{a.offerExpiresAt ? `Accept by ${fmtDate(a.offerExpiresAt)}. ` : "Accept before the offer expires. "}
 						{deposit != null ? `Holding deposit ${gbp(deposit)} counts towards your first rent.` : ""}
 					</span>
 					{unpaidHolding && (
@@ -391,6 +391,7 @@ export default function StudentHome() {
 								<div className="flex min-w-0 flex-1 flex-col">
 									<span className="truncate text-sm font-semibold">{d.title || DOC_LABEL[d.type] || d.type}</span>
 									<span className="text-[12.5px] text-sk-muted">{SOURCE_LABEL[d.source] ?? "Saved"}{d.addedAt ? ` ${fmtDate(d.addedAt)}` : ""}</span>
+									{d.type === "TENANCY_AGREEMENT" && d.confirmedByLandlord === false && <Chip tone="warn" className="mt-1 self-start">From email — awaiting landlord confirmation</Chip>}
 								</div>
 								{(d.url || d.key) && (
 									<button type="button" onClick={() => openFile(d)} className="flex h-9 cursor-pointer items-center rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] font-semibold text-sk-text no-underline">

@@ -6,6 +6,7 @@ import { Card, ErrorState, Loading, Page, PageHeader } from "../components/sk.js
 import { AdviceCard, Notice } from "../components/StudentBits.jsx";
 import { DEPOSIT_SCHEMES, api, depositRules, errMessage, fmtDate, gbp, openFile, safeUrl } from "../lib/landlord.js";
 import { idOf, useMyTenancy } from "../lib/student.js";
+import { tenanciesControllerAddDocumentMutation } from "../client/@tanstack/react-query.gen";
 
 const linkCls = "flex h-9 items-center rounded-[10px] border border-sk-border2 px-3 text-[13px] font-semibold text-sk-text no-underline";
 
@@ -15,6 +16,60 @@ const Row = ({ label, children }) => (
 		<span className="text-right font-semibold">{children}</span>
 	</div>
 );
+
+function InventoryPhotos({ tenancyId, documents, stage, title }) {
+	const qc = useQueryClient();
+	const [busy, setBusy] = useState(false);
+	const [error, setError] = useState("");
+	const addDocument = useMutation(tenanciesControllerAddDocumentMutation());
+	const upload = async (file) => {
+		if (!file) return;
+		setBusy(true);
+		setError("");
+		try {
+			const { data } = await api.get("/upload/presign", {
+				params: { filename: file.name, fileType: file.type, fileSize: file.size, folder: "private" }
+			});
+			const response = await fetch(data.uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+			if (!response.ok) throw new Error("The upload didn't go through.");
+			await addDocument.mutateAsync({
+				path: { id: tenancyId },
+				body: { type: "INVENTORY", stage, title: file.name, url: data.fileUrl, key: data.key, source: "UPLOAD" }
+			});
+			await qc.invalidateQueries({ queryKey: ["student-tenancies"] });
+		} catch (e) {
+			setError(errMessage(e, e?.message || "We couldn't upload that photo."));
+		} finally {
+			setBusy(false);
+		}
+	};
+	return (
+		<Card title={title} className="!gap-2.5">
+			{documents.length === 0 && <span className="text-sm text-sk-text2">No photos uploaded yet.</span>}
+			{documents.map((document) => (
+				<div key={document._id} className="flex items-center justify-between gap-3 border-b border-sk-hair pb-2.5 last:border-none last:pb-0">
+					<span className="min-w-0 flex-1 truncate text-sm">{document.title}</span>
+					<span className="shrink-0 text-[12.5px] text-sk-muted">{fmtDate(document.addedAt)}</span>
+					<button type="button" onClick={() => openFile(document)} className={linkCls}>Open</button>
+				</div>
+			))}
+			<label className={`${linkCls} w-fit cursor-pointer`}>
+				{busy ? "Uploading…" : "Upload photo"}
+				<input
+					type="file"
+					accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif"
+					disabled={busy}
+					className="sr-only"
+					onChange={(e) => {
+						void upload(e.target.files?.[0]);
+						e.target.value = "";
+					}}
+				/>
+			</label>
+			{error && <span role="alert" className="text-[12.5px] text-sk-warn">{error}</span>}
+		</Card>
+	);
+}
 
 export default function StudentDeposit() {
 	const qc = useQueryClient();
@@ -49,6 +104,7 @@ export default function StudentDeposit() {
 	const overCap = (tenancy.depositAmount ?? 0) > cap;
 	const scheme = DEPOSIT_SCHEMES.find((s) => s.value === tenancy.depositScheme);
 	const certificate = (tenancy.documents ?? []).find((d) => d.type === "DEPOSIT_CERTIFICATE");
+	const inventoryDocuments = (tenancy.documents ?? []).filter((d) => d.type === "INVENTORY");
 	const protectBy = rules.protectBy;
 
 	const contracts = contractsQ.data ?? [];
@@ -80,6 +136,9 @@ export default function StudentDeposit() {
 
 			<div className="flex flex-wrap items-start gap-6">
 				<div className="flex min-w-0 flex-[1.4_1_480px] flex-col gap-4">
+					<p className="m-0 text-sm text-sk-text2">Take dated photos of every room — they protect your deposit.</p>
+					<InventoryPhotos tenancyId={tid} documents={inventoryDocuments.filter((d) => d.stage === "CHECK_IN")} stage="CHECK_IN" title="Move-in photos" />
+					<InventoryPhotos tenancyId={tid} documents={inventoryDocuments.filter((d) => d.stage === "CHECK_OUT")} stage="CHECK_OUT" title="Move-out photos" />
 					<Card title="Protection" className="!gap-2.5">
 						<Row label="Scheme">{scheme?.label ?? tenancy.depositScheme ?? "Not given yet"}</Row>
 						<Row label="Reference">{tenancy.depositReference ?? "—"}</Row>

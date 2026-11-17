@@ -212,7 +212,7 @@ export function ApplyModal({ id, onClose }) {
 
 					{holding != null && (
 						<p className="text-[13px] leading-snug text-sk-text2">
-							If you're offered the house, the holding deposit is <strong className="text-sk-text">{pounds(holding)}{(l.numOfPeople ?? 1) > 1 ? " each" : ""}</strong> (never more than one week's rent). It goes towards your first rent, and the landlord must decide within 15 days.
+							If you're offered the house, the holding deposit is <strong className="text-sk-text">{pounds(holding)}{(l.numOfPeople ?? 1) > 1 ? " each" : ""}</strong> (never more than one week's rent). It goes towards your first rent. {existing?.offerExpiresAt ? `Your household must accept by ${fmtDate(existing.offerExpiresAt)}.` : "Accept before the offer expires."}
 						</p>
 					)}
 

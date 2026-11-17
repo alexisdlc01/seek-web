@@ -3,6 +3,8 @@ import { useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, Chip, Empty, ErrorState, Loading, Page, PageHeader, btnSmGhost, btnSmPrimary } from "../components/sk.jsx";
 import { DEPOSIT_SCHEMES, api, engineerLink, errMessage, fmtDate, depositRules, fmtDay, gbp, openAttachment } from "../lib/landlord.js";
+import { tenanciesControllerBankTransferInstructionsMutation } from "../client/@tanstack/react-query.gen";
+import { tenanciesControllerConfirmDocument } from "../client/sdk.gen";
 
 const SCHEME_LABEL = Object.fromEntries(DEPOSIT_SCHEMES.map((s) => [s.value, s.label]));
 const CONTRACT_TONE = { DRAFT: "muted", SENT: "warn", SIGNED: "ok" };
@@ -86,6 +88,38 @@ function EnergyForm({ tenancy }) {
 			</label>
 			<button type="submit" className={btnSmPrimary} disabled={save.isPending}>{save.isPending ? "Saving…" : "Save allowance"}</button>
 			{save.isError && <span role="alert" className="text-[12.5px] text-sk-warn">{errMessage(save.error)}</span>}
+		</form>
+	);
+}
+
+function BankTransferForm({ tenancy }) {
+	const qc = useQueryClient();
+	const [instructions, setInstructions] = useState(tenancy.bankTransferInstructions ?? "");
+	const save = useMutation({
+		...tenanciesControllerBankTransferInstructionsMutation(),
+		onSuccess: () => qc.invalidateQueries({ queryKey: ["landlord-tenancies"] })
+	});
+	return (
+		<form className="flex flex-col gap-2" onSubmit={(e) => {
+			e.preventDefault();
+			save.mutate({ path: { id: tenancy._id }, body: { bankTransferInstructions: instructions.trim() } });
+		}}>
+			<label className="flex flex-col gap-1 text-[12.5px] text-sk-muted">
+				Bank transfer instructions (optional)
+				<textarea
+					value={instructions}
+					onChange={(e) => setInstructions(e.target.value)}
+					maxLength={1000}
+					rows={4}
+					placeholder="Account name, sort code, account number and payment reference"
+					className="w-full rounded-[10px] border border-sk-border2 bg-sk-bg px-3 py-2.5 text-[13.5px] text-sk-text"
+				/>
+			</label>
+			<div className="flex flex-wrap items-center gap-2">
+				<button type="submit" className={btnSmPrimary} disabled={save.isPending}>{save.isPending ? "Saving…" : "Save instructions"}</button>
+				{save.isSuccess && <span role="status" className="text-[12.5px] text-sk-ok">Bank transfer instructions saved.</span>}
+				{save.isError && <span role="alert" className="text-[12.5px] text-sk-warn">{errMessage(save.error, "We couldn't save the instructions.")}</span>}
+			</div>
 		</form>
 	);
 }
@@ -342,6 +376,22 @@ function Templates({ templates }) {
 	);
 }
 
+function ConfirmDocument({ tenancyId, documentId }) {
+	const qc = useQueryClient();
+	const confirm = useMutation({
+		mutationFn: () => tenanciesControllerConfirmDocument({ path: { id: tenancyId, docId: documentId }, throwOnError: true }),
+		onSuccess: () => qc.invalidateQueries({ queryKey: ["landlord-tenancies"] })
+	});
+	return (
+		<>
+			<button type="button" className={btnSmGhost} disabled={confirm.isPending} onClick={() => confirm.mutate()}>
+				{confirm.isPending ? "Confirming…" : "Confirm"}
+			</button>
+			{confirm.isError && <span role="alert" className="text-[12.5px] text-sk-warn">{errMessage(confirm.error)}</span>}
+		</>
+	);
+}
+
 function TenancyCard({ tenancy: t, contracts, templates }) {
 	const [editing, setEditing] = useState(false);
 	// monthlyRent and depositAmount are per tenant (pence); show the tenancy total.
@@ -386,6 +436,7 @@ function TenancyCard({ tenancy: t, contracts, templates }) {
 			)}
 
 			{t.listing?.billsIncluded && <EnergyForm key={t.energyAllowance} tenancy={t} />}
+			<BankTransferForm tenancy={t} />
 
 			{(t.compliance ?? []).map((c, i) => (
 				<div key={i} className={`rounded-xl bg-sk-warn-bg p-3 text-[13px] ${SEVERITY_TEXT[c.severity]}`}>
@@ -402,11 +453,19 @@ function TenancyCard({ tenancy: t, contracts, templates }) {
 			</div>
 
 			{t.documents?.length > 0 && (
-				<div className="flex flex-wrap gap-2 text-[13px]">
+				<div className="flex flex-wrap items-center gap-2 text-[13px]">
 					{t.documents.map((d) => (
-						<button key={d.key || d.url} type="button" onClick={() => openDocument(d)} className="cursor-pointer rounded-lg border-none bg-sk-hair px-2.5 py-1.5 text-sk-text">
-							{d.title}
-						</button>
+						<div key={d.key || d.url} className="flex items-center gap-1.5">
+							<button type="button" onClick={() => openDocument(d)} className="cursor-pointer rounded-lg border-none bg-sk-hair px-2.5 py-1.5 text-sk-text">
+								{d.title}
+							</button>
+							{d.type === "TENANCY_AGREEMENT" && d.confirmedByLandlord === false && (
+								<>
+									<Chip tone="warn">From email — awaiting landlord confirmation</Chip>
+									<ConfirmDocument tenancyId={t._id} documentId={d._id} />
+								</>
+							)}
+						</div>
 					))}
 				</div>
 			)}

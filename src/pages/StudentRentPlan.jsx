@@ -83,6 +83,7 @@ export default function StudentRentPlan() {
 			<div className="flex flex-wrap items-start gap-6">
 				<div className="flex min-w-0 flex-[1.4_1_480px] flex-col gap-4">
 					<Card title="How you pay">
+						<span className="text-[13px] font-semibold text-sk-text2">Paying ahead is optional — you choose. Monthly is always available.</span>
 						<fieldset className="m-0 flex flex-col gap-2.5 border-none p-0">
 							<legend className="sr-only">Payment frequency</legend>
 							{OPTIONS.map((o) => {
@@ -110,6 +111,13 @@ export default function StudentRentPlan() {
 							</div>
 						)}
 					</Card>
+
+					{data?.bankTransferInstructions && (
+						<Card title="Pay by bank transfer" className="!gap-2.5">
+							<p className="m-0 whitespace-pre-wrap text-sm leading-normal text-sk-text2">{data.bankTransferInstructions}</p>
+							<span className="text-[12.5px] text-sk-muted">Seek does not process bank transfers; tell your landlord once paid.</span>
+						</Card>
+					)}
 
 					{form && (
 						<Card title="Reminders and receipts" className="!gap-2.5">

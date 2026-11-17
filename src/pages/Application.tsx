@@ -113,16 +113,20 @@ export default function ApplicationPage() {
 	const property = listing?.streetAddress || listing?.propertyTitle || "this property";
 
 	const decide = useMutation({
-		// The offer is a POST (15 days to accept, holding deposit recorded); reject is a PATCH.
+		// The offer is a POST (the backend sets the acceptance deadline); reject is a PATCH.
 		mutationFn: async ({ action, reason }: { action: "offer" | "reject"; reason?: string }) =>
 			(await (action === "offer" ? api.post(`/application/${applicationId}/offer`) : api.patch(`/application/${applicationId}/reject`, { reason }))).data,
-		onSuccess: (_d, { action }) => {
+		onSuccess: (result, { action }) => {
 			setDeclining(false);
 			qc.invalidateQueries({ queryKey: ["application-listing", listingId] });
 			toast.current?.show({
 				severity: action === "offer" ? "success" : "warn",
 				summary: action === "offer" ? "Offer sent" : "Rejected",
-				detail: action === "offer" ? "The household has 15 days to accept." : "You have rejected the application",
+				detail: action === "offer"
+					? result?.offerExpiresAt
+						? `The household can accept until ${fmtDate(result.offerExpiresAt)}.`
+						: "The household must accept before the offer expires."
+					: "You have rejected the application",
 				life: 3000
 			});
 		},
@@ -497,7 +501,7 @@ function ApplicationCard({
 					</div>
 					<ol className="m-0 flex list-decimal flex-col gap-2 pl-[18px] text-[13.5px] leading-snug text-sk-text2">
 						<li>Hold the viewing</li>
-						<li>Make the offer. The household has 15 days to accept</li>
+						<li>{data.offerExpiresAt ? `The household must accept by ${fmtDate(data.offerExpiresAt)}` : "Make the offer. The household must accept before it expires"}</li>
 						{holdingDeposit ? <li>Hold the deposit ({`£${holdingDeposit.toLocaleString("en-GB")}`} per room, one week's rent at most) to reserve the room</li> : null}
 						<li>Send the tenancy agreement for e-signature</li>
 						<li>Protect the deposit within 30 days</li>

@@ -52,7 +52,7 @@ const COLUMNS: { key: ColumnKey; label: string; empty: string }[] = [
 	{ key: "SUBMITTED", label: "Submitted", empty: "New applications land here." },
 	{ key: "QUALIFIED", label: "Qualified", empty: "Households whose passports are all complete appear here, first come first served." },
 	{ key: "VIEWED", label: "Viewed", empty: "Households move here after their viewing. Make the offer in one click." },
-	{ key: "OFFER", label: "Offer and hold", empty: "Holding deposit collected (max one week). 15-day clock to sign." },
+	{ key: "OFFER", label: "Offer and hold", empty: "Holding deposit collected (max one week). The household accepts before the offer expires." },
 	{ key: "SIGNED", label: "Signed", empty: "Contract emailed to all and filed in their app. Deposit registration starts." }
 ];
 
@@ -173,7 +173,7 @@ export default function Applicants() {
 	const updateStage = async (application: Application, action: "offer" | "reject", reason?: string) => {
 		setPendingId(application._id);
 		try {
-			// The offer is a POST (15 days to accept, holding deposit recorded); reject is a PATCH.
+			// The offer is a POST (the backend sets the acceptance deadline); reject is a PATCH.
 			await axios.request({
 				method: action === "offer" ? "post" : "patch",
 				url: `${API_BASE}/application/${application._id}/${action}`,

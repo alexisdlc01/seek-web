@@ -341,7 +341,7 @@ const ApplicationRequirements = ({
 							})}
 						</div>
 						<span className="text-xs text-sk-muted">
-							Only properties in Scotland can offer half-year and full-year plans. In England the law caps rent in advance at one month; elsewhere paying ahead isn't available yet. Those homes are monthly only.
+							Students may choose to pay ahead. You can't require it. Only properties in Scotland can offer half-year and full-year plans; other homes are monthly only.
 						</span>
 					</div>
 

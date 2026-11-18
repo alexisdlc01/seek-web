@@ -702,6 +702,13 @@ export type AddTenancyDocumentDto = {
     stage?: 'CHECK_IN' | 'CHECK_OUT';
 };
 
+export type EndTenancyDto = {
+    /**
+     * The first London calendar day no longer covered by the tenancy.
+     */
+    endDate: string;
+};
+
 export type Notification = {
     _id: string;
     user: string;
@@ -1192,12 +1199,12 @@ export type ApplicationDto = {
     applicantUsers?: Array<UserDto>;
     createdAt: string;
     owner: string;
-    stage: 'SENT' | 'NOT_SENT' | 'VIEWED' | 'OFFERED' | 'ACCEPTED' | 'SIGNED' | 'REJECTED';
+    stage: 'SENT' | 'NOT_SENT' | 'VIEWED' | 'OFFERED' | 'ACCEPTED' | 'SIGNED' | 'REJECTED' | 'WITHDRAWN';
     sentAt?: string | null;
     viewingAt?: string | null;
     offeredAt?: string | null;
     /**
-     * Deadline for the household to accept the offer (15 days after it was made).
+     * Deadline for the household to accept the offer.
      */
     offerExpiresAt?: string | null;
     /**
@@ -1471,7 +1478,7 @@ export type StudentPaymentDto = {
      * Months of rent this payment covers.
      */
     coversMonths: number;
-    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE';
+    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE' | 'CANCELLED';
     dueDate: string;
     paidAt: string | null;
     provider: 'stripe' | 'simulated';
@@ -1497,6 +1504,21 @@ export type StudentPaymentDto = {
      * A paid holding deposit the landlord must refund within 7 days (Tenant Fees Act), e.g. after declining the household.
      */
     refundDue: boolean;
+    /**
+     * Amount due back to the payer, in pence.
+     */
+    refundAmount: number;
+    /**
+     * Amount actually refunded, in pence.
+     */
+    refundedAmount: number;
+    refundedAt: string | null;
+    /**
+     * Stripe refund id, or the simulated refund reference.
+     */
+    refundRef?: {
+        [key: string]: unknown;
+    } | null;
 };
 
 export type RentPlanViewDto = {
@@ -1547,7 +1569,7 @@ export type RentPlanPreviewItemDto = {
      * Holding deposit taken off this payment, in pence.
      */
     holdingDepositCredit: number;
-    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE';
+    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE' | 'CANCELLED';
 };
 
 export type UpdateRentPlanDto = {
@@ -1569,7 +1591,7 @@ export type LandlordPaymentRowDto = {
         [key: string]: unknown;
     };
     amount: number;
-    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE';
+    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE' | 'CANCELLED';
     dueDate: string;
     paidAt: string | null;
     /**
@@ -1752,12 +1774,12 @@ export type CheckoutResponseDto = {
      * Open this page. Stripe's hosted Checkout, or the success URL straight away in simulated mode (already paid). Null when the payment was already paid: nothing to open.
      */
     url: string | null;
-    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE';
+    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE' | 'CANCELLED';
 };
 
 export type PayResponseDto = {
     paymentId: string;
-    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE';
+    status: 'SCHEDULED' | 'PENDING' | 'PAID' | 'FAILED' | 'LATE' | 'CANCELLED';
     provider: 'stripe' | 'simulated';
     /**
      * Stripe PaymentIntent client secret for the Payment Element. Null when already paid or simulated.
@@ -3123,6 +3145,27 @@ export type TenanciesControllerConfirmDocumentResponses = {
 };
 
 export type TenanciesControllerConfirmDocumentResponse = TenanciesControllerConfirmDocumentResponses[keyof TenanciesControllerConfirmDocumentResponses];
+
+export type TenanciesControllerEndData = {
+    body: EndTenancyDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/tenancies/{id}/end';
+};
+
+export type TenanciesControllerEndErrors = {
+    403: ErrorDto;
+};
+
+export type TenanciesControllerEndError = TenanciesControllerEndErrors[keyof TenanciesControllerEndErrors];
+
+export type TenanciesControllerEndResponses = {
+    200: Tenancy;
+};
+
+export type TenanciesControllerEndResponse = TenanciesControllerEndResponses[keyof TenanciesControllerEndResponses];
 
 export type NotificationsControllerListData = {
     body?: never;

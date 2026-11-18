@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, Chip, Empty, ErrorState, Loading, Page, PageHeader, btnSmGhost, btnSmPrimary } from "../components/sk.jsx";
 import { DEPOSIT_SCHEMES, api, engineerLink, errMessage, fmtDate, depositRules, fmtDay, gbp, openAttachment } from "../lib/landlord.js";
 import { tenanciesControllerBankTransferInstructionsMutation } from "../client/@tanstack/react-query.gen";
-import { tenanciesControllerConfirmDocument } from "../client/sdk.gen";
+import { tenanciesControllerConfirmDocument, tenanciesControllerEnd } from "../client/sdk.gen";
 
 const SCHEME_LABEL = Object.fromEntries(DEPOSIT_SCHEMES.map((s) => [s.value, s.label]));
 const CONTRACT_TONE = { DRAFT: "muted", SENT: "warn", SIGNED: "ok" };
@@ -12,6 +12,10 @@ const CONTRACT_LABEL = { DRAFT: "Draft", SENT: "Waiting for signatures", SIGNED:
 const SEVERITY_TEXT = { high: "text-sk-danger", medium: "text-sk-warn", low: "text-sk-text2" };
 
 const toDateInput = (iso) => (iso ? new Date(iso).toISOString().slice(0, 10) : "");
+const todayDateInput = () => {
+	const today = new Date();
+	return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+};
 
 const openDocument = doc => openAttachment(doc).catch(e => window.alert(errMessage(e, "We couldn't open this document.")));
 
@@ -392,8 +396,47 @@ function ConfirmDocument({ tenancyId, documentId }) {
 	);
 }
 
+function EndTenancy({ tenancy, onDone }) {
+	const qc = useQueryClient();
+	const [endDate, setEndDate] = useState(todayDateInput);
+	const end = useMutation({
+		mutationFn: () => tenanciesControllerEnd({ path: { id: tenancy._id }, body: { endDate }, throwOnError: true }),
+		onSuccess: () => {
+			qc.invalidateQueries({ queryKey: ["landlord-tenancies"] });
+			onDone();
+		}
+	});
+	const error = end.error?.statusCode === 409
+		? "This tenancy was already ended."
+		: end.error?.message || errMessage(end.error);
+	return (
+		<form className="flex flex-col gap-3 rounded-xl bg-sk-card2 p-3" onSubmit={(e) => { e.preventDefault(); end.mutate(); }}>
+			<label className="flex flex-col gap-1 text-[12.5px] text-sk-muted">
+				End date
+				<input
+					type="date"
+					min={todayDateInput()}
+					max={toDateInput(tenancy.endDate) || undefined}
+					value={endDate}
+					onChange={(e) => setEndDate(e.target.value)}
+					required
+					disabled={end.isPending}
+					className="h-10 rounded-[10px] border border-sk-border2 bg-sk-bg px-3 text-[13.5px] text-sk-text"
+				/>
+			</label>
+			<p className="text-[12.5px] text-sk-text2">Rent already paid for days after this date is refunded to the student automatically (pro-rata). Future unpaid rent is cancelled.</p>
+			{end.isError && <span role="alert" className="text-[12.5px] text-sk-warn">{error}</span>}
+			<div className="flex gap-2">
+				<button type="submit" className={btnSmPrimary} disabled={end.isPending}>{end.isPending ? "Ending…" : "Confirm"}</button>
+				<button type="button" className={btnSmGhost} disabled={end.isPending} onClick={onDone}>Cancel</button>
+			</div>
+		</form>
+	);
+}
+
 function TenancyCard({ tenancy: t, contracts, templates }) {
 	const [editing, setEditing] = useState(false);
+	const [ending, setEnding] = useState(false);
 	// monthlyRent and depositAmount are per tenant (pence); show the tenancy total.
 	const count = Math.max(1, t.tenants.length);
 	const weeklyRent = (t.monthlyRent * 12) / 52;
@@ -437,6 +480,10 @@ function TenancyCard({ tenancy: t, contracts, templates }) {
 
 			{t.listing?.billsIncluded && <EnergyForm key={t.energyAllowance} tenancy={t} />}
 			<BankTransferForm tenancy={t} />
+			{t.status === "ACTIVE" && (ending
+				? <EndTenancy tenancy={t} onDone={() => setEnding(false)} />
+				: <div><button type="button" className={btnSmGhost} onClick={() => setEnding(true)}>End tenancy early</button></div>
+			)}
 
 			{(t.compliance ?? []).map((c, i) => (
 				<div key={i} className={`rounded-xl bg-sk-warn-bg p-3 text-[13px] ${SEVERITY_TEXT[c.severity]}`}>

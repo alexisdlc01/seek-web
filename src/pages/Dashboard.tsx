@@ -19,6 +19,7 @@ import {
 	remindLate
 } from "../lib/landlord.js";
 import { useLandlordRepairs } from "../components/RepairsPanel.jsx";
+import { RepairPhotoThumbs } from "../components/RepairPhotos.jsx";
 import ListingsContext from "../context/ListingsContext";
 import {
 	Page,
@@ -207,6 +208,7 @@ export default function Dashboard() {
 							? `Booked ${new Date(r.scheduledFor).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}`
 							: `Reported by ${r.reportedBy?.name ?? "a tenant"}, not booked yet`,
 					cta: "Thread",
+					photoUrls: r.photoUrls,
 					to: `/inbox?tenancy=${r.tenancy?._id ?? ""}`,
 					primary: false
 				})),
@@ -304,6 +306,7 @@ export default function Dashboard() {
 									<div className="flex min-w-0 flex-1 flex-col gap-0.5">
 										<span className="text-sm font-semibold">{item.title}</span>
 										<span className="text-[12.5px] text-sk-muted">{item.sub}</span>
+										{item.photoUrls?.length > 0 && <RepairPhotoThumbs urls={item.photoUrls} />}
 									</div>
 									{item.onClick ? (
 										<button type="button" className={btnSmGhost} onClick={item.onClick}>

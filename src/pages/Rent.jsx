@@ -142,8 +142,8 @@ export default function Rent() {
 							)}
 							{(d.payoutsOnHold || d.held > 0) && (
 								<span className="rounded-lg bg-sk-warn-bg px-2.5 py-2 text-[12.5px] font-semibold text-sk-warn">
-									{gbp(d.held)} held by Seek: payouts aren't set up yet, so card payments can't reach you.{" "}
-									<Link to="/edit-profile" className="underline">Finish payouts in Edit profile</Link>
+									Students can't pay you by card until you finish Stripe setup.{d.held > 0 ? ` Older payments (${gbp(d.held)}) are being paid out to you.` : ""}{" "}
+									<Link to="/edit-profile" className="underline">Finish Stripe setup in Edit profile</Link>
 								</span>
 							)}
 							<span className="mt-0.5 border-t border-sk-border pt-2 text-[12.5px] text-sk-text2">

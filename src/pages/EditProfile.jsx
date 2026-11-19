@@ -255,7 +255,7 @@ function PayoutsCard() {
 		}
 	});
 	const s = status.data;
-	const ready = s?.connected && s.payoutsEnabled;
+	const ready = s?.connected && s.chargesEnabled;
 	return (
 		<Card title="Payouts" className="!border-transparent !bg-sk-card2">
 			{status.isLoading && <span className="text-[13px] text-sk-muted">Checking your payout account…</span>}
@@ -271,7 +271,7 @@ function PayoutsCard() {
 							{s.payoutBank.verified === false ? " (not verified yet)" : ""}
 						</span>
 					)}
-					<span className="text-[13px] text-sk-text2">Rent is paid out to this account after it's collected.</span>
+					<span className="text-[13px] text-sk-text2">Card rent goes straight to this Stripe account.</span>
 					{s.mode !== "unavailable" && (
 						<button type="button" className={btnSmGhost} disabled={onboard.isPending} onClick={() => onboard.mutate()}>
 							{onboard.isPending ? "Opening Stripe…" : "Change bank account"}
@@ -284,7 +284,7 @@ function PayoutsCard() {
 				<>
 					<span className="text-sm font-semibold">{s.connected ? "Finish setting up payouts" : "Payouts not set up yet"}</span>
 					<span className="text-[13px] text-sk-text2">
-						Rent is collected and recorded, but can't be paid out until you connect a payout account with Stripe. It takes a few minutes.
+						Students can't pay you by card until you finish Stripe setup. It takes a few minutes.
 					</span>
 					{s.mode === "unavailable" ? (
 						<span className="text-[13px] text-sk-warn">Payout setup isn't available right now.</span>

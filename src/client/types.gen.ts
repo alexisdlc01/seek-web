@@ -1486,7 +1486,7 @@ export type StudentPaymentDto = {
         [key: string]: unknown;
     } | null;
     /**
-     * HELD: paid by card while the landlord's payouts weren't set up, so Seek holds the money. TRANSFERRED: Seek has since sent it to the landlord. Null: it goes straight to the landlord.
+     * Legacy only, never written for new charges. HELD: an old card payment Seek collected before the landlord could take card payments. TRANSFERRED: Seek has since sent it to the landlord. Null: it went straight to the landlord.
      */
     payoutStatus?: 'HELD' | 'TRANSFERRED';
     /**
@@ -1628,7 +1628,7 @@ export type LandlordPaymentRowDto = {
      */
     nextPayout: string | null;
     /**
-     * HELD: Seek holds this payment until payouts are set up. TRANSFERRED: released since.
+     * Legacy only (no new card payment is ever held). HELD: an old payment Seek collected before the landlord could take card payments. TRANSFERRED: released since.
      */
     payoutStatus: 'HELD' | 'TRANSFERRED';
 };
@@ -1672,11 +1672,11 @@ export type LandlordPaymentsDto = {
      */
     nextPayoutDate: string | null;
     /**
-     * True when card payments can't reach the landlord yet (no Stripe payout account able to take them): Seek holds them until payouts are set up.
+     * True when tenants can't pay this landlord by card yet (no Stripe account able to take card payments): card payment is blocked until setup is finished.
      */
     payoutsOnHold: boolean;
     /**
-     * Paid this month but held by Seek until payouts are set up, pence (after Seek's fee).
+     * Legacy: paid this month but held by Seek from before direct card payments, pence (after Seek's fee).
      */
     held: number;
     rows: Array<LandlordPaymentRowDto>;
@@ -1785,6 +1785,10 @@ export type PayResponseDto = {
      * Stripe PaymentIntent client secret for the Payment Element. Null when already paid or simulated.
      */
     clientSecret: string | null;
+    /**
+     * Landlord's Stripe connected account the charge lives on (pass it as stripeAccount to Stripe.js). Null for simulated or legacy payments.
+     */
+    stripeAccountId: string | null;
 };
 
 export type BillShareDto = {

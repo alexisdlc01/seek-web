@@ -12,13 +12,15 @@ const STATUS = {
 	LATE: { tone: "warn", label: "Late" },
 	FAILED: { tone: "warn", label: "Failed" },
 	PENDING: { tone: "accent", label: "Processing" },
-	SCHEDULED: { tone: "muted", label: "Scheduled" }
+	SCHEDULED: { tone: "muted", label: "Scheduled" },
+	CANCELLED: { tone: "muted", label: "Cancelled" }
 };
 
 
 // "£695 · 3 days late", "£695 · paid 1 Nov", "£695 · due 1 Dec".
 function periodText(r) {
 	if (r.status === "PAID") return `${gbp(r.amount)} · paid ${fmtDay(r.paidAt ?? r.dueDate)}`;
+	if (r.status === "CANCELLED") return `${gbp(r.amount)} · cancelled`;
 	if (r.status === "LATE") {
 		const days = Math.max(1, Math.floor((Date.now() - new Date(r.dueDate).getTime()) / 86_400_000));
 		return `${gbp(r.amount)} · ${days} ${days === 1 ? "day" : "days"} late`;

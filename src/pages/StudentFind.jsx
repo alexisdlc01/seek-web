@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ListingsMap from "../components/ListingsMap.jsx";
 import { ApplyModal, ListingDetailModal } from "../components/StudentListing.jsx";
@@ -74,7 +74,8 @@ export default function StudentFind() {
 	const [bounds, setBounds] = useState(null);
 	const [chips, setChips] = useState(() => new Set(["Under £750"]));
 	const [selected, setSelected] = useState(null);
-	const [detailId, setDetailId] = useState(null);
+	const [searchParams] = useSearchParams();
+	const [detailId, setDetailId] = useState(() => searchParams.get("home")); // shared listing link
 	const [applyId, setApplyId] = useState(null);
 	const [ask, setAsk] = useState(SAMPLE_ASK);
 	const [chat, setChat] = useState([]); // [{role, content}]

@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { API_BASE } from "../lib/landlord.js";
 
 const UserContext = createContext(undefined);
@@ -9,6 +10,8 @@ export default UserContext;
 export const UserProvider = ({ children }) => {
 	const [user, setUser] = useState(null);
 	const navigate = useNavigate();
+	// Query keys carry no user id: drop the cache whenever the signed-in user changes.
+	const queryClient = useQueryClient();
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -58,6 +61,7 @@ export const UserProvider = ({ children }) => {
 				const res = await axios.get(`${API_BASE}/auth/currentUser`, {
 					withCredentials: true
 				});
+				queryClient.clear();
 				setUser(res.data);
 			} catch (err) {
 				if (err.response.status === 401) {
@@ -83,6 +87,7 @@ export const UserProvider = ({ children }) => {
 		} catch (err) {
 			console.log("error logging out", err);
 		} finally {
+			queryClient.clear();
 			navigate("/");
 		}
 	};
@@ -111,6 +116,7 @@ export const UserProvider = ({ children }) => {
 			const res = await axios.get(`${API_BASE}/auth/currentUser`, {
 				withCredentials: true
 			});
+			queryClient.clear();
 			setUser(res.data);
 		} catch (err) {
 			console.log("Error trying to sign up", err);

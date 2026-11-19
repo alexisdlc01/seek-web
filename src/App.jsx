@@ -191,6 +191,12 @@ function JoinLinkRedirect() {
 	return <Navigate to={`/student/join/${id}${search}`} replace />;
 }
 
+// Shared listing links (seekapp.uk/link/location/:id/details) open the listing on the find page.
+function ListingLinkRedirect() {
+	const { id } = useParams();
+	return <Navigate to={`/student/find?home=${encodeURIComponent(id)}`} replace />;
+}
+
 function App() {
 	return (
 		<Routes>
@@ -251,6 +257,7 @@ function App() {
 
 			{/* Public site, sign-in and everything else */}
 			<Route path="/link/chat/:id/join" element={<JoinLinkRedirect />} />
+			<Route path="/link/location/:id/details" element={<ListingLinkRedirect />} />
 			<Route path="*" element={<PublicSite />} />
 		</Routes>
 	);

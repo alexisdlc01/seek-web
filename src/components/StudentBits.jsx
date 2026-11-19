@@ -22,8 +22,8 @@ export function AdviceCard({ topic, tenancyId = undefined, applicationId = undef
 	const ask = useMutation({
 		mutationFn: async (question) => (await api.post("/ai/advice", { topic, tenancyId, question }, { timeout: 30_000 })).data,
 		onSuccess: (d) => {
-			// Not an AI answer: the card is the generic one, so say so instead of showing it as the reply.
-			if (d.source !== "ai") return setNoAnswer(true);
+			// The rules answer is shown too when the model reply was rejected; only the backend's "can't answer" fallback is not.
+			if (d.source !== "ai" && d.advice?.startsWith("Seek can't answer")) return setNoAnswer(true);
 			setNoAnswer(false);
 			setAsked(d);
 			setDraft("");
@@ -53,7 +53,7 @@ export function AdviceCard({ topic, tenancyId = undefined, applicationId = undef
 					<span className="whitespace-pre-line">{a.advice}</span>
 				</span>
 			</div>
-			{askable && a.source === "ai" && (
+			{askable && (a.source === "ai" || asked) && (
 				<form onSubmit={send} className="flex gap-2">
 					<input
 						value={draft}

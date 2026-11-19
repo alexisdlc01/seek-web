@@ -8,8 +8,7 @@ import { PLAN_LABEL, useMyTenancy } from "../lib/student.js";
 
 const OPTIONS = [
 	{ value: "MONTHLY", months: 1, hint: "Pay each month" },
-	{ value: "SIX_MONTHS", months: 6, hint: "Two payments a year" },
-	{ value: "YEARLY", months: 12, hint: "One payment for the year" }
+	{ value: "SIX_MONTHS", months: 6, hint: "Two payments a year" }
 ];
 const STATUS = {
 	PAID: { text: "Paid", tone: "text-sk-ok" },

@@ -210,7 +210,6 @@ export default function Rent() {
 											<div className="flex flex-wrap gap-2">
 												<Chip tone="ok">Monthly (always on)</Chip>
 												<Chip tone={offered.has("SIX_MONTHS") ? "ok" : "muted"}>Half-year</Chip>
-												<Chip tone={offered.has("YEARLY") ? "ok" : "muted"}>Full year</Chip>
 											</div>
 										)}
 									</div>

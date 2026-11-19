@@ -130,7 +130,7 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 							{prop.epcRating && <Chip tone="muted">EPC {prop.epcRating}</Chip>}
 							{(prop.hmoLicenceExpiry || prop.licenceNumber) && <Chip tone="muted">HMO licence</Chip>}
 							{prop.nation === "WALES" && <Chip tone="muted">Rent Smart Wales</Chip>}
-							{plans.includes("SIX_MONTHS") && plans.includes("YEARLY") && <Chip tone="accent">Half-year and full year on</Chip>}
+							{plans.includes("SIX_MONTHS") && <Chip tone="accent">Half-year on</Chip>}
 						</div>
 						{f.isLet ? (
 							<span className="text-[13px] text-sk-text2">

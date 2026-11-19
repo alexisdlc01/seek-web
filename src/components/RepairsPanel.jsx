@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Chip, btnSmGhost, btnSmPrimary } from "./sk.jsx";
+import { RepairPhotoThumbs } from "./RepairPhotos.jsx";
 import { api, errMessage, fmtDateTime } from "../lib/landlord.js";
 
 export const useLandlordRepairs = () =>
 	useQuery({
 		queryKey: ["landlord-repairs"],
+		staleTime: 5 * 60 * 1000,
 		queryFn: async () => (await api.get("/repairs/landlord")).data
 	});
 
@@ -100,6 +102,7 @@ export default function RepairsPanel({ tenancyId }) {
 								{r.status === "SCHEDULED" && r.scheduledFor ? `Booked ${fmtDateTime(r.scheduledFor)}` : fmtDateTime(r.createdAt)}
 							</span>
 						</div>
+						<RepairPhotoThumbs urls={r.photoUrls} />
 						<Chip tone={st.tone}>{st.label}</Chip>
 						{r.status !== "FIXED" && (
 							<>

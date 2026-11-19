@@ -182,6 +182,7 @@ export default function StudentRentPlan() {
 					</Card>
 					{history.length > 0 && (
 						<Card title="Payment history" className="!gap-3">
+							<Link to="/student/home/receipts" className="text-[13px] font-semibold text-sk-link">All receipts →</Link>
 							{history.map((p) => (
 								<div key={p._id} className="flex items-center justify-between gap-2 border-b border-sk-hair pb-3 text-sm last:border-none last:pb-0">
 									<span className="flex flex-col">

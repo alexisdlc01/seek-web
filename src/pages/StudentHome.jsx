@@ -1,8 +1,9 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserContext from "../context/UserContext.jsx";
 import { Card, Chip, ErrorState, Loading, Page, PageHeader, btnGhost, btnPrimary } from "../components/sk.jsx";
+import { MAX_REPAIR_PHOTOS, PHOTO_ACCEPT, RepairPhotoThumbs, uploadRepairPhoto } from "../components/RepairPhotos.jsx";
 import { AdviceCard, Modal, Notice, PayNowButton, useCheckoutReturn } from "../components/StudentBits.jsx";
 import { api, errMessage, fmtDate, fmtDay, gbp, greeting, openFile } from "../lib/landlord.js";
 import { PLAN_LABEL, idOf, useMyApplications, useMyTenancy } from "../lib/student.js";
@@ -46,9 +47,23 @@ function ReportRepairModal({ tenancyId, onClose }) {
 	const qc = useQueryClient();
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
+	const [photos, setPhotos] = useState([]);
+	const previews = useMemo(() => photos.map((f) => URL.createObjectURL(f)), [photos]);
+	useEffect(() => () => previews.forEach(URL.revokeObjectURL), [previews]);
+	// Keys already uploaded for the current selection, so a retry after a failed submit doesn't re-upload.
+	const uploaded = useRef(new Map());
 	const create = useMutation({
-		mutationFn: () => api.post("/repairs", { tenancy: tenancyId, title: title.trim(), description: description.trim() || undefined }),
+		mutationFn: async () => {
+			const photoKeys = await Promise.all(
+				photos.map(async (f) => {
+					if (!uploaded.current.has(f)) uploaded.current.set(f, await uploadRepairPhoto(f));
+					return uploaded.current.get(f);
+				})
+			);
+			return api.post("/repairs", { tenancy: tenancyId, title: title.trim(), description: description.trim() || undefined, photoKeys });
+		},
 		onSuccess: () => {
+			uploaded.current = new Map();
 			qc.invalidateQueries({ queryKey: ["repairs", tenancyId] });
 			onClose();
 		}
@@ -71,6 +86,18 @@ function ReportRepairModal({ tenancyId, onClose }) {
 					Details <span className="font-normal text-sk-muted">(optional)</span>
 					<textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} maxLength={2000} placeholder="When it started, which room, good times for a visit" className={field} />
 				</label>
+				<label className="flex flex-col gap-1.5 text-sm font-semibold">
+					Photos <span className="font-normal text-sk-muted">(optional, up to {MAX_REPAIR_PHOTOS})</span>
+					<input type="file" accept={PHOTO_ACCEPT} multiple onChange={(e) => {
+						uploaded.current = new Map();
+						setPhotos(Array.from(e.target.files ?? []).slice(0, MAX_REPAIR_PHOTOS));
+					}} className="text-sm font-normal" />
+				</label>
+				{photos.length > 0 && (
+					<div className="flex flex-wrap gap-1.5">
+						{photos.map((f, i) => <img key={previews[i]} src={previews[i]} alt={f.name} className="h-14 w-14 rounded-lg object-cover" />)}
+					</div>
+				)}
 				<span className="text-[12.5px] text-sk-muted">Your landlord is told straight away. Gas leak or no heating in winter? Call them too.</span>
 				{create.isError && <div role="alert" className="rounded-xl bg-sk-warn-bg p-3 text-sm text-sk-warn">{errMessage(create.error, "We couldn't send this report.")}</div>}
 				<button type="submit" disabled={create.isPending || !title.trim()} className={`${btnPrimary} disabled:opacity-60`}>
@@ -225,7 +252,7 @@ export default function StudentHome() {
 	const paymentsQ = useQuery({ queryKey: ["my-payments"], queryFn: async () => (await api.get("/payments/mine")).data });
 	const billsQ = useQuery({ queryKey: ["bills", tid], enabled: !!tid, queryFn: async () => (await api.get(`/bills/tenancy/${tid}`)).data });
 	const contractsQ = useQuery({ queryKey: ["contracts", tid], enabled: !!tid, queryFn: async () => (await api.get(`/contracts/tenancy/${tid}`)).data });
-	const repairsQ = useQuery({ queryKey: ["repairs", tid], enabled: !!tid, queryFn: async () => (await api.get(`/repairs/tenancy/${tid}`)).data });
+	const repairsQ = useQuery({ queryKey: ["repairs", tid], enabled: !!tid, staleTime: 5 * 60 * 1000, queryFn: async () => (await api.get(`/repairs/tenancy/${tid}`)).data });
 	const appsQ = useMyApplications();
 
 	const acceptTenancy = useMutation({
@@ -337,6 +364,7 @@ export default function StudentHome() {
 					<div className="flex flex-wrap items-center gap-3 pt-1">
 						{next && <PayNowButton payment={next} className="h-9 rounded-[10px] border-none bg-sk-accent px-3 text-[13px] font-semibold text-sk-on-accent" />}
 						<Link to="/student/home/rent" className="text-[13px] font-semibold text-sk-link">Rent plan →</Link>
+						<Link to="/student/home/receipts" className="text-[13px] font-semibold text-sk-link">Receipts →</Link>
 					</div>
 				</div>
 				<Link to="/student/home/deposit" className="flex flex-col gap-1.5 rounded-2xl border border-sk-border bg-sk-card p-[18px] text-inherit no-underline">
@@ -414,7 +442,8 @@ export default function StudentHome() {
 						{repairsQ.isLoading && <Loading label="Loading repairs" />}
 						{!repairsQ.isLoading && repairs.length === 0 && <span className="text-sm text-sk-text2">Nothing reported. If something breaks, report it here and your landlord is told straight away.</span>}
 						{repairs.map((r) => (
-							<div key={r._id} className="flex justify-between gap-2.5 text-sm">
+							<div key={r._id} className="flex flex-col gap-1.5 text-sm">
+							<div className="flex justify-between gap-2.5">
 								<span>{r.title}</span>
 								<span className={`shrink-0 font-semibold ${r.status === "FIXED" ? "text-sk-ok" : "text-sk-warn"}`}>
 									{r.status === "FIXED"
@@ -423,6 +452,8 @@ export default function StudentHome() {
 											? `Visit ${new Date(r.scheduledFor).toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}`
 											: `Reported ${fmtDate(r.createdAt)}`}
 								</span>
+							</div>
+							<RepairPhotoThumbs urls={r.photoUrls} />
 							</div>
 						))}
 					</Card>

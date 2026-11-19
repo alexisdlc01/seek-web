@@ -1918,6 +1918,11 @@ export type Repair = {
     reportedBy: string;
     title: string;
     description?: string;
+    /**
+     * Private upload keys of the attached photos (max 5).
+     */
+    photoKeys: Array<string>;
+    photoUrls?: Array<string>;
     status: 'OPEN' | 'SCHEDULED' | 'FIXED';
     scheduledFor: string | null;
     fixedAt: string | null;
@@ -1928,6 +1933,10 @@ export type CreateRepairDto = {
     tenancy: string;
     title: string;
     description?: string;
+    /**
+     * Private upload keys from /upload/presign (max 5 photos).
+     */
+    photoKeys?: Array<string>;
 };
 
 export type UpdateRepairDto = {

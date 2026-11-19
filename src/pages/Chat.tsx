@@ -76,6 +76,8 @@ export default function ChatPage() {
 	// Latest selection, readable from the long-lived socket handler below.
 	const selectedIdRef = useRef(selectedId);
 	selectedIdRef.current = selectedId;
+	const chatsRef = useRef(chats);
+	chatsRef.current = chats;
 
 	useEffect(() => {
 		let isMounted = true;
@@ -134,6 +136,26 @@ export default function ChatPage() {
 		});
 		socketRef.current = socket;
 
+		// Rooms are lost on every (re)connect: rejoin them all.
+		socket.on("connect", () => {
+			chatsRef.current.forEach(chat => socket.emit("conversation:join", chat._id));
+			if (selectedIdRef.current) socket.emit("conversation:seen", selectedIdRef.current);
+		});
+
+		// The server drops the socket when its access token expires and
+		// socket.io never retries that. Refresh the cookie through an
+		// interceptor-covered call (the interceptor skips /auth/ URLs), then
+		// reconnect; if the refresh fails (401), stay disconnected.
+		socket.on("disconnect", async reason => {
+			if (reason !== "io server disconnect") return;
+			try {
+				await axios.get(`${API_BASE}/conversation`, { withCredentials: true });
+				if (socketRef.current === socket) socket.connect();
+			} catch {
+				/* session over: do not reconnect */
+			}
+		});
+
 		socket.on("message:new", (incoming: Message) => {
 			setChats(curr =>
 				curr.map(chat => {
@@ -144,6 +166,9 @@ export default function ChatPage() {
 					// unpopulated id; fill in the name from the member list.
 					const msg = resolveSender(chat, incoming);
 					const mine = msg.sender._id === currentUser._id;
+					// Idempotent, so a repeated updater call is harmless.
+					if (!mine && chat._id === selectedIdRef.current)
+						socket.emit("conversation:seen", chat._id);
 					const messages = mine
 						? chat.messages
 								.filter(m => !(m._id.startsWith("local-") && m.data === msg.data))

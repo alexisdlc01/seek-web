@@ -73,7 +73,7 @@ export default function SignUpLandlord() {
 			return false;
 		}
 		const strongPasswordRegex =
-			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[-#!$@£%^&*()_+|~=`{}[\]:";'<>?,./\\ ]).{8,}$/;
 		if (!strongPasswordRegex.test(password)) {
 			showError(
 				"Password must be at least 8 characters, with uppercase, lowercase, number, and symbol."

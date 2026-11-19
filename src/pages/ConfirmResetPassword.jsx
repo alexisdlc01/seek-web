@@ -37,7 +37,7 @@ export default function ResetPasswordPassword() {
 
 	const validatePassword = () => {
 		const strongPasswordRegex =
-			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[-#!$@£%^&*()_+|~=`{}[\]:";'<>?,./\\ ]).{8,}$/;
 		if (!strongPasswordRegex.test(password)) {
 			showError(
 				"Weak Password",

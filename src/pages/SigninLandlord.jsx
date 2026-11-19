@@ -6,6 +6,7 @@ import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { Toast } from "primereact/toast";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
@@ -75,8 +76,14 @@ export default function SignInLandlord() {
 		e.preventDefault();
 		if (!validateEmail()) return;
 		if (!validatePassword()) return;
-		await login(email, password);
-		navigate("/dashboard");
+		const res = await login(email, password);
+		// login() returns undefined on success, the error message otherwise
+		if (res) return showError(String(res));
+		// login() does not return the user: read the role to route students correctly
+		const me = await axios
+			.get(`${API_BASE}/auth/currentUser`, { withCredentials: true })
+			.catch(() => null);
+		navigate(me?.data?.role === "STUDENT" ? "/student/find" : "/dashboard");
 	};
 
 	return (

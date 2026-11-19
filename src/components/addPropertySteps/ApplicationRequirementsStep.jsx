@@ -11,8 +11,7 @@ const GUARANTOR_OPTIONS = [
 
 const PLAN_OPTIONS = [
 	["MONTHLY", "Monthly (autopay or reminder)"],
-	["SIX_MONTHS", "Half-year upfront"],
-	["YEARLY", "Full year upfront"]
+	["SIX_MONTHS", "Half-year upfront"]
 ];
 
 const slotLabel = iso =>
@@ -341,7 +340,7 @@ const ApplicationRequirements = ({
 							})}
 						</div>
 						<span className="text-xs text-sk-muted">
-							Students may choose to pay ahead. You can't require it. Only properties in Scotland can offer half-year and full-year plans; other homes are monthly only.
+							Students may choose to pay ahead. You can't require it. Only properties in Scotland can offer a half-year plan; other homes are monthly only.
 						</span>
 					</div>
 

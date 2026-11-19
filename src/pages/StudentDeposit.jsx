@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserContext from "../context/UserContext.jsx";
 import { Card, ErrorState, Loading, Page, PageHeader } from "../components/sk.jsx";
@@ -74,7 +74,10 @@ function InventoryPhotos({ tenancyId, documents, stage, title }) {
 export default function StudentDeposit() {
 	const qc = useQueryClient();
 	const { user } = useContext(UserContext);
-	const { tenancy, isLoading, isError, error, refetch } = useMyTenancy();
+	const { tenancy: picked, data: tenancies, isLoading, isError, error, refetch } = useMyTenancy();
+	// Deduction notifications link here with the tenancy the student may have left.
+	const wanted = useSearchParams()[0].get("tenancy");
+	const tenancy = tenancies?.find((t) => t._id === wanted) ?? picked;
 	const tid = tenancy?._id;
 	const [notice, setNotice] = useState(null);
 	const contractsQ = useQuery({ queryKey: ["contracts", tid], enabled: !!tid, queryFn: async () => (await api.get(`/contracts/tenancy/${tid}`)).data });

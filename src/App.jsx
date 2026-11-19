@@ -50,6 +50,8 @@ import StudentConnectors from "./pages/StudentConnectors.jsx";
 import StudentRentPlan from "./pages/StudentRentPlan.jsx";
 import StudentDeposit from "./pages/StudentDeposit.jsx";
 import StudentBills from "./pages/StudentBills.jsx";
+import StudentReceipts from "./pages/StudentReceipts.jsx";
+import Tenancies from "./pages/Tenancies.jsx";
 
 const NotFound = () => {
 	const navigate = useNavigate();
@@ -200,6 +202,7 @@ function App() {
 				<Route path="/add-listing/:id" element={<AddListing />} />
 				<Route path="/view-listing/:id" element={<ViewListing />} />
 				<Route path="/rent" element={<Rent />} />
+				<Route path="/tenancies" element={<Tenancies />} />
 				<Route path="/contracts" element={<Contracts />} />
 				<Route path="/inbox" element={<Inbox />} />
 				<Route path="/connectors" element={<Connectors />} />
@@ -221,6 +224,7 @@ function App() {
 				<Route path="home/rent" element={<StudentRentPlan />} />
 				<Route path="home/deposit" element={<StudentDeposit />} />
 				<Route path="home/bills" element={<StudentBills />} />
+				<Route path="home/receipts" element={<StudentReceipts />} />
 				<Route path="inbox" element={<StudentInbox />} />
 				<Route path="profile" element={<StudentProfile />} />
 				<Route path="connectors" element={<StudentConnectors />} />

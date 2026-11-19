@@ -16,6 +16,7 @@ const Inner = () => {
 		{ to: "/dashboard", label: "Overview" },
 		{ to: "/applicants", label: "Applicants", badge: waiting ?? badges.applicants, match: ["/application"] },
 		{ to: "/listings", label: "Properties", match: ["/add-listing", "/view-listing"] },
+		{ to: "/tenancies", label: "Tenancies" },
 		{ to: "/rent", label: "Rent" },
 		{ to: "/contracts", label: "Contracts and deposits" },
 		{ to: "/inbox", label: "Inbox", match: ["/chat"] },

@@ -9,6 +9,7 @@ import { useApplyRole } from "../context/ThemeContext.jsx";
 import UserContext from "../context/UserContext.jsx";
 import { Toast } from "primereact/toast";
 import BackgroundBubbles from "../components/BackgroundBubbles";
+import ResendVerification from "../components/ResendVerification.jsx";
 
 export default function SignInStudent() {
 	useApplyRole("student");
@@ -147,6 +148,7 @@ export default function SignInStudent() {
 						}}
 					/>
 				</motion.div>
+				<ResendVerification />
 
 				<motion.p
 					initial={{ opacity: 0, y: 10 }}

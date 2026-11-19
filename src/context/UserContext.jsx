@@ -13,12 +13,16 @@ export const UserProvider = ({ children }) => {
 	// Query keys carry no user id: drop the cache whenever the signed-in user changes.
 	const queryClient = useQueryClient();
 	const [loading, setLoading] = useState(true);
+	// Set when sign-in is refused because the email is not verified yet, so the page can offer a new link.
+	const [unverifiedUserId, setUnverifiedUserId] = useState(null);
 
 	useEffect(() => {
 		(async () => {
-			const currentUser = await getCurrentUser();
-			setUser(currentUser);
-			setLoading(false);
+			try {
+				setUser(await getCurrentUser());
+			} finally {
+				setLoading(false);
+			}
 		})();
 	}, []);
 
@@ -29,7 +33,7 @@ export const UserProvider = ({ children }) => {
 			});
 			return res.data;
 		} catch (err) {
-			if (err.response.status === 401) {
+			if (err.response?.status === 401) {
 				try {
 					await axios.post(
 						`${API_BASE}/auth/refresh`,
@@ -47,6 +51,7 @@ export const UserProvider = ({ children }) => {
 	};
 
 	const login = async (email, password) => {
+		setUnverifiedUserId(null);
 		try {
 			await axios.post(
 				`${API_BASE}/auth/login`,
@@ -64,12 +69,13 @@ export const UserProvider = ({ children }) => {
 				queryClient.clear();
 				setUser(res.data);
 			} catch (err) {
-				if (err.response.status === 401) {
+				if (err.response?.status === 401) {
 					throw new Error();
 				}
 			}
 		} catch (err) {
-			// invalid credentials
+			// invalid credentials, unverified email (401 with userId) or suspended account (403)
+			setUnverifiedUserId(err.response?.data?.userId ?? null);
 			return err.response?.data?.message || "Sign-in failed. Please try again.";
 		}
 	};
@@ -125,7 +131,7 @@ export const UserProvider = ({ children }) => {
 
 	return (
 		<UserContext.Provider
-			value={{ user, setUser, login, logout, signup, loading }}
+			value={{ user, setUser, login, logout, signup, loading, unverifiedUserId }}
 		>
 			{children}
 		</UserContext.Provider>

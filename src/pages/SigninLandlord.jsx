@@ -10,6 +10,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import BackgroundBubbles from "../components/BackgroundBubbles.jsx";
+import ResendVerification from "../components/ResendVerification.jsx";
 
 import { API_BASE } from "../lib/landlord.js";
 
@@ -144,6 +145,7 @@ export default function SignInLandlord() {
 						}}
 					/>
 				</motion.div>
+				<ResendVerification />
 
 				<Divider
 					layout="horizontal"
@@ -164,7 +166,8 @@ export default function SignInLandlord() {
 							}}
 							type="button"
 							onClick={() => {
-								window.location.href = `${API_BASE}/auth/google`;
+								// A new Google account opened here is a landlord one; an existing account keeps its role.
+								window.location.href = `${API_BASE}/auth/google?role=LANDLORD_AGENCY`;
 							}}
 						/>
 					</motion.div>

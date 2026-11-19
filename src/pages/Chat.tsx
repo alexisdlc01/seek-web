@@ -44,7 +44,7 @@ type ApplicationSummary = {
 	_id: string;
 	owner: string;
 	landlord: string;
-	stage: "NOT_SENT" | "SENT" | "ACCEPTED" | "REJECTED";
+	stage: "NOT_SENT" | "SENT" | "VIEWED" | "OFFERED" | "ACCEPTED" | "SIGNED" | "REJECTED" | "WITHDRAWN";
 };
 
 type Conversation = {
@@ -568,6 +568,26 @@ const STAGE_INFO: Record<
 		label: "Sent to landlord",
 		detail: "Waiting for the landlord to respond.",
 		color: "var(--sk-accent)"
+	},
+	VIEWED: {
+		label: "Viewing arranged",
+		detail: "A viewing is booked or done. Waiting for the landlord to respond.",
+		color: "var(--sk-accent)"
+	},
+	OFFERED: {
+		label: "Offer received",
+		detail: "The landlord made an offer. The group needs to accept it before it expires.",
+		color: "var(--sk-accent)"
+	},
+	SIGNED: {
+		label: "Signed",
+		detail: "Everyone has signed the tenancy agreement.",
+		color: "var(--sk-ok)"
+	},
+	WITHDRAWN: {
+		label: "Withdrawn",
+		detail: "The group withdrew from this application.",
+		color: "var(--sk-muted)"
 	},
 	ACCEPTED: {
 		label: "Accepted",

@@ -398,7 +398,7 @@ export default function StudentHome() {
 									<span className="text-[12.5px] text-sk-muted">
 										{c.status === "SIGNED"
 											? `Signed by all ${c.signatures?.length ?? ""}`.trim()
-											: `Sent ${fmtDate(c.sentAt)} · signed by ${(c.signatures ?? []).filter((s) => s.signedAt).length} of ${c.signatures?.length ?? 0}`}
+											: `Sent ${fmtDate(c.sentAt)} · signed by ${(c.signatures ?? []).filter((s) => s.signedAt).length} of ${tenancy.tenants?.length ?? 0}`}
 									</span>
 								</div>
 								{c.status === "SENT" && !signedByMe(c) && (

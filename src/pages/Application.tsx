@@ -322,7 +322,7 @@ function ApplicationCard({
 					<button type="button" className={btnGhost} onClick={() => setVisible(true)}>
 						Report
 					</button>
-					{data.stage !== "REJECTED" && (
+					{["SENT", "VIEWED", "OFFERED"].includes(data.stage) && (
 						<button type="button" className={`${btnGhost} !text-sk-danger`} disabled={busy} onClick={reject}>
 							Reject
 						</button>
@@ -506,7 +506,7 @@ function ApplicationCard({
 						<li>Send the tenancy agreement for e-signature</li>
 						<li>Protect the deposit within 30 days</li>
 					</ol>
-					{data.stage !== "REJECTED" && (
+					{["SENT", "VIEWED", "OFFERED"].includes(data.stage) && (
 						<button type="button" className={`${btnSmGhost} !border-sk-danger-border !text-sk-danger`} onClick={reject}>
 							Decline
 						</button>

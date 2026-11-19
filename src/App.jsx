@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
@@ -184,6 +184,13 @@ function PublicSite() {
 
 const LANDLORD = ["LANDLORD_AGENCY"];
 
+// Shared mobile links (seekapp.uk/link/chat/:id/join?invite=…) land on the student join page.
+function JoinLinkRedirect() {
+	const { id } = useParams();
+	const { search } = useLocation();
+	return <Navigate to={`/student/join/${id}${search}`} replace />;
+}
+
 function App() {
 	return (
 		<Routes>
@@ -243,6 +250,7 @@ function App() {
 			</Route>
 
 			{/* Public site, sign-in and everything else */}
+			<Route path="/link/chat/:id/join" element={<JoinLinkRedirect />} />
 			<Route path="*" element={<PublicSite />} />
 		</Routes>
 	);

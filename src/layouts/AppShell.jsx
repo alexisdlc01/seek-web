@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import UserContext from "../context/UserContext.jsx";
 import NotificationsBell from "../components/NotificationsBell.jsx";
@@ -31,10 +31,18 @@ export default function AppShell({ role, label, items }) {
 
 	const nav = (
 		<nav aria-label={label} className="flex flex-col gap-1">
-			{items.map((item) => {
+			{items.map((item, i) => {
 				const active = isActive(item);
+					const startsSection = item.section && item.section !== items[i - 1]?.section;
+					const heading = startsSection ? (
+						<p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wide text-sk-muted">
+							{item.section}
+						</p>
+					) : null;
 				return (
-					<NavLink
+					<Fragment key={item.to}>
+							{heading}
+							<NavLink
 						key={item.to}
 						to={item.to}
 						aria-current={active ? "page" : undefined}
@@ -53,6 +61,7 @@ export default function AppShell({ role, label, items }) {
 							</span>
 						)}
 					</NavLink>
+						</Fragment>
 				);
 			})}
 		</nav>

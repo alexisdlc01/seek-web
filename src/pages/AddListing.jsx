@@ -241,7 +241,7 @@ const AddListing = () => {
 			);
 		}
 		if (!furnishingStatus) missing.push("Furnishing status");
-		if (photos.length === 0) missing.push("At least one photo");
+		if (photos.length < 3) missing.push("At least 3 photos");
 		if (Apprequirements.length === 0)
 			missing.push("At least one requirement");
 
@@ -312,9 +312,21 @@ const AddListing = () => {
 		});
 
 		try {
-			await axios.post(`${API_BASE}/listings/${id}/publish`, finalData, {
+			const res = await axios.post(`${API_BASE}/listings/${id}/publish`, finalData, {
 				withCredentials: true
 			});
+
+			if (res.data?.isVerified === false) {
+				const reasons = res.data.moderationReasons?.join(" ") || "Please review your listing.";
+				toast.current?.show({
+					severity: "warn",
+					summary: "Listing saved, not live yet",
+					detail: reasons,
+					life: 8000
+				});
+				navigate("/listings");
+				return;
+			}
 
 			toast.current?.show({
 				severity: "success",
@@ -473,7 +485,8 @@ const AddListing = () => {
 		"epcExpiry",
 		"hmoLicenceExpiry",
 		"licenceNumber",
-		"holdingDeposit"
+		"holdingDeposit",
+		"floorPlanImage"
 	];
 	const cleanObject = obj =>
 		Object.fromEntries(

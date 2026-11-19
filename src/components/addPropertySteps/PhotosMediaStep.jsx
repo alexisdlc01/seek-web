@@ -151,7 +151,10 @@ const PhotosMediaStep = ({
 								size="small"
 								className="ml-2"
 								aria-label="Remove file"
-								onClick={() => setFloorPlan(null)}
+								onClick={() => {
+									setFloorPlan(null);
+									setFloorPlanUrl(null);
+								}}
 							/>
 						</div>
 					)}

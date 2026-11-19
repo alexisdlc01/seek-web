@@ -1,11 +1,13 @@
 import AppShell from "./AppShell.jsx";
 
 const ITEMS = [
-	{ to: "/student/find", label: "Find a home" },
-	{ to: "/student/home", label: "My home" },
-	{ to: "/student/inbox", label: "Inbox" },
-	{ to: "/student/profile", label: "Profile and documents" },
-	{ to: "/student/connectors", label: "Connected email" }
+	// Two spaces: Search (find homes, applications) and My home (lease, rent, deposit, bills, photos).
+	// Inbox and Profile stay visible in both, under "Shared".
+	{ to: "/student/find", label: "Search", section: "Search" },
+	{ to: "/student/home", label: "My home", section: "My home" },
+	{ to: "/student/inbox", label: "Inbox", section: "Shared" },
+	{ to: "/student/profile", label: "Profile", section: "Shared" },
+	{ to: "/student/connectors", label: "Connected email", section: "Shared" }
 ];
 
 export default function StudentLayout() {

@@ -42,6 +42,9 @@ export default function StudentInbox() {
 	const connectorsQ = useQuery({ queryKey: ["connectors"], queryFn: async () => (await api.get("/connectors")).data });
 	const connected = (connectorsQ.data?.connections ?? []).find((c) => c.status === "CONNECTED");
 
+	// A draft belongs to its thread.
+	useEffect(() => { setText(""); }, [sel]);
+
 	// Default the reply channel to what the thread supports; opening marks it read.
 	useEffect(() => {
 		if (!cur) return;

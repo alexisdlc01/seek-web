@@ -141,6 +141,11 @@ export default function ConnectorsView({ title, intro, scopeLabel, scopeHint, op
 									{c.lastError && <span className="text-[12.5px] text-sk-warn">{c.lastError}</span>}
 									<Matches id={c.id} />
 									<div className="flex gap-2">
+										{c.status === "ERROR" && oauth.some((p) => p.provider === c.provider && p.available) && (
+											<button type="button" className={btnSmGhost} disabled={!!busy} onClick={() => connectOAuth(c.provider)}>
+												{busy === `connect-${c.provider}` ? "Opening…" : "Reconnect"}
+											</button>
+										)}
 										<button
 											type="button"
 											className={btnSmGhost}

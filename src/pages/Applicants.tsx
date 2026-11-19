@@ -312,7 +312,7 @@ export default function Applicants() {
 							{busy ? "Working…" : "Make offer"}
 						</button>
 					)}
-					{application.stage !== "REJECTED" && (
+					{["SENT", "VIEWED", "OFFERED"].includes(application.stage) && (
 						<button
 							type="button"
 							className={`${btnSmGhost} !text-sk-danger disabled:opacity-50`}

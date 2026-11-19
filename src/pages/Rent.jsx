@@ -160,7 +160,7 @@ export default function Rent() {
 						) : (
 							<Table head={["Tenant", "Plan", "Pays by", "This period", "Status", "Next payout", "Action"]} minWidth={860}>
 								{d.rows.map((r) => {
-									const st = STATUS[r.status] || STATUS.SCHEDULED;
+									const st = r.refundedAt ? { tone: "muted", label: "Refunded" } : STATUS[r.status] || STATUS.SCHEDULED;
 									return (
 										<Tr key={r.payment}>
 											<td>

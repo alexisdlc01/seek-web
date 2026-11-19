@@ -223,7 +223,7 @@ function ApplicationRow({ a, holding, setNotice }) {
 }
 
 function ApplicationsCard({ apps, loading, payments, setNotice, title }) {
-	const holdingFor = (a) => payments.find((p) => p.kind === "HOLDING_DEPOSIT" && idOf(p.application) === a._id);
+	const holdingFor = (a) => payments.find((p) => p.kind === "HOLDING_DEPOSIT" && !p.refundDue && !p.refundedAt && idOf(p.application) === a._id);
 	return (
 		<Card title={title} className="!gap-2.5">
 			{loading && <Loading label="Loading applications" />}

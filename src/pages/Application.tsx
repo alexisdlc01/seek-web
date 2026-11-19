@@ -69,6 +69,13 @@ type ApplicationData = {
 const itemOf = (m: Member, type: string): PassportItem | undefined =>
 	m.passport?.sections.flatMap(s => s.items).find(i => i.type === type);
 
+// buildPassport always returns every reference item (status MISSING when absent): take the first one given.
+const REFERENCE_TYPES = ["LANDLORD_REFERENCE", "AGENT_REFERENCE", "RECOMMENDATION", "CHARACTER_REFERENCE"];
+const refItem = (m: Member): PassportItem | undefined => {
+	const refs = REFERENCE_TYPES.map(t => itemOf(m, t));
+	return refs.find(i => i && i.status !== "MISSING") ?? refs.find(Boolean);
+};
+
 function Cell({ item }: { item?: PassportItem }) {
 	if (!item || item.status === "MISSING")
 		return <span className="font-semibold text-sk-muted">Missing</span>;
@@ -399,7 +406,7 @@ function ApplicationCard({
 							<td className="px-2 py-3"><Cell item={itemOf(m, "PROOF_OF_FUNDS")} /></td>
 							<td className="px-2 py-3"><Cell item={itemOf(m, "GUARANTOR_AGREEMENT")} /></td>
 							<td className="px-2 py-3">
-								<Cell item={itemOf(m, "LANDLORD_REFERENCE") ?? itemOf(m, "AGENT_REFERENCE")} />
+								<Cell item={refItem(m)} />
 							</td>
 							<td className={`px-2 py-3 font-semibold ${m.passport?.ready ? "text-sk-ok" : "text-sk-warn"}`}>
 								{m.passport?.percent ?? 0}%

@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import axios from "axios";
 import ListingsContext from "../context/ListingsContext.jsx";
+import UserContext from "../context/UserContext.jsx";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
 
@@ -194,13 +195,17 @@ export default function Listings() {
 	const navigate = useNavigate();
 	const { listings, setCurrentListing } = useContext(ListingsContext);
 	const toast = useRef(null);
+	const { user } = useContext(UserContext);
+	const canSeeTenancies = !user?.teamOf || user.teamOf.scopes?.includes("TENANCIES");
 	const tenanciesQ = useQuery({
 		queryKey: ["landlord-tenancies"],
-		queryFn: async () => (await api.get("/tenancies/landlord")).data
+		queryFn: async () => (await api.get("/tenancies/landlord")).data,
+		enabled: canSeeTenancies
 	});
 	const paymentsQ = useQuery({
 		queryKey: ["landlord-payments", currentMonth()],
-		queryFn: async () => (await api.get("/payments/landlord", { params: { month: currentMonth() } })).data
+		queryFn: async () => (await api.get("/payments/landlord", { params: { month: currentMonth() } })).data,
+		enabled: !user?.teamOf // /payments/* is owner-only
 	});
 	const tenancies = tenanciesQ.data ?? [];
 	const payRows = paymentsQ.data?.rows ?? [];

@@ -24,6 +24,8 @@ type ChatUser = {
 	profilePicUrl?: string;
 	email?: string;
 	role?: string;
+	// Set for a team member: they act as the owner, so messages carry the owner's id.
+	teamOf?: { ownerId: string } | null;
 };
 
 type MessageType = "Text" | "Image";
@@ -64,6 +66,7 @@ type Conversation = {
 
 export default function ChatPage() {
 	const { user: currentUser } = useContext(UserContext);
+	const actingId = currentUser?.teamOf?.ownerId ?? currentUser?._id;
 	const [searchParams] = useSearchParams();
 	const requestedId = searchParams.get("conversation") ?? undefined;
 	const [selectedId, setSelectedId] = useState<string | undefined>(requestedId);
@@ -165,7 +168,7 @@ export default function ChatPage() {
 					// The gateway emits the raw message, so the sender may be an
 					// unpopulated id; fill in the name from the member list.
 					const msg = resolveSender(chat, incoming);
-					const mine = msg.sender._id === currentUser._id;
+					const mine = msg.sender._id === actingId;
 					// Idempotent, so a repeated updater call is harmless.
 					if (!mine && chat._id === selectedIdRef.current)
 						socket.emit("conversation:seen", chat._id);
@@ -212,8 +215,8 @@ export default function ChatPage() {
 	const canInvite =
 		!!application &&
 		!!currentUser &&
-		(application.owner === currentUser._id ||
-			(application.landlord === currentUser._id &&
+		(application.owner === actingId ||
+			(application.landlord === actingId &&
 				application.stage !== "NOT_SENT"));
 
 	const createInvite = async () => {
@@ -343,19 +346,19 @@ export default function ChatPage() {
 		c.name.toLowerCase().includes(search.toLowerCase())
 	);
 
-	const isMe = (msg: Message) => !!currentUser && msg.sender._id === currentUser._id;
+	const isMe = (msg: Message) => !!currentUser && msg.sender._id === actingId;
 
 	const sendMessage = async (message: string) => {
 		if (!message.trim() || !selectedId || !currentUser) return;
 
 		const optimisticMessage: Message = {
-			sender: currentUser,
+			sender: { ...currentUser, _id: actingId! },
 			data: message,
 			_id: `local-${Date.now()}`,
 			messageType: "Text",
 			createdAt: new Date().toISOString(),
 			conversation: selectedId,
-			seenUsers: [currentUser._id],
+			seenUsers: [actingId!],
 			deliveredTo: []
 		};
 
@@ -1137,7 +1140,7 @@ function ConverationsElem({
 					</p>
 					{lastMessage && (
 						<p className="text-sm truncate">
-							{currentUser && lastMessage.sender._id === currentUser._id && (
+							{currentUser && lastMessage.sender._id === (currentUser.teamOf?.ownerId ?? currentUser._id) && (
 								<span className="text-sk-link">You: </span>
 							)}
 							<span className="text-sk-text2">{lastMessage.data}</span>

@@ -271,7 +271,7 @@ export default function StudentFind() {
 						</div>
 					)}
 
-					<div className="grid gap-4 sm:grid-cols-2">
+					<div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
 						{homes.map((h, i) => (
 							<article
 								key={h.id}

@@ -77,7 +77,7 @@ export default function StudentFind() {
 	const [searchParams] = useSearchParams();
 	const [detailId, setDetailId] = useState(() => searchParams.get("home")); // shared listing link
 	const [applyId, setApplyId] = useState(null);
-	const [ask, setAsk] = useState(SAMPLE_ASK);
+	const [ask, setAsk] = useState("");
 	const [chat, setChat] = useState([]); // [{role, content}]
 	const [ai, setAi] = useState(null); // last /ai/search-chat result
 	const [notice, setNotice] = useState("");
@@ -143,12 +143,12 @@ export default function StudentFind() {
 	};
 	const sendAsk = (e) => {
 		e.preventDefault();
-		send(ask);
+		send(ask.trim() || (chat.length ? "" : SAMPLE_ASK)); // empty first search runs the placeholder example
 	};
 	const clearAi = () => {
 		setAi(null);
 		setChat([]);
-		setAsk(SAMPLE_ASK);
+		setAsk("");
 	};
 
 	// Map area listings, with the client-side chips applied.

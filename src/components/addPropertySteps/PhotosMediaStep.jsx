@@ -5,6 +5,15 @@ import axios from "axios";
 
 import { API_BASE } from "../../lib/landlord.js";
 
+// Same rules as the backend presign endpoint (ALLOWED_UPLOAD_TYPES, MAX_UPLOAD_BYTES).
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif"];
+export const uploadRejection = file =>
+	!IMAGE_TYPES.includes(file.type)
+		? "Use a JPEG, PNG, WebP, GIF or HEIC image."
+		: file.size > 15 * 1024 * 1024
+			? "Images must be 15MB or smaller."
+			: null;
+
 const PhotosMediaStep = ({
 	photos,
 	videoLink,
@@ -19,6 +28,7 @@ const PhotosMediaStep = ({
 	removePhoto,
 	floorPlanUrl,
 	setFloorPlanUrl,
+	toast,
 	back,
 	next
 }) => {
@@ -112,6 +122,13 @@ const PhotosMediaStep = ({
 						onChange={async e => {
 							const file = e.target.files[0];
 							if (!file) return;
+							const rejection = uploadRejection(file);
+							if (rejection) {
+								toast.current?.show({ severity: "warn", summary: `${file.name} not added`, detail: rejection });
+								e.target.value = null;
+								return;
+							}
+							try {
 							const res = await axios.get(
 								`${API_BASE}/upload/presign`,
 								{
@@ -132,6 +149,9 @@ const PhotosMediaStep = ({
 							});
 							setFloorPlan(file);
 							setFloorPlanUrl(fileUrl);
+							} catch {
+								toast.current?.show({ severity: "error", summary: "Floor plan upload failed", detail: "Please try again." });
+							}
 						}}
 					/>
 					{floorPlan && (

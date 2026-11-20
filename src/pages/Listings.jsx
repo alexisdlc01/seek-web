@@ -75,7 +75,9 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 				: { tone: "warning", label: "Being checked" }
 			: f.isLet
 				? { tone: "info", label: `Let · ${f.letNow} of ${prop.numOfPeople}` }
-				: { tone: "success", label: "Taking applications" };
+				: prop.availableUntil && new Date(prop.availableUntil) < new Date()
+					? { tone: "warning", label: "Hidden · available-until date has passed — edit the dates to relist" }
+					: { tone: "success", label: "Taking applications" };
 	const btnPrimary =
 		"flex h-10 flex-1 cursor-pointer items-center justify-center rounded-[10px] border-none bg-sk-accent px-3.5 text-[13px] font-semibold text-sk-on-accent";
 	const btnGhost =

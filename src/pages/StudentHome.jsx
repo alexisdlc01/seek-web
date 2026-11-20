@@ -26,7 +26,8 @@ const STAGE = {
 	OFFERED: { text: "Offer made", tone: "text-sk-ok" },
 	SIGNED: { text: "Signed", tone: "text-sk-ok" },
 	ACCEPTED: { text: "Accepted", tone: "text-sk-ok" },
-	REJECTED: { text: "Not successful", tone: "text-sk-muted" }
+	REJECTED: { text: "Not successful", tone: "text-sk-muted" },
+	WITHDRAWN: { text: "Withdrawn · you turned the offer down", tone: "text-sk-muted" }
 };
 
 
@@ -113,6 +114,7 @@ const slotText = (iso) => new Date(iso).toLocaleString("en-GB", { weekday: "shor
 /** One application under "Next year": queue position, viewing slot, offer and holding deposit. */
 function ApplicationRow({ a, holding, setNotice }) {
 	const qc = useQueryClient();
+	const { user } = useContext(UserContext);
 	const [picking, setPicking] = useState(false);
 	const refresh = () => qc.invalidateQueries({ queryKey: ["my-applications"] });
 	const fail = (fallback) => (e) => setNotice({ tone: "warn", text: errMessage(e, fallback) });
@@ -169,7 +171,7 @@ function ApplicationRow({ a, holding, setNotice }) {
 			{["NOT_SENT", "SENT"].includes(a.stage) && needed > 1 && (
 				<span className="flex flex-wrap items-center gap-x-3 text-[13px] text-sk-text2">
 					{people} of {needed} people
-					{people < needed && (
+					{people < needed && idOf(a.owner) === user?._id && (
 						<button type="button" onClick={() => invite.mutate()} disabled={invite.isPending} className="border-none bg-transparent p-0 text-[13px] font-semibold text-sk-link disabled:opacity-60">
 							{invite.isPending ? "Creating link…" : "Invite housemates"}
 						</button>

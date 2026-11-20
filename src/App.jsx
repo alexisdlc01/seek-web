@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
@@ -206,6 +206,13 @@ function ListingLinkRedirect() {
 	return <Navigate to={`/student/find?home=${encodeURIComponent(id)}`} replace />;
 }
 
+// Password-reset links from the mobile app (…/link/reset-password?token=…&userId=…) open the web reset page.
+function ResetLinkRedirect() {
+	const [params] = useSearchParams();
+	const q = new URLSearchParams({ id: params.get("userId") ?? "", token: params.get("token") ?? "" });
+	return <Navigate to={`/confirmResetPassword?${q}`} replace />;
+}
+
 function App() {
 	return (
 		<Routes>
@@ -267,6 +274,7 @@ function App() {
 
 			{/* Public site, sign-in and everything else */}
 			<Route path="/link/chat/:id/join" element={<JoinLinkRedirect />} />
+			<Route path="/link/reset-password" element={<ResetLinkRedirect />} />
 			<Route path="/link/location/:id/details" element={<ListingLinkRedirect />} />
 			<Route path="*" element={<PublicSite />} />
 		</Routes>

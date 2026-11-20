@@ -38,10 +38,18 @@ export default function NavbarMobile({ user, logout, logo }) {
 
 	const items = loggedIn
 		? [
-				{ label: "Dashboard", command: () => navigate("/dashboard") },
-				{ label: "Listings", command: () => navigate("/listings") },
-				{ label: "Messages", command: () => navigate("/messages") },
-				{ label: "Settings", command: () => navigate("/settings") },
+				...(user.role === "LANDLORD_AGENCY"
+					? [
+							{ label: "Dashboard", command: () => navigate("/dashboard") },
+							{ label: "Listings", command: () => navigate("/listings") },
+							{ label: "Chat", command: () => navigate("/chat") }
+						]
+					: [
+							{ label: "Home", command: () => navigate("/") },
+							{ label: "About", command: () => navigate("/about") },
+							{ label: "Help", command: () => navigate("/contact") }
+						]),
+				{ label: "Edit Profile", command: () => navigate("/edit-profile") },
 				{ label: "Logout", command: async () => await logout() }
 			]
 		: [

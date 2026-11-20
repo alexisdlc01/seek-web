@@ -9,13 +9,31 @@ import { API_BASE } from "../lib/landlord.js";
 export default function ResetPassword() {
 	const [email, setEmail] = useState("");
 
+	const [pending, setPending] = useState(false);
+	const [message, setMessage] = useState(null);
+	const [error, setError] = useState(null);
+
 	const handleSubmit = async e => {
 		e.preventDefault();
-		await axios.post(
-			`${API_BASE}/auth/forgot-password`,
-			{ email },
-			{ withCredentials: true }
-		);
+		setPending(true);
+		setMessage(null);
+		setError(null);
+		try {
+			await axios.post(
+				`${API_BASE}/auth/forgot-password`,
+				{ email },
+				{ withCredentials: true }
+			);
+			setMessage("If an account exists, we've sent a reset link.");
+		} catch (err) {
+			setError(
+				err.response?.status === 429
+					? "Too many attempts, try again in an hour."
+					: err.response?.data?.message || "Something went wrong. Please try again."
+			);
+		} finally {
+			setPending(false);
+		}
 	};
 
 	return (
@@ -40,8 +58,13 @@ export default function ResetPassword() {
 					</label>
 				</FloatLabel>
 
+				{message && <p className="text-center text-sm text-green-700">{message}</p>}
+				{error && <p className="text-center text-sm text-red-600">{error}</p>}
+
 				<Button
 					label="Send Reset Link"
+					disabled={pending}
+					loading={pending}
 					className="w-full bg-[var(--primary-color)] text-[var(--primary-color-text)] font-medium"
 					type="submit"
 				/>

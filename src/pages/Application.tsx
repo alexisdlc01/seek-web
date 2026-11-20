@@ -471,7 +471,7 @@ function ApplicationCard({
 						<span className="text-sm text-sk-text2">
 							{data.viewingAt ? `Viewing booked for ${fmtDateTime(data.viewingAt)}` : "No viewing booked yet."}
 						</span>
-						{viewingSlots?.some(slot => new Date(slot).getTime() > Date.now()) ? (
+						{["SENT", "VIEWED"].includes(data.stage) && (viewingSlots?.some(slot => new Date(slot).getTime() > Date.now()) ? (
 							<div className="flex flex-wrap gap-2">
 								{viewingSlots.filter(slot => new Date(slot).getTime() > Date.now()).map(slot => (
 									<button
@@ -504,7 +504,7 @@ function ApplicationCard({
 								{viewingBusy ? "Saving…" : data.viewingAt ? "Reschedule" : "Schedule viewing"}
 							</button>
 						</div>
-						)}
+						))}
 					</div>
 					<ol className="m-0 flex list-decimal flex-col gap-2 pl-[18px] text-[13.5px] leading-snug text-sk-text2">
 						<li>Hold the viewing</li>

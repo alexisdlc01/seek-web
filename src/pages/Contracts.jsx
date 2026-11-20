@@ -197,9 +197,11 @@ function DeductionsForm({ contract, depositTotal, onDone }) {
 	);
 }
 
+// Same labels as Tenancies.jsx.
+const TENANCY_STATUS = { ACTIVE: ["ok", "Active"], PENDING_ACCEPTANCE: ["warn", "Waiting for tenants"] };
 const DEDUCTION_TONE = { PROPOSED: "warn", ACCEPTED: "ok", DISPUTED: "warn" };
 
-function ContractRow({ contract, depositTotal }) {
+function ContractRow({ contract, depositTotal, tenancyActive }) {
 	const qc = useQueryClient();
 	const [panel, setPanel] = useState(null); // "inventory" | "deductions"
 	const send = useMutation({
@@ -232,7 +234,7 @@ function ContractRow({ contract, depositTotal }) {
 			<div className="flex items-center gap-2">
 				<Chip tone={CONTRACT_TONE[contract.status]}>{CONTRACT_LABEL[contract.status]}</Chip>
 				{contract.status === "DRAFT" && (
-					<button type="button" className={btnSmPrimary} disabled={send.isPending} onClick={() => send.mutate()}>
+					<button type="button" className={btnSmPrimary} disabled={send.isPending || !tenancyActive} title={tenancyActive ? undefined : "Available once the tenants have accepted"} onClick={() => send.mutate()}>
 						{send.isPending ? "Sending…" : "Send for e-signature"}
 					</button>
 				)}
@@ -438,13 +440,13 @@ function TenancyCard({ tenancy: t, contracts, templates }) {
 	const [editing, setEditing] = useState(false);
 	const [ending, setEnding] = useState(false);
 	// monthlyRent and depositAmount are per tenant (pence); show the tenancy total.
-	const count = Math.max(1, t.tenants.length);
+	const count = Math.max(1, t.tenants.length + (t.pendingTenants?.length ?? 0));
 	const weeklyRent = (t.monthlyRent * 12) / 52;
 	const weeks = weeklyRent ? t.depositAmount / weeklyRent : 0;
 	const isProtected = !!t.depositProtectedAt;
 	const rules = depositRules(t.listing?.nation, t.monthlyRent, t);
 	const overCap = t.depositAmount > rules.capPence;
-	const names = t.tenants.map((x) => x.name).join(", ");
+	const names = [...t.tenants, ...(t.pendingTenants ?? [])].map((x) => x.name).join(", ");
 	const facts = [
 		["Deposit", gbp(t.depositAmount * count), `${count} × ${gbp(t.depositAmount)}${t.depositScheme ? ` · ${SCHEME_LABEL[t.depositScheme]}` : ""} · ${weeks.toFixed(1)} weeks each${overCap ? ` · over the ${rules.capShort} cap` : ""}`, overCap ? "warn" : ""],
 		["Protected", isProtected ? fmtDay(t.depositProtectedAt) : "Not yet", isProtected ? `Ref ${t.depositReference || "-"}` : rules.protectBy ? `Protect within ${rules.window}: due ${fmtDay(rules.protectBy)}` : `Protect within ${rules.window}. The clock starts when it is received`, isProtected ? "ok" : "warn"],
@@ -459,7 +461,7 @@ function TenancyCard({ tenancy: t, contracts, templates }) {
 					<h2 className="font-display text-lg font-semibold">{t.listing?.propertyTitle || "Tenancy"}</h2>
 					<span className="text-[13px] text-sk-muted">{names} · from {fmtDate(t.startDate)}</span>
 				</div>
-				<Chip tone={t.status === "ACTIVE" ? "ok" : "muted"}>{t.status === "ACTIVE" ? "Active" : "Ended"}</Chip>
+				<Chip tone={TENANCY_STATUS[t.status]?.[0] ?? "muted"}>{TENANCY_STATUS[t.status]?.[1] ?? "Ended"}</Chip>
 			</div>
 
 			<div className="grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
@@ -494,7 +496,7 @@ function TenancyCard({ tenancy: t, contracts, templates }) {
 			<div className="flex flex-col gap-2">
 				<span className="text-[12.5px] font-semibold text-sk-muted">Contracts</span>
 				{contracts.length === 0 && <Empty title="No contract yet">Upload the agreement, then send it to your tenants to sign.</Empty>}
-				{contracts.map((c) => <ContractRow key={c._id} contract={c} depositTotal={t.depositAmount * count} />)}
+				{contracts.map((c) => <ContractRow key={c._id} contract={c} depositTotal={t.depositAmount * count} tenancyActive={t.status === "ACTIVE"} />)}
 				<TenancyActions tenancy={t} contracts={contracts} templates={templates} />
 				<AddContract tenancy={t} />
 			</div>

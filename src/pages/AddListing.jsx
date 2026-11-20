@@ -4,7 +4,7 @@ import { StepperPanel } from "primereact/stepperpanel";
 import { Toast } from "primereact/toast";
 import BasicInfoStep from "../components/addPropertySteps/BasicInfoStep";
 import FeaturesStep from "../components/addPropertySteps/FeaturesStep";
-import PhotosMediaStep from "../components/addPropertySteps/PhotosMediaStep";
+import PhotosMediaStep, { uploadRejection } from "../components/addPropertySteps/PhotosMediaStep";
 import ApplicationRequirements from "../components/addPropertySteps/ApplicationRequirementsStep.jsx";
 import ReviewPublishStep from "../components/addPropertySteps/ReviewPublishStep";
 import axios from "axios";
@@ -414,15 +414,15 @@ const AddListing = () => {
 
 	const onPhotoSelect = e => {
 		let selected = Array.from(e.target.files || []);
-		const invalid = selected.filter(f => !f.type.startsWith("image/"));
-		if (invalid.length) {
+		const rejected = selected.filter(uploadRejection);
+		if (rejected.length) {
 			toast.current.show({
 				severity: "warn",
-				summary: "Unsupported Format",
-				detail: "Only image files allowed."
+				summary: "Some files were not added",
+				detail: rejected.map(f => `${f.name}: ${uploadRejection(f)}`).join(" ")
 			});
 		}
-		selected = selected.filter(f => f.type.startsWith("image/"));
+		selected = selected.filter(f => !uploadRejection(f));
 		let combined = [
 			...photos,
 			...selected.map(file => ({
@@ -691,62 +691,73 @@ const AddListing = () => {
 					break;
 				}
 				case 4: {
-					const existingUrls = photos
-						.filter(p => p.url.startsWith("https://"))
-						.map(p => p.url);
+					try {
+						const existingUrls = photos
+							.filter(p => p.url.startsWith("https://"))
+							.map(p => p.url);
 
-					const newFiles = photos.filter(p => p.file);
+						const newFiles = photos.filter(p => p.file);
 
-					const uploadedUrls = await Promise.all(
-						newFiles.map(async p => {
-							const res = await axios.get(
-								`${API_BASE}/upload/presign`,
-								{
-									params: {
-										filename: p.file.name,
-										fileType: p.file.type,
-										fileSize: p.file.size,
-										folder: "public"
-									},
-									withCredentials: true
-								}
-							);
-							const { uploadUrl, fileUrl } = res.data;
-							await axios.put(uploadUrl, p.file, {
-								headers: { "Content-Type": p.file.type }
-							});
-							return fileUrl;
-						})
-					);
-
-					const combinedUrls = [...existingUrls, ...uploadedUrls];
-					setAllPhotosUrls(combinedUrls);
-
-					const step4Data = cleanObject({
-						photos: combinedUrls,
-						videoTourLink: videoLink,
-						floorPlanImage: floorPlanUrl
-					});
-
-					const step4Changes = getChangedFields(
-						step4Data,
-						originalListingRef.current || {}
-					);
-
-					if (Object.keys(step4Changes).length > 0) {
-						await axios.patch(
-							`${API_BASE}/listings/${currentListing._id}/createStep3`,
-							step4Changes,
-							{ withCredentials: true }
+						const uploadedUrls = await Promise.all(
+							newFiles.map(async p => {
+								const res = await axios.get(
+									`${API_BASE}/upload/presign`,
+									{
+										params: {
+											filename: p.file.name,
+											fileType: p.file.type,
+											fileSize: p.file.size,
+											folder: "public"
+										},
+										withCredentials: true
+									}
+								);
+								const { uploadUrl, fileUrl } = res.data;
+								await axios.put(uploadUrl, p.file, {
+									headers: { "Content-Type": p.file.type }
+								});
+								return fileUrl;
+							})
 						);
-					}
-					originalListingRef.current = {
-						...originalListingRef.current,
-						...step4Data
-					};
 
+						const combinedUrls = [...existingUrls, ...uploadedUrls];
+						setAllPhotosUrls(combinedUrls);
+
+						const step4Data = cleanObject({
+							photos: combinedUrls,
+							videoTourLink: videoLink,
+							floorPlanImage: floorPlanUrl
+						});
+
+						const step4Changes = getChangedFields(
+							step4Data,
+							originalListingRef.current || {}
+						);
+
+						if (Object.keys(step4Changes).length > 0) {
+							await axios.patch(
+								`${API_BASE}/listings/${currentListing._id}/createStep3`,
+								step4Changes,
+								{ withCredentials: true }
+							);
+						}
+						originalListingRef.current = {
+							...originalListingRef.current,
+							...step4Data
+						};
+
+					} catch (error) {
+						toast.current?.show({
+							severity: "error",
+							summary: "Photo upload failed",
+							detail: error?.response?.data?.message || "We couldn't upload your photos. Please try again."
+						});
+						stepperRef.current?.prevCallback();
+						setStep(3);
+					}
 					break;
 				}
+
 				case 5:
 					await axios.patch(
 						`${API_BASE}/listings/${currentListing._id}/createStep1`,
@@ -883,6 +894,7 @@ const AddListing = () => {
 							removePhoto={removePhoto}
 							floorPlanUrl={floorPlanUrl}
 							setFloorPlanUrl={setFloorPlanUrl}
+							toast={toast}
 							back={back}
 							next={next}
 						/>

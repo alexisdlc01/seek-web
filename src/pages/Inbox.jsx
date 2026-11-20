@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Empty, ErrorState, Loading } from "../components/sk.jsx";
 import RepairsPanel from "../components/RepairsPanel.jsx";
+import UserContext from "../context/UserContext.jsx";
 import { api, errMessage, openAttachment, timeAgo } from "../lib/landlord.js";
 
 const FILTERS = [
@@ -18,6 +19,8 @@ const CHANNEL = { seek: "Seek", email: "Email" };
 
 export default function Inbox() {
 	const qc = useQueryClient();
+	// A team member would read the connectors and AI advice of their own account, not the owner's.
+	const member = !!useContext(UserContext).user?.teamOf;
 	const [filter, setFilter] = useState("All");
 	const [search, setSearch] = useState("");
 	const [selectedId, setSelectedId] = useState(null);
@@ -73,7 +76,7 @@ export default function Inbox() {
 
 	const advice = useQuery({
 		queryKey: ["inbox-advice", selectedId],
-		enabled: !!selectedId,
+		enabled: !!selectedId && !member,
 		staleTime: 60_000,
 		retry: false,
 		queryFn: async () => (await api.post("/ai/advice", { topic: "inbox", threadId: selectedId })).data
@@ -81,6 +84,7 @@ export default function Inbox() {
 
 	const connectors = useQuery({
 		queryKey: ["connectors"],
+		enabled: !member,
 		queryFn: async () => (await api.get("/connectors")).data
 	});
 	const latestSync = (connectors.data?.connections ?? [])
@@ -139,12 +143,12 @@ export default function Inbox() {
 					<span className="text-sm text-sk-muted">Seek messages and email, in one place</span>
 					<h1 className="font-display text-2xl font-semibold md:text-[30px]">Inbox</h1>
 				</div>
-				<Link to="/connectors" className="flex h-11 items-center gap-2 rounded-xl bg-sk-tint px-3.5 text-[13.5px] font-semibold text-sk-link no-underline">
+				{!member && <Link to="/connectors" className="flex h-11 items-center gap-2 rounded-xl bg-sk-tint px-3.5 text-[13.5px] font-semibold text-sk-link no-underline">
 					<span className={`h-2 w-2 rounded ${connected ? "bg-sk-ok" : "bg-sk-muted"}`} />
 					{connected
 						? `${connected.label} synced ${latestSync ? timeAgo(latestSync) : "never"}`
 						: "Connect your email"}
-				</Link>
+				</Link>}
 			</div>
 
 			<div className="flex flex-wrap items-stretch gap-5">

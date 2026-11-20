@@ -39,6 +39,7 @@ import StudentLayout from "./layouts/StudentLayout.jsx";
 import RoleLayout from "./layouts/RoleLayout.jsx";
 import Rent from "./pages/Rent.jsx";
 import Contracts from "./pages/Contracts.jsx";
+import Repairs from "./pages/Repairs.jsx";
 import Inbox from "./pages/Inbox.jsx";
 import Connectors from "./pages/Connectors.jsx";
 import StudentFind from "./pages/StudentFind.jsx";
@@ -217,6 +218,7 @@ function App() {
 				<Route path="/rent" element={<Rent />} />
 				<Route path="/tenancies" element={<Tenancies />} />
 				<Route path="/contracts" element={<Contracts />} />
+				<Route path="/repairs" element={<Repairs />} />
 				<Route path="/inbox" element={<Inbox />} />
 				<Route path="/connectors" element={<Connectors />} />
 				<Route path="/chat" element={<Chat />} />

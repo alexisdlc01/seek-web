@@ -17,7 +17,7 @@ const STATUS = {
 	FIXED: { tone: "ok", label: "Fixed" }
 };
 
-// Repairs the tenants reported for one tenancy: book an engineer or close them.
+// Repairs the tenants reported: book an engineer or close them. Without tenancyId, lists every tenancy (and cannot log).
 export default function RepairsPanel({ tenancyId }) {
 	const qc = useQueryClient();
 	const repairs = useLandlordRepairs();
@@ -50,13 +50,13 @@ export default function RepairsPanel({ tenancyId }) {
 		onError: (e) => setError(errMessage(e, "We couldn't log that repair."))
 	});
 
-	const mine = (repairs.data ?? []).filter((r) => (r.tenancy?._id ?? r.tenancy) === tenancyId);
+	const mine = (repairs.data ?? []).filter((r) => !tenancyId || (r.tenancy?._id ?? r.tenancy) === tenancyId);
 
 	return (
 		<div className="flex flex-col gap-2 rounded-xl border border-sk-border bg-sk-card2 p-3" data-testid="repairs-panel">
 			<div className="flex items-center justify-between gap-2">
-				<span className="text-[13px] font-semibold">Repairs for this home</span>
-				{!logging && <button type="button" className={btnSmGhost} onClick={() => setLogging(true)}>Log repair</button>}
+				<span className="text-[13px] font-semibold">{tenancyId ? "Repairs for this home" : "Repairs"}</span>
+				{tenancyId && !logging && <button type="button" className={btnSmGhost} onClick={() => setLogging(true)}>Log repair</button>}
 			</div>
 			{logging && (
 				<form
@@ -88,7 +88,7 @@ export default function RepairsPanel({ tenancyId }) {
 					</div>
 				</form>
 			)}
-			{mine.length === 0 && !logging && <span className="text-[12.5px] text-sk-muted">No repairs logged for this home.</span>}
+			{mine.length === 0 && !logging && <span className="text-[12.5px] text-sk-muted">No repairs logged.</span>}
 			{error && <span role="alert" className="text-[12.5px] text-sk-warn">{error}</span>}
 			{mine.map((r) => {
 				const st = STATUS[r.status] ?? STATUS.OPEN;

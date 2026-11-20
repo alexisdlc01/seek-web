@@ -20,7 +20,8 @@ const Inner = () => {
 		enabled: !!user && !member
 	});
 	const waiting = overview.data?.applicants?.total;
-	const ownerOnly = (item) => !member || !["/dashboard", "/rent"].includes(item.to);
+	const scopes = user?.teamOf?.scopes ?? [];
+	const ownerOnly = (item) => !member || (item.to === "/repairs" ? scopes.includes("REPAIRS") : !["/dashboard", "/rent"].includes(item.to));
 	const items = [
 		{ to: "/dashboard", label: "Overview" },
 		{ to: "/applicants", label: "Applicants", badge: waiting ?? badges.applicants, match: ["/application"] },
@@ -28,13 +29,13 @@ const Inner = () => {
 		{ to: "/tenancies", label: "Tenancies" },
 		{ to: "/rent", label: "Rent" },
 		{ to: "/contracts", label: "Contracts and deposits" },
+		{ to: "/repairs", label: "Repairs" },
 		{ to: "/inbox", label: "Inbox", match: ["/chat"] },
 		{ to: "/connectors", label: "Connectors" },
 		{ to: "/edit-profile", label: "Account" }
 	].filter(ownerOnly);
 	if (member && pathname === "/dashboard") {
-		const scopes = user.teamOf.scopes ?? [];
-		const home = scopes.includes("APPLICATIONS") ? "/applicants" : scopes.includes("LISTINGS") ? "/listings" : scopes.includes("TENANCIES") ? "/tenancies" : "/inbox";
+		const home = scopes.includes("APPLICATIONS") ? "/applicants" : scopes.includes("LISTINGS") ? "/listings" : scopes.includes("TENANCIES") ? "/tenancies" : scopes.includes("REPAIRS") && !scopes.includes("VIEWINGS_INBOX") ? "/repairs" : "/inbox";
 		return <Navigate to={home} replace />;
 	}
 	return <AppShell role="landlord" label="Landlord" items={items} />;

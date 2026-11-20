@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Card, ErrorState, Loading, Page, PageHeader, btnGhost, btnPrimary } from "../components/sk.jsx";
+import { Card, Chip, ErrorState, Loading, Page, PageHeader, btnGhost, btnPrimary } from "../components/sk.jsx";
 import { AdviceCard, Modal, Notice, PayNowButton } from "../components/StudentBits.jsx";
 import { api, errMessage, fmtDate, gbp } from "../lib/landlord.js";
 import { PLAN_LABEL, useMyTenancy } from "../lib/student.js";
@@ -189,7 +189,10 @@ export default function StudentRentPlan() {
 										<span className="text-[12.5px] text-sk-muted">{p.kind === "HOLDING_DEPOSIT" ? "Holding deposit" : "Rent"} · paid {fmtDate(p.paidAt)}</span>
 										{p.holdingDepositCredit > 0 && <span className="text-[12.5px] text-sk-ok">Holding deposit {gbp(p.holdingDepositCredit)} applied to first rent</span>}
 									</span>
+									<span className="flex items-center gap-2">
+									{p.refundedAt && <Chip tone="muted">{p.refundedAmount > 0 && p.refundedAmount < p.amount ? `Partially refunded · ${gbp(p.refundedAmount)}` : "Refunded"}</Chip>}
 									<button type="button" onClick={() => setReceipt(p)} className="cursor-pointer border-none bg-transparent p-0 text-[13px] font-semibold text-sk-link">Receipt</button>
+								</span>
 								</div>
 							))}
 						</Card>

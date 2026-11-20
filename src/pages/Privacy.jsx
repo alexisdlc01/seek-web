@@ -72,7 +72,7 @@ export default function PrivacyPolicy() {
 									<tr className="border-b"><td className="py-2 pr-4">Tenancy records, contracts, payments, tenancy messages, inventories and photos</td><td className="py-2">6 years after the tenancy ends</td></tr>
 									<tr className="border-b"><td className="py-2 pr-4">Imported emails and other non-tenancy messages</td><td className="py-2">Deleted on mailbox disconnect or within 30 days of account deletion</td></tr>
 									<tr className="border-b"><td className="py-2 pr-4">Mailbox tokens and IMAP credentials</td><td className="py-2">Deleted or revoked immediately on disconnect or account deletion</td></tr>
-									<tr><td className="py-2 pr-4">Identity documents</td><td className="py-2">Deleted within 30 days after verification; we may retain the result and date</td></tr>
+									<tr><td className="py-2 pr-4">Identity documents</td><td className="py-2">Deleted 30 days after you last share them with a landlord, or as soon as you replace them or close your account</td></tr>
 								</tbody>
 							</table>
 						</div>

@@ -14,13 +14,22 @@ export const api = axios.create({ baseURL: API_BASE, withCredentials: true });
 // The access token lasts 15 minutes: on the first 401 refresh it once (shared
 // across parallel requests) and replay the request.
 let refreshing = null;
+// Also used by the generated fetch client (main.tsx). A refused refresh means the session is
+// gone: UserContext listens for "seek:session-expired" and signs out locally.
+export const refreshSession = () =>
+	(refreshing ??= axios
+		.post(`${API_BASE}/auth/refresh`, {}, { withCredentials: true })
+		.catch(err => {
+			if ([401, 403].includes(err.response?.status)) window.dispatchEvent(new Event("seek:session-expired"));
+			throw err;
+		})
+		.finally(() => (refreshing = null)));
 const refreshOn401 = async error => {
 	const { config, response } = error;
 	if (response?.status !== 401 || !config || config._retry || config.url?.includes("/auth/")) throw error;
 	config._retry = true;
-	refreshing ??= axios.post(`${API_BASE}/auth/refresh`, {}, { withCredentials: true }).finally(() => (refreshing = null));
 	try {
-		await refreshing;
+		await refreshSession();
 	} catch {
 		throw error;
 	}

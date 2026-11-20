@@ -11,12 +11,25 @@ import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { ListingsProvider } from "./context/ListingsContext.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { API_BASE } from "./lib/landlord.js";
+import { API_BASE, refreshSession } from "./lib/landlord.js";
 import { client } from "./client/client.gen.ts";
 
 client.setConfig({
 	baseUrl: API_BASE,
-	credentials: "include"
+	credentials: "include",
+	// Same 401 -> refresh -> replay once as the axios interceptor in lib/landlord.js.
+	fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
+		const request = new Request(input, init);
+		const replay = request.clone(); // the body can only be read once
+		const response = await fetch(request);
+		if (response.status !== 401 || request.url.includes("/auth/")) return response;
+		try {
+			await refreshSession();
+		} catch {
+			return response;
+		}
+		return fetch(replay);
+	}
 });
 
 const LoadingScreen = () => (

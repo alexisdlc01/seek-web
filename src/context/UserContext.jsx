@@ -26,6 +26,17 @@ export const UserProvider = ({ children }) => {
 		})();
 	}, []);
 
+	// The refresh token was refused (lib/landlord.js): the session is gone, sign out locally.
+	useEffect(() => {
+		if (!user) return;
+		const expire = () => {
+			setUser(null);
+			queryClient.clear();
+		};
+		window.addEventListener("seek:session-expired", expire);
+		return () => window.removeEventListener("seek:session-expired", expire);
+	}, [user, queryClient]);
+
 	const getCurrentUser = async () => {
 		try {
 			const res = await axios.get(`${API_BASE}/auth/currentUser`, {
@@ -89,10 +100,11 @@ export const UserProvider = ({ children }) => {
 					withCredentials: true
 				}
 			);
-			setUser(null);
 		} catch (err) {
 			console.log("error logging out", err);
 		} finally {
+			// Sign out locally even when the server refuses (session already gone, network error).
+			setUser(null);
 			queryClient.clear();
 			navigate("/");
 		}

@@ -141,7 +141,7 @@ export default function StudentBills() {
 	const bills = billsQ.data ?? [];
 	const included = bills.filter((b) => b.includedInRent);
 	const extra = bills.filter((b) => !b.includedInRent);
-	const due = extra.filter((b) => b.status !== "PAID" && !b.myPaid);
+	const due = extra.filter((b) => b.status !== "PAID" && !b.myPaid && b.myShare !== 0);
 	const people = tenancy.tenants?.length || tenancy.listing?.numOfPeople || 1;
 	const docs = tenancy.documents ?? [];
 	const councilTaxDoc = docs.findLast((d) => d.type === "COUNCIL_TAX_EXEMPTION");
@@ -241,6 +241,8 @@ export default function StudentBills() {
 									<span className="shrink-0 text-[13px] font-semibold text-sk-ok">Paid</span>
 								) : b.myPaid ? (
 									<span className="shrink-0 text-[13px] font-semibold text-sk-ok">You've paid</span>
+								) : b.myShare === 0 ? (
+									<span className="shrink-0 text-[13px] text-sk-text2">Not in this split</span>
 								) : (
 									<button
 										type="button"

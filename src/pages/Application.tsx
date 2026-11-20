@@ -126,6 +126,8 @@ export default function ApplicationPage() {
 		onSuccess: (result, { action }) => {
 			setDeclining(false);
 			qc.invalidateQueries({ queryKey: ["application-listing", listingId] });
+			qc.invalidateQueries({ queryKey: ["landlord-overview"] });
+			qc.invalidateQueries({ queryKey: ["listing-applications"] });
 			toast.current?.show({
 				severity: action === "offer" ? "success" : "warn",
 				summary: action === "offer" ? "Offer sent" : "Rejected",
@@ -139,7 +141,11 @@ export default function ApplicationPage() {
 		},
 		onError: e => {
 			const queue = axios.isAxiosError(e) && e.response?.status === 409;
-			if (queue) qc.invalidateQueries({ queryKey: ["application-listing", listingId] });
+			if (queue) {
+				qc.invalidateQueries({ queryKey: ["application-listing", listingId] });
+				qc.invalidateQueries({ queryKey: ["landlord-overview"] });
+				qc.invalidateQueries({ queryKey: ["listing-applications"] });
+			}
 			toast.current?.show({
 				severity: queue ? "warn" : "error",
 				summary: queue ? "Not next in line" : "Couldn't update",
@@ -154,6 +160,8 @@ export default function ApplicationPage() {
 			(await api.patch(`/application/${applicationId}/viewing`, { viewingAt })).data,
 		onSuccess: () => {
 			qc.invalidateQueries({ queryKey: ["application-listing", listingId] });
+			qc.invalidateQueries({ queryKey: ["landlord-overview"] });
+			qc.invalidateQueries({ queryKey: ["listing-applications"] });
 			toast.current?.show({ severity: "success", summary: "Viewing scheduled", life: 3000 });
 		},
 		onError: e =>

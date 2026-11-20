@@ -44,7 +44,7 @@ function usePropertyFacts(prop, tenancies, payRows) {
 		enabled: live,
 		queryFn: async () => (await api.get(`/application/listing/${prop._id}`)).data
 	});
-	const sent = (apps.data ?? []).filter(a => a.stage === "SENT");
+	const sent = (apps.data ?? []).filter(a => ["SENT", "VIEWED", "OFFERED"].includes(a.stage));
 	const qualified = sent.filter(a => a.qualified).length;
 	const rows = payRows.filter(r => r.property && (r.property === prop.propertyTitle || r.property === prop.streetAddress));
 	const paidPct = rows.length ? Math.round((rows.filter(r => r.status === "PAID").length / rows.length) * 100) : null;

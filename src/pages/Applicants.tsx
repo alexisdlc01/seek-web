@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Toast } from "primereact/toast";
 import axios, { AxiosError } from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DeclineDialog from "../components/DeclineDialog";
 import ListingsContext from "../context/ListingsContext.jsx";
@@ -72,6 +73,7 @@ export default function Applicants() {
 	const { listingId } = useParams<{ listingId: string }>();
 	const { listings } = useContext(ListingsContext)!;
 	const toast = useRef<Toast>(null);
+	const qc = useQueryClient();
 	const [decliningApp, setDecliningApp] = useState<Application | null>(null);
 
 	const [applications, setApplications] = useState<Application[]>([]);
@@ -180,6 +182,8 @@ export default function Applicants() {
 				data: reason ? { reason } : {},
 				withCredentials: true
 			});
+			qc.invalidateQueries({ queryKey: ["landlord-overview"] });
+			qc.invalidateQueries({ queryKey: ["listing-applications"] });
 			await loadApplications();
 		} catch (error) {
 			const queueBlocked = axios.isAxiosError(error) && error.response?.status === 409;

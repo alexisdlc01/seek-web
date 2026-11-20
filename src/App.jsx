@@ -96,6 +96,14 @@ const NotFound = () => {
 	);
 };
 
+// Signed-in users skip the marketing page and land in their own app.
+const APP_HOME = { STUDENT: "/student/find", LANDLORD_AGENCY: "/dashboard", SUPERUSER: "/superuser" };
+function LandingOrApp() {
+	const { user } = useContext(UserContext);
+	const to = user && APP_HOME[user.role];
+	return to ? <Navigate to={to} replace /> : <Home />;
+}
+
 function PublicSite() {
 	const location = useLocation();
 
@@ -113,7 +121,7 @@ function PublicSite() {
 					>
 						<ScrollToTop />
 						<Routes location={location}>
-							<Route path="/" element={<Home />} />
+							<Route path="/" element={<LandingOrApp />} />
 							<Route path="/download" element={<Download />} />
 							<Route path="/terms" element={<Terms />} />
 							<Route path="/privacy" element={<Privacy />} />

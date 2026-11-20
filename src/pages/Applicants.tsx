@@ -459,6 +459,7 @@ function initialsOf(applicants: Applicant[]): string {
 
 function formatViewing(dateStr: string): string {
 	return new Date(dateStr).toLocaleString("en-GB", {
+		timeZone: "Europe/London",
 		weekday: "short",
 		day: "numeric",
 		hour: "2-digit",

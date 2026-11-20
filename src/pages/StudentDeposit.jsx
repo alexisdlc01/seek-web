@@ -110,7 +110,7 @@ export default function StudentDeposit() {
 	const inventoryDocuments = (tenancy.documents ?? []).filter((d) => d.type === "INVENTORY");
 	const protectBy = rules.protectBy;
 
-	const contracts = contractsQ.data ?? [];
+	const contracts = (contractsQ.data ?? []).filter((c) => c.status !== "DRAFT");
 	const withDeductions = contracts.find((c) => c.deductions);
 	const withInventory = contracts.find((c) => c.inventory?.items?.length);
 	const prescribed = contracts.find((c) => c.prescribedInformationUrl);

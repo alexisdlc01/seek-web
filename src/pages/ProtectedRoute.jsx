@@ -27,6 +27,10 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 		return <Navigate to={`/signin/student?returnTo=${encodeURIComponent(loc.pathname + loc.search)}`} replace />;
 	}
 
+	if (!user && loc.pathname !== "/") {
+		return <Navigate to={`/signin/landlord?returnTo=${encodeURIComponent(loc.pathname + loc.search)}`} replace />;
+	}
+
 	if (!user) {
 		return <Navigate to="/" replace />;
 	}

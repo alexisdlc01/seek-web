@@ -195,7 +195,7 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 
 export default function Listings() {
 	const navigate = useNavigate();
-	const { listings, setCurrentListing, loadError, reload } = useContext(ListingsContext);
+	const { listings, setListings, setCurrentListing, loadError, reload } = useContext(ListingsContext);
 	const toast = useRef(null);
 	const { user } = useContext(UserContext);
 	const canSeeTenancies = !user?.teamOf || user.teamOf.scopes?.includes("TENANCIES");
@@ -225,6 +225,7 @@ export default function Listings() {
 			await axios.delete(`${API_BASE}/listings/${id}`, {
 				withCredentials: true
 			});
+			setListings(prev => prev.filter(l => l._id !== id));
 			toast.current?.show({
 				severity: "success",
 				summary: "Listing Deleted",

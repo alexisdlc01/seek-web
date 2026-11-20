@@ -175,7 +175,7 @@ export default function Rent() {
 											<td className="font-semibold">{periodText(r)}{r.holdingDepositCredit > 0 && <><br /><span className="text-[12.5px] font-normal text-sk-ok">Holding deposit {gbp(r.holdingDepositCredit)} applied to first rent</span></>}</td>
 											<td><Chip tone={st.tone}>{st.label}</Chip>{r.refundDue && <Chip tone="warn" className="ml-1.5">Refund due (7 days)</Chip>}</td>
 											<td>
-												{r.status === "PAID" ? `${gbp(r.payout)} · ${fmtDay(r.nextPayout)}` : r.nextPayout ? fmtDay(r.nextPayout) : "-"}
+												{r.status === "PAID" ? `${gbp(r.payout)}${r.nextPayout ? ` · ${fmtDay(r.nextPayout)}` : ""}` : r.nextPayout ? fmtDay(r.nextPayout) : "-"}
 											</td>
 											<td className="text-right">
 												{(r.status === "LATE" || r.status === "FAILED") && (

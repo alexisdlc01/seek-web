@@ -242,6 +242,15 @@ export default function StudentProfile() {
 												</>
 											) : (
 												<>
+													{it.source === "request" && ASK[it.type] && (
+														<button
+															type="button"
+															onClick={() => setAsking(it.type)}
+															className="h-9 cursor-pointer rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] font-semibold text-sk-text"
+														>
+															Send again
+														</button>
+													)}
 													{(it.url || it.key) && <button type="button" onClick={() => openFile(it)} className="cursor-pointer border-none bg-transparent p-0 text-[13px] font-semibold text-sk-link">Open</button>}
 													<span className={`font-semibold ${tone}`}>{it.source === "request" ? `Pending · ${it.detail ?? ""}` : label}</span>
 												</>

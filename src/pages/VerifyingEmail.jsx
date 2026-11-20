@@ -42,7 +42,12 @@ export default function VerifyingEmail() {
 								err
 							);
 						}
-						navigate("/");
+						let back = null;
+						try {
+							back = localStorage.getItem("seek:returnTo");
+							localStorage.removeItem("seek:returnTo");
+						} catch { /* storage unavailable */ }
+						navigate(back && /^\/student\/[^/]/.test(back) ? back : "/");
 					}
 				} catch (err) {
 					console.log(

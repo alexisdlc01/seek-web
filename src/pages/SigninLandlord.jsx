@@ -5,7 +5,7 @@ import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { Toast } from "primereact/toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
@@ -16,6 +16,7 @@ import { API_BASE } from "../lib/landlord.js";
 
 export default function SignInLandlord() {
 	const navigate = useNavigate();
+	const [params] = useSearchParams();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const { login } = useContext(UserContext);
@@ -84,7 +85,15 @@ export default function SignInLandlord() {
 		const me = await axios
 			.get(`${API_BASE}/auth/currentUser`, { withCredentials: true })
 			.catch(() => null);
-		navigate(me?.data?.role === "STUDENT" ? "/student/find" : "/dashboard");
+		const back = params.get("returnTo");
+		const sameOrigin = back && /^\/(?![/\\])/.test(back) && !back.startsWith("/student");
+		navigate(
+			me?.data?.role === "STUDENT"
+				? "/student/find"
+				: sameOrigin && me?.data?.role === "LANDLORD_AGENCY"
+					? back
+					: "/dashboard"
+		);
 	};
 
 	return (

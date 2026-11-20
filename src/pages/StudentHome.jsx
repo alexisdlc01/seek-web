@@ -109,7 +109,7 @@ function ReportRepairModal({ tenancyId, onClose }) {
 	);
 }
 
-const slotText = (iso) => new Date(iso).toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+const slotText = (iso) => new Date(iso).toLocaleString("en-GB", { timeZone: "Europe/London", weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
 
 /** One application under "Next year": queue position, viewing slot, offer and holding deposit. */
 function ApplicationRow({ a, holding, setNotice }) {
@@ -451,7 +451,7 @@ export default function StudentHome() {
 									{r.status === "FIXED"
 										? `Fixed ${fmtDate(r.fixedAt ?? r.updatedAt)}`
 										: r.status === "SCHEDULED" && r.scheduledFor
-											? `Visit ${new Date(r.scheduledFor).toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}`
+											? `Visit ${new Date(r.scheduledFor).toLocaleString("en-GB", { timeZone: "Europe/London", weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}`
 											: `Reported ${fmtDate(r.createdAt)}`}
 								</span>
 							</div>

@@ -23,6 +23,7 @@ export default function NotificationsBell() {
 
 	const go = (n) => {
 		if (!n.readAt) read.mutate(n._id);
+		if (n.kind?.startsWith("REPAIR")) qc.invalidateQueries({ predicate: (q2) => ["landlord-repairs", "repairs"].includes(q2.queryKey[0]) });
 		setOpen(false);
 		if (n.link?.startsWith("/")) navigate(n.link);
 	};

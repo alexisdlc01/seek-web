@@ -21,7 +21,7 @@ const Inner = () => {
 	});
 	const waiting = overview.data?.applicants?.total;
 	const scopes = user?.teamOf?.scopes ?? [];
-	const ownerOnly = (item) => !member || (item.to === "/repairs" ? scopes.includes("REPAIRS") : !["/dashboard", "/rent"].includes(item.to));
+	const ownerOnly = (item) => !member || (item.to === "/repairs" ? scopes.includes("REPAIRS") : !["/dashboard", "/rent", "/connectors"].includes(item.to));
 	const items = [
 		{ to: "/dashboard", label: "Overview" },
 		{ to: "/applicants", label: "Applicants", badge: waiting ?? badges.applicants, match: ["/application"] },

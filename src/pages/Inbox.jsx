@@ -20,7 +20,8 @@ const CHANNEL = { seek: "Seek", email: "Email" };
 export default function Inbox() {
 	const qc = useQueryClient();
 	// A team member would read the connectors and AI advice of their own account, not the owner's.
-	const member = !!useContext(UserContext).user?.teamOf;
+	const { user } = useContext(UserContext);
+	const member = !!user?.teamOf;
 	const [filter, setFilter] = useState("All");
 	const [search, setSearch] = useState("");
 	const [selectedId, setSelectedId] = useState(null);
@@ -265,7 +266,7 @@ export default function Inbox() {
 								))}
 
 								{advice.isLoading && <Loading label="Loading tips" />}
-								{t.tenancyId && <RepairsPanel tenancyId={t.tenancyId} />}
+								{t.tenancyId && (!member || user.teamOf.scopes?.includes("REPAIRS")) && <RepairsPanel tenancyId={t.tenancyId} />}
 
 								{advice.data && (
 									<div className="flex flex-wrap items-center gap-2.5 self-stretch rounded-xl border border-sk-accent/40 bg-sk-tint p-3" data-testid="ai-advice">

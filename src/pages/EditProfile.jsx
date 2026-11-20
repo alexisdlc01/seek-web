@@ -369,7 +369,7 @@ function TeamCard({ user, setUser }) {
 		<Card title="Team">
 			<div className="flex items-center justify-between gap-3 text-sm">
 				<span className="font-semibold">{user?.name}</span>
-				<span className="text-[13px] text-sk-muted">You · full access</span>
+				<span className="text-[13px] text-sk-muted">{user?.teamOf ? `Team of ${user.teamOf.ownerName}` : "You · full access"}</span>
 			</div>
 			{(invites.data ?? []).map(i => (
 				<div key={i.ownerId} className="flex items-center justify-between gap-3 border-t border-sk-hair pt-2.5 text-sm">
@@ -382,7 +382,7 @@ function TeamCard({ user, setUser }) {
 					</button>
 				</div>
 			))}
-			{(team.data ?? []).map(m => (
+			{!user?.teamOf && (team.data ?? []).map(m => (
 				<div key={m.id} className="flex items-center justify-between gap-3 border-t border-sk-hair pt-2.5 text-sm">
 					<span className="flex min-w-0 flex-col">
 						<span className="truncate font-semibold">{m.name ?? m.email}</span>
@@ -395,7 +395,7 @@ function TeamCard({ user, setUser }) {
 					</button>
 				</div>
 			))}
-			<form
+			{!user?.teamOf && <form
 				className="flex flex-col gap-2 border-t border-sk-hair pt-3"
 				onSubmit={e => {
 					e.preventDefault();
@@ -424,7 +424,7 @@ function TeamCard({ user, setUser }) {
 					<span className="text-[12.5px] text-sk-text2">Team members never see payouts or bank details.</span>
 					<button type="submit" className={btnSmGhost} disabled={invite.isPending || !email.trim() || !scopes.length}>Invite</button>
 				</div>
-			</form>
+			</form>}
 			{user?.teamOf && (
 				<button type="button" className={`${btnSmGhost} self-start`} disabled={leave.isPending} onClick={() => window.confirm("Leave the team you were invited to?") && leave.mutate()}>
 					Leave team

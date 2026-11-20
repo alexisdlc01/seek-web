@@ -3,6 +3,7 @@ import React, {
 	useState,
 	useEffect,
 	useRef,
+	useCallback,
 	useContext
 } from "react";
 import { io } from "socket.io-client";
@@ -16,19 +17,27 @@ export default ListingsContext;
 
 export const ListingsProvider = ({ children }) => {
 	const [listings, setListings] = useState([]);
+	const [loadError, setLoadError] = useState(null);
 	const [currentListing, setCurrentListing] = useState({});
 	const socketRef = useRef(null);
 	const { user } = useContext(UserContext);
 
-	useEffect(() => {
-		if (!user || user.role !== "LANDLORD_AGENCY") return;
-		(async () => {
+	const reload = useCallback(async () => {
+		setLoadError(null);
+		try {
 			const res = await axios.get(`${API_BASE}/listings/mine`, {
 				withCredentials: true
 			});
 			setListings(res.data);
-		})();
-	}, [user]);
+		} catch (e) {
+			setLoadError(e);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (!user || user.role !== "LANDLORD_AGENCY") return;
+		reload();
+	}, [user, reload]);
 
 	useEffect(() => {
 		if (!user || user.role !== "LANDLORD_AGENCY") return;
@@ -69,6 +78,8 @@ export const ListingsProvider = ({ children }) => {
 			value={{
 				listings,
 				setListings,
+				loadError,
+				reload,
 				currentListing,
 				setCurrentListing
 			}}

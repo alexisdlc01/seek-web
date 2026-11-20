@@ -15,6 +15,7 @@ export default function EditProfile() {
 
 	const [loading2, setLoading2] = useState(true);
 	const [saving, setSaving] = useState(false);
+	const [error, setError] = useState("");
 
 	const [displayName, setDisplayName] = useState("");
 	const [avatarUrl, setAvatarUrl] = useState("");
@@ -42,6 +43,8 @@ export default function EditProfile() {
 
 	const onFile = async f => {
 		if (!f?.type?.startsWith("image/")) return;
+		setError("");
+		try {
 		const { data } = await axios.get(`${API_BASE}/upload/presign`, {
 			params: {
 				filename: f.name,
@@ -56,6 +59,9 @@ export default function EditProfile() {
 		});
 		setAvatarKey(data.key);
 		setAvatarUrl(data.fileUrl || URL.createObjectURL(f)); // instant preview
+		} catch (e) {
+			setError(errMessage(e, "We couldn't upload that photo."));
+		}
 	};
 
 	const dirty = displayName !== initialName || avatarKey !== initialKey || removePicture;
@@ -64,8 +70,9 @@ export default function EditProfile() {
 	const save = async () => {
 		if (!canSave) return;
 		setSaving(true);
+		setError("");
 		try {
-			if (avatarUrl !== "") {
+			if (avatarUrl) {
 				await axios.put(
 					`${API_BASE}/users/setProfilePic`,
 					{ url: avatarUrl },
@@ -92,6 +99,8 @@ export default function EditProfile() {
 				name: displayName,
 				profilePicUrl: avatarUrl
 			}));
+		} catch (e) {
+			setError(errMessage(e, "We couldn't save your changes."));
 		} finally {
 			setSaving(false);
 		}
@@ -183,6 +192,7 @@ export default function EditProfile() {
 							/>
 						</label>
 
+						{error && <span role="alert" className="text-[12.5px] text-sk-warn">{error}</span>}
 						<div className="flex justify-end">
 							<button
 								type="button"

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Chip, btnSmGhost, btnSmPrimary } from "./sk.jsx";
+import { Chip, ErrorState, btnSmGhost, btnSmPrimary } from "./sk.jsx";
 import { RepairPhotoThumbs } from "./RepairPhotos.jsx";
 import { api, errMessage, fmtDateTime } from "../lib/landlord.js";
 
@@ -88,7 +88,8 @@ export default function RepairsPanel({ tenancyId }) {
 					</div>
 				</form>
 			)}
-			{mine.length === 0 && !logging && <span className="text-[12.5px] text-sk-muted">No repairs logged.</span>}
+			{repairs.isError && <ErrorState error={repairs.error} onRetry={() => repairs.refetch()} />}
+			{mine.length === 0 && !logging && !repairs.isError && !repairs.isLoading && <span className="text-[12.5px] text-sk-muted">No repairs logged.</span>}
 			{error && <span role="alert" className="text-[12.5px] text-sk-warn">{error}</span>}
 			{mine.map((r) => {
 				const st = STATUS[r.status] ?? STATUS.OPEN;

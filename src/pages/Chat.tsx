@@ -370,11 +370,6 @@ export default function ChatPage() {
 				{ message },
 				{ withCredentials: true }
 			);
-			const { data } = await axios.get<Conversation>(
-				`${API_BASE}/conversation/${selectedId}`,
-				{ withCredentials: true }
-			);
-			mergeConversation(data);
 		} catch (error) {
 			setChats(curr =>
 				curr.map(chat =>
@@ -389,6 +384,16 @@ export default function ChatPage() {
 				)
 			);
 			throw error;
+		}
+		// The server already has the message: a failed refresh must not report a failed send (the socket merges it).
+		try {
+			const { data } = await axios.get<Conversation>(
+				`${API_BASE}/conversation/${selectedId}`,
+				{ withCredentials: true }
+			);
+			mergeConversation(data);
+		} catch {
+			/* ignored */
 		}
 	};
 
@@ -938,6 +943,7 @@ function ChatInput({ send, toast }: ChatInputProps) {
 	const handleSend = async () => {
 		try {
 			await send(input);
+			setInput("");
 		} catch {
 			toast?.show({
 				severity: "error",
@@ -945,8 +951,6 @@ function ChatInput({ send, toast }: ChatInputProps) {
 				detail: "Failed to send a message in this chat",
 				life: 3000
 			});
-		} finally {
-			setInput("");
 		}
 	};
 

@@ -9,8 +9,8 @@ import UserContext from "../context/UserContext.jsx";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
 
-import { Chip } from "../components/sk.jsx";
-import { API_BASE, api, currentMonth, daysUntil, fmtDate } from "../lib/landlord.js";
+import { Chip, ErrorState } from "../components/sk.jsx";
+import { API_BASE, api, currentMonth, daysUntil, errMessage, fmtDate } from "../lib/landlord.js";
 
 // Steps in the Add property wizard (Basics to Review).
 const WIZARD_STEPS = 5;
@@ -195,7 +195,7 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 
 export default function Listings() {
 	const navigate = useNavigate();
-	const { listings, setCurrentListing } = useContext(ListingsContext);
+	const { listings, setCurrentListing, loadError, reload } = useContext(ListingsContext);
 	const toast = useRef(null);
 	const { user } = useContext(UserContext);
 	const canSeeTenancies = !user?.teamOf || user.teamOf.scopes?.includes("TENANCIES");
@@ -255,13 +255,27 @@ export default function Listings() {
 		});
 	};
 
+	const [creating, setCreating] = useState(false);
 	const addListing = async () => {
-		const res = await axios.post(
-			`${API_BASE}/listings/draft`,
-			{},
-			{ withCredentials: true }
-		);
-		navigate(`/add-listing/${res.data}`);
+		if (creating) return;
+		setCreating(true);
+		try {
+			const res = await axios.post(
+				`${API_BASE}/listings/draft`,
+				{},
+				{ withCredentials: true }
+			);
+			navigate(`/add-listing/${res.data}`);
+		} catch (err) {
+			toast.current?.show({
+				severity: "error",
+				summary: "Couldn't add property",
+				detail: errMessage(err, "Unable to start a new property. Please try again."),
+				life: 4000
+			});
+		} finally {
+			setCreating(false);
+		}
 	};
 
 	const FILTERS = [
@@ -284,6 +298,7 @@ export default function Listings() {
 		<div className="flex flex-col gap-6 p-4 md:p-8">
 			<Toast ref={toast} position="bottom-right" />
 			<ConfirmDialog />
+			{loadError && <ErrorState error={loadError} onRetry={reload} />}
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<div className="flex flex-col gap-1">
 					<span className="text-sm text-sk-muted">
@@ -304,6 +319,7 @@ export default function Listings() {
 					<button
 						type="button"
 						onClick={addListing}
+						disabled={creating}
 						className="inline-flex h-11 cursor-pointer items-center rounded-xl border-none bg-sk-accent px-4 text-sm font-semibold text-sk-on-accent"
 					>
 						+ Add property
@@ -346,6 +362,7 @@ export default function Listings() {
 				<button
 					type="button"
 					onClick={addListing}
+					disabled={creating}
 					className="flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border border-dashed border-sk-border2 bg-sk-card p-5 text-sk-text"
 				>
 					<span className="font-display text-[17px] font-semibold">Add a property</span>

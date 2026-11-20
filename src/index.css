@@ -497,13 +497,37 @@ body {
 	box-sizing: border-box;
 }
 
-a {
-	color: inherit;
+/* In the base layer so Tailwind text-* utilities on links win. */
+@layer base {
+	a {
+		color: inherit;
+	}
 }
 
-input,
-textarea,
-select,
+/* Bare form elements live in the base layer so Tailwind utilities on them win
+   (checkboxes kept their native size, the AI search box keeps its own look). */
+@layer base {
+	input:not([type="checkbox"]):not([type="radio"]),
+	textarea,
+	select {
+		width: 100%;
+		border: 1px solid var(--surface-border);
+		border-radius: 0.75rem;
+		background-color: var(--surface-0);
+		color: var(--text-color);
+		padding: 0.75rem 0.9rem;
+		transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+	}
+
+	input:focus,
+	textarea:focus,
+	select:focus {
+		outline: none;
+		border-color: var(--primary-color);
+		box-shadow: 0 0 0 4px rgba(35, 183, 197, 0.16);
+	}
+}
+
 .p-inputtext,
 .p-inputtextarea,
 .p-password input,
@@ -526,9 +550,6 @@ textarea::placeholder,
 	color: var(--text-color-secondary);
 }
 
-input:focus,
-textarea:focus,
-select:focus,
 .p-inputtext:focus,
 .p-inputtextarea:focus,
 .p-password input:focus,

@@ -408,32 +408,42 @@ const BasicInfoStep = ({
 							disabled={registerInputMode !== "document"}
 							onChange={async e => {
 								const file = e.target.files[0];
-								if (file && file.type !== "application/pdf") {
+								e.target.value = "";
+								if (!file) return;
+								if (file.type !== "application/pdf") {
 									alert("Please upload a PDF file");
 									return;
 								}
+								if (file.size > 15 * 1024 * 1024) {
+									alert("File is too large (15 MB max).");
+									return;
+								}
 
-								const res = await axios.get(
-									`${API_BASE}/upload/presign`,
-									{
-										params: {
-											filename: file.name,
-											fileType: file.type,
-											fileSize: file.size,
-											folder: "private"
-										},
-										withCredentials: true
-									}
-								);
+								try {
+									const res = await axios.get(
+										`${API_BASE}/upload/presign`,
+										{
+											params: {
+												filename: file.name,
+												fileType: file.type,
+												fileSize: file.size,
+												folder: "private"
+											},
+											withCredentials: true
+										}
+									);
 
-								const { uploadUrl, key } = res.data;
+									const { uploadUrl, key } = res.data;
 
-								await axios.put(uploadUrl, file, {
-									headers: { "Content-Type": file.type }
-								});
+									await axios.put(uploadUrl, file, {
+										headers: { "Content-Type": file.type }
+									});
 
-								setRegisterOfTitleKeyFromBackend(key);
-								setRegisterOfTitle(file);
+									setRegisterOfTitleKeyFromBackend(key);
+									setRegisterOfTitle(file);
+								} catch {
+									alert("Upload failed. Please try again.");
+								}
 							}}
 						/>
 

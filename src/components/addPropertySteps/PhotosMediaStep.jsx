@@ -42,8 +42,9 @@ const PhotosMediaStep = ({
 			<div className="space-y-6">
 				<div>
 					<label className="font-medium text-sk-text">Photos</label>
-					<div
-						className="border-2 border-dashed p-8 rounded text-center cursor-pointer mt-2"
+					<button
+						type="button"
+						className="w-full bg-transparent border-2 border-dashed p-8 rounded text-center cursor-pointer mt-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sk-link"
 						onClick={() => fileInputRef.current?.click()}
 						onDrop={e => {
 							e.preventDefault();
@@ -54,15 +55,15 @@ const PhotosMediaStep = ({
 						onDragOver={e => e.preventDefault()}
 					>
 						Drag & drop or click to browse files
-						<input
-							type="file"
-							accept="image/*"
-							multiple
-							ref={fileInputRef}
-							className="hidden"
-							onChange={onPhotoSelect}
-						/>
-					</div>
+					</button>
+					<input
+						type="file"
+						accept="image/*"
+						multiple
+						ref={fileInputRef}
+						className="hidden"
+						onChange={onPhotoSelect}
+					/>
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
 						{photos.map((p, idx) => (
 							<div

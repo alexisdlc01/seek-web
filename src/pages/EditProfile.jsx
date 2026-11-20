@@ -266,6 +266,8 @@ function PayoutsCard() {
 	});
 	const s = status.data;
 	const ready = s?.connected && s.chargesEnabled;
+	// Stripe can keep card payments on while payouts are off (bank removed, details past due): the money waits in Stripe.
+	const payoutsOff = ready && !s.payoutsEnabled;
 	return (
 		<Card title="Payouts" className="!border-transparent !bg-sk-card2">
 			{status.isLoading && <span className="text-[13px] text-sk-muted">Checking your payout account…</span>}
@@ -273,8 +275,13 @@ function PayoutsCard() {
 				<>
 					<div className="flex justify-between text-sm">
 						<span>Stripe Connect account</span>
-						<span className="font-semibold text-sk-ok">Connected</span>
+						<span className={`font-semibold ${payoutsOff ? "text-sk-warn" : "text-sk-ok"}`}>{payoutsOff ? "Payouts paused" : "Connected"}</span>
 					</div>
+					{payoutsOff && (
+						<span role="status" className="text-[13px] text-sk-warn">
+							Stripe has paused payouts to your bank. Students can still pay by card, but the money stays in Stripe until you finish setup.
+						</span>
+					)}
 					{s.payoutBank && (
 						<span className="text-sm">
 							Paid out to {s.payoutBank.bankName ?? "your bank"} ····{s.payoutBank.last4}
@@ -283,8 +290,8 @@ function PayoutsCard() {
 					)}
 					<span className="text-[13px] text-sk-text2">Card rent goes straight to this Stripe account.</span>
 					{s.mode !== "unavailable" && (
-						<button type="button" className={btnSmGhost} disabled={onboard.isPending} onClick={() => onboard.mutate()}>
-							{onboard.isPending ? "Opening Stripe…" : "Change bank account"}
+						<button type="button" className={payoutsOff ? btnPrimary : btnSmGhost} disabled={onboard.isPending} onClick={() => onboard.mutate()}>
+							{onboard.isPending ? "Opening Stripe…" : payoutsOff ? "Continue setup" : "Change bank account"}
 						</button>
 					)}
 					{onboard.isError && <span role="alert" className="text-[13px] text-sk-warn">{errMessage(onboard.error)}</span>}
@@ -488,10 +495,10 @@ function BusinessCard({ user, setUser }) {
 	const save = async () => {
 		setState({ saving: true, error: "", saved: false });
 		try {
-			const body = { companyName: company.trim() };
-			if (phone.trim()) body.phone = phone.trim();
+			// An empty phone is sent as "" so the backend clears it.
+			const body = { companyName: company.trim(), phone: phone.trim() };
 			await patchMe(body);
-			setUser(prev => ({ ...prev, companyName: body.companyName, ...(body.phone ? { phone: body.phone } : {}) }));
+			setUser(prev => ({ ...prev, companyName: body.companyName, phone: body.phone }));
 			setState({ saving: false, error: "", saved: true });
 		} catch (e) {
 			setState({ saving: false, error: errMessage(e), saved: false });

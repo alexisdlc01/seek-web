@@ -83,7 +83,9 @@ function AddExpense({ tenancy, onDone }) {
 	const submit = (e) => {
 		e.preventDefault();
 		setError("");
-		const pounds = Number.parseFloat(amount.replace(",", "."));
+		// "£1,200.50" → 1200.5 (thousands commas), "12,50" → 12.5 (decimal comma).
+		const clean = amount.replace(/[£\s]/g, "");
+		const pounds = Number(/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(clean) ? clean.replace(/,/g, "") : clean.replace(",", "."));
 		if (!provider.trim()) return setError("Say what the expense is for.");
 		if (!Number.isFinite(pounds) || pounds <= 0 || pounds > 10000) return setError("Enter the total you paid, in pounds.");
 		create.mutate(Math.round(pounds * 100));

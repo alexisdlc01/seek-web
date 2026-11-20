@@ -61,7 +61,9 @@ export default function SigninSuperuser() {
 	const handleSubmit = async e => {
 		e.preventDefault();
 		if (!validateEmail()) return;
-		await login(email, password);
+		const res = await login(email, password);
+		// login() returns undefined on success, the error message otherwise
+		if (res) return showError(String(res));
 		navigate("/superuser");
 	};
 

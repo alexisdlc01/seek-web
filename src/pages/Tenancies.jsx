@@ -34,7 +34,7 @@ export default function Tenancies() {
 							<div className="flex flex-wrap items-center justify-between gap-2">
 								<div className="flex flex-col gap-0.5">
 									<h2 className="font-display text-lg font-semibold">{t.listing?.propertyTitle || "Tenancy"}</h2>
-									<span className="text-[13px] text-sk-muted">{(t.tenants ?? []).map((x) => x.name).join(", ") || "No tenants yet"}</span>
+									<span className="text-[13px] text-sk-muted">{[...(t.tenants ?? []), ...(t.pendingTenants ?? [])].map((x) => x.name).join(", ") || "No tenants yet"}</span>
 								</div>
 								<div className="flex flex-wrap gap-2">
 									{t.status === "ACTIVE" && rent && <Chip tone={rent.tone}>{rent.label}</Chip>}

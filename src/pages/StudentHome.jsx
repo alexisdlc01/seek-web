@@ -154,7 +154,7 @@ function ApplicationRow({ a, holding, setNotice }) {
 	const slots = (l.viewingSlotAvailability ?? (l.viewingSlots ?? []).map((at) => ({ at, remaining: null }))).filter((x) => new Date(x.at) > new Date());
 	const people = a.members?.length ?? 1;
 	const needed = l.numOfPeople ?? 1;
-	const qualified = a.qualified && a.stage === "SENT";
+	const qualified = a.qualified && ["SENT", "VIEWED"].includes(a.stage);
 	const unpaidHolding = holding && holding.status !== "PAID";
 	const deposit = holding?.amount ?? (a.holdingDeposit ? a.holdingDeposit * 100 : null);
 	return (
@@ -176,7 +176,7 @@ function ApplicationRow({ a, holding, setNotice }) {
 					)}
 				</span>
 			)}
-			{a.stage === "SENT" && !a.qualified && a.criteria?.some((c) => !c.passed) && (
+			{["SENT", "VIEWED"].includes(a.stage) && !a.qualified && a.criteria?.some((c) => !c.passed) && (
 				<span className="text-[12.5px] text-sk-warn">Not qualified yet: {a.criteria.filter((c) => !c.passed).map((c) => c.label).join(", ")}</span>
 			)}
 			{["SENT", "VIEWED"].includes(a.stage) && slots.length > 0 && (

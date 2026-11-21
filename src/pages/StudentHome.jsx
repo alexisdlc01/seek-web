@@ -319,7 +319,7 @@ export default function StudentHome() {
 	const next = mine.find((p) => OPEN.includes(p.status)) ?? plan?.upcoming?.find((p) => OPEN.includes(p.status));
 	const lastPaid = [...mine].reverse().find((p) => p.status === "PAID");
 	const bills = billsQ.data ?? [];
-	const toPay = bills.filter((b) => !b.includedInRent && b.status !== "PAID" && !b.myPaid);
+	const toPay = bills.filter((b) => !b.includedInRent && b.status !== "PAID" && !b.myPaid && b.myShare !== 0);
 	const myBills = toPay.reduce((s, b) => s + (b.myShare ?? 0), 0);
 	const contracts = (contractsQ.data ?? []).filter((c) => c.status !== "DRAFT");
 	const docs = tenancy.documents ?? [];

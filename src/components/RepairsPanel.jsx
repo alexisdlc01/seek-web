@@ -98,6 +98,7 @@ export default function RepairsPanel({ tenancyId }) {
 					<div key={r._id} className="flex flex-wrap items-center gap-2 border-t border-sk-hair pt-2 text-[13px]">
 						<div className="flex min-w-0 flex-[1_1_200px] flex-col">
 							<span className="font-semibold">{r.title}</span>
+							{r.description && <span className="whitespace-pre-line text-[12.5px] text-sk-text2">{r.description}</span>}
 							<span className="text-[12px] text-sk-muted">
 								{r.reportedBy?.name ? `${r.reportedBy.name} · ` : ""}
 								{r.status === "SCHEDULED" && r.scheduledFor ? `Booked ${fmtDateTime(r.scheduledFor)}` : fmtDateTime(r.createdAt)}

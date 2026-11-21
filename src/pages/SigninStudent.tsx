@@ -47,42 +47,15 @@ export default function SignInStudent() {
 		});
 	};
 
-	const validateEmailPrefix = (prefix: string) => /^[a-zA-Z0-9._-]+$/.test(prefix);
-
 	const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault();
-		const prefix = email.trim().replace(/@st-andrews\.ac\.uk$/i, "");
-		if (!validateEmailPrefix(prefix) || prefix.includes("@")) {
-			toast.current?.show({
-				severity: "error",
-				summary: "Sign-In Failed",
-				detail: "Your email or password didn’t match our records. Please try again.",
-				life: 4000,
-				style: {
-					background: "#1E1E2F",
-					color: "#fff",
-					borderLeft: "5px solid #EF4444", // red accent
-					borderRadius: "8px",
-					boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
-				},
-				content: (
-					<div className="flex items-center space-x-3">
-						<i className="pi pi-times-circle text-red-400 text-xl"></i>
-						<div>
-							<p className="font-semibold">
-								Invalid Email Format
-							</p>
-							<p className="text-sm text-[var(--text-color-secondary)]">
-								"Please enter only your email prefix (before
-								@st-andrews.ac.uk)".
-							</p>
-						</div>
-					</div>
-				)
-			});
+		const typed = email.trim().toLowerCase();
+		// A full address (personal or other university) is sent as is; a bare prefix keeps the St Andrews shortcut.
+		if (!typed) {
+			showError("Please enter your email.");
 			return;
 		}
-		const fullEmail = `${prefix}@st-andrews.ac.uk`;
+		const fullEmail = typed.includes("@") ? typed : `${typed}@st-andrews.ac.uk`;
 		const res = await login(fullEmail, password);
 		// login() returns undefined on success, the error message otherwise
 		if (res === "Credentials are not valid." || res === "Unauthorized")
@@ -122,7 +95,7 @@ export default function SignInStudent() {
 						onChange={e => setEmail(e.target.value)}
 						className="w-full auth-form-input"
 					/>
-					<label htmlFor="email">St Andrews Email</label>
+					<label htmlFor="email">University or personal email</label>
 				</FloatLabel>
 
 				<FloatLabel className="mb-8">

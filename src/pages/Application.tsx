@@ -26,7 +26,7 @@ import DeclineDialog from "../components/DeclineDialog";
 import { AdviceCard } from "../components/StudentBits.jsx";
 import { VerifiedStudentBadge } from "../components/StudentVerification.jsx";
 import axios from "axios";
-import { api, errMessage, fmtDate, fmtDateTime, openAttachment } from "../lib/landlord.js";
+import { api, errMessage, fmtDate, fmtDateTime, londonToIso, openAttachment } from "../lib/landlord.js";
 
 type PassportItem = {
 	type: string;
@@ -69,11 +69,13 @@ type ApplicationData = {
 const itemOf = (m: Member, type: string): PassportItem | undefined =>
 	m.passport?.sections.flatMap(s => s.items).find(i => i.type === type);
 
-// buildPassport always returns every reference item (status MISSING when absent): take the first one given.
+// buildPassport always returns every reference item (status MISSING when absent): take the best status.
+const REF_RANK: Record<string, number> = { VERIFIED: 5, PROVIDED: 4, PENDING: 3, EXPIRED: 2, REJECTED: 1, MISSING: 0 };
 const REFERENCE_TYPES = ["LANDLORD_REFERENCE", "AGENT_REFERENCE", "RECOMMENDATION", "CHARACTER_REFERENCE"];
 const refItem = (m: Member): PassportItem | undefined => {
-	const refs = REFERENCE_TYPES.map(t => itemOf(m, t));
-	return refs.find(i => i && i.status !== "MISSING") ?? refs.find(Boolean);
+	const refs = REFERENCE_TYPES.map(t => itemOf(m, t)).filter((i): i is PassportItem => !!i);
+	const rank = (i: PassportItem) => REF_RANK[i.status] ?? 0;
+	return refs.reduce<PassportItem | undefined>((best, i) => (!best || rank(i) > rank(best) ? i : best), undefined);
 };
 
 function Cell({ item }: { item?: PassportItem }) {
@@ -507,7 +509,7 @@ function ApplicationCard({
 								type="button"
 								className={btnSmPrimary}
 								disabled={!viewingInput || viewingBusy}
-								onClick={() => onViewing(new Date(viewingInput).toISOString())}
+								onClick={() => onViewing(londonToIso(viewingInput))}
 							>
 								{viewingBusy ? "Saving…" : data.viewingAt ? "Reschedule" : "Schedule viewing"}
 							</button>

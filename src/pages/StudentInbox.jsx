@@ -65,6 +65,17 @@ export default function StudentInbox() {
 		onError: (e) => setSendError(errMessage(e, "We couldn't send that message."))
 	});
 
+	// Same filing as the automatic one, started by hand (only for an email tied to a tenancy).
+	const fileAttachment = useMutation({
+		mutationFn: async ({ messageId, index }) => (await api.post(`/inbox/messages/${messageId}/attachments/${index}/file`)).data,
+		onSuccess: () => {
+			setSendError("");
+			qc.invalidateQueries({ queryKey: ["inbox-thread", sel] });
+			qc.invalidateQueries({ queryKey: ["inbox-threads"] });
+		},
+		onError: (e) => setSendError(errMessage(e, "We couldn't file this attachment."))
+	});
+
 	const canReply = cur && (cur.canReplyBySeek || cur.canReplyByEmail);
 	const replyFrom = cur?.replyFrom ?? connected?.emailAddress;
 	const receiveOnly = !!cur?.canReplyBySeek && !cur?.canReplyByEmail && connected?.canSend === false;
@@ -142,17 +153,24 @@ export default function StudentInbox() {
 										</span>
 										{m.subject && <span className="text-[13px] font-semibold">{m.subject}</span>}
 										<span className="whitespace-pre-line text-sm leading-normal">{m.text}</span>
-										{(m.attachments ?? []).map((a) =>
-											(a.url || a.key) ? (
-												<button key={a.name} type="button" onClick={() => openFile(a)} className="cursor-pointer self-start rounded-lg border-none bg-sk-tint px-2.5 py-1.5 text-[12.5px] font-semibold text-sk-link">
+										{(m.attachments ?? []).map((a, index) => (
+											<div key={a.name} className="flex flex-wrap items-center gap-2 self-start">
+											{(a.url || a.key) ? (
+												<button type="button" onClick={() => openFile(a)} className="cursor-pointer rounded-lg border-none bg-sk-tint px-2.5 py-1.5 text-[12.5px] font-semibold text-sk-link">
 													{a.name}{a.filedAs ? ` · saved to ${a.filedAs}` : ""}
 												</button>
 											) : (
-												<span key={a.name} className="self-start rounded-lg bg-sk-tint px-2.5 py-1.5 text-[12.5px] font-semibold text-sk-link">
+												<span className="rounded-lg bg-sk-tint px-2.5 py-1.5 text-[12.5px] font-semibold text-sk-link">
 													{a.name}{a.filedAs ? ` · saved to ${a.filedAs}` : ""}
 												</span>
-											)
-										)}
+											)}
+											{!a.filedAs && cur.tenancyId && !m.me && (
+												<button type="button" disabled={fileAttachment.isPending} onClick={() => fileAttachment.mutate({ messageId: m.id, index })} className="cursor-pointer border-none bg-transparent p-0 text-xs font-semibold text-sk-link">
+													{fileAttachment.isPending ? "Filing…" : "File in My home"}
+												</button>
+											)}
+											</div>
+										))}
 									</div>
 								</div>
 							))}

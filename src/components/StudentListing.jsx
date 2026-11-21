@@ -134,7 +134,7 @@ export function ApplyModal({ id, onClose }) {
 	const sharedItems = (p?.sections ?? []).flatMap((s) => s.items).filter((i) => i.status !== "MISSING");
 	const missing = (p?.sections ?? []).flatMap((s) => s.items).filter((i) => i.required && i.status !== "VERIFIED" && i.status !== "PROVIDED");
 	// Documents the landlord requires (backend rule); any one of a document's types satisfies it.
-	const haveTypes = new Set((p?.sections ?? []).flatMap((s) => s.items).filter((i) => i.status !== "MISSING").map((i) => i.type));
+	const haveTypes = new Set((p?.sections ?? []).flatMap((s) => s.items).filter((i) => i.status !== "MISSING" && i.source !== "request").map((i) => i.type));
 	const missingDocs = (l?.requiredDocuments ?? []).filter((d) => !d.types.some((t) => haveTypes.has(t))).map((d) => d.label);
 	// Backend criteria exist once an application does; before that, mirror the household-size rule only.
 	// shortcut: mirrors backend household-size rule, use API criteria when exposed
@@ -184,7 +184,7 @@ export function ApplyModal({ id, onClose }) {
 						)}
 					</section>
 
-					{((l.requiredDocuments ?? []).length > 0 || rules.length > 0) && (
+					{((l.requiredDocuments ?? []).length > 0 || (l.requirements ?? []).length > 0 || rules.length > 0) && (
 						<section className="flex flex-col gap-2">
 							<h3 className="text-[15px] font-semibold">Landlord's criteria</h3>
 							{rules.map((r) => <div key={r} className="border-b border-sk-hair pb-2 text-sm">{r}</div>)}
@@ -193,6 +193,12 @@ export function ApplyModal({ id, onClose }) {
 								<div key={d.label} className="flex justify-between gap-3 border-b border-sk-hair pb-2 text-sm">
 									<span>{d.label}</span>
 									<span className="shrink-0 text-[13px] font-semibold text-sk-text">Required</span>
+								</div>
+							))}
+							{(l.requirements ?? []).map((r) => (
+								<div key={r._id ?? r.name} className="flex justify-between gap-3 border-b border-sk-hair pb-2 text-sm">
+									<span>{r.name}{r.desc && <span className="block text-[13px] text-sk-muted">{r.desc}</span>}</span>
+									<span className="shrink-0 text-[13px] font-semibold text-sk-text">{r.required ? "Required" : "Optional"}</span>
 								</div>
 							))}
 						</section>

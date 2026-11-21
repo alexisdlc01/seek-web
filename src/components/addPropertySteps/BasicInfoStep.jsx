@@ -71,23 +71,12 @@ const BasicInfoStep = ({
 		["epcExpiry", "EPC expires"],
 		["hmoLicenceExpiry", "HMO licence expires"]
 	];
-	const [registerInputMode, setRegisterInputMode] = useState("number");
+	const [registerInputMode, setRegisterInputMode] = useState(registerOfTitle || registerOfTitleKeyFromBackend ? "document" : "number");
 	// "number" | "document"
 
 	useEffect(() => {
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	}, []);
-
-	useEffect(() => {
-		if (registerInputMode === "number") {
-			// Clear document-related state
-			setRegisterOfTitle(null);
-			setRegisterOfTitleKeyFromBackend(null);
-		} else {
-			// Clear registration number
-			setRegistrationNumber("");
-		}
-	}, [registerInputMode]);
 
 	const registerInputOptions = [
 		{
@@ -351,6 +340,10 @@ const BasicInfoStep = ({
 						options={registerInputOptions}
 						onChange={e => {
 							if (e.value === null) return;
+							if (e.value === "number") {
+								setRegisterOfTitle(null);
+								setRegisterOfTitleKeyFromBackend(null);
+							} else setRegistrationNumber("");
 							setRegisterInputMode(e.value);
 						}}
 						optionLabel="label"

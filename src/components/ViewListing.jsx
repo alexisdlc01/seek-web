@@ -187,8 +187,8 @@ const ViewListing = () => {
 					</p>
 					<p className="text-sk-text2">
 						Available:{" "}
-						{new Date(listing.availableFrom).toLocaleDateString()} –{" "}
-						{new Date(listing.availableUntil).toLocaleDateString()}
+						{new Date(listing.availableFrom).toLocaleDateString()}
+						{listing.availableUntil ? ` – ${new Date(listing.availableUntil).toLocaleDateString()}` : " onwards"}
 					</p>
 				</div>
 			</div>

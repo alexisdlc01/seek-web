@@ -346,11 +346,17 @@ function TeamCard({ user, setUser }) {
 	};
 	const accept = useMutation({
 		mutationFn: async ownerId => api.post(`/users/me/team-invites/${ownerId}/accept`),
-		onSuccess: refresh
+		onSuccess: () => {
+			qc.clear(); // team-scoped caches belong to the previous account
+			refresh();
+		}
 	});
 	const leave = useMutation({
 		mutationFn: async () => api.post("/users/me/team/leave"),
-		onSuccess: refresh
+		onSuccess: () => {
+			qc.clear();
+			refresh();
+		}
 	});
 	const invite = useMutation({
 		mutationFn: async () => (await api.post("/users/me/team/invite", { email: email.trim(), scopes })).data,

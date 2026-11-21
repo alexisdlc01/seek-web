@@ -74,6 +74,7 @@ export default function StudentFind() {
 	const [bounds, setBounds] = useState(null);
 	const [chips, setChips] = useState(() => new Set(["Under £750"]));
 	const [selected, setSelected] = useState(null);
+	const [hovered, setHovered] = useState(null);
 	const [searchParams] = useSearchParams();
 	const [detailId, setDetailId] = useState(() => searchParams.get("home")); // shared listing link
 	const [applyId, setApplyId] = useState(null);
@@ -186,8 +187,18 @@ export default function StudentFind() {
 	const mapHomes = useMemo(() => {
 		const byId = new Map(areaHomes.map((h) => [h.id, h]));
 		aiHomes.forEach((h) => h.lat != null && byId.set(h.id, h));
-		return [...byId.values()].map((h) => ({ id: h.id, lat: h.lat, lng: h.lng, price: pounds(h.each), title: h.title }));
-	}, [areaHomes, aiHomes]);
+		return [...byId.values()].map((h) => ({
+			id: h.id,
+			lat: h.lat,
+			lng: h.lng,
+			price: pounds(h.each),
+			priceNote: h.shared ? "pcm each" : "pcm",
+			title: h.title,
+			photo: h.photo,
+			saved: liked.has(h.id),
+			subtitle: [h.beds ? `${h.beds} bed` : null, h.area, h.availableFrom ? `free ${fmtDate(h.availableFrom)}` : null].filter(Boolean).join(" · ")
+		}));
+	}, [areaHomes, aiHomes, liked]);
 
 	const p = passportQ.data;
 
@@ -293,6 +304,8 @@ export default function StudentFind() {
 						{homes.map((h, i) => (
 							<article
 								key={h.id}
+								onMouseEnter={() => setHovered(h.id)}
+								onMouseLeave={() => setHovered(null)}
 								className={`flex flex-col overflow-hidden rounded-2xl border-2 bg-sk-card ${h.id === selected ? "border-sk-accent" : "border-transparent"}`}
 							>
 								<button
@@ -357,10 +370,13 @@ export default function StudentFind() {
 					<ListingsMap
 						listings={mapHomes}
 						selectedId={selected}
-						onSelect={(id) => {
+						hoveredId={hovered}
+						onSelect={setSelected}
+						onOpen={(id) => {
 							setSelected(id);
 							setDetailId(id);
 						}}
+						onToggleSave={toggleSave}
 						landmark={UNIVERSITY}
 						center={[56.3398, -2.7967]}
 						zoom={13}

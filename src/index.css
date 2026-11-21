@@ -1038,75 +1038,61 @@ textarea::placeholder,
 }
 
 /* ------------------------------------------------------------------
-   ListingsMap price pills (Leaflet divIcon markup, so plain CSS)
+   ListingsMap pins (MapLibre HTML markers built in JS, so plain CSS)
    ------------------------------------------------------------------ */
-.sk-pill-wrap {
-  background: none;
-  border: none;
-}
-.sk-pill {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  min-width: 60px;
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 16px;
-  font: 700 13px Inter, sans-serif;
-  background: #ffffff;
-  color: #222222;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: transform 0.15s;
-}
-.sk-pill:hover {
-  transform: scale(1.08);
-}
-.sk-pill--on {
-  background: #222222;
-  color: #ffffff;
-  border-color: #222222;
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-}
-.sk-pill--dim {
-  opacity: 0.6;
-}
-/* Airbnb-like soft map: mute the OSM tiles only (pills and controls untouched) */
-.sk-map .leaflet-tile-pane {
-  filter: saturate(0.35) brightness(1.04) contrast(0.92);
-}
-:root[data-theme="dark"] .sk-map .leaflet-tile-pane {
-  filter: invert(0.9) hue-rotate(180deg) saturate(0.3) brightness(0.95) contrast(0.9);
-}
-.sk-map .leaflet-bar {
-  border: none;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-}
-.sk-map .leaflet-bar a {
-  background: #ffffff;
-  color: #222222;
-  border-bottom-color: rgba(0, 0, 0, 0.08);
-}
-.sk-landmark {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-  font: 700 11.5px Inter, sans-serif;
-  color: #151515;
-  text-shadow: 0 0 3px #fff, 0 0 3px #fff;
-}
-.sk-landmark i {
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  background: #151515;
-  border: 2px solid #fff;
-  box-sizing: border-box;
-  flex: none;
+@layer base {
+  .sk-pin { z-index: 2; }
+  .sk-pin.is-dot { z-index: 1; }
+  .sk-pin:hover, .sk-pin.is-hover { z-index: 5; }
+  .sk-pin.is-on { z-index: 6; }
+  .sk-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 999px;
+    font: 700 13.5px/1 Inter, sans-serif;
+    white-space: nowrap;
+    background: #fff;
+    color: #222;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.15s, color 0.15s, opacity 0.15s;
+  }
+  .sk-pill--home { width: 30px; padding: 0; }
+  .sk-pin:hover .sk-pill, .sk-pin.is-hover .sk-pill { transform: scale(1.08); }
+  .sk-pin.is-seen .sk-pill { color: #717171; }
+  .sk-pin.is-on .sk-pill { background: #222; color: #fff; transform: scale(1.08); }
+  .sk-pin.is-dim:not(.is-on):not(.is-hover):not(:hover) .sk-pill { opacity: 0.55; }
+  /* Collided pill: a small ringed dot until zoomed in (hover/list hover shows the price) */
+  .sk-pin.is-dot:not(.is-on):not(.is-hover):not(:hover) .sk-pill {
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    font-size: 0;
+    border: 2px solid #222;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  }
+  .sk-pin.is-dot:not(.is-on):not(.is-hover):not(:hover) .sk-pill svg { display: none; }
+  .sk-landmark {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    font: 700 11.5px Inter, sans-serif;
+    color: #151515;
+    text-shadow: 0 0 3px #fff, 0 0 3px #fff;
+  }
+  .sk-landmark i {
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: #151515;
+    border: 2px solid #fff;
+    box-sizing: border-box;
+    flex: none;
+  }
 }

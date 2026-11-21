@@ -383,7 +383,7 @@ function TeamCard({ user, setUser }) {
 						<span className="truncate font-semibold">{i.ownerName} invited you to their team</span>
 						<span className="text-[12.5px] text-sk-muted">{i.scopes.map(scopeLabel).join(", ")}</span>
 					</span>
-					<button type="button" className={btnSmGhost} disabled={accept.isPending} onClick={() => accept.mutate(i.ownerId)}>
+					<button type="button" className={btnSmGhost} disabled={accept.isPending} onClick={() => window.confirm("While you're on this team, Seek shows their properties instead of yours. Your own listings, applicants and rent stay hidden until you leave the team. Accept?") && accept.mutate(i.ownerId)}>
 						Accept
 					</button>
 				</div>

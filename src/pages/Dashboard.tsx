@@ -167,11 +167,12 @@ export default function Dashboard() {
 	const firstName = (user?.name ?? "").split(" ")[0];
 
 	const offers = (ov?.todo ?? []).filter((t: any) => t.kind === "MAKE_OFFER" && t.applicationId) as any[];
-	type Item = { dot: string; title: string; sub: string; cta: string; to: string; primary: boolean; onClick?: () => void; href?: string };
+	type Item = { id: string; dot: string; title: string; sub: string; cta: string; to: string; primary: boolean; onClick?: () => void; href?: string };
 	const needsYou: Item[] = ov
 		? [
 				...(offers.length > 0
 					? offers.map(t => ({
+							id: `offer-${t.applicationId}`,
 							dot: "bg-sk-accent",
 							title: t.title,
 							sub: `${t.members ?? 1} ${t.members === 1 ? "person" : "people"} · all passports ready`,
@@ -182,6 +183,7 @@ export default function Dashboard() {
 					: ov.applicants.qualified > 0
 					? [
 							{
+								id: "qualified",
 								dot: "bg-sk-accent",
 								title: `${ov.applicants.qualified} qualified ${ov.applicants.qualified === 1 ? "household" : "households"} waiting`,
 								sub: "Passport complete, ready for a decision",
@@ -192,6 +194,7 @@ export default function Dashboard() {
 						]
 					: []),
 				...lateRows.map(r => ({
+					id: `late-${r.payment}`,
 					dot: "bg-sk-danger",
 					title: `Rent late: ${r.tenant?.name ?? "Tenant"}, ${r.property ?? "your property"}`,
 					sub: `${gbp(r.amount)} · due ${fmtDay(r.dueDate)}${r.remindersSent ? " · reminded" : ""}`,
@@ -201,6 +204,7 @@ export default function Dashboard() {
 					primary: false
 				})),
 				...openRepairs.map((r: any) => ({
+					id: `repair-${r._id}`,
 					dot: "bg-sk-warn",
 					title: `Repair: ${r.title}, ${r.tenancy?.listing?.propertyTitle ?? r.tenancy?.listing?.streetAddress ?? "your property"}`,
 					sub:
@@ -209,12 +213,14 @@ export default function Dashboard() {
 							: `Reported by ${r.reportedBy?.name ?? "a tenant"}, not booked yet`,
 					cta: "Thread",
 					photoUrls: r.photoUrls,
+					description: r.description,
 					to: `/inbox?tenancy=${r.tenancy?._id ?? ""}`,
 					primary: false
 				})),
 				...[...ov.compliance]
 					.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity])
-					.map(c => ({
+					.map((c, i) => ({
+						id: `compliance-${i}`,
 						dot: SEVERITY_DOT[c.severity],
 						title: `${c.listingTitle}: ${c.message}`,
 						sub: `Due ${fmtDay(c.dueDate)}`,
@@ -299,13 +305,14 @@ export default function Dashboard() {
 							)}
 							{needsYou.map(item => (
 								<div
-									key={item.title}
+									key={item.id}
 									className="flex items-center gap-3 border-t border-sk-hair py-3"
 								>
 									<span className={`h-2.5 w-2.5 shrink-0 rounded-full ${item.dot}`} />
 									<div className="flex min-w-0 flex-1 flex-col gap-0.5">
 										<span className="text-sm font-semibold">{item.title}</span>
 										<span className="text-[12.5px] text-sk-muted">{item.sub}</span>
+										{item.description && <span className="whitespace-pre-line text-[12.5px] text-sk-text2">{item.description}</span>}
 										{item.photoUrls?.length > 0 && <RepairPhotoThumbs urls={item.photoUrls} />}
 									</div>
 									{item.onClick ? (

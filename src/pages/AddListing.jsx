@@ -585,7 +585,7 @@ const AddListing = () => {
 					: {};
 
 				res.data.requirements.length !== 0
-					? setRequirements(res.data.requirements)
+					? setRequirements(res.data.requirements.map(r => ({ ...r, id: r._id ?? r.id })))
 					: {};
 
 				res.data.registrationNumber
@@ -692,14 +692,10 @@ const AddListing = () => {
 				}
 				case 4: {
 					try {
-						const existingUrls = photos
-							.filter(p => p.url.startsWith("https://"))
-							.map(p => p.url);
-
-						const newFiles = photos.filter(p => p.file);
-
-						const uploadedUrls = await Promise.all(
-							newFiles.map(async p => {
+						// Keep the drag order: upload new files in place, reuse saved urls.
+						const combinedUrls = await Promise.all(
+							photos.map(async p => {
+								if (!p.file) return p.url;
 								const res = await axios.get(
 									`${API_BASE}/upload/presign`,
 									{
@@ -720,7 +716,6 @@ const AddListing = () => {
 							})
 						);
 
-						const combinedUrls = [...existingUrls, ...uploadedUrls];
 						setAllPhotosUrls(combinedUrls);
 
 						const step4Data = cleanObject({

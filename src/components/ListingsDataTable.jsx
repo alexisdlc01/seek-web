@@ -195,11 +195,10 @@ const ListingsDataTable = () => {
 							<b>Available:</b>{" "}
 							{new Date(
 								selectedListing.availableFrom
-							).toLocaleDateString()}{" "}
-							-{" "}
-							{new Date(
-								selectedListing.availableUntil
 							).toLocaleDateString()}
+							{selectedListing.availableUntil
+								? ` - ${new Date(selectedListing.availableUntil).toLocaleDateString()}`
+								: " onwards"}
 						</p>
 						<p>
 							<b>Description:</b> {selectedListing.propertyDesc}

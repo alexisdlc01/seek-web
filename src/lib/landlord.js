@@ -82,9 +82,22 @@ export const fmtDateTime = (iso) =>
 				day: "numeric",
 				month: "short",
 				hour: "2-digit",
-				minute: "2-digit"
+				minute: "2-digit",
+				timeZone: "Europe/London"
 			})
 		: "";
+
+// datetime-local has no zone: read it as a Europe/London wall-clock time, whatever the browser zone.
+const londonFmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/London", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", hourCycle: "h23" });
+const londonWall = d => {
+	const p = Object.fromEntries(londonFmt.formatToParts(d).map(x => [x.type, +x.value]));
+	return new Date(Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute));
+};
+export const londonToIso = local => {
+	const guess = new Date(local + "Z");
+	const first = new Date(guess - (londonWall(guess) - guess));
+	return new Date(guess - (londonWall(first) - first)).toISOString();
+};
 
 export const monthLabel = (ym) => {
 	const [y, m] = ym.split("-").map(Number);

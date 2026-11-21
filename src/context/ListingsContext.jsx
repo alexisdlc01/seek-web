@@ -34,13 +34,22 @@ export const ListingsProvider = ({ children }) => {
 		}
 	}, []);
 
+	const isLandlord = user?.role === "LANDLORD_AGENCY";
+	const userId = user?._id;
+
+	// Drop the previous landlord's data on logout or account switch.
 	useEffect(() => {
-		if (!user || user.role !== "LANDLORD_AGENCY") return;
-		reload();
-	}, [user, reload]);
+		setListings([]);
+		setCurrentListing({});
+	}, [userId, isLandlord]);
 
 	useEffect(() => {
-		if (!user || user.role !== "LANDLORD_AGENCY") return;
+		if (!isLandlord) return;
+		reload();
+	}, [userId, isLandlord, reload]);
+
+	useEffect(() => {
+		if (!isLandlord) return;
 		socketRef.current = io(`${API_BASE}/listings`, {
 			withCredentials: true,
 			transports: ["websocket"]
@@ -88,7 +97,7 @@ export const ListingsProvider = ({ children }) => {
 		return () => {
 			socketRef.current.disconnect();
 		};
-	}, [user, reload]);
+	}, [userId, isLandlord, reload]);
 
 	return (
 		<ListingsContext.Provider

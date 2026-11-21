@@ -91,12 +91,30 @@ export default function StudentFind() {
 	const active = CHIPS.filter((c) => chips.has(c.key));
 	const params = Object.assign({ limit: 50 }, bounds, ...active.map((c) => c.params ?? {}));
 
+	const paramsKey = JSON.stringify(params);
+	// Extra pages appended by "Load more"; ignored once the filters or map area change.
+	const [more, setMore] = useState({ key: "", rows: [], page: 1, done: false, busy: false });
+	const extra = more.key === paramsKey ? more : { rows: [], page: 1, done: false };
+
 	const listingsQ = useQuery({
 		queryKey: ["listings-bbox", params],
 		enabled: !!bounds,
 		placeholderData: keepPreviousData,
 		queryFn: async () => (await api.get("/listings/filter", { params })).data
 	});
+
+	const loadMore = async () => {
+		const page = extra.page + 1;
+		setMore({ ...extra, key: paramsKey, busy: true });
+		try {
+			const rows = (await api.get("/listings/filter", { params: { ...params, page } })).data;
+			setMore({ key: paramsKey, rows: [...extra.rows, ...rows], page, done: rows.length < params.limit, busy: false });
+		} catch (e) {
+			setMore({ ...extra, key: paramsKey, busy: false });
+			setNotice(errMessage(e, "We couldn't load more homes."));
+		}
+	};
+	const mayHaveMore = !extra.done && (listingsQ.data?.length ?? 0) >= params.limit;
 
 	const likedQ = useQuery({
 		queryKey: ["liked-listings"],
@@ -154,12 +172,12 @@ export default function StudentFind() {
 	// Map area listings, with the client-side chips applied.
 	const areaHomes = useMemo(
 		() =>
-			(listingsQ.data ?? [])
+			[...(listingsQ.data ?? []), ...extra.rows]
 				.filter((l) => active.every((c) => !c.test || c.test(l)))
 				.map(fromListing)
 				.filter((h) => h.lat != null && h.lng != null),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[listingsQ.data, chips]
+		[listingsQ.data, extra.rows, chips]
 	);
 	const aiHomes = useMemo(() => (ai?.listings ?? []).map(fromAi), [ai]);
 	const homes = ai ? aiHomes : areaHomes;
@@ -255,7 +273,7 @@ export default function StudentFind() {
 
 					<div className="flex flex-wrap items-center justify-between gap-2">
 						<h1 className="font-display text-xl font-semibold">
-							{ai ? `${homes.length} homes match · sorted by match` : listingsQ.isLoading || !bounds ? "Finding homes on the map…" : `${homes.length} homes in this map area`}
+							{ai ? `${homes.length} homes match · sorted by match` : listingsQ.isLoading || !bounds ? "Finding homes on the map…" : `${homes.length}${mayHaveMore ? "+" : ""} homes in this map area`}
 						</h1>
 						{p && (
 							<Link to="/student/profile" className="rounded-[10px] bg-sk-tint px-3 py-2 text-[13px] font-semibold text-sk-link no-underline">
@@ -328,6 +346,11 @@ export default function StudentFind() {
 							</article>
 						))}
 					</div>
+					{!ai && mayHaveMore && (
+						<button type="button" onClick={loadMore} disabled={more.busy} className="cursor-pointer self-center rounded-[10px] border border-sk-border2 bg-sk-card px-4 py-2.5 text-[13.5px] font-semibold text-sk-text disabled:opacity-60">
+							{more.busy ? "Loading…" : "Load more homes"}
+						</button>
+					)}
 				</section>
 
 				<section aria-label="Map" className="h-[380px] shrink-0 border-t border-sk-border md:h-auto md:w-[470px] md:border-l md:border-t-0">

@@ -90,6 +90,7 @@ export default function SignInStudent() {
 		else if (res) showError(String(res));
 		else {
 			const back = params.get("returnTo");
+			try { localStorage.removeItem("seek:returnTo"); } catch { /* storage unavailable */ }
 			navigate(back && /^\/student\/[^/]/.test(back) ? back : "/student/find");
 		}
 	};
@@ -159,6 +160,12 @@ export default function SignInStudent() {
 					Don't have an account?{" "}
 					<Link
 						to="/signup/student"
+						onClick={() => {
+							const back = params.get("returnTo");
+							try {
+								if (back && /^\/student\/[^/]/.test(back)) localStorage.setItem("seek:returnTo", back);
+							} catch { /* storage unavailable */ }
+						}}
 						className="text-[var(--primary-color)] font-semibold underline-offset-2 hover:underline"
 					>
 						Signup

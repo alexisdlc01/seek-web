@@ -447,7 +447,7 @@ function ApplicationCard({
 								{!active || !m.shareExpiresAt ? (
 									<span className="text-[12.5px] text-sk-muted">
 										{active
-											? "Ask them to share their Seek Passport with you."
+											? "Their files are not shared with you right now. Access reopens when you make them an offer."
 											: "Ask them to share their Seek Passport again to view their files."}
 									</span>
 								) : files.length === 0 ? (

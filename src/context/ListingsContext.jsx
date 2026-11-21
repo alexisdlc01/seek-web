@@ -46,6 +46,23 @@ export const ListingsProvider = ({ children }) => {
 			transports: ["websocket"]
 		});
 
+		const socket = socketRef.current;
+		// socket.io fires "connect" on the first connection and every reconnect:
+		// it is the initial load, and it recovers events missed while offline.
+		socket.on("connect", reload);
+		// The server drops the socket when its access token expires and
+		// socket.io never retries that. Refresh the cookie through an
+		// interceptor-covered call (the interceptor skips /auth/ URLs), then reconnect.
+		socket.on("disconnect", async reason => {
+			if (reason !== "io server disconnect") return;
+			try {
+				await axios.get(`${API_BASE}/conversation`, { withCredentials: true });
+				if (socketRef.current === socket) socket.connect();
+			} catch {
+				/* session over: do not reconnect */
+			}
+		});
+
 		const handleListingUpdated = updatedListing => {
 			setListings(prev =>
 				prev.map(listing =>
@@ -71,7 +88,7 @@ export const ListingsProvider = ({ children }) => {
 		return () => {
 			socketRef.current.disconnect();
 		};
-	}, [user]);
+	}, [user, reload]);
 
 	return (
 		<ListingsContext.Provider

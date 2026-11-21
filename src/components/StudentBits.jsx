@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, errMessage } from "../lib/landlord.js";
@@ -102,7 +103,8 @@ export function Modal({ title, onClose, children, wide = false }) {
 		};
 	}, [onClose]);
 
-	return (
+	// Portal: a sticky ancestor (sidebar) traps z-index, so render at body level.
+	return createPortal(
 		<div className="fixed inset-0 z-[2000] flex items-end justify-center sm:items-center sm:p-6">
 			<button type="button" aria-label="Close" onClick={onClose} className="absolute inset-0 cursor-pointer border-none bg-black/55" />
 			<div
@@ -126,7 +128,8 @@ export function Modal({ title, onClose, children, wide = false }) {
 				</div>
 				{children}
 			</div>
-		</div>
+		</div>,
+		document.body,
 	);
 }
 

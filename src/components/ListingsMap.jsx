@@ -100,7 +100,7 @@ export default function ListingsMap({
 	}, [center, listings]);
 
 	return (
-		<div className={`relative isolate overflow-hidden ${className}`}>
+		<div className={`sk-map relative isolate overflow-hidden ${className}`}>
 			<MapContainer
 				center={initialCenter}
 				zoom={zoom}

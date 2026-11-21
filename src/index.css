@@ -1050,26 +1050,47 @@ textarea::placeholder,
   justify-content: center;
   box-sizing: border-box;
   min-width: 60px;
-  height: 36px;
-  padding: 0 10px;
-  border-radius: 18px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 16px;
   font: 700 13px Inter, sans-serif;
-  background: var(--sk-accent);
-  color: var(--sk-on-accent);
-  border: 2px solid #ffffff;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  background: #ffffff;
+  color: #222222;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   transition: transform 0.15s;
 }
+.sk-pill:hover {
+  transform: scale(1.08);
+}
 .sk-pill--on {
-  background: #ffffff;
-  color: #0b2a5b;
-  border: 3px solid var(--sk-accent);
-  transform: scale(1.15);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  background: #222222;
+  color: #ffffff;
+  border-color: #222222;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 .sk-pill--dim {
-  opacity: 0.45;
+  opacity: 0.6;
+}
+/* Airbnb-like soft map: mute the OSM tiles only (pills and controls untouched) */
+.sk-map .leaflet-tile-pane {
+  filter: saturate(0.35) brightness(1.04) contrast(0.92);
+}
+:root[data-theme="dark"] .sk-map .leaflet-tile-pane {
+  filter: invert(0.9) hue-rotate(180deg) saturate(0.3) brightness(0.95) contrast(0.9);
+}
+.sk-map .leaflet-bar {
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+.sk-map .leaflet-bar a {
+  background: #ffffff;
+  color: #222222;
+  border-bottom-color: rgba(0, 0, 0, 0.08);
 }
 .sk-landmark {
   display: flex;

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, Chip, Empty, ErrorState, Loading, Page, PageHeader, btnSmGhost, btnSmPrimary } from "../components/sk.jsx";
@@ -543,7 +543,23 @@ export default function Contracts() {
 	});
 
 	const all = tenancies.data ?? [];
-	const list = only ? all.filter((t) => t._id === only) : all;
+	// One group per property; the selector shows a single property's tenancies at a time.
+	const groups = [];
+	for (const t of all) {
+		const id = t.listing?._id ?? t._id;
+		const g = groups.find((x) => x.id === id) ?? groups[groups.push({ id, title: t.listing?.propertyTitle || t.listing?.streetAddress || "Property", tenancies: [] }) - 1];
+		g.tenancies.push(t);
+	}
+	// "Needs action" = a live tenancy with no signed contract yet.
+	const needsAction = (g) => !!contracts.data && g.tenancies.some((t) => ["ACTIVE", "PENDING_ACCEPTANCE"].includes(t.status) && !contracts.data.some((c) => c.tenancy?._id === t._id && c.status === "SIGNED"));
+	const wanted = params.get("property");
+	const selected = groups.find((g) => g.id === wanted) ?? groups.find(needsAction) ?? groups[0];
+	// Pin the default into the URL so it doesn't jump when the last contract gets signed.
+	const defaultId = tenancies.data && contracts.data && !wanted ? selected?.id : null;
+	useEffect(() => {
+		if (defaultId) setParams((prev) => { prev.set("property", defaultId); return prev; }, { replace: true });
+	}, [defaultId, setParams]);
+	const list = only ? all.filter((t) => t._id === only) : (selected?.tenancies ?? []);
 	const protectedTotal = list.filter((t) => t.depositProtectedAt).reduce((n, t) => n + t.depositAmount * Math.max(1, t.tenants.length), 0);
 	const calendar = [...(overview.data?.compliance ?? [])].sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
@@ -559,6 +575,22 @@ export default function Contracts() {
 					{(tenancies.isLoading || contracts.isLoading) && <Loading label="Loading tenancies" />}
 					{tenancies.isError && <ErrorState error={tenancies.error} onRetry={() => tenancies.refetch()} />}
 					{contracts.isError && <ErrorState error={contracts.error} onRetry={() => contracts.refetch()} />}
+					{!only && groups.length > 1 && selected && (
+						<label className="flex flex-col gap-1 text-[12.5px] text-sk-muted">
+							Property
+							<select
+								value={selected.id}
+								onChange={(e) => setParams((prev) => { prev.set("property", e.target.value); return prev; })}
+								className="h-10 rounded-[10px] border border-sk-border2 bg-sk-bg px-3 text-[13.5px] text-sk-text"
+							>
+								{groups.map((g) => (
+									<option key={g.id} value={g.id}>
+										{g.title}{g.tenancies.length > 1 ? ` (${g.tenancies.length} tenancies)` : ""}
+									</option>
+								))}
+							</select>
+						</label>
+					)}
 					{only && (
 						<div className="flex items-center justify-between gap-3 rounded-xl bg-sk-card2 px-3 py-2 text-[13px] text-sk-text2">
 							Showing one tenancy

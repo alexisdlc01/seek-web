@@ -34,11 +34,7 @@ export default function AppShell({ role, label, items }) {
 			{items.map((item, i) => {
 				const active = isActive(item);
 					const startsSection = item.section && item.section !== items[i - 1]?.section;
-					const heading = startsSection ? (
-						<p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wide text-sk-muted">
-							{item.section}
-						</p>
-					) : null;
+					const heading = startsSection && i > 0 ? <div className="mx-3 my-2 h-px bg-sk-hair" /> : null;
 				return (
 					<Fragment key={item.to}>
 							{heading}

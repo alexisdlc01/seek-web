@@ -43,6 +43,7 @@ axios.interceptors.response.use(undefined, refreshOn401);
 // shortcut: working days skip weekends only, not bank holidays (same as the backend).
 export const depositRules = (nation, monthlyPence, tenancy) => {
 	const scot = nation === "SCOTLAND";
+	const ni = nation === "NORTHERN_IRELAND";
 	let protectBy = null;
 	if (scot && tenancy?.startDate) {
 		protectBy = new Date(tenancy.startDate);
@@ -50,12 +51,12 @@ export const depositRules = (nation, monthlyPence, tenancy) => {
 			protectBy.setDate(protectBy.getDate() + 1);
 			if (protectBy.getDay() % 6) left--;
 		}
-	} else if (!scot && tenancy?.depositReceivedAt) protectBy = new Date(new Date(tenancy.depositReceivedAt).getTime() + 30 * 86400000);
+	} else if (!scot && tenancy?.depositReceivedAt) protectBy = new Date(new Date(tenancy.depositReceivedAt).getTime() + (ni ? 28 : 30) * 86400000);
 	return {
-		capPence: scot ? monthlyPence * 2 : Math.floor(((monthlyPence * 12) / 52) * 5),
-		capName: scot ? "two months' rent" : "5 weeks' rent",
-		capShort: scot ? "two months" : "five weeks",
-		window: scot ? "30 working days of the tenancy starting" : "30 days of receiving the deposit",
+		capPence: scot ? monthlyPence * 2 : ni ? monthlyPence : Math.floor(((monthlyPence * 12) / 52) * 5),
+		capName: scot ? "two months' rent" : ni ? "one month's rent" : "5 weeks' rent",
+		capShort: scot ? "two months" : ni ? "one month" : "five weeks",
+		window: scot ? "30 working days of the tenancy starting" : ni ? "28 days of receiving the deposit" : "30 days of receiving the deposit",
 		protectBy
 	};
 };

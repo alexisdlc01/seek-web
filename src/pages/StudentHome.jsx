@@ -285,6 +285,7 @@ export default function StudentHome() {
 	const [leaving, setLeaving] = useState(false);
 	const [notice, setNotice] = useState(null);
 	const returned = useCheckoutReturn();
+	const ended = tenancy?.status === "ENDED";
 
 	const planQ = useQuery({ queryKey: ["rent-plan", tid], enabled: !!tid, queryFn: async () => (await api.get(`/payments/plan/${tid}`)).data });
 	const paymentsQ = useQuery({ queryKey: ["my-payments"], queryFn: async () => (await api.get("/payments/mine")).data });
@@ -373,6 +374,7 @@ export default function StudentHome() {
 
 			<Notice notice={returned} />
 			<Notice notice={notice} />
+			{ended && <Notice notice={{ tone: "ok", text: `Your tenancy ended on ${londonDay(tenancy.endDate)}.` }} />}
 
 			{followOn && (
 				<Card title="Your landlord has set up your next tenancy" className="!gap-2.5">
@@ -394,16 +396,16 @@ export default function StudentHome() {
 
 			<div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
 				<div className="flex flex-col gap-1.5 rounded-2xl bg-sk-card2 p-[18px]">
-					<span className="text-[13px] text-sk-muted">Next rent{next ? ` · ${fmtDay(next.dueDate)}` : ""}</span>
-					<span className="font-display text-[28px] font-semibold">{gbp(next?.amount ?? tenancy.monthlyRent)}</span>
+					<span className="text-[13px] text-sk-muted">{ended && !next ? "Rent" : "Next rent"}{next ? ` · ${fmtDay(next.dueDate)}` : ""}</span>
+					{!(ended && !next) && <><span className="font-display text-[28px] font-semibold">{gbp(next?.amount ?? tenancy.monthlyRent)}</span>
 					<span className={`text-[12.5px] ${next?.status === "LATE" || next?.status === "FAILED" ? "text-sk-warn" : "text-sk-ok"}`}>
 						{plan?.plan ? `${PLAN_LABEL[plan.plan.frequency]} ${plan.plan.autopay ? (plan.autopayCardSaved ? "autopay on" : "· autopay starts after you pay once by card") : "· reminder before it's due"}` : "No rent plan yet"}
 						{lastPaid ? ` · ${new Date(lastPaid.dueDate).toLocaleDateString("en-GB", { month: "long" })} paid` : ""}
 						{next?.status === "LATE" ? " · overdue" : ""}
-					</span>
+					</span></>}
 					<div className="flex flex-wrap items-center gap-3 pt-1">
 						{next && <PayNowButton payment={next} className="h-9 rounded-[10px] border-none bg-sk-accent px-3 text-[13px] font-semibold text-sk-on-accent" />}
-						<Link to="/student/home/rent" className="text-[13px] font-semibold text-sk-link">Rent plan →</Link>
+						{!(ended && !next) && <Link to="/student/home/rent" className="text-[13px] font-semibold text-sk-link">Rent plan →</Link>}
 						<Link to="/student/home/receipts" className="text-[13px] font-semibold text-sk-link">Receipts →</Link>
 					</div>
 				</div>
@@ -484,7 +486,7 @@ export default function StudentHome() {
 					<Card className="!gap-2.5">
 						<div className="flex items-center justify-between">
 							<h2 className="font-display text-lg font-semibold">Repairs</h2>
-							<button type="button" onClick={() => setReporting(true)} className="h-9 cursor-pointer rounded-[10px] border-none bg-sk-accent px-3 text-[13px] font-semibold text-sk-on-accent">Report a problem</button>
+							{!ended && <button type="button" onClick={() => setReporting(true)} className="h-9 cursor-pointer rounded-[10px] border-none bg-sk-accent px-3 text-[13px] font-semibold text-sk-on-accent">Report a problem</button>}
 						</div>
 						{repairsQ.isLoading && <Loading label="Loading repairs" />}
 						{!repairsQ.isLoading && repairs.length === 0 && <span className="text-sm text-sk-text2">Nothing reported. If something breaks, report it here and your landlord is told straight away.</span>}
@@ -504,7 +506,7 @@ export default function StudentHome() {
 							</div>
 						))}
 					</Card>
-					<Card className="!gap-2.5">
+					{!ended && <Card className="!gap-2.5">
 						<h2 className="font-display text-lg font-semibold">Moving out</h2>
 						{tenancy.noticeGivenAt ? (
 							<span className="text-sm text-sk-text2">Your tenancy ends on {londonDay(tenancy.endDate)}.</span>
@@ -515,10 +517,12 @@ export default function StudentHome() {
 									<button type="button" onClick={() => setLeaving(true)} className={`${btnGhost} self-start`}>Confirm notice for {londonDay(tenancy.noticeEndDate)}</button>
 								)}
 							</>
+						) : tenancy.periodic === false && l.nation === "NORTHERN_IRELAND" ? (
+							<span className="text-sm text-sk-text2">Your fixed term ends on {londonDay(tenancy.endDate)}.</span>
 						) : (
 							tenancy.status === "ACTIVE" && <button type="button" onClick={() => setLeaving(true)} className={`${btnGhost} self-start`}>Give notice</button>
 						)}
-					</Card>
+					</Card>}
 				</div>
 
 				<aside className="flex min-w-0 flex-[1_1_300px] flex-col gap-4">

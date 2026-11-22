@@ -115,7 +115,9 @@ export default function StudentBills() {
 	const { user } = useContext(UserContext);
 	const { tenancy, isLoading, isError, error, refetch } = useMyTenancy();
 	const tid = tenancy?._id;
-	const billsQ = useQuery({ queryKey: ["bills", tid], enabled: !!tid, queryFn: async () => (await api.get(`/bills/tenancy/${tid}`)).data });
+	// An invited student is not a tenant yet: the bills route answers 403.
+	const pending = tenancy?.status === "PENDING_ACCEPTANCE";
+	const billsQ = useQuery({ queryKey: ["bills", tid], enabled: !!tid && !pending, queryFn: async () => (await api.get(`/bills/tenancy/${tid}`)).data });
 	const [notice, setNotice] = useState(null);
 
 	const markPaid = useMutation({
@@ -132,7 +134,7 @@ export default function StudentBills() {
 	if (billsQ.isError) return <Page><ErrorState error={billsQ.error} onRetry={() => billsQ.refetch()} /></Page>;
 
 	const back = <Link to="/student/home" className="text-sk-link no-underline">← My home</Link>;
-	if (!tenancy)
+	if (!tenancy || pending)
 		return (
 			<Page>
 				<PageHeader eyebrow={back} title="Bills" />
@@ -141,7 +143,8 @@ export default function StudentBills() {
 		);
 
 	const bills = billsQ.data ?? [];
-	const included = bills.filter((b) => b.includedInRent);
+	// Synced utility emails create one included bill per month: show each category once.
+	const included = bills.filter((b) => b.includedInRent).filter((b, i, arr) => arr.findIndex((x) => x.category === b.category) === i);
 	const extra = bills.filter((b) => !b.includedInRent);
 	const due = extra.filter((b) => b.status !== "PAID" && !b.myPaid && b.myShare !== 0);
 	const people = tenancy.tenants?.length || tenancy.listing?.numOfPeople || 1;
@@ -175,7 +178,7 @@ export default function StudentBills() {
 
 			<div className="flex flex-wrap items-start gap-6">
 				<div className="flex min-w-0 flex-[1.4_1_480px] flex-col gap-4">
-					{bills.filter((b) => b.allowance).map((b) => {
+					{(bills.find((b) => b.allowance) ? [bills.find((b) => b.allowance)] : []).map((b) => {
 						const a = b.allowance;
 						const mine = a.overagePerMember?.find((m) => m.user === user?._id)?.amount;
 						return (

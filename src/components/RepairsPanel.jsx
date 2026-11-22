@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Chip, ErrorState, btnSmGhost, btnSmPrimary } from "./sk.jsx";
 import { RepairPhotoThumbs } from "./RepairPhotos.jsx";
-import { api, errMessage, fmtDateTime } from "../lib/landlord.js";
+import { api, errMessage, fmtDateTime, londonToIso } from "../lib/landlord.js";
 
 export const useLandlordRepairs = () =>
 	useQuery({
@@ -100,6 +100,7 @@ export default function RepairsPanel({ tenancyId }) {
 							<span className="font-semibold">{r.title}</span>
 							{r.description && <span className="whitespace-pre-line text-[12.5px] text-sk-text2">{r.description}</span>}
 							<span className="text-[12px] text-sk-muted">
+								{!tenancyId && (r.tenancy?.listing?.propertyTitle ?? r.tenancy?.listing?.streetAddress) ? `${r.tenancy.listing.propertyTitle ?? r.tenancy.listing.streetAddress} · ` : ""}
 								{r.reportedBy?.name ? `${r.reportedBy.name} · ` : ""}
 								{r.status === "SCHEDULED" && r.scheduledFor ? `Booked ${fmtDateTime(r.scheduledFor)}` : fmtDateTime(r.createdAt)}
 							</span>
@@ -120,7 +121,7 @@ export default function RepairsPanel({ tenancyId }) {
 									type="button"
 									className={btnSmGhost}
 									disabled={!value || update.isPending}
-									onClick={() => update.mutate({ id: r._id, status: "SCHEDULED", scheduledFor: new Date(value).toISOString() })}
+									onClick={() => update.mutate({ id: r._id, status: "SCHEDULED", scheduledFor: londonToIso(value) })}
 								>
 									Book in
 								</button>

@@ -176,6 +176,12 @@ export default function SignInLandlord() {
 							type="button"
 							onClick={() => {
 								// A new Google account opened here is a landlord one; an existing account keeps its role.
+								const back = params.get("returnTo");
+								try {
+									if (back && /^\/(?![/\\])/.test(back) && !back.startsWith("/student")) sessionStorage.setItem("seek.landlordReturnTo", back);
+								} catch {
+									/* storage unavailable: fall back to /dashboard */
+								}
 								window.location.href = `${API_BASE}/auth/google?role=LANDLORD_AGENCY`;
 							}}
 						/>

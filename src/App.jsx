@@ -100,7 +100,23 @@ const NotFound = () => {
 const APP_HOME = { STUDENT: "/student/find", LANDLORD_AGENCY: "/dashboard", SUPERUSER: "/superuser" };
 function LandingOrApp() {
 	const { user } = useContext(UserContext);
-	const to = user && APP_HOME[user.role];
+	// Landlord Google sign-in stashes its returnTo here (see SigninLandlord); removed in an effect so StrictMode's double render keeps it.
+	let back = null;
+	try {
+		back = sessionStorage.getItem("seek.landlordReturnTo");
+	} catch {
+		/* storage unavailable */
+	}
+	useEffect(() => {
+		if (!user) return;
+		try {
+			sessionStorage.removeItem("seek.landlordReturnTo");
+		} catch {
+			/* storage unavailable */
+		}
+	}, [user]);
+	const safe = back && /^\/(?![/\\])/.test(back) && !back.startsWith("/student");
+	const to = user && (user.role === "LANDLORD_AGENCY" && safe ? back : APP_HOME[user.role]);
 	return to ? <Navigate to={to} replace /> : <Home />;
 }
 

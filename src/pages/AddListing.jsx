@@ -53,7 +53,6 @@ const AddListing = () => {
 		"Other (please specify)": "OTHER"
 	};
 	const [propertyType, setPropertyType] = useState(null);
-	const [otherType, setOtherType] = useState("");
 	// Nation, bills and compliance dates (landlord redesign)
 	const [extras, setExtras] = useState({
 		nation: "ENGLAND",
@@ -221,8 +220,6 @@ const AddListing = () => {
 		if (!title?.trim()) missing.push("Property title");
 		if (!sizeSqM) missing.push("Size (sq m)");
 		if (!propertyType) missing.push("Property type");
-		if (propertyType === "Other (please specify)" && !otherType?.trim())
-			missing.push("Custom property type");
 		if (numOfPeople === 0) missing.push("Number of People");
 		if (!street?.trim()) missing.push("Street");
 		if (!city?.trim()) missing.push("City");
@@ -631,6 +628,7 @@ const AddListing = () => {
 
 	useEffect(() => {
 		(async () => {
+			try {
 			switch (step) {
 				case 2: {
 					const step1Data = cleanObject({
@@ -768,6 +766,16 @@ const AddListing = () => {
 					);
 					break;
 			}
+			} catch (error) {
+				// Steps 2, 3 and 5 (step 4 handles its own errors): don't move on as if it was saved.
+				toast.current?.show({
+					severity: "error",
+					summary: "Couldn't save",
+					detail: error?.response?.data?.message || "We couldn't save this step. Please try again."
+				});
+				stepperRef.current?.prevCallback();
+				setStep(step === 5 ? 4 : step - 1);
+			}
 		})();
 	}, [step]);
 
@@ -820,8 +828,6 @@ const AddListing = () => {
 							country={country}
 							setCountry={setCountry}
 							propertyTypes={propertyTypes}
-							otherType={otherType}
-							setOtherType={setOtherType}
 							regularBedrooms={regularBedrooms}
 							setRegularBedrooms={setRegularBedrooms}
 							ensuiteBedrooms={ensuiteBedrooms}
@@ -934,7 +940,6 @@ const AddListing = () => {
 							postcode={postcode}
 							country={country}
 							propertyTypes={propertyTypes}
-							otherType={otherType}
 							regularBedrooms={regularBedrooms}
 							ensuiteBedrooms={ensuiteBedrooms}
 							bedroomOptions={bedroomOptions}

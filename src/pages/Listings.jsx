@@ -61,7 +61,7 @@ function usePropertyFacts(prop, tenancies, payRows) {
 }
 
 // One property card.
-function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navigate }) {
+function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navigate, canEdit }) {
 	const f = usePropertyFacts(prop, tenancies, payRows);
 	const perRoom = prop.monthlyRent && prop.numOfPeople ? Math.round(prop.monthlyRent / prop.numOfPeople) : null;
 	const place = [prop.cityTown, (prop.postcodeZIP || "").split(" ")[0]].filter(Boolean).join(" ");
@@ -152,18 +152,18 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 				<div className="mt-auto flex gap-2 pt-2">
 					{prop.isDraft ? (
 						<>
-							<button type="button" className={btnPrimary} onClick={edit}>Continue listing</button>
-							<button
+							{canEdit && <button type="button" className={btnPrimary} onClick={edit}>Continue listing</button>}
+							{canEdit && <button
 								type="button"
 								aria-label="Delete draft"
 								className={`${btnGhost} !border-sk-danger-border !text-sk-danger`}
 								onClick={() => onDelete(prop)}
 							>
 								<i className="pi pi-trash" />
-							</button>
+							</button>}
 						</>
 					) : prop.moderationStatus === "NEEDS_CHANGES" ? (
-						<button type="button" className={btnPrimary} onClick={edit}>Fix listing</button>
+						canEdit && <button type="button" className={btnPrimary} onClick={edit}>Fix listing</button>
 					) : !prop.isVerified ? (
 						<button
 							type="button"
@@ -184,7 +184,7 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 							>
 								{f.isLet ? "Contract and deposit" : "View applicants"}
 							</button>
-							<button type="button" className={btnGhost} onClick={edit}>Edit</button>
+							{canEdit && <button type="button" className={btnGhost} onClick={edit}>Edit</button>}
 						</>
 					)}
 				</div>
@@ -198,6 +198,7 @@ export default function Listings() {
 	const { listings, setListings, setCurrentListing, loadError, reload } = useContext(ListingsContext);
 	const toast = useRef(null);
 	const { user } = useContext(UserContext);
+	const canEditListings = !user?.teamOf || user.teamOf.scopes?.includes("LISTINGS");
 	const canSeeTenancies = !user?.teamOf || user.teamOf.scopes?.includes("TENANCIES");
 	const tenanciesQ = useQuery({
 		queryKey: ["landlord-tenancies"],
@@ -317,14 +318,14 @@ export default function Listings() {
 						placeholder="Search address or postcode"
 						className="h-11 w-full rounded-xl border border-sk-border2 bg-sk-card px-3.5 text-sm text-sk-text sm:w-[260px]"
 					/>
-					<button
+					{canEditListings && <button
 						type="button"
 						onClick={addListing}
 						disabled={creating}
 						className="inline-flex h-11 cursor-pointer items-center rounded-xl border-none bg-sk-accent px-4 text-sm font-semibold text-sk-on-accent"
 					>
 						+ Add property
-					</button>
+					</button>}
 				</div>
 			</div>
 
@@ -358,9 +359,10 @@ export default function Listings() {
 						onOpen={setCurrentListing}
 						onDelete={confirmDelete}
 						navigate={navigate}
+						canEdit={canEditListings}
 					/>
 				))}
-				<button
+				{canEditListings && <button
 					type="button"
 					onClick={addListing}
 					disabled={creating}
@@ -368,7 +370,7 @@ export default function Listings() {
 				>
 					<span className="font-display text-[17px] font-semibold">Add a property</span>
 					<span className="text-[13px] text-sk-muted">Start a draft, finish it later.</span>
-				</button>
+				</button>}
 			</div>
 		</div>
 	);

@@ -293,7 +293,9 @@ export default function StudentHome() {
 	const billsPending = tenancy?.status === "PENDING_ACCEPTANCE";
 	const billsQ = useQuery({ queryKey: ["bills", tid], enabled: !!tid && !billsPending, queryFn: async () => (await api.get(`/bills/tenancy/${tid}`)).data });
 	const contractsQ = useQuery({ queryKey: ["contracts", tid], enabled: !!tid, queryFn: async () => (await api.get(`/contracts/tenancy/${tid}`)).data });
-	const repairsQ = useQuery({ queryKey: ["repairs", tid], enabled: !!tid, staleTime: 5 * 60 * 1000, queryFn: async () => (await api.get(`/repairs/tenancy/${tid}`)).data });
+	// Repairs routes check `tenants` only: an invited co-tenant gets 403.
+	const isTenant = (tenancy?.tenants ?? []).some((t) => idOf(t) === user?._id);
+	const repairsQ = useQuery({ queryKey: ["repairs", tid], enabled: !!tid && isTenant, staleTime: 5 * 60 * 1000, queryFn: async () => (await api.get(`/repairs/tenancy/${tid}`)).data });
 	const appsQ = useMyApplications();
 
 	const acceptTenancy = useMutation({
@@ -486,10 +488,10 @@ export default function StudentHome() {
 					<Card className="!gap-2.5">
 						<div className="flex items-center justify-between">
 							<h2 className="font-display text-lg font-semibold">Repairs</h2>
-							{!ended && <button type="button" onClick={() => setReporting(true)} className="h-9 cursor-pointer rounded-[10px] border-none bg-sk-accent px-3 text-[13px] font-semibold text-sk-on-accent">Report a problem</button>}
+							{!ended && isTenant && <button type="button" onClick={() => setReporting(true)} className="h-9 cursor-pointer rounded-[10px] border-none bg-sk-accent px-3 text-[13px] font-semibold text-sk-on-accent">Report a problem</button>}
 						</div>
 						{repairsQ.isLoading && <Loading label="Loading repairs" />}
-						{!repairsQ.isLoading && repairs.length === 0 && <span className="text-sm text-sk-text2">Nothing reported. If something breaks, report it here and your landlord is told straight away.</span>}
+						{isTenant && !repairsQ.isLoading && repairs.length === 0 && <span className="text-sm text-sk-text2">Nothing reported. If something breaks, report it here and your landlord is told straight away.</span>}
 						{repairs.map((r) => (
 							<div key={r._id} className="flex flex-col gap-1.5 text-sm">
 							<div className="flex justify-between gap-2.5">

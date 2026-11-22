@@ -28,8 +28,6 @@ const BasicInfoStep = ({
 	propertyType,
 	setPropertyType,
 	propertyTypes,
-	otherType,
-	setOtherType,
 	regularBedrooms,
 	setRegularBedrooms,
 	ensuiteBedrooms,
@@ -145,21 +143,6 @@ const BasicInfoStep = ({
 							panelClassName="listing-flow-panel"
 						/>
 					</div>
-					{propertyType === "Other (please specify)" && (
-						<div className="flex flex-col">
-							<label
-								htmlFor="otherType"
-								className="font-medium mb-2"
-							>
-								Please Specify Type
-							</label>
-							<InputText
-								id="otherType"
-								value={otherType}
-								onChange={e => setOtherType(e.target.value)}
-							/>
-						</div>
-					)}
 				</div>
 				<div className="flex flex-col">
 					<label htmlFor="street" className="font-medium mb-2">

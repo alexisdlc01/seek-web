@@ -137,6 +137,20 @@ function ApplicationRow({ a, holding, setNotice }) {
 		onError: fail("We couldn't accept this offer.")
 	});
 
+	const [confirming, setConfirming] = useState(false);
+	const drop = useMutation({
+		mutationFn: () => api.patch(`/application/${a._id}/${action}`),
+		onSuccess: () => {
+			setConfirming(false);
+			setNotice({ tone: "ok", text: action === "leave" ? "You left the group." : a.stage === "OFFERED" ? "You turned the offer down." : "Application deleted." });
+			["my-applications", "shares", "student-tenancies"].forEach((k) => qc.invalidateQueries({ queryKey: [k] }));
+		},
+		onError: (e) => {
+			setConfirming(false);
+			setNotice({ tone: "warn", text: errMessage(e, action === "leave" ? "We couldn't leave the group." : "We couldn't delete the application.") });
+		}
+	});
+
 	const invite = useMutation({
 		mutationFn: async () => (await api.post(`/application/${a._id}/invite`)).data,
 		onSuccess: async (d) => {
@@ -155,6 +169,9 @@ function ApplicationRow({ a, holding, setNotice }) {
 	// Prefer per-slot capacity; fall back to the plain list.
 	const slots = (l.viewingSlotAvailability ?? (l.viewingSlots ?? []).map((at) => ({ at, remaining: null }))).filter((x) => new Date(x.at) > new Date());
 	const people = a.members?.length ?? 1;
+	// Same rules as the backend: delete (or withdraw an offer) for the owner, leave for a member while the household is still open. Team members act for the landlord, not as a household.
+	const isOwner = idOf(a.owner) === user?._id;
+	const action = user?.teamOf ? null : isOwner && ["NOT_SENT", "SENT", "VIEWED", "OFFERED"].includes(a.stage) ? "delete" : !isOwner && ["NOT_SENT", "SENT", "VIEWED"].includes(a.stage) ? "leave" : null;
 	const needed = l.numOfPeople ?? 1;
 	const qualified = a.qualified && ["SENT", "VIEWED"].includes(a.stage);
 	const unpaidHolding = holding && holding.status !== "PAID";
@@ -219,6 +236,24 @@ function ApplicationRow({ a, holding, setNotice }) {
 					</div>
 					{unpaidHolding && <span className="text-[12.5px] text-sk-muted">Pay first: accepting the offer cancels an unpaid holding deposit.</span>}
 				</div>
+			)}
+			{action && (
+				<button type="button" onClick={() => setConfirming(true)} className="self-start border-none bg-transparent p-0 text-[13px] font-semibold text-sk-danger">
+					{action === "leave" ? "Leave group" : a.stage === "OFFERED" ? "Turn down the offer" : "Delete application"}
+				</button>
+			)}
+			{confirming && (
+				<Modal title={action === "leave" ? "Leave group?" : a.stage === "OFFERED" ? "Turn down the offer?" : "Delete application?"} onClose={() => setConfirming(false)}>
+					<p className="text-sm text-sk-text2">
+						{action === "leave" ? "You will be removed from this application and its conversation." : a.stage === "OFFERED" ? "The offer is withdrawn for your whole household. This can't be undone." : "Delete this application? This can't be undone."}
+					</p>
+					<div className="flex justify-end gap-2">
+						<button type="button" onClick={() => setConfirming(false)} className={btnGhost}>Cancel</button>
+						<button type="button" onClick={() => drop.mutate()} disabled={drop.isPending} className="h-10 cursor-pointer rounded-[10px] border-none bg-sk-danger px-4 text-sm font-semibold text-sk-on-accent disabled:opacity-60">
+							{drop.isPending ? "Please wait…" : action === "leave" ? "Leave" : a.stage === "OFFERED" ? "Turn down" : "Delete"}
+						</button>
+					</div>
+				</Modal>
 			)}
 		</div>
 	);
@@ -292,7 +327,7 @@ export default function StudentHome() {
 	// An invited student is not a tenant yet: the bills route answers 403.
 	const billsPending = tenancy?.status === "PENDING_ACCEPTANCE";
 	const billsQ = useQuery({ queryKey: ["bills", tid], enabled: !!tid && !billsPending, queryFn: async () => (await api.get(`/bills/tenancy/${tid}`)).data });
-	const contractsQ = useQuery({ queryKey: ["contracts", tid], enabled: !!tid, queryFn: async () => (await api.get(`/contracts/tenancy/${tid}`)).data });
+	const contractsQ = useQuery({ queryKey: ["contracts", tid], enabled: !!tid && !billsPending, queryFn: async () => (await api.get(`/contracts/tenancy/${tid}`)).data });
 	// Repairs routes check `tenants` only: an invited co-tenant gets 403.
 	const isTenant = (tenancy?.tenants ?? []).some((t) => idOf(t) === user?._id);
 	const repairsQ = useQuery({ queryKey: ["repairs", tid], enabled: !!tid && isTenant, staleTime: 5 * 60 * 1000, queryFn: async () => (await api.get(`/repairs/tenancy/${tid}`)).data });
@@ -363,6 +398,7 @@ export default function StudentHome() {
 	const toPay = bills.filter((b) => !b.includedInRent && b.status !== "PAID" && !b.myPaid && b.myShare !== 0);
 	const myBills = toPay.reduce((s, b) => s + (b.myShare ?? 0), 0);
 	const contracts = (contractsQ.data ?? []).filter((c) => c.status !== "DRAFT");
+	const withInventory = contracts.find((c) => c.inventory?.items?.length);
 	const docs = tenancy.documents ?? [];
 	const repairs = repairsQ.data ?? [];
 	const nextYear = (appsQ.data ?? []).filter((a) => a._id !== idOf(tenancy.application));
@@ -484,6 +520,18 @@ export default function StudentHome() {
 						)}
 						<AdviceCard topic="contract" tenancyId={tid} />
 					</Card>
+
+					{withInventory && (
+						<Card title="Check-in inventory" className="!gap-2.5">
+							{withInventory.inventory.items.map((i) => (
+								<div key={`${i.room}-${i.item}`} className="flex justify-between gap-3 text-sm">
+									<span className="text-sk-text2">{i.room} · {i.item}</span>
+									<span className="font-semibold">{i.condition}</span>
+								</div>
+							))}
+							<span className="text-[12.5px] text-sk-muted">Recorded {fmtDate(withInventory.inventory.recordedAt)}. Check it and tell your landlord about anything missing.</span>
+						</Card>
+					)}
 
 					<Card className="!gap-2.5">
 						<div className="flex items-center justify-between">

@@ -633,7 +633,7 @@ export default function Contracts() {
 					<section className="flex flex-col gap-2 rounded-2xl bg-sk-card2 p-5">
 						<span className="text-xs font-bold text-sk-link">Deposit rules</span>
 						<span className="text-[13.5px] leading-normal text-sk-text2">
-							Deposits are capped at 5 weeks of rent (two months in Scotland) and must be protected in a government-approved scheme within 30 days of receiving the deposit (30 working days of the tenancy starting in Scotland).
+							Deposits are capped at 5 weeks of rent (two months in Scotland, one month in Northern Ireland) and must be protected in a government-approved scheme within 30 days of receiving the deposit (30 working days of the tenancy starting in Scotland, 28 days in Northern Ireland).
 						</span>
 					</section>
 				</aside>

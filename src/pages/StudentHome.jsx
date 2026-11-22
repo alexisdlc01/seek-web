@@ -168,7 +168,7 @@ function ApplicationRow({ a, holding, setNotice }) {
 					: (STAGE[a.stage]?.text ?? a.stage)}
 				{a.viewingAt ? ` · viewing ${slotText(a.viewingAt)}` : ""}
 			</span>
-			{["NOT_SENT", "SENT"].includes(a.stage) && needed > 1 && (
+			{["NOT_SENT", "SENT", "VIEWED"].includes(a.stage) && needed > 1 && (
 				<span className="flex flex-wrap items-center gap-x-3 text-[13px] text-sk-text2">
 					{people} of {needed} people
 					{people < needed && idOf(a.owner) === user?._id && (

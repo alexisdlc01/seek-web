@@ -269,6 +269,8 @@ export default function ChatPage() {
 			);
 			setApplication(undefined);
 			setStatusOpen(false);
+			void queryClient.invalidateQueries({ queryKey: ["my-applications"] });
+			void queryClient.invalidateQueries({ queryKey: ["shares"] });
 			toast.current?.show({
 				severity: "success",
 				summary: "Application deleted",
@@ -692,6 +694,7 @@ function ChatStatusDialog({
 	const canLeave =
 		!!application &&
 		!isOwner &&
+		!currentUser?.teamOf &&
 		application.landlord !== currentUser?._id &&
 		["NOT_SENT", "SENT", "VIEWED"].includes(application.stage);
 

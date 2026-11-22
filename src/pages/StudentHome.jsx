@@ -238,6 +238,41 @@ function ApplicationsCard({ apps, loading, payments, setNotice, title }) {
 	);
 }
 
+const LONDON_DAY = { day: "numeric", month: "short", year: "numeric", timeZone: "Europe/London" };
+const londonDay = (d) => fmtDate(d, LONDON_DAY);
+const NOTICE_HELP = { ENGLAND: "England: at least 2 months' notice, ending on a rent day.", SCOTLAND: "Scotland: at least 28 days' notice.", WALES: "Wales: at least 28 days' notice.", NORTHERN_IRELAND: "Northern Ireland: at least 28 days' notice." };
+
+function NoticeModal({ tenancy, onClose }) {
+	const qc = useQueryClient();
+	const proposed = tenancy.noticeEndDate ? new Date(tenancy.noticeEndDate).toLocaleDateString("en-CA", { timeZone: "Europe/London" }) : "";
+	const [date, setDate] = useState(proposed);
+	const give = useMutation({
+		mutationFn: () => api.post(`/tenancies/${tenancy._id}/notice`, { endDate: date }),
+		onSuccess: () => {
+			qc.invalidateQueries({ queryKey: ["student-tenancies"] });
+			onClose();
+		}
+	});
+	return (
+		<Modal title="Give notice" onClose={onClose}>
+			<form className="flex flex-col gap-3" onSubmit={(e) => { e.preventDefault(); if (date) give.mutate(); }}>
+				<label className="flex flex-col gap-1.5 text-sm font-semibold">
+					Tenancy end date
+					<input type="date" value={date} onChange={(e) => setDate(e.target.value)} required disabled={!!proposed} className="w-full rounded-[10px] border border-sk-border2 bg-sk-card px-3 py-2.5 text-sm text-sk-text outline-none focus:border-sk-accent disabled:opacity-60" />
+					<span className="text-[12.5px] font-normal text-sk-muted">Your tenancy ends at midnight at the start of this day, so your last night is the night before.</span>
+				</label>
+				<span className="text-[12.5px] text-sk-muted">
+					{NOTICE_HELP[tenancy.listing?.nation] ?? "Scotland, Wales and Northern Ireland: at least 28 days' notice. England: at least 2 months, ending on a rent day."} Every housemate must give notice for the same date.
+				</span>
+				{give.isError && <div role="alert" className="rounded-xl bg-sk-warn-bg p-3 text-sm text-sk-warn">{errMessage(give.error, "We couldn't give notice.")}</div>}
+				<button type="submit" disabled={give.isPending || !date} className={`${btnPrimary} disabled:opacity-60`}>
+					{give.isPending ? "Sending…" : proposed ? `Confirm notice for ${londonDay(tenancy.noticeEndDate)}` : "Give notice"}
+				</button>
+			</form>
+		</Modal>
+	);
+}
+
 export default function StudentHome() {
 	const qc = useQueryClient();
 	const { user } = useContext(UserContext);
@@ -247,6 +282,7 @@ export default function StudentHome() {
 	// A follow-on tenancy (renewal) the user can still accept while another one is current.
 	const followOn = tenancy?.status === "ACTIVE" ? (myTenancies ?? []).find((t) => t._id !== tid && invitedTo(t)) : null;
 	const [reporting, setReporting] = useState(false);
+	const [leaving, setLeaving] = useState(false);
 	const [notice, setNotice] = useState(null);
 	const returned = useCheckoutReturn();
 
@@ -459,6 +495,21 @@ export default function StudentHome() {
 							</div>
 						))}
 					</Card>
+					<Card className="!gap-2.5">
+						<h2 className="font-display text-lg font-semibold">Moving out</h2>
+						{tenancy.noticeGivenAt ? (
+							<span className="text-sm text-sk-text2">Your tenancy ends on {londonDay(tenancy.endDate)}.</span>
+						) : tenancy.noticeEndDate ? (
+							<>
+								<span className="text-sm text-sk-text2">Notice given for {londonDay(tenancy.noticeEndDate)}. {(tenancy.noticeFrom ?? []).length} of {tenancy.tenants?.length ?? 0} housemates have given notice.</span>
+								{!(tenancy.noticeFrom ?? []).some((u) => idOf(u) === user?._id) && (
+									<button type="button" onClick={() => setLeaving(true)} className={`${btnGhost} self-start`}>Confirm notice for {londonDay(tenancy.noticeEndDate)}</button>
+								)}
+							</>
+						) : (
+							tenancy.status === "ACTIVE" && <button type="button" onClick={() => setLeaving(true)} className={`${btnGhost} self-start`}>Give notice</button>
+						)}
+					</Card>
 				</div>
 
 				<aside className="flex min-w-0 flex-[1_1_300px] flex-col gap-4">
@@ -479,6 +530,7 @@ export default function StudentHome() {
 				</aside>
 			</div>
 
+			{leaving && <NoticeModal tenancy={tenancy} onClose={() => setLeaving(false)} />}
 			{reporting && <ReportRepairModal tenancyId={tid} onClose={() => setReporting(false)} />}
 		</Page>
 	);

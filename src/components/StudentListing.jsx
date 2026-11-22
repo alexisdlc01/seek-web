@@ -123,8 +123,8 @@ export function ApplyModal({ id, onClose }) {
 	});
 
 	const each = perPerson(l);
-	// The listing's holding deposit is per room, in pounds; else the one-week cap.
-	const holding = l?.holdingDeposit ?? (each ? Math.floor((each * 12) / 52) : null);
+	// Per room, in pounds, capped at one week's rent; none charged if the listing has no deposit.
+	const holding = l?.holdingDeposit > 0 ? Math.min(l.holdingDeposit, Math.floor((each * 12) / 52)) : null;
 	const GUARANTOR = { UK_ONLY: "UK guarantor needed", UK_OR_SERVICE: "UK guarantor or guarantor service", NONE: "No guarantor needed" };
 	const rules = [
 		l?.criteria?.guarantor && GUARANTOR[l.criteria.guarantor],

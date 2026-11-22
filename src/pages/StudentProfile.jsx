@@ -169,8 +169,17 @@ export default function StudentProfile() {
 		onError: (e) => setNotice({ tone: "warn", text: errMessage(e, "We couldn't stop sharing.") })
 	});
 
+	const reopen = useMutation({
+		mutationFn: (id) => api.post(`/users/me/shares/${id}/reopen`),
+		onSuccess: () => {
+			setNotice({ tone: "ok", text: "Sharing is back on. The landlord can open your documents again." });
+			qc.invalidateQueries({ queryKey: ["shares"] });
+		},
+		onError: (e) => setNotice({ tone: "warn", text: errMessage(e, "We couldn't share again.") })
+	});
+
 	const p = passportQ.data;
-	const shares = (sharesQ.data ?? []).filter((s) => s.active);
+	const shares = (sharesQ.data ?? []).filter((s) => s.active || s.revokedBy === "student");
 
 	return (
 		<Page className="!gap-[22px]">
@@ -278,16 +287,27 @@ export default function StudentProfile() {
 									{s.viewer?.name ?? s.viewer?.companyName ?? "Landlord"}
 									{s.listing?.propertyTitle ? ` · ${s.listing.propertyTitle}` : ""}
 								</span>
-								<span className="text-[13px] text-sk-muted">until {fmtDate(s.expiresAt)}</span>
+								<span className="text-[13px] text-sk-muted">{s.revokedBy === "student" ? "Sharing stopped" : `until ${fmtDate(s.expiresAt)}`}</span>
 							</span>
-							<button
-								type="button"
-								onClick={() => stop.mutate(s._id)}
-								disabled={stop.isPending}
-								className="h-9 cursor-pointer rounded-[10px] border border-sk-danger-border bg-transparent px-3 text-[13px] font-semibold text-sk-danger disabled:opacity-60"
-							>
-								Stop sharing
-							</button>
+							{s.revokedBy === "student" ? (
+								<button
+									type="button"
+									onClick={() => reopen.mutate(s._id)}
+									disabled={reopen.isPending}
+									className="h-9 cursor-pointer rounded-[10px] border border-sk-border bg-transparent px-3 text-[13px] font-semibold text-sk-text disabled:opacity-60"
+								>
+									Share again
+								</button>
+							) : (
+								<button
+									type="button"
+									onClick={() => stop.mutate(s._id)}
+									disabled={stop.isPending}
+									className="h-9 cursor-pointer rounded-[10px] border border-sk-danger-border bg-transparent px-3 text-[13px] font-semibold text-sk-danger disabled:opacity-60"
+								>
+									Stop sharing
+								</button>
+							)}
 						</div>
 					))}
 				</Card>

@@ -76,7 +76,7 @@ export const ListingsProvider = ({ children }) => {
 			setListings(prev =>
 				prev.map(listing =>
 					listing._id === updatedListing._id
-						? updatedListing
+						? { ...listing, ...updatedListing }
 						: listing
 				)
 			);

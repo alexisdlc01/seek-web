@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import UserContext from "../context/UserContext.jsx";
 import { Modal } from "./StudentBits.jsx";
 import { ErrorState, Loading, btnPrimary, btnGhost } from "./sk.jsx";
 import { api, errMessage, fmtDate } from "../lib/landlord.js";
-import { perPerson, photoBackground, pounds, useMyApplications, usePassport } from "../lib/student.js";
+import { idOf, perPerson, photoBackground, pounds, useMyApplications, usePassport } from "../lib/student.js";
 
 const AMENITY = (a) => a.replace(/_/g, " ");
 
@@ -98,6 +99,7 @@ export function ListingDetailModal({ id, saved, onToggleSave, onApply, onClose }
  */
 export function ApplyModal({ id, onClose }) {
 	const qc = useQueryClient();
+	const { user } = useContext(UserContext);
 	const listingQ = useListing(id);
 	const passportQ = usePassport();
 	const appsQ = useMyApplications();
@@ -107,6 +109,9 @@ export function ApplyModal({ id, onClose }) {
 	const p = passportQ.data;
 	const existing = (appsQ.data ?? []).find((a) => (a.listing?._id ?? a.listing) === id);
 	const alreadySent = existing && existing.stage !== "NOT_SENT";
+	// Only the household owner can send a draft (backend 403 otherwise).
+	const notOwner = existing?.stage === "NOT_SENT" && idOf(existing.owner) !== user?._id;
+	const ownerName = existing?.members?.find((m) => m.user === idOf(existing.owner))?.name ?? "the household owner";
 
 	const send = useMutation({
 		mutationFn: async () => {
@@ -229,6 +234,8 @@ export function ApplyModal({ id, onClose }) {
 							<strong>{send.isSuccess ? "Application sent." : STAGE_TEXT[existing.stage] ?? existing.stage}</strong>
 							<span>Track it under Next year in My home. Messages from the landlord arrive in your inbox.</span>
 						</div>
+					) : notOwner ? (
+						<div role="status" className="rounded-xl bg-sk-card2 p-3 text-sm text-sk-text2">Only {ownerName} can send this application.</div>
 					) : (
 						<button type="button" onClick={() => send.mutate()} disabled={send.isPending || missingDocs.length > 0} className={`${btnPrimary} h-12 disabled:opacity-60`}>
 							{send.isPending ? "Sending…" : "Send application"}

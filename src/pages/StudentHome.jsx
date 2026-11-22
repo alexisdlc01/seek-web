@@ -288,7 +288,9 @@ export default function StudentHome() {
 
 	const planQ = useQuery({ queryKey: ["rent-plan", tid], enabled: !!tid, queryFn: async () => (await api.get(`/payments/plan/${tid}`)).data });
 	const paymentsQ = useQuery({ queryKey: ["my-payments"], queryFn: async () => (await api.get("/payments/mine")).data });
-	const billsQ = useQuery({ queryKey: ["bills", tid], enabled: !!tid, queryFn: async () => (await api.get(`/bills/tenancy/${tid}`)).data });
+	// An invited student is not a tenant yet: the bills route answers 403.
+	const billsPending = tenancy?.status === "PENDING_ACCEPTANCE";
+	const billsQ = useQuery({ queryKey: ["bills", tid], enabled: !!tid && !billsPending, queryFn: async () => (await api.get(`/bills/tenancy/${tid}`)).data });
 	const contractsQ = useQuery({ queryKey: ["contracts", tid], enabled: !!tid, queryFn: async () => (await api.get(`/contracts/tenancy/${tid}`)).data });
 	const repairsQ = useQuery({ queryKey: ["repairs", tid], enabled: !!tid, staleTime: 5 * 60 * 1000, queryFn: async () => (await api.get(`/repairs/tenancy/${tid}`)).data });
 	const appsQ = useMyApplications();
@@ -414,6 +416,12 @@ export default function StudentHome() {
 							: "Not protected yet · see what to do"}
 					</span>
 				</Link>
+				{billsPending ? (
+					<div className="flex flex-col gap-1.5 rounded-2xl border border-sk-border bg-sk-card p-[18px]">
+						<span className="text-[13px] text-sk-muted">Your share of bills</span>
+						<span className="text-[12.5px] text-sk-text2">Your household bills show here once you have a tenancy.</span>
+					</div>
+				) : (
 				<Link to="/student/home/bills" className="flex flex-col gap-1.5 rounded-2xl border border-sk-border bg-sk-card p-[18px] text-inherit no-underline">
 					<span className="text-[13px] text-sk-muted">Your share of bills</span>
 					<span className="font-display text-[28px] font-semibold">{billsQ.isLoading ? "…" : gbp(myBills)}</span>
@@ -422,6 +430,7 @@ export default function StudentHome() {
 						{bills.some((b) => b.category === "COUNCIL_TAX" && b.includedInRent) || docs.some((d) => d.type === "COUNCIL_TAX_EXEMPTION") ? " · council tax exempt" : ""}
 					</span>
 				</Link>
+				)}
 			</div>
 
 			<div className="flex flex-wrap items-start gap-6">

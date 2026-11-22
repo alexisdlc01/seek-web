@@ -212,6 +212,7 @@ export default function EditProfile() {
 							<TeamCard user={user} setUser={setUser} />
 						</>
 					)}
+					{!isLandlord && <CloseAccount />}
 				</div>
 
 				{isLandlord && (
@@ -464,7 +465,7 @@ function CloseAccount() {
 			{open && (
 				<Modal title="Close your account?" onClose={() => setOpen(false)}>
 					<span className="text-sm leading-snug text-sk-text2">
-						You'll be signed out and won't be able to sign in again. We can't close it while rent is still to be collected on an active tenancy.
+						You'll be signed out and won't be able to sign in again. We can't close it while rent is still to be paid or collected on an active tenancy.
 					</span>
 					{close.isError && <span role="alert" className="text-[13px] text-sk-warn">{errMessage(close.error)}</span>}
 					<div className="flex justify-end gap-2">

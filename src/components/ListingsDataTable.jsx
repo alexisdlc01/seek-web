@@ -72,6 +72,7 @@ const ListingsDataTable = () => {
 				text
 				onClick={async () => {
 					setSelectedListing(listing);
+					setLandlord(null);
 					setVisible(true);
 					try {
 						const res = await axios.get(
@@ -141,7 +142,7 @@ const ListingsDataTable = () => {
 					<div className="flex items-center gap-3 mt-4 p-3 border rounded-lg">
 						<img
 							loading="lazy"
-							src={landlord.profilePic}
+							src={landlord.profilePicUrl}
 							alt={landlord.name}
 							style={{
 								width: "50px",

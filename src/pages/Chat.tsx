@@ -12,6 +12,7 @@ import React, {
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Toast } from "primereact/toast";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import UserContext from "../context/UserContext.jsx";
@@ -75,6 +76,7 @@ export default function ChatPage() {
 	const [loadError, setLoadError] = useState<string | null>(null);
 	const [search, setSearch] = useState("");
 	const toast: Ref<Toast> = useRef(null);
+	const queryClient = useQueryClient();
 	const socketRef = useRef<Socket | null>(null);
 	// Latest selection, readable from the long-lived socket handler below.
 	const selectedIdRef = useRef(selectedId);
@@ -276,6 +278,33 @@ export default function ChatPage() {
 			toast.current?.show({
 				severity: "error",
 				summary: "Could not delete the application",
+				detail: getErrorMessage(error),
+				life: 3000
+			});
+		}
+	};
+
+	const leaveApplication = async () => {
+		if (!application) return;
+		try {
+			await axios.patch(
+				`${API_BASE}/application/${application._id}/leave`,
+				{},
+				{ withCredentials: true }
+			);
+			setApplication(undefined);
+			setStatusOpen(false);
+			if (selectedId) {
+				setChats(prev => prev.filter(c => c._id !== selectedId));
+				setSelectedId(undefined);
+			}
+			void queryClient.invalidateQueries({ queryKey: ["my-applications"] });
+			void queryClient.invalidateQueries({ queryKey: ["shares"] });
+			toast.current?.show({ severity: "success", summary: "You left the group", life: 3000 });
+		} catch (error) {
+			toast.current?.show({
+				severity: "error",
+				summary: "Could not leave the group",
 				detail: getErrorMessage(error),
 				life: 3000
 			});
@@ -522,6 +551,7 @@ export default function ChatPage() {
 									application={application}
 									currentUser={currentUser}
 									onDelete={deleteApplication}
+									onLeave={leaveApplication}
 								/>
 
 								{/* Messages + Input */}
@@ -641,6 +671,7 @@ type ChatStatusDialogProps = {
 	application?: ApplicationSummary;
 	currentUser?: ChatUser;
 	onDelete: () => Promise<void>;
+	onLeave: () => Promise<void>;
 };
 
 // Web counterpart of the app's chat details screen: application status,
@@ -651,12 +682,18 @@ function ChatStatusDialog({
 	conversation,
 	application,
 	currentUser,
-	onDelete
+	onDelete,
+	onLeave
 }: ChatStatusDialogProps) {
 	const [confirming, setConfirming] = useState(false);
 	const [deleting, setDeleting] = useState(false);
 	const stage = application ? STAGE_INFO[application.stage] : undefined;
 	const isOwner = !!application && application.owner === currentUser?._id;
+	const canLeave =
+		!!application &&
+		!isOwner &&
+		application.landlord !== currentUser?._id &&
+		["NOT_SENT", "SENT", "VIEWED"].includes(application.stage);
 
 	const hide = () => {
 		setConfirming(false);
@@ -724,6 +761,15 @@ function ChatStatusDialog({
 						))}
 					</ul>
 				</section>
+
+				{canLeave && (
+					<Button
+						label="Leave group"
+						icon="pi pi-sign-out"
+						onClick={() => void onLeave()}
+						className="self-start px-4 py-1 border border-sk-danger text-sk-danger bg-transparent rounded-full text-sm"
+					/>
+				)}
 
 				{isOwner &&
 					(confirming ? (

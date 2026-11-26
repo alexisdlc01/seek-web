@@ -1023,8 +1023,11 @@ type ChatInputProps = {
 
 function ChatInput({ send, toast }: ChatInputProps) {
 	const [input, setInput] = useState<string>("");
+	const [sending, setSending] = useState(false);
 
 	const handleSend = async () => {
+		if (sending || !input.trim()) return;
+		setSending(true);
 		try {
 			await send(input);
 			setInput("");
@@ -1035,6 +1038,8 @@ function ChatInput({ send, toast }: ChatInputProps) {
 				detail: "Failed to send a message in this chat",
 				life: 3000
 			});
+		} finally {
+			setSending(false);
 		}
 	};
 
@@ -1060,6 +1065,7 @@ function ChatInput({ send, toast }: ChatInputProps) {
 			<Button
 				onClick={() => handleSend()}
 				label="Send"
+				disabled={sending}
 				className="px-4 py-1 border border-sk-accent text-sk-link bg-transparent rounded-full text-sm"
 			/>
 		</div>

@@ -5,7 +5,7 @@ import UserContext from "../context/UserContext.jsx";
 import { Modal } from "./StudentBits.jsx";
 import { ErrorState, Loading, btnPrimary, btnGhost } from "./sk.jsx";
 import { api, errMessage, fmtDate } from "../lib/landlord.js";
-import { idOf, perPerson, photoBackground, pounds, useMyApplications, usePassport } from "../lib/student.js";
+import { docLabel, idOf, perPerson, photoBackground, pounds, useMyApplications, usePassport } from "../lib/student.js";
 
 const AMENITY = (a) => a.replace(/_/g, " ");
 
@@ -58,7 +58,9 @@ export function ListingDetailModal({ id, saved, onToggleSave, onApply, onClose }
 						</div>
 						<div className="flex gap-2">
 							<button type="button" aria-pressed={saved} onClick={onToggleSave} className={btnGhost}>{saved ? "Saved" : "Save"}</button>
-							<button type="button" onClick={onApply} className={btnPrimary}>Apply with Passport</button>
+							{l.closed
+								? <span className="self-center text-sm font-semibold text-sk-danger">No longer available</span>
+								: <button type="button" onClick={onApply} className={btnPrimary}>Apply with Passport</button>}
 						</div>
 					</div>
 					<dl className="m-0 grid gap-3 text-sm" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))" }}>
@@ -187,7 +189,7 @@ export function ApplyModal({ id, onClose }) {
 							<span className="text-[13px] font-semibold text-sk-ok">Ready · you qualify for the landlord's queue</span>
 						) : (
 							<span className="text-[13px] text-sk-warn">
-								Missing: {missing.map((m) => m.label).join(", ") || p.missingRequired.join(", ")}. You can send now, but your household joins the qualified queue only once every required document is provided.{" "}
+								Missing: {missing.map((m) => m.label).join(", ") || p.missingRequired.map(docLabel).join(", ")}. You can send now, but your household joins the qualified queue only once every required document is provided.{" "}
 								<Link to="/student/profile" className="font-semibold text-sk-link">Complete passport</Link>
 							</span>
 						)}

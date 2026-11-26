@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserContext from "../context/UserContext.jsx";
 import { Card, Chip, btnSmPrimary, btnSmGhost } from "./sk.jsx";
 import { api, errMessage } from "../lib/landlord.js";
@@ -16,6 +16,7 @@ const field =
 /** Student proves a university address with a 6-digit code to earn the badge. */
 export function StudentVerificationCard({ className = "" }) {
 	const { user, setUser } = useContext(UserContext);
+	const qc = useQueryClient();
 	const [email, setEmail] = useState("");
 	const [code, setCode] = useState("");
 	const [sentTo, setSentTo] = useState("");
@@ -35,6 +36,7 @@ export function StudentVerificationCard({ className = "" }) {
 		onSuccess: (data) => {
 			setError("");
 			setUser((u) => ({ ...u, studentVerified: data.studentVerified, university: data.university }));
+			qc.invalidateQueries({ queryKey: ["passport"] });
 		},
 		onError: (e) => setError(errMessage(e, "We couldn't check the code."))
 	});

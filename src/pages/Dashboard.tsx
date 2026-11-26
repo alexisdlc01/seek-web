@@ -83,7 +83,7 @@ const SEVERITY_DOT: Record<string, string> = {
 const SEVERITY_ORDER = { high: 0, medium: 1, low: 2 };
 
 export default function Dashboard() {
-	const { listings } = useContext(ListingsContext);
+	const { listings, loadError, loaded, reload } = useContext(ListingsContext);
 
 	const overview = useQuery<Overview>({
 		queryKey: ["landlord-overview"],
@@ -370,7 +370,15 @@ export default function Dashboard() {
 			<Card title="Properties" className="min-w-0">
 				<Alternative
 					ok={listings && listings.length > 0}
-					fallback={<ListingsPlaceholder onAdd={addProperty} />}
+					fallback={
+						loadError ? (
+							<ErrorState error={loadError} onRetry={reload} />
+						) : !loaded ? (
+							<Loading label="Loading your properties" />
+						) : (
+							<ListingsPlaceholder onAdd={addProperty} />
+						)
+					}
 				>
 					<Table head={["Property", "Rooms", `Rent · ${monthLabel(currentMonth()).split(" ")[0].slice(0, 3)}`, "Collected", "Arrears", "Compliance", "Next year"]}>
 						{(listings ?? []).map((l: any) => {

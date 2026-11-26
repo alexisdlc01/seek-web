@@ -21,7 +21,9 @@ const Inner = () => {
 	});
 	const waiting = overview.data?.applicants?.total;
 	const scopes = user?.teamOf?.scopes ?? [];
-	const ownerOnly = (item) => !member || (item.to === "/repairs" ? scopes.includes("REPAIRS") : !["/dashboard", "/rent", "/connectors"].includes(item.to));
+	// Mirrors backend @TeamAccess: a member sees a page only if one of its scopes is held.
+	const needs = { "/applicants": ["APPLICATIONS", "VIEWINGS_INBOX"], "/tenancies": ["TENANCIES"], "/contracts": ["TENANCIES"], "/inbox": ["VIEWINGS_INBOX"], "/chat": ["VIEWINGS_INBOX", "APPLICATIONS"], "/repairs": ["REPAIRS"] };
+	const ownerOnly = (item) => !member || (needs[item.to] ? needs[item.to].some((s) => scopes.includes(s)) : !["/dashboard", "/rent", "/connectors"].includes(item.to));
 	const items = [
 		{ to: "/dashboard", label: "Overview" },
 		{ to: "/applicants", label: "Applicants", badge: waiting ?? badges.applicants, match: ["/application"] },

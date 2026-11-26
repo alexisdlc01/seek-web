@@ -9,6 +9,7 @@ import { FiHome } from "react-icons/fi";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ListingsContext from "../context/ListingsContext.jsx";
+import UserContext from "../context/UserContext.jsx";
 import {
 	Page,
 	Card,
@@ -105,6 +106,7 @@ export default function ApplicationPage() {
 	const listingId = params.get("listing") ?? "";
 	const applicationId = params.get("id") ?? "";
 	const { listings } = useContext(ListingsContext)!;
+	const { user } = useContext(UserContext);
 
 	const q = useQuery<ApplicationData[]>({
 		queryKey: ["application-listing", listingId],
@@ -365,11 +367,11 @@ function ApplicationCard({
 			{["SENT", "VIEWED"].includes(data.stage) && !canOffer && (
 				<span className="text-[13px] text-sk-muted">
 					{data.qualified
-						? "Another qualified household is first in line. Offers go out in the order households qualified."
-						: "Offers go to qualified households only, in the order they qualified."}
+						? "Another qualified household is first in line. Offers go out in the order households applied; only qualified households can get one."
+						: "Offers go out in the order households applied; only qualified households can get one."}
 				</span>
 			)}
-			<AdviceCard topic="application" applicationId={data._id} showActions={false} />
+			{!user?.teamOf && <AdviceCard topic="application" applicationId={data._id} showActions={false} />}
 			{criteria.length > 0 && (
 				<ul className="m-0 flex list-none flex-col gap-1.5 p-0 text-sm">
 					{criteria.map(c => (

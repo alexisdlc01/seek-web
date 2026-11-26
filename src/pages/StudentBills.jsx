@@ -171,8 +171,8 @@ export default function StudentBills() {
 				</div>
 				<div className="flex flex-col gap-1.5 rounded-2xl border border-sk-border bg-sk-card p-[18px]">
 					<span className="text-[13px] text-sk-muted">Included in rent</span>
-					<span className="font-display text-[28px] font-semibold">{included.length}</span>
-					<span className="text-[12.5px] text-sk-ok">{included.map((b) => CATEGORY[b.category] ?? b.category).join(", ") || "None"}</span>
+					<span className="font-display text-[28px] font-semibold">{included.length || (tenancy.listing?.billsIncluded ? "All" : 0)}</span>
+					<span className="text-[12.5px] text-sk-ok">{included.map((b) => CATEGORY[b.category] ?? b.category).join(", ") || (tenancy.listing?.billsIncluded ? "Bills included in rent" : "None")}</span>
 				</div>
 			</div>
 
@@ -206,7 +206,9 @@ export default function StudentBills() {
 											? "Included in your rent."
 											: councilTaxDoc
 												? "Exemption certificate on file. Send it to your council if they ask."
-												: "A house of full-time students is usually exempt. Get a certificate from your university and file it here."}
+												: tenancy.listing?.billsIncluded && included.length === 0
+													? "Ask your landlord whether council tax is included. A house of full-time students is usually exempt."
+													: "A house of full-time students is usually exempt. Get a certificate from your university and file it here."}
 									</span>
 								</span>
 								{!councilTaxBill?.includedInRent && <FileDoc tenancy={tenancy} doc={councilTaxDoc} type="COUNCIL_TAX_EXEMPTION" title="Council tax exemption" add="File exemption" replace="Replace" onDone={done} />}
@@ -260,7 +262,7 @@ export default function StudentBills() {
 								)}
 							</div>
 						))}
-						<AddExpense tenancy={tenancy} onDone={done} />
+						{tenancy.status !== "ENDED" && <AddExpense tenancy={tenancy} onDone={done} />}
 					</Card>
 
 					{included.length > 0 && (

@@ -6,10 +6,10 @@ import axios from "axios";
 import { API_BASE } from "../../lib/landlord.js";
 
 // Same rules as the backend presign endpoint (ALLOWED_UPLOAD_TYPES, MAX_UPLOAD_BYTES).
-const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif"];
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 export const uploadRejection = file =>
 	!IMAGE_TYPES.includes(file.type)
-		? "Use a JPEG, PNG, WebP, GIF or HEIC image."
+		? "Use a JPEG, PNG, WebP or GIF image."
 		: file.size > 15 * 1024 * 1024
 			? "Images must be 15MB or smaller."
 			: null;

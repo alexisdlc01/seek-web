@@ -341,12 +341,12 @@ function ApplicationCard({
 					<button type="button" className={btnGhost} onClick={() => setVisible(true)}>
 						Report
 					</button>
-					{["SENT", "VIEWED", "OFFERED"].includes(data.stage) && (
+					{(!user?.teamOf || user.teamOf.scopes?.includes("APPLICATIONS")) && ["SENT", "VIEWED", "OFFERED"].includes(data.stage) && (
 						<button type="button" className={`${btnGhost} !text-sk-danger`} disabled={busy} onClick={reject}>
 							Reject
 						</button>
 					)}
-					{["SENT", "VIEWED"].includes(data.stage) && (
+					{(!user?.teamOf || user.teamOf.scopes?.includes("APPLICATIONS")) && ["SENT", "VIEWED"].includes(data.stage) && (
 						<button
 							type="button"
 							className={`${btnPrimary} disabled:opacity-50`}

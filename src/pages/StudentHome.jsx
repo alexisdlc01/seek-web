@@ -556,7 +556,7 @@ export default function StudentHome() {
 							</div>
 						))}
 					</Card>
-					{!ended && <Card className="!gap-2.5">
+					{tenancy.status === "ACTIVE" && <Card className="!gap-2.5">
 						<h2 className="font-display text-lg font-semibold">Moving out</h2>
 						{tenancy.noticeGivenAt ? (
 							<span className="text-sm text-sk-text2">Your tenancy ends on {londonDay(tenancy.endDate)}.</span>

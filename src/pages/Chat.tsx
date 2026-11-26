@@ -143,9 +143,39 @@ export default function ChatPage() {
 		socketRef.current = socket;
 
 		// Rooms are lost on every (re)connect: rejoin them all.
+		let firstConnect = true;
 		socket.on("connect", () => {
 			chatsRef.current.forEach(chat => socket.emit("conversation:join", chat._id));
 			if (selectedIdRef.current) socket.emit("conversation:seen", selectedIdRef.current);
+			// The mount fetch covers the first connect; after a reconnect, catch up
+			// on messages the room never delivered during the gap.
+			if (firstConnect) {
+				firstConnect = false;
+				return;
+			}
+			void (async () => {
+				try {
+					const fresh = await fetchConversations();
+					if (socketRef.current !== socket) return;
+					setChats(curr =>
+						fresh.map(f => {
+							const old = curr.find(c => c._id === f._id);
+							// Keep the open thread on screen; other threads reload when opened.
+							return old?.messagesLoaded && f._id === selectedIdRef.current
+								? { ...f, messages: old.messages, messagesLoaded: true }
+								: f;
+						})
+					);
+					const id = selectedIdRef.current;
+					if (!id || !fresh.some(c => c._id === id)) return;
+					const { data } = await axios.get<Conversation>(`${API_BASE}/conversation/${id}`, {
+						withCredentials: true
+					});
+					if (socketRef.current === socket) mergeConversation(data);
+				} catch {
+					/* best effort: the next reconnect or a reload catches up */
+				}
+			})();
 		});
 
 		// The server drops the socket when its access token expires and

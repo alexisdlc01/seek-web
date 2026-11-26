@@ -7,6 +7,7 @@ import { ErrorState, Loading, btnPrimary, btnGhost } from "./sk.jsx";
 import { api, errMessage, fmtDate } from "../lib/landlord.js";
 import { docLabel, idOf, perPerson, photoBackground, pounds, useMyApplications, usePassport } from "../lib/student.js";
 
+const COMPLIANCE_HINT = "The landlord has entered a registration number, EPC, gas and electrical safety certificates (and HMO licence where needed) that are in date. Seek does not inspect the documents.";
 const AMENITY = (a) => a.replace(/_/g, " ");
 
 const STAGE_TEXT = {
@@ -48,6 +49,9 @@ export function ListingDetailModal({ id, saved, onToggleSave, onApply, onClose }
 					<div className="flex flex-wrap items-end justify-between gap-3">
 						<div className="flex flex-col gap-0.5">
 							<span className="text-[13.5px] text-sk-muted">{l.formatted_address || [l.streetAddress, l.cityTown, l.postcodeZIP].filter(Boolean).join(", ")}</span>
+							{l.complianceComplete === true && (
+								<span title={COMPLIANCE_HINT} className="self-start rounded-lg bg-sk-hair px-2.5 py-1 text-xs font-semibold text-sk-accent">Safety documents provided</span>
+							)}
 							<span className="font-display text-[26px] font-semibold">
 								{pounds(each)} <span className="text-base font-normal text-sk-text2">pcm{shared ? " each" : ""}</span>
 							</span>

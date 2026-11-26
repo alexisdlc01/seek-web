@@ -1,7 +1,9 @@
 import { Fragment, useContext, useEffect, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import UserContext from "../context/UserContext.jsx";
 import NotificationsBell from "../components/NotificationsBell.jsx";
+import SeekLogo from "../components/SeekLogo.jsx";
+import { APP_HOME } from "../lib/appHome.js";
 import { useApplyTheme, useTheme } from "../context/ThemeContext.jsx";
 
 /**
@@ -11,7 +13,7 @@ import { useApplyTheme, useTheme } from "../context/ThemeContext.jsx";
 export default function AppShell({ role, label, items }) {
 	useApplyTheme(role);
 	const { theme, toggleTheme } = useTheme();
-	const { logout } = useContext(UserContext);
+	const { user, logout } = useContext(UserContext);
 	const { pathname } = useLocation();
 	const [open, setOpen] = useState(false);
 
@@ -75,6 +77,13 @@ export default function AppShell({ role, label, items }) {
 				<span>{theme === "dark" ? "Dark theme" : "Light theme"}</span>
 				<span aria-hidden="true">{theme === "dark" ? "☾" : "☀"}</span>
 			</button>
+			<Link
+				to="/"
+				state={{ landing: true }}
+				className="flex h-11 items-center rounded-[10px] px-3 text-sm text-sk-muted no-underline hover:text-sk-text"
+			>
+				Seek website
+			</Link>
 			<button
 				type="button"
 				onClick={logout}
@@ -86,9 +95,9 @@ export default function AppShell({ role, label, items }) {
 	);
 
 	const logo = (
-		<span className="font-display text-[22px] font-bold text-sk-text">
-			seek<span className="text-sk-link">.</span>
-		</span>
+		<Link to={APP_HOME[user?.role] ?? "/"} aria-label="Seek home" className="no-underline">
+			<SeekLogo dark={theme === "dark"} />
+		</Link>
 	);
 
 	return (

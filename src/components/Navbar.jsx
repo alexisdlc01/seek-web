@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import UserContext from "../context/UserContext.jsx";
 import NavbarMobile from "./NavBarMobile.jsx";
 import NavbarDesktop from "./NavBarDesktop";
+import SeekLogo from "./SeekLogo.jsx";
+import { APP_HOME } from "../lib/appHome.js";
 import { useNavbarTheme } from "../context/NavBarThemeContext.jsx";
 
 export default function Navbar() {
-	const navigate = useNavigate();
 	const { user, logout } = useContext(UserContext);
 	const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 	const { theme } = useNavbarTheme();
@@ -18,17 +19,12 @@ export default function Navbar() {
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
-	const logoSrc =
-		theme === "dark" ? "/textLogos/seek_white_text.svg" : "/textLogos/seek_blue_text.svg";
-
 	const logo = (
-		<motion.img
-			src={logoSrc}
-			alt="Logo"
-			whileHover={{ scale: 1.05 }}
-			className="w-20 h-auto object-cover ml-2 cursor-pointer"
-			onClick={() => navigate("/")}
-		/>
+		<motion.div whileHover={{ scale: 1.05 }} className="ml-2 inline-block">
+			<Link to={(user && APP_HOME[user.role]) || "/"} aria-label="Seek home" className="no-underline">
+				<SeekLogo dark={theme === "dark"} className="text-[26px]" />
+			</Link>
+		</motion.div>
 	);
 
 	return (

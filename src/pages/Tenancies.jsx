@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
+import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
+import UserContext from "../context/UserContext.jsx";
 import { Card, Chip, Empty, ErrorState, Loading, Page, PageHeader, btnSmGhost } from "../components/sk.jsx";
 import { DEPOSIT_SCHEMES, api, fmtDate, gbp } from "../lib/landlord.js";
 
@@ -14,6 +16,7 @@ const RENT = {
 const STATUS = { ACTIVE: ["ok", "Active"], PENDING_ACCEPTANCE: ["warn", "Waiting for tenants"] };
 
 export default function Tenancies() {
+	const { user } = useContext(UserContext);
 	const tenancies = useQuery({ queryKey: ["landlord-tenancies"], queryFn: async () => (await api.get("/tenancies/landlord")).data });
 	const overview = useQuery({ queryKey: ["landlord-overview"], queryFn: async () => (await api.get("/landlord/overview")).data });
 	const list = tenancies.data ?? [];
@@ -52,7 +55,7 @@ export default function Tenancies() {
 							</div>
 							<div className="flex flex-wrap gap-2">
 								<Link to={`/contracts?tenancy=${t._id}`} className={btnSmGhost}>Contract and deposit</Link>
-								<Link to="/rent" className={btnSmGhost}>Rent</Link>
+								{!user?.teamOf && <Link to="/rent" className={btnSmGhost}>Rent</Link>}
 							</div>
 						</Card>
 					);

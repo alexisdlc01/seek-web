@@ -26,11 +26,15 @@ export default function EditProfile() {
 	const [removePicture, setRemovePicture] = useState(false);
 	const { loading, user, setUser } = useContext(UserContext);
 
+	const formReady = useRef(false);
 	useEffect(() => {
 		(async () => {
-			if (!loading) {
+			// Fill the form once: later setUser calls from other cards must not wipe unsaved edits.
+			if (!loading && !formReady.current) {
+				formReady.current = true;
 				try {
 					setDisplayName(user.name);
+					setInitialName(user.name);
 					setAvatarUrl(user.profilePicUrl);
 				} finally {
 					setLoading2(false);
@@ -207,8 +211,8 @@ export default function EditProfile() {
 
 					{isLandlord && (
 						<>
-							<BusinessCard user={user} setUser={setUser} />
-							<RegistrationsCard user={user} setUser={setUser} />
+							{!user?.teamOf && <BusinessCard user={user} setUser={setUser} />}
+							{!user?.teamOf && <RegistrationsCard user={user} setUser={setUser} />}
 							<TeamCard user={user} setUser={setUser} />
 						</>
 					)}
@@ -231,7 +235,7 @@ export default function EditProfile() {
 							<FeeThisMonth />
 						</Card>
 
-						<NotificationsCard user={user} setUser={setUser} />
+						{!user?.teamOf && <NotificationsCard user={user} setUser={setUser} />}
 						<CloseAccount />
 					</div>
 				)}

@@ -284,7 +284,7 @@ function NoticeModal({ tenancy, onClose }) {
 	const give = useMutation({
 		mutationFn: () => api.post(`/tenancies/${tenancy._id}/notice`, { endDate: date }),
 		onSuccess: () => {
-			qc.invalidateQueries({ queryKey: ["student-tenancies"] });
+			["student-tenancies", "rent-plan", "my-payments", "bills"].forEach((k) => qc.invalidateQueries({ queryKey: [k] }));
 			onClose();
 		}
 	});
@@ -322,10 +322,10 @@ export default function StudentHome() {
 	const returned = useCheckoutReturn();
 	const ended = tenancy?.status === "ENDED";
 
-	const planQ = useQuery({ queryKey: ["rent-plan", tid], enabled: !!tid, queryFn: async () => (await api.get(`/payments/plan/${tid}`)).data });
-	const paymentsQ = useQuery({ queryKey: ["my-payments"], queryFn: async () => (await api.get("/payments/mine")).data });
-	// An invited student is not a tenant yet: the bills route answers 403.
+	// An invited student is not a tenant yet: the bills and rent plan routes answer 403.
 	const billsPending = tenancy?.status === "PENDING_ACCEPTANCE";
+	const planQ = useQuery({ queryKey: ["rent-plan", tid], enabled: !!tid && !billsPending, queryFn: async () => (await api.get(`/payments/plan/${tid}`)).data });
+	const paymentsQ = useQuery({ queryKey: ["my-payments"], queryFn: async () => (await api.get("/payments/mine")).data });
 	const billsQ = useQuery({ queryKey: ["bills", tid], enabled: !!tid && !billsPending, queryFn: async () => (await api.get(`/bills/tenancy/${tid}`)).data });
 	const contractsQ = useQuery({ queryKey: ["contracts", tid], enabled: !!tid && !billsPending, queryFn: async () => (await api.get(`/contracts/tenancy/${tid}`)).data });
 	// Repairs routes check `tenants` only: an invited co-tenant gets 403.
@@ -336,7 +336,7 @@ export default function StudentHome() {
 	const acceptTenancy = useMutation({
 		mutationFn: (id = tid) => api.post(`/tenancies/${id}/accept`),
 		onSuccess: () => {
-			qc.invalidateQueries({ queryKey: ["student-tenancies"] });
+			["student-tenancies", "rent-plan", "my-payments"].forEach((k) => qc.invalidateQueries({ queryKey: [k] }));
 			setNotice({ tone: "ok", text: "You've joined the tenancy. Rent starts once everyone has accepted." });
 		},
 		onError: (e) => setNotice({ tone: "warn", text: errMessage(e, "We couldn't accept this tenancy.") })
@@ -443,7 +443,7 @@ export default function StudentHome() {
 					</span></>}
 					<div className="flex flex-wrap items-center gap-3 pt-1">
 						{next && <PayNowButton payment={next} className="h-9 rounded-[10px] border-none bg-sk-accent px-3 text-[13px] font-semibold text-sk-on-accent" />}
-						{!(ended && !next) && <Link to="/student/home/rent" className="text-[13px] font-semibold text-sk-link">Rent plan →</Link>}
+						{!billsPending && !(ended && !next) && <Link to="/student/home/rent" className="text-[13px] font-semibold text-sk-link">Rent plan →</Link>}
 						<Link to="/student/home/receipts" className="text-[13px] font-semibold text-sk-link">Receipts →</Link>
 					</div>
 				</div>
@@ -577,7 +577,7 @@ export default function StudentHome() {
 
 				<aside className="flex min-w-0 flex-[1_1_300px] flex-col gap-4">
 					<ApplicationsCard apps={nextYear} loading={appsQ.isLoading} payments={paymentsQ.data ?? []} setNotice={setNotice} title="Next year" />
-					<section className="flex flex-col gap-2.5 rounded-2xl bg-sk-card2 p-5">
+					{!billsPending && <section className="flex flex-col gap-2.5 rounded-2xl bg-sk-card2 p-5">
 						<h2 className="font-display text-lg font-semibold">Payment notifications</h2>
 						<Check
 							checked={reminderDays > 0}
@@ -589,7 +589,7 @@ export default function StudentHome() {
 						<Check checked={planBody?.notifyEveryPayment ?? true} disabled={!planBody || savePlan.isPending} onChange={(on) => savePlan.mutate({ notifyEveryPayment: on })}>
 							Receipt every time I pay
 						</Check>
-					</section>
+					</section>}
 				</aside>
 			</div>
 

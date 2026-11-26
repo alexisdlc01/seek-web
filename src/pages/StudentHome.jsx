@@ -466,7 +466,7 @@ export default function StudentHome() {
 					<span className="text-[13px] text-sk-muted">Your share of bills</span>
 					<span className="font-display text-[28px] font-semibold">{billsQ.isLoading ? "…" : gbp(myBills)}</span>
 					<span className="text-[12.5px] text-sk-text2">
-						{toPay.length ? `${toPay.length} to sort out · split ${l.numOfPeople ?? tenancy.tenants?.length ?? ""} ways` : l.billsIncluded ? "Bills included in rent" : "Nothing due right now"}
+						{toPay.length ? `${toPay.length} to sort out · split ${tenancy.tenants?.length || l.numOfPeople || ""} ways` : l.billsIncluded ? "Bills included in rent" : "Nothing due right now"}
 						{bills.some((b) => b.category === "COUNCIL_TAX" && b.includedInRent) || docs.some((d) => d.type === "COUNCIL_TAX_EXEMPTION") ? " · council tax exempt" : ""}
 					</span>
 				</Link>

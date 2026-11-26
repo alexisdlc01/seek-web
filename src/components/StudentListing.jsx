@@ -87,6 +87,10 @@ export function ListingDetailModal({ id, saved, onToggleSave, onApply, onClose }
 							{l.amenities.map((a) => <span key={a} className="rounded-lg bg-sk-hair px-2.5 py-1.5">{AMENITY(a)}</span>)}
 						</div>
 					)}
+					{l.floorPlanImage && <img src={l.floorPlanImage} alt="Floor plan" className="w-full rounded-xl" />}
+					{l.videoTourLink?.startsWith("https://") && (
+						<a href={l.videoTourLink} target="_blank" rel="noopener noreferrer" className="text-[13px] font-semibold text-sk-link">Video tour →</a>
+					)}
 				</>
 			)}
 		</Modal>

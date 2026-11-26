@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Home from "./pages/Home";
+import { APP_HOME } from "./lib/appHome.js";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -97,9 +98,9 @@ const NotFound = () => {
 };
 
 // Signed-in users skip the marketing page and land in their own app.
-const APP_HOME = { STUDENT: "/student/find", LANDLORD_AGENCY: "/dashboard", SUPERUSER: "/superuser" };
 function LandingOrApp() {
 	const { user } = useContext(UserContext);
+	const { state } = useLocation();
 	// Landlord Google sign-in stashes its returnTo here (see SigninLandlord); removed in an effect so StrictMode's double render keeps it.
 	let back = null;
 	try {
@@ -116,7 +117,7 @@ function LandingOrApp() {
 		}
 	}, [user]);
 	const safe = back && /^\/(?![/\\])/.test(back) && !back.startsWith("/student");
-	const to = user && (user.role === "LANDLORD_AGENCY" && safe ? back : APP_HOME[user.role]);
+	const to = user && !state?.landing && (user.role === "LANDLORD_AGENCY" && safe ? back : APP_HOME[user.role]);
 	return to ? <Navigate to={to} replace /> : <Home />;
 }
 

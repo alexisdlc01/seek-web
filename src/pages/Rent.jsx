@@ -136,18 +136,23 @@ export default function Rent() {
 						<div className="flex flex-col gap-1.5 rounded-2xl bg-sk-card2 p-[18px]">
 							<span className="text-[13px] text-sk-muted">Payout for {monthLabel(month).split(" ")[0]}</span>
 							<span className="font-display text-[28px] font-semibold">{gbp(d.payouts)}</span>
-							{(d.nextPayoutDate || bank?.last4) && (
+							{d.payoutsPaused ? (
+								<span role="status" className="rounded-lg bg-sk-warn-bg px-2.5 py-2 text-[12.5px] font-semibold text-sk-warn">
+									Stripe has paused payouts. Check your Stripe dashboard.
+								</span>
+							) : (d.nextPayoutDate || bank?.last4) && (
 								<span className="text-[12.5px] text-sk-text2">
 									Next payout{d.nextPayoutDate ? ` · ${fmtDay(d.nextPayoutDate)}` : ""}
 									{bank?.last4 ? ` to ${bank.bankName ? `${bank.bankName} ` : ""}ending ${bank.last4}` : ""}
 								</span>
 							)}
-							{(d.payoutsOnHold || d.held > 0) && (
+							{d.payoutsOnHold && (
 								<span className="rounded-lg bg-sk-warn-bg px-2.5 py-2 text-[12.5px] font-semibold text-sk-warn">
-									Students can't pay you by card until you finish Stripe setup.{d.held > 0 ? ` Older payments (${gbp(d.held)}) are being paid out to you.` : ""}{" "}
+									Students can't pay you by card until you finish Stripe setup.{" "}
 									<Link to="/edit-profile" className="underline">Finish Stripe setup in Edit profile</Link>
 								</span>
 							)}
+							{d.held > 0 && <span className="text-[12.5px] text-sk-text2">Older payments ({gbp(d.held)}) are being paid out to you.</span>}
 							<span className="mt-0.5 border-t border-sk-border pt-2 text-[12.5px] text-sk-text2">
 								{gbp(d.collected)} rent{d.holdingDepositsCollected ? ` + ${gbp(d.holdingDepositsCollected)} holding deposits` : ""} − {gbp(d.seekFee)} Seek fee (1% of rent collected). No fee if rent isn't paid.
 							</span>

@@ -135,6 +135,11 @@ export default function RepairsPanel({ tenancyId }) {
 								</button>
 							</>
 						)}
+						{r.status === "FIXED" && (
+							<button type="button" className={btnSmGhost} disabled={update.isPending} onClick={() => update.mutate({ id: r._id, status: "OPEN" })}>
+								Reopen
+							</button>
+						)}
 					</div>
 				);
 			})}

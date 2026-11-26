@@ -19,9 +19,16 @@ let refreshing = null;
 export const refreshSession = () =>
 	(refreshing ??= axios
 		.post(`${API_BASE}/auth/refresh`, {}, { withCredentials: true })
-		.catch(err => {
-			if ([401, 403].includes(err.response?.status)) window.dispatchEvent(new Event("seek:session-expired"));
-			throw err;
+		.catch(async err => {
+			if (![401, 403].includes(err.response?.status)) throw err;
+			// Another tab may have rotated the token first: if the cookie is valid, the session is alive.
+			try {
+				await axios.get(`${API_BASE}/auth/currentUser`, { withCredentials: true });
+				return;
+			} catch (e) {
+				if ([401, 403].includes(e.response?.status)) window.dispatchEvent(new Event("seek:session-expired"));
+				throw err;
+			}
 		})
 		.finally(() => (refreshing = null)));
 const refreshOn401 = async error => {

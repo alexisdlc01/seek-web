@@ -5,24 +5,9 @@ import UserContext from "../context/UserContext.jsx";
 import { Card, ErrorState, Loading, Page, PageHeader, btnPrimary } from "../components/sk.jsx";
 import { AdviceCard, Modal, Notice } from "../components/StudentBits.jsx";
 import { api, errMessage, fmtDate, openFile } from "../lib/landlord.js";
-import { initials, usePassport } from "../lib/student.js";
+import { DOC_TYPES, docLabel, initials, usePassport } from "../lib/student.js";
 import { StudentVerificationCard, VerifiedStudentBadge } from "../components/StudentVerification.jsx";
 
-const DOC_TYPES = [
-	["PASSPORT", "Passport"],
-	["VISA", "Visa or eVisa"],
-	["RIGHT_TO_RENT", "Right to Rent share code"],
-	["IDENTIFICATION", "Other photo ID"],
-	["STUDENT_STATUS", "Student status letter"],
-	["CAS_LETTER", "CAS letter"],
-	["PROOF_OF_FUNDS", "Proof of funds"],
-	["PROOF_OF_INCOME", "Proof of income"],
-	["GUARANTOR_AGREEMENT", "Guarantor agreement"],
-	["LANDLORD_REFERENCE", "Previous landlord reference"],
-	["AGENT_REFERENCE", "Letting agent reference"],
-	["CHARACTER_REFERENCE", "Character reference"],
-	["RECOMMENDATION", "Recommendation letter"]
-];
 const STATUS = {
 	VERIFIED: ["Verified", "text-sk-ok"],
 	PENDING: ["Checking", "text-sk-warn"],
@@ -204,7 +189,7 @@ export default function StudentProfile() {
 						<div className="flex justify-between text-[13.5px]"><span className="font-semibold">Seek Passport</span><span className="text-sk-text2">{p.completed} of {p.total} ready</span></div>
 						<div className="h-2 rounded bg-sk-border" aria-hidden="true"><div className="h-2 rounded bg-sk-accent" style={{ width: `${p.percent}%` }} /></div>
 						<span className={`text-[12.5px] ${p.ready ? "text-sk-text2" : "text-sk-warn"}`}>
-							{p.ready ? "One tap to apply. Landlords see only what you share, for a limited time." : `Still needed to apply: ${p.missingRequired.join(", ")}`}
+							{p.ready ? "One tap to apply. Landlords see only what you share, for a limited time." : `Still needed to apply: ${p.missingRequired.map(docLabel).join(", ")}`}
 						</span>
 					</div>
 				)}

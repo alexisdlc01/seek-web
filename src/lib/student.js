@@ -85,3 +85,22 @@ export const initials = (name = "") =>
 export const idOf = (v) => (v && typeof v === "object" ? v._id : v);
 
 export const PLAN_LABEL = { MONTHLY: "Monthly", SIX_MONTHS: "Half-year", YEARLY: "Full year" };
+
+export const DOC_TYPES = [
+	["PASSPORT", "Passport"],
+	["VISA", "Visa or eVisa"],
+	["RIGHT_TO_RENT", "Right to Rent share code"],
+	["IDENTIFICATION", "Other photo ID"],
+	["STUDENT_STATUS", "Student status letter"],
+	["CAS_LETTER", "CAS letter"],
+	["PROOF_OF_FUNDS", "Proof of funds"],
+	["PROOF_OF_INCOME", "Proof of income"],
+	["GUARANTOR_AGREEMENT", "Guarantor agreement"],
+	["LANDLORD_REFERENCE", "Previous landlord reference"],
+	["AGENT_REFERENCE", "Letting agent reference"],
+	["CHARACTER_REFERENCE", "Character reference"],
+	["RECOMMENDATION", "Recommendation letter"]
+];
+
+export const docLabel = (type) =>
+	DOC_TYPES.find(([v]) => v === type)?.[1] ?? type.toLowerCase().replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());

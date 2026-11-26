@@ -404,9 +404,9 @@ export default function ChatPage() {
 			curr.map(c => (c._id === selectedId ? { ...c, unreadCount: 0 } : c))
 		);
 	}, [selectedId, currentUser, selectedLoaded]);
-	const visibleChats = chats.filter(c =>
-		c.name.toLowerCase().includes(search.toLowerCase())
-	);
+	const visibleChats = chats
+		.filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
+		.sort((a, b) => getConversationTime(b).getTime() - getConversationTime(a).getTime());
 
 	const isMe = (msg: Message) => !!currentUser && msg.sender._id === actingId;
 

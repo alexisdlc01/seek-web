@@ -255,7 +255,7 @@ export default function Inbox() {
 													<span className="flex-1 font-semibold text-sk-text">{a.name}</span>
 												)}
 												{a.filedAs && <span className="text-xs font-semibold text-sk-ok">Filed to {a.filedAs}</span>}
-												{!a.filedAs && t.tenancyId && !m.me && (
+												{!a.filedAs && t.tenancyId && !m.me && (!member || user.teamOf.scopes?.includes("TENANCIES")) && (
 													<button type="button" disabled={fileAttachment.isPending} onClick={() => fileAttachment.mutate({ messageId: m.id, index })} className="cursor-pointer border-none bg-transparent p-0 text-xs font-semibold text-sk-link">
 														{fileAttachment.isPending ? "Filing…" : "File in tenancy documents"}
 													</button>

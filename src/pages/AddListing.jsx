@@ -715,6 +715,9 @@ const AddListing = () => {
 						);
 
 						setAllPhotosUrls(combinedUrls);
+						// Uploaded files become saved urls so Back/Next or a retry does not re-upload them.
+						const uploaded = new Map(photos.map((p, i) => [p.id, combinedUrls[i]]));
+						setPhotos(curr => curr.map(p => (p.file && uploaded.has(p.id) ? { ...p, file: null, url: uploaded.get(p.id) } : p)));
 
 						const step4Data = cleanObject({
 							photos: combinedUrls,

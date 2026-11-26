@@ -139,7 +139,7 @@ export function ApplyModal({ id, onClose }) {
 	const sharedItems = (p?.sections ?? []).flatMap((s) => s.items).filter((i) => i.status !== "MISSING");
 	const missing = (p?.sections ?? []).flatMap((s) => s.items).filter((i) => i.required && i.status !== "VERIFIED" && i.status !== "PROVIDED");
 	// Documents the landlord requires (backend rule); any one of a document's types satisfies it.
-	const haveTypes = new Set((p?.sections ?? []).flatMap((s) => s.items).filter((i) => i.status !== "MISSING" && i.source !== "request").map((i) => i.type));
+	const haveTypes = new Set((p?.sections ?? []).flatMap((s) => s.items).filter((i) => i.status !== "MISSING" && i.status !== "EXPIRED" && i.status !== "REJECTED" && i.source !== "request").map((i) => i.type));
 	const missingDocs = (l?.requiredDocuments ?? []).filter((d) => !d.types.some((t) => haveTypes.has(t))).map((d) => d.label);
 	// Backend criteria exist once an application does; before that, mirror the household-size rule only.
 	// shortcut: mirrors backend household-size rule, use API criteria when exposed

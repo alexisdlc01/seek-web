@@ -154,7 +154,7 @@ function InventoryForm({ contract, onDone }) {
 			{save.isError && <span role="alert" className="text-[12.5px] text-sk-warn">{errMessage(save.error)}</span>}
 			<div className="flex gap-2">
 				<button type="button" className={btnSmGhost} onClick={() => setRows((cur) => [...cur, { ...INVENTORY_START }])}>Add item</button>
-				<button type="submit" className={btnSmPrimary} disabled={save.isPending}>{save.isPending ? "Saving…" : "Save inventory"}</button>
+				<button type="submit" className={btnSmPrimary} disabled={save.isPending || !rows.some((r) => r.room.trim() && r.item.trim() && r.condition.trim())}>{save.isPending ? "Saving…" : "Save inventory"}</button>
 				<button type="button" className={btnSmGhost} onClick={onDone}>Cancel</button>
 			</div>
 		</form>

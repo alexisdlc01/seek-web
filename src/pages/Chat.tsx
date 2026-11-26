@@ -63,6 +63,7 @@ type Conversation = {
 	lastMessage?: Message;
 	messages: Message[];
 	messagesLoaded?: boolean;
+	closedAt?: string | null;
 };
 
 export default function ChatPage() {
@@ -572,7 +573,11 @@ export default function ChatPage() {
 									</div>
 
 									{/* Input */}
-									<ChatInput send={sendMessage} toast={toast.current} />
+									{selectedChat.closedAt ? (
+										<div className="p-4 text-center text-sm text-sk-muted">This conversation is closed.</div>
+									) : (
+										<ChatInput send={sendMessage} toast={toast.current} />
+									)}
 								</div>
 							</>
 						) : (

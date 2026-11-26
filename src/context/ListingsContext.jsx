@@ -18,6 +18,7 @@ export default ListingsContext;
 export const ListingsProvider = ({ children }) => {
 	const [listings, setListings] = useState([]);
 	const [loadError, setLoadError] = useState(null);
+	const [loaded, setLoaded] = useState(false);
 	const [currentListing, setCurrentListing] = useState({});
 	const socketRef = useRef(null);
 	const { user } = useContext(UserContext);
@@ -32,6 +33,7 @@ export const ListingsProvider = ({ children }) => {
 		} catch (e) {
 			setLoadError(e);
 		}
+		setLoaded(true);
 	}, []);
 
 	const isLandlord = user?.role === "LANDLORD_AGENCY";
@@ -40,6 +42,7 @@ export const ListingsProvider = ({ children }) => {
 	// Drop the previous landlord's data on logout or account switch.
 	useEffect(() => {
 		setListings([]);
+		setLoaded(false);
 		setCurrentListing({});
 	}, [userId, isLandlord]);
 
@@ -105,6 +108,7 @@ export const ListingsProvider = ({ children }) => {
 				listings,
 				setListings,
 				loadError,
+				loaded,
 				reload,
 				currentListing,
 				setCurrentListing

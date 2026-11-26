@@ -143,9 +143,9 @@ export const timeAgo = (iso) => {
 // Backend activity links look like /landlord/applications/:id. Map them to
 // the routes that exist in this app.
 export const activityRoute = (kind, link = "") => {
-	if (kind === "REPAIR") return "/inbox";
 	// The backend already links to routes of this app (e.g. /application?listing=..&id=..).
-	if (/^\/(application|applicants|rent|contracts|inbox)(\?|\/|$)/.test(link)) return link;
+	if (/^\/(application|applicants|rent|contracts|inbox|repairs)(\?|\/|$)/.test(link)) return link;
+	if (kind === "REPAIR") return "/repairs";
 	if (kind === "APPLICATION") return "/applicants";
 	if (kind === "PAYMENT") return "/rent";
 	if (link.includes("contract") || link.includes("tenanc")) return "/contracts";

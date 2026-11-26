@@ -87,18 +87,21 @@ export default function Dashboard() {
 
 	const overview = useQuery<Overview>({
 		queryKey: ["landlord-overview"],
-		queryFn: async () => (await api.get("/landlord/overview")).data
+		queryFn: async () => (await api.get("/landlord/overview")).data,
+		refetchOnMount: "always"
 	});
 	const ov = overview.data;
 
 	const toast = useRef<Toast>(null);
 	const payments = useQuery({
 		queryKey: ["landlord-payments", currentMonth()],
-		queryFn: async () => (await api.get("/payments/landlord", { params: { month: currentMonth() } })).data
+		queryFn: async () => (await api.get("/payments/landlord", { params: { month: currentMonth() } })).data,
+		refetchOnMount: "always"
 	});
 	const tenancies = useQuery({
 		queryKey: ["landlord-tenancies"],
-		queryFn: async () => (await api.get("/tenancies/landlord")).data
+		queryFn: async () => (await api.get("/tenancies/landlord")).data,
+		refetchOnMount: "always"
 	});
 	const repairs = useLandlordRepairs();
 	const payRows: any[] = payments.data?.rows ?? [];

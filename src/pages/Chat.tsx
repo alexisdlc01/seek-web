@@ -1045,14 +1045,6 @@ function ChatInput({ send, toast }: ChatInputProps) {
 
 	return (
 		<div className="border-t-1 border-sk-border p-4 flex items-center gap-3">
-			<button
-				type="button"
-				className="shrink-0 rounded-full p-2.5 flex items-center justify-center"
-				style={{ backgroundColor: "var(--sk-card2)" }}
-				aria-label="Attach file"
-			>
-				<i className="pi pi-paperclip text-sk-text text-sm" />
-			</button>
 			<input
 				value={input}
 				onChange={e => setInput(e.target.value)}

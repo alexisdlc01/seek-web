@@ -68,7 +68,7 @@ export const ListingsProvider = ({ children }) => {
 		socket.on("disconnect", async reason => {
 			if (reason !== "io server disconnect") return;
 			try {
-				await axios.get(`${API_BASE}/conversation`, { withCredentials: true });
+				await axios.get(`${API_BASE}/listings/mine`, { withCredentials: true });
 				if (socketRef.current === socket) socket.connect();
 			} catch {
 				/* session over: do not reconnect */

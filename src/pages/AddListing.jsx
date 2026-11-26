@@ -241,6 +241,8 @@ const AddListing = () => {
 		if (photos.length < 3) missing.push("At least 3 photos");
 		if (Apprequirements.length === 0)
 			missing.push("At least one requirement");
+		else if (Apprequirements.some(r => !r.name?.trim()))
+			missing.push("Name for every requirement");
 
 		if (missing.length > 0) {
 			toast.current?.show({
@@ -763,7 +765,7 @@ const AddListing = () => {
 					await axios.patch(
 						`${API_BASE}/listings/${currentListing._id}/createStep4`,
 						{
-							requirements: Apprequirements
+							requirements: Apprequirements.filter(r => r.name?.trim())
 						},
 						{ withCredentials: true }
 					);

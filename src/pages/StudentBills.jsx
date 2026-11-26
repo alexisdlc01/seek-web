@@ -125,6 +125,7 @@ export default function StudentBills() {
 		onSuccess: () => {
 			setNotice({ tone: "ok", text: "Your share is marked as paid." });
 			qc.invalidateQueries({ queryKey: ["bills", tid] });
+			qc.invalidateQueries({ queryKey: ["ai-advice", "bills"] });
 		},
 		onError: (e) => setNotice({ tone: "warn", text: errMessage(e, "We couldn't update this bill.") })
 	});
@@ -156,7 +157,11 @@ export default function StudentBills() {
 		setNotice(n);
 		qc.invalidateQueries({ queryKey: ["student-tenancies"] });
 		qc.invalidateQueries({ queryKey: ["bills", tid] });
+		qc.invalidateQueries({ queryKey: ["ai-advice", "bills"] });
 	};
+	const ni = tenancy.listing?.nation === "NORTHERN_IRELAND";
+	// Latest billing period first: synced bills arrive newest-first, so list order is not chronological.
+	const allowanceBill = bills.filter((b) => b.allowance).sort((a, b) => new Date(b.periodEnd ?? b.periodStart ?? b.createdAt) - new Date(a.periodEnd ?? a.periodStart ?? a.createdAt))[0];
 
 	return (
 		<Page className="!gap-[22px]">
@@ -178,7 +183,7 @@ export default function StudentBills() {
 
 			<div className="flex flex-wrap items-start gap-6">
 				<div className="flex min-w-0 flex-[1.4_1_480px] flex-col gap-4">
-					{(bills.find((b) => b.allowance) ? [bills.find((b) => b.allowance)] : []).map((b) => {
+					{(allowanceBill ? [allowanceBill] : []).map((b) => {
 						const a = b.allowance;
 						const mine = a.overagePerMember?.find((m) => m.user === user?._id)?.amount;
 						return (
@@ -202,7 +207,9 @@ export default function StudentBills() {
 								<span className="flex min-w-0 flex-col">
 									<span className="text-sm font-semibold">Council tax</span>
 									<span className="text-[12.5px] text-sk-muted">
-										{councilTaxBill?.includedInRent
+										{ni
+											? "Northern Ireland has domestic rates, not council tax. Check your tenancy agreement for who pays them."
+											: councilTaxBill?.includedInRent
 											? "Included in your rent."
 											: councilTaxDoc
 												? "Exemption certificate on file. Send it to your council if they ask."
@@ -211,7 +218,7 @@ export default function StudentBills() {
 													: "A house of full-time students is usually exempt. Get a certificate from your university and file it here."}
 									</span>
 								</span>
-								{!councilTaxBill?.includedInRent && <FileDoc tenancy={tenancy} doc={councilTaxDoc} type="COUNCIL_TAX_EXEMPTION" title="Council tax exemption" add="File exemption" replace="Replace" onDone={done} />}
+								{!ni && !councilTaxBill?.includedInRent && <FileDoc tenancy={tenancy} doc={councilTaxDoc} type="COUNCIL_TAX_EXEMPTION" title="Council tax exemption" add="File exemption" replace="Replace" onDone={done} />}
 							</div>
 							<div className="flex items-center justify-between gap-3">
 								<span className="flex min-w-0 flex-col">

@@ -349,9 +349,12 @@ function TenancyActions({ tenancy: t, contracts, templates }) {
 	const prescribed = useMutation({ mutationFn: () => api.post(`/tenancies/${t._id}/prescribed-info`, {}), onSuccess: refresh });
 	const err = [seek, fromTemplate, received, prescribed].find((m) => m.isError)?.error;
 	const hasSeek = contracts.some((c) => c.source === "SEEK");
+	const seekCovers = !t.listing?.nation || ["ENGLAND", "WALES"].includes(t.listing.nation);
 	return (
 		<div className="flex flex-wrap items-center gap-2">
-			{!hasSeek && <button type="button" className={btnSmPrimary} disabled={seek.isPending} onClick={() => seek.mutate()}>{seek.isPending ? "Drafting…" : "Create Seek contract"}</button>}
+			{!hasSeek && (seekCovers
+				? <button type="button" className={btnSmPrimary} disabled={seek.isPending} onClick={() => seek.mutate()}>{seek.isPending ? "Drafting…" : "Create Seek contract"}</button>
+				: <span className="text-[12.5px] text-sk-muted">Seek's agreement covers England and Wales. Upload your own agreement for this property.</span>)}
 			{templates.map((tpl) => (
 				<button key={tpl._id} type="button" className={btnSmGhost} disabled={fromTemplate.isPending} onClick={() => fromTemplate.mutate(tpl)}>Use “{tpl.title}”</button>
 			))}

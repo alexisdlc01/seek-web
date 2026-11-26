@@ -273,6 +273,8 @@ function PayoutsCard() {
 	const ready = s?.connected && s.chargesEnabled;
 	// Stripe can keep card payments on while payouts are off (bank removed, details past due): the money waits in Stripe.
 	const payoutsOff = ready && !s.payoutsEnabled;
+	// A payout to this bank failed or it could not be verified: Stripe stops payouts until it is changed.
+	const bankFailed = ["errored", "verification_failed"].includes(s?.payoutBank?.status);
 	return (
 		<Card title="Payouts" className="!border-transparent !bg-sk-card2">
 			{status.isLoading && <span className="text-[13px] text-sk-muted">Checking your payout account…</span>}
@@ -290,12 +292,16 @@ function PayoutsCard() {
 					{s.payoutBank && (
 						<span className="text-sm">
 							Paid out to {s.payoutBank.bankName ?? "your bank"} ····{s.payoutBank.last4}
-							{s.payoutBank.verified === false ? " (not verified yet)" : ""}
+						</span>
+					)}
+					{bankFailed && (
+						<span role="alert" className="text-[13px] text-sk-warn">
+							Stripe couldn't pay out to this bank account. Change your bank account to get paid.
 						</span>
 					)}
 					<span className="text-[13px] text-sk-text2">Card rent goes straight to this Stripe account.</span>
 					{s.mode !== "unavailable" && (
-						<button type="button" className={payoutsOff ? btnPrimary : btnSmGhost} disabled={onboard.isPending} onClick={() => onboard.mutate()}>
+						<button type="button" className={payoutsOff || bankFailed ? btnPrimary : btnSmGhost} disabled={onboard.isPending} onClick={() => onboard.mutate()}>
 							{onboard.isPending ? "Opening Stripe…" : payoutsOff ? "Continue setup" : "Change bank account"}
 						</button>
 					)}

@@ -5,7 +5,7 @@ import UserContext from "../context/UserContext.jsx";
 import { Card, Chip, ErrorState, Loading, Page, PageHeader, btnGhost, btnPrimary } from "../components/sk.jsx";
 import { MAX_REPAIR_PHOTOS, PHOTO_ACCEPT, RepairPhotoThumbs, uploadRepairPhoto } from "../components/RepairPhotos.jsx";
 import { AdviceCard, Modal, Notice, PayNowButton, useCheckoutReturn } from "../components/StudentBits.jsx";
-import { api, errMessage, fmtDate, fmtDay, gbp, greeting, openFile } from "../lib/landlord.js";
+import { DEPOSIT_SCHEMES, api, errMessage, fmtDate, fmtDay, gbp, greeting, openFile } from "../lib/landlord.js";
 import { PLAN_LABEL, idOf, useMyApplications, useMyTenancy } from "../lib/student.js";
 
 const DOC_LABEL = {
@@ -452,7 +452,7 @@ export default function StudentHome() {
 					<span className="font-display text-[28px] font-semibold">{gbp(tenancy.depositAmount)}</span>
 					<span className={`text-[12.5px] ${tenancy.depositProtectedAt ? "text-sk-ok" : "text-sk-warn"}`}>
 						{tenancy.depositProtectedAt
-							? `Protected with ${tenancy.depositScheme ?? "a scheme"}${docs.some((d) => d.type === "DEPOSIT_CERTIFICATE") ? " · certificate saved" : ""}`
+							? `Protected with ${DEPOSIT_SCHEMES.find((s) => s.value === tenancy.depositScheme)?.label ?? "a scheme"}${docs.some((d) => d.type === "DEPOSIT_CERTIFICATE") ? " · certificate saved" : ""}`
 							: "Not protected yet · see what to do"}
 					</span>
 				</Link>

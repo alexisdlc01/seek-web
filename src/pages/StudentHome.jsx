@@ -6,7 +6,7 @@ import { Card, Chip, ErrorState, Loading, Page, PageHeader, btnGhost, btnPrimary
 import { MAX_REPAIR_PHOTOS, PHOTO_ACCEPT, RepairPhotoThumbs, uploadRepairPhoto } from "../components/RepairPhotos.jsx";
 import { AdviceCard, Modal, Notice, PayNowButton, useCheckoutReturn } from "../components/StudentBits.jsx";
 import { DEPOSIT_SCHEMES, api, errMessage, fmtDate, fmtDay, gbp, greeting, londonToIso, openFile } from "../lib/landlord.js";
-import { PLAN_LABEL, idOf, useMyApplications, useMyTenancy } from "../lib/student.js";
+import { PLAN_LABEL, idOf, useMyApplications, useMyTenancy, useTenancyQs } from "../lib/student.js";
 
 const DOC_LABEL = {
 	TENANCY_AGREEMENT: "Tenancy agreement",
@@ -323,6 +323,7 @@ export default function StudentHome() {
 	const { user } = useContext(UserContext);
 	const { tenancy, data: myTenancies, isLoading, isError, error, refetch } = useMyTenancy();
 	const tid = tenancy?._id;
+	const tq = useTenancyQs();
 	const invitedTo = (t) => t.status === "PENDING_ACCEPTANCE" && (t.pendingTenants ?? []).some((p) => idOf(p) === user?._id);
 	// A follow-on tenancy (renewal) the user can still accept while another one is current.
 	const followOn = tenancy?.status === "ACTIVE" ? (myTenancies ?? []).find((t) => t._id !== tid && invitedTo(t)) : null;
@@ -414,6 +415,9 @@ export default function StudentHome() {
 	const docs = tenancy.documents ?? [];
 	const repairs = repairsQ.data ?? [];
 	const nextYear = (appsQ.data ?? []).filter((a) => a._id !== idOf(tenancy.application));
+	// Another live tenancy (e.g. next year's) the student can switch to via ?tenancy=<id>.
+	const otherHome = (myTenancies ?? []).find((t) => t._id !== tid && t.status === "ACTIVE" && (!t.endDate || new Date(t.endDate).getTime() >= Date.now()));
+	const otherL = otherHome?.listing ?? {};
 	const signedByMe = (c) => (c.signatures ?? []).some((s) => idOf(s.user) === user?._id && s.signedAt);
 
 	return (
@@ -425,6 +429,15 @@ export default function StudentHome() {
 			<Notice notice={returned} />
 			<Notice notice={notice} />
 			{ended && <Notice notice={{ tone: "ok", text: `Your tenancy ended on ${londonDay(tenancy.endDate)}.` }} />}
+
+			{tq && <Link to="/student/home" className="text-[13px] font-semibold text-sk-link no-underline">← Current home</Link>}
+			{!tq && otherHome && (
+				<Link to={`/student/home?tenancy=${otherHome._id}`} className="flex flex-col gap-1 rounded-2xl border border-sk-border bg-sk-card p-[18px] text-inherit no-underline">
+					<span className="text-[13px] text-sk-muted">Next year's home</span>
+					<span className="font-display text-[20px] font-semibold">{otherL.propertyTitle ?? otherL.streetAddress ?? "Your next home"}</span>
+					<span className="text-[12.5px] text-sk-text2">From {fmtDay(otherHome.startDate)} · contract, rent plan and bills →</span>
+				</Link>
+			)}
 
 			{followOn && (
 				<Card title="Your landlord has set up your next tenancy" className="!gap-2.5">
@@ -455,11 +468,11 @@ export default function StudentHome() {
 					</span></>}
 					<div className="flex flex-wrap items-center gap-3 pt-1">
 						{next && <PayNowButton payment={next} className="h-9 rounded-[10px] border-none bg-sk-accent px-3 text-[13px] font-semibold text-sk-on-accent" />}
-						{!billsPending && !(ended && !next) && <Link to="/student/home/rent" className="text-[13px] font-semibold text-sk-link">Rent plan →</Link>}
-						<Link to="/student/home/receipts" className="text-[13px] font-semibold text-sk-link">Receipts →</Link>
+						{!billsPending && !(ended && !next) && <Link to={`/student/home/rent${tq}`} className="text-[13px] font-semibold text-sk-link">Rent plan →</Link>}
+						<Link to={`/student/home/receipts${tq}`} className="text-[13px] font-semibold text-sk-link">Receipts →</Link>
 					</div>
 				</div>
-				<Link to="/student/home/deposit" className="flex flex-col gap-1.5 rounded-2xl border border-sk-border bg-sk-card p-[18px] text-inherit no-underline">
+				<Link to={`/student/home/deposit${tq}`} className="flex flex-col gap-1.5 rounded-2xl border border-sk-border bg-sk-card p-[18px] text-inherit no-underline">
 					<span className="text-[13px] text-sk-muted">Deposit</span>
 					<span className="font-display text-[28px] font-semibold">{tenancy.depositAmount === 0 ? "No deposit" : gbp(tenancy.depositAmount)}</span>
 					{tenancy.depositAmount !== 0 && <span className={`text-[12.5px] ${tenancy.depositProtectedAt ? "text-sk-ok" : "text-sk-warn"}`}>
@@ -474,7 +487,7 @@ export default function StudentHome() {
 						<span className="text-[12.5px] text-sk-text2">Your household bills show here once you have a tenancy.</span>
 					</div>
 				) : (
-				<Link to="/student/home/bills" className="flex flex-col gap-1.5 rounded-2xl border border-sk-border bg-sk-card p-[18px] text-inherit no-underline">
+				<Link to={`/student/home/bills${tq}`} className="flex flex-col gap-1.5 rounded-2xl border border-sk-border bg-sk-card p-[18px] text-inherit no-underline">
 					<span className="text-[13px] text-sk-muted">Your share of bills</span>
 					<span className="font-display text-[28px] font-semibold">{billsQ.isLoading ? "…" : billsQ.isError ? "Couldn't load" : gbp(myBills)}</span>
 					{!billsQ.isError && <span className="text-[12.5px] text-sk-text2">

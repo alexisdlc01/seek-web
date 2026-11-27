@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ListingsMap from "../components/ListingsMap.jsx";
@@ -142,9 +142,11 @@ export default function StudentFind() {
 	});
 	const toggleSave = (id) => like.mutate({ id, on: !liked.has(id) });
 
+	const searchSeq = useRef(0); // Clear bumps it so a late response is ignored
 	const searchChat = useMutation({
-		mutationFn: async (messages) => (await api.post("/ai/search-chat", { messages })).data,
-		onSuccess: (data, messages) => {
+		mutationFn: async ({ messages }) => (await api.post("/ai/search-chat", { messages })).data,
+		onSuccess: (data, { messages, seq }) => {
+			if (seq !== searchSeq.current) return;
 			setAi(data);
 			setChat([...messages, { role: "assistant", content: data.reply }]);
 			setSelected(data.listings?.[0]?.id ?? null);
@@ -158,13 +160,15 @@ export default function StudentFind() {
 		const messages = [...chat, { role: "user", content: text }].slice(-20);
 		setChat(messages);
 		setAsk("");
-		searchChat.mutate(messages);
+		searchChat.mutate({ messages, seq: ++searchSeq.current });
 	};
 	const sendAsk = (e) => {
 		e.preventDefault();
 		send(ask.trim() || (chat.length ? "" : SAMPLE_ASK)); // empty first search runs the placeholder example
 	};
 	const clearAi = () => {
+		searchSeq.current++;
+		searchChat.reset();
 		setAi(null);
 		setChat([]);
 		setAsk("");
@@ -214,7 +218,7 @@ export default function StudentFind() {
 							value={ask}
 							onChange={(e) => setAsk(e.target.value)}
 							maxLength={2000}
-							placeholder={chat.length ? "Refine: closer to campus, cheaper, garden…" : SAMPLE_ASK}
+							placeholder={chat.length ? "Refine: under £600, from September, bills included…" : SAMPLE_ASK}
 							className="min-w-0 flex-1 border-none bg-transparent text-[15px] text-sk-text outline-none"
 						/>
 						<button type="submit" disabled={searchChat.isPending} className="h-[38px] cursor-pointer rounded-[10px] border-none bg-sk-accent px-3.5 text-[13.5px] font-semibold text-sk-on-accent disabled:opacity-60">
@@ -296,7 +300,7 @@ export default function StudentFind() {
 					{listingsQ.isError && !ai && <ErrorState error={listingsQ.error} onRetry={() => listingsQ.refetch()} />}
 					{!listingsQ.isLoading && bounds && homes.length === 0 && !listingsQ.isError && (
 						<div className="rounded-2xl border border-dashed border-sk-border2 p-6 text-center text-sm text-sk-text2">
-							No homes here with these filters. Move the map, remove a filter or try a new search.
+							{ai ? "Nothing matched your search. Try a higher budget or a wider area." : "No homes here with these filters. Move the map, remove a filter or try a new search."}
 						</div>
 					)}
 

@@ -38,18 +38,20 @@ export const ListingsProvider = ({ children }) => {
 
 	const isLandlord = user?.role === "LANDLORD_AGENCY";
 	const userId = user?._id;
+	// Joining or leaving a team only changes teamOf: the listings are the owner's.
+	const actingId = user?.teamOf?.ownerId ?? userId;
 
 	// Drop the previous landlord's data on logout or account switch.
 	useEffect(() => {
 		setListings([]);
 		setLoaded(false);
 		setCurrentListing({});
-	}, [userId, isLandlord]);
+	}, [actingId, isLandlord]);
 
 	useEffect(() => {
 		if (!isLandlord) return;
 		reload();
-	}, [userId, isLandlord, reload]);
+	}, [actingId, isLandlord, reload]);
 
 	useEffect(() => {
 		if (!isLandlord) return;
@@ -100,7 +102,7 @@ export const ListingsProvider = ({ children }) => {
 		return () => {
 			socketRef.current.disconnect();
 		};
-	}, [userId, isLandlord, reload]);
+	}, [actingId, isLandlord, reload]);
 
 	return (
 		<ListingsContext.Provider

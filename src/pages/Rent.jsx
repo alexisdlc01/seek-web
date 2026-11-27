@@ -186,7 +186,7 @@ export default function Rent() {
 												{(r.status === "LATE" || r.status === "FAILED") && (
 													<span className="inline-flex gap-2">
 														<button type="button" className={btnSmGhost} onClick={() => remindOne(r)}>Remind</button>
-														<Link to={`/inbox?tenancy=${r.tenancy}`} className={btnSmGhost}>Message</Link>
+														{r.tenancy && <Link to={`/inbox?tenancy=${r.tenancy}`} className={btnSmGhost}>Message</Link>}
 													</span>
 												)}
 											</td>

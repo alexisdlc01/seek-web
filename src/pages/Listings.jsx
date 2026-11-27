@@ -46,7 +46,8 @@ function usePropertyFacts(prop, tenancies, payRows, canSeeApplicants, tenanciesF
 	});
 	const sent = (apps.data ?? []).filter(a => ["SENT", "VIEWED", "OFFERED"].includes(a.stage));
 	const qualified = sent.filter(a => a.qualified).length;
-	const rows = payRows.filter(r => r.property && (r.property === prop.propertyTitle || r.property === prop.streetAddress));
+	// Match by listing id; the title fallback is for rows from a backend that does not send `listing` yet.
+	const rows = payRows.filter(r => r.listing ? r.listing === String(prop._id) : r.property && (r.property === prop.propertyTitle || r.property === prop.streetAddress));
 	const paidPct = rows.length && !paymentsFailed ? Math.round((rows.filter(r => r.status === "PAID").length / rows.length) * 100) : null;
 	const ends = tenancies
 		.filter(t => t.listing?._id === prop._id && t.status === "ACTIVE" && t.endDate)

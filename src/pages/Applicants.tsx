@@ -113,7 +113,11 @@ export default function Applicants() {
 		criteria.push("Fixed rent, no bidding", "First qualified household is first in line");
 	}
 
+	// Only the latest load may write state: a slow answer for another listing must not overwrite it.
+	const reqRef = useRef(0);
 	const loadApplications = useCallback(async () => {
+		const seq = ++reqRef.current;
+		const stale = () => seq !== reqRef.current;
 		if (targetListings.length === 0) {
 			setApplications([]);
 			setIsLoading(false);
@@ -139,6 +143,7 @@ export default function Applicants() {
 			// Keep the order the API returns (qualified first, then first sent):
 			// the home goes to the first qualified household, no bidding.
 			const all = perListing.flat();
+			if (stale()) return;
 			setApplications(all);
 
 			if (canSeeTenancies && all.some(a => a.stage === "ACCEPTED")) {
@@ -147,6 +152,7 @@ export default function Applicants() {
 						axios.get<{ _id: string; application?: string | null }[]>(`${API_BASE}/tenancies/landlord`, { withCredentials: true }),
 						axios.get<{ status: string; tenancy?: { _id?: string } | string }[]>(`${API_BASE}/contracts/landlord`, { withCredentials: true })
 					]);
+					if (stale()) return;
 					const signedTenancies = new Set(
 						(contracts.data ?? [])
 							.filter(c => c.status === "SIGNED")
@@ -160,13 +166,13 @@ export default function Applicants() {
 						)
 					);
 				} catch {
-					setSignedIds(new Set());
+					if (!stale()) setSignedIds(new Set());
 				}
 			}
 		} catch (error) {
-			setLoadError(getErrorMessage(error));
+			if (!stale()) setLoadError(getErrorMessage(error));
 		} finally {
-			setIsLoading(false);
+			if (!stale()) setIsLoading(false);
 		}
 		// targetIds captures which listings we're loading for.
 		// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, Chip, Empty, ErrorState, Loading, Page, PageHeader, btnSmGhost, btnSmPrimary } from "../components/sk.jsx";
-import { DEPOSIT_SCHEMES, api, engineerLink, errMessage, fmtDate, depositRules, fmtDay, gbp, openAttachment } from "../lib/landlord.js";
+import { DEPOSIT_SCHEMES, api, engineerLink, errMessage, fmtDate, londonToIso, depositRules, fmtDay, gbp, openAttachment } from "../lib/landlord.js";
 import { tenanciesControllerBankTransferInstructionsMutation } from "../client/@tanstack/react-query.gen";
 import { tenanciesControllerConfirmDocument, tenanciesControllerEnd } from "../client/sdk.gen";
 
@@ -339,13 +339,16 @@ function TenancyActions({ tenancy: t, contracts, templates }) {
 	const refresh = () => {
 		qc.invalidateQueries({ queryKey: ["landlord-contracts"] });
 		qc.invalidateQueries({ queryKey: ["landlord-tenancies"] });
+		qc.invalidateQueries({ queryKey: ["landlord-overview"] });
 	};
+	const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/London" });
+	const [receivedOn, setReceivedOn] = useState(today);
 	const seek = useMutation({ mutationFn: () => api.post("/contracts/default", { tenancy: t._id }), onSuccess: refresh });
 	const fromTemplate = useMutation({
 		mutationFn: (tpl) => api.post("/contracts", { tenancy: t._id, title: tpl.title, url: tpl.url, key: tpl.key, source: "UPLOAD" }),
 		onSuccess: refresh
 	});
-	const received = useMutation({ mutationFn: () => api.patch(`/tenancies/${t._id}/deposit-received`, {}), onSuccess: refresh });
+	const received = useMutation({ mutationFn: () => api.patch(`/tenancies/${t._id}/deposit-received`, { receivedAt: receivedOn === today ? undefined : londonToIso(`${receivedOn}T00:00`) }), onSuccess: refresh });
 	const prescribed = useMutation({ mutationFn: () => api.post(`/tenancies/${t._id}/prescribed-info`, {}), onSuccess: refresh });
 	const err = [seek, fromTemplate, received, prescribed].find((m) => m.isError)?.error;
 	const hasSeek = contracts.some((c) => c.source === "SEEK");
@@ -358,7 +361,15 @@ function TenancyActions({ tenancy: t, contracts, templates }) {
 			{templates.map((tpl) => (
 				<button key={tpl._id} type="button" className={btnSmGhost} disabled={fromTemplate.isPending} onClick={() => fromTemplate.mutate(tpl)}>Use “{tpl.title}”</button>
 			))}
-			{!t.depositReceivedAt && <button type="button" className={btnSmGhost} disabled={received.isPending} onClick={() => received.mutate()}>Deposit received</button>}
+			{!t.depositReceivedAt && (
+					<span className="flex items-center gap-2">
+						<label className="flex items-center gap-1.5 text-[12.5px] text-sk-muted">
+							Received on
+							<input type="date" value={receivedOn} max={today} onChange={(e) => setReceivedOn(e.target.value)} className="h-8 rounded-[10px] border border-sk-border2 bg-sk-bg px-2 text-[13px] text-sk-text" />
+						</label>
+						<button type="button" className={btnSmGhost} disabled={received.isPending || !receivedOn} onClick={() => received.mutate()}>Deposit received</button>
+					</span>
+				)}
 			{t.depositReceivedAt && !t.prescribedInfoSentAt && <button type="button" className={btnSmGhost} disabled={prescribed.isPending} onClick={() => prescribed.mutate()}>Prescribed info sent</button>}
 			{err && <span role="alert" className="basis-full text-[12.5px] text-sk-warn">{errMessage(err)}</span>}
 		</div>

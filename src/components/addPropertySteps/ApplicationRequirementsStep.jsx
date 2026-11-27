@@ -45,8 +45,8 @@ const ApplicationRequirements = ({
 	// The listing stores whole-property totals in pounds; landlords think per
 	// room, so the inputs below are per room (total = per room x people).
 	const people = Math.max(1, Number(numOfPeople) || 1);
-	const perRoomRent = rent ? Math.round(rent / people) : null;
-	const perRoomDeposit = deposit ? Math.round(deposit / people) : null;
+	const perRoomRent = rent ? Math.round((rent * 100) / people) / 100 : null;
+	const perRoomDeposit = deposit ? Math.round((deposit * 100) / people) / 100 : null;
 	const monthlyOnly = nation !== "SCOTLAND";
 	// Holding deposit max one week, security deposit max five weeks.
 	const weekly = perRoomRent ? Math.floor((perRoomRent * 12) / 52) : 0;

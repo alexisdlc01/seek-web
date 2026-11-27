@@ -72,7 +72,7 @@ export default function StudentRentPlan() {
 	const rent = data?.monthlyRent ?? tenancy.monthlyRent;
 	const set = (patch) => setForm((f) => ({ ...f, ...patch }));
 	const upcoming = data?.upcoming ?? [];
-	const history = (paidQ.data ?? []).filter((p) => p.status === "PAID").sort((a, b) => new Date(b.paidAt) - new Date(a.paidAt));
+	const history = (paidQ.data ?? []).filter((p) => p.status === "PAID" && String(p.tenancy?._id ?? p.tenancy) === String(tid)).sort((a, b) => new Date(b.paidAt) - new Date(a.paidAt));
 
 	return (
 		<Page className="!gap-[22px]">

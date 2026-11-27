@@ -14,7 +14,7 @@ export default function StudentReceipts() {
 	const paid = (q.data ?? [])
 		.filter((p) => p.status === "PAID")
 		.sort((a, b) => new Date(b.paidAt ?? b.dueDate) - new Date(a.paidAt ?? a.dueDate));
-	const title = (p) => p.tenancy?.listing?.propertyTitle;
+	const title = (p) => (p.tenancy?.listing ?? p.application?.listing)?.propertyTitle; // holding-deposit payments link via the application
 
 	return (
 		<Page className="!gap-[22px]">

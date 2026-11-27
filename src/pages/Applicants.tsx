@@ -63,8 +63,8 @@ function columnOf(a: Application, signed: Set<string>): ColumnKey | null {
 	if (a.stage === "SIGNED") return "SIGNED";
 	if (a.stage === "ACCEPTED") return signed.has(a._id) ? "SIGNED" : "OFFER";
 	if (a.stage === "OFFERED") return "OFFER";
-	if (a.stage === "VIEWED") return "VIEWED";
-	if (a.stage !== "SENT") return null;
+	if (a.stage === "VIEWED" && (!a.viewingAt || new Date(a.viewingAt).getTime() <= Date.now())) return "VIEWED";
+	if (a.stage !== "SENT" && a.stage !== "VIEWED") return null;
 	if (a.viewingAt && new Date(a.viewingAt).getTime() <= Date.now()) return "VIEWED";
 	return a.qualified ? "QUALIFIED" : "SUBMITTED";
 }

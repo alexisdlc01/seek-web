@@ -30,7 +30,7 @@ export default function Inbox() {
 	const [sendError, setSendError] = useState("");
 
 	// /inbox?tenancy=<id> opens that tenancy's thread (Rent, Dashboard).
-	const [params] = useSearchParams();
+	const [params, setParams] = useSearchParams();
 	const wantedTenancy = params.get("tenancy");
 
 	const category = FILTERS.find(([l]) => l === filter)?.[1];
@@ -59,8 +59,9 @@ export default function Inbox() {
 			return;
 		}
 		if (!visible.some((t) => t.id === selectedId)) {
-			const wanted = wantedTenancy && visible.find((t) => t.tenancyId === wantedTenancy);
-			setSelectedId((wanted || visible[0]).id);
+			// A tenancy with no thread opens nothing, never another tenant's thread.
+			if (wantedTenancy) setSelectedId(visible.find((t) => t.tenancyId === wantedTenancy)?.id ?? null);
+			else setSelectedId(visible[0].id);
 		}
 	}, [visible, selectedId, wantedTenancy]);
 
@@ -193,7 +194,10 @@ export default function Inbox() {
 							<button
 								key={c.id}
 								type="button"
-								onClick={() => setSelectedId(c.id)}
+								onClick={() => {
+									setSelectedId(c.id);
+									if (wantedTenancy) setParams((p) => { p.delete("tenancy"); return p; }, { replace: true });
+								}}
 								aria-current={c.id === selectedId}
 								className={`flex cursor-pointer flex-col gap-1 border-x-0 border-b-0 border-t border-solid border-sk-hair bg-transparent px-3.5 py-3 text-left text-sk-text first:border-t-0 ${c.id === selectedId ? "border-l-[3px] border-l-sk-accent bg-sk-card2" : ""}`}
 							>
@@ -217,7 +221,7 @@ export default function Inbox() {
 
 				<section aria-label="Conversation" className="flex min-w-0 flex-[2_1_480px] flex-col overflow-hidden rounded-2xl border border-sk-border bg-sk-card">
 					{!selectedId && (
-						<div className="p-[18px]"><Empty title="Select a conversation">Pick a thread on the left to read and reply.</Empty></div>
+						<div className="p-[18px]"><Empty title={wantedTenancy ? "No conversation with this tenant yet." : "Select a conversation"}>Pick a thread on the left to read and reply.</Empty></div>
 					)}
 					{selectedId && thread.isLoading && <div className="p-[18px]"><Loading label="Loading messages" /></div>}
 					{selectedId && thread.isError && <div className="p-[18px]"><ErrorState error={thread.error} onRetry={() => thread.refetch()} /></div>}

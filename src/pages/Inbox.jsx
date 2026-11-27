@@ -233,7 +233,7 @@ export default function Inbox() {
 									<span className="text-[12.5px] text-sk-muted">{t.sub}</span>
 								</div>
 								<div className="flex gap-2">
-									{t.tenancyId && (
+									{t.tenancyId && (!member || user.teamOf.scopes?.includes("TENANCIES")) && (
 										<Link to={`/contracts?tenancy=${t.tenancyId}`} className="inline-flex h-10 items-center rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] font-semibold text-sk-text no-underline">
 											Open tenancy
 										</Link>

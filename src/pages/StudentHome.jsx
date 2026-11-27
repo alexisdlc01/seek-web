@@ -403,7 +403,8 @@ export default function StudentHome() {
 	const plan = planQ.data;
 	const mine = (paymentsQ.data ?? []).filter((p) => idOf(p.tenancy) === tid);
 	const next = mine.find((p) => OPEN.includes(p.status)) ?? plan?.upcoming?.find((p) => OPEN.includes(p.status));
-	const paidUp = !next && (ended || (!billsPending && !!plan)); // nothing open and the plan is loaded
+	const rentQ = [paymentsQ, planQ].find((q) => q.isError); // never derive rent status from a failed request
+	const paidUp = !rentQ && !next && (ended || (!billsPending && !!plan)); // nothing open and the plan is loaded
 	const lastPaid = [...mine].reverse().find((p) => p.status === "PAID");
 	const bills = billsQ.data ?? [];
 	const toPay = bills.filter((b) => !b.includedInRent && b.status !== "PAID" && !b.myPaid && b.myShare !== 0);
@@ -446,7 +447,7 @@ export default function StudentHome() {
 			<div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
 				<div className="flex flex-col gap-1.5 rounded-2xl bg-sk-card2 p-[18px]">
 					<span className="text-[13px] text-sk-muted">{paidUp ? "Rent" : "Next rent"}{next ? ` · ${fmtDay(next.dueDate)}` : ""}</span>
-					{paidUp ? <span className="font-display text-[28px] font-semibold">All paid up</span> : <><span className="font-display text-[28px] font-semibold">{gbp(next?.amount ?? tenancy.monthlyRent)}</span>
+					{rentQ ? <ErrorState error={rentQ.error} onRetry={() => rentQ.refetch()} /> : paidUp ? <span className="font-display text-[28px] font-semibold">All paid up</span> : <><span className="font-display text-[28px] font-semibold">{gbp(next?.amount ?? tenancy.monthlyRent)}</span>
 					<span className={`text-[12.5px] ${next?.status === "LATE" || next?.status === "FAILED" ? "text-sk-warn" : "text-sk-ok"}`}>
 						{plan?.plan ? `${PLAN_LABEL[plan.plan.frequency]} ${plan.plan.autopay ? (plan.autopayCardSaved ? "autopay on" : "· autopay starts after you pay once by card") : "· reminder before it's due"}` : "No rent plan yet"}
 						{lastPaid ? ` · ${new Date(lastPaid.dueDate).toLocaleDateString("en-GB", { month: "long" })} paid` : ""}
@@ -475,11 +476,11 @@ export default function StudentHome() {
 				) : (
 				<Link to="/student/home/bills" className="flex flex-col gap-1.5 rounded-2xl border border-sk-border bg-sk-card p-[18px] text-inherit no-underline">
 					<span className="text-[13px] text-sk-muted">Your share of bills</span>
-					<span className="font-display text-[28px] font-semibold">{billsQ.isLoading ? "…" : gbp(myBills)}</span>
-					<span className="text-[12.5px] text-sk-text2">
+					<span className="font-display text-[28px] font-semibold">{billsQ.isLoading ? "…" : billsQ.isError ? "Couldn't load" : gbp(myBills)}</span>
+					{!billsQ.isError && <span className="text-[12.5px] text-sk-text2">
 						{toPay.length ? `${toPay.length} to sort out · split ${tenancy.tenants?.length || l.numOfPeople || ""} ways` : l.billsIncluded ? "Bills included in rent" : "Nothing due right now"}
 						{bills.some((b) => b.category === "COUNCIL_TAX" && b.includedInRent) || docs.some((d) => d.type === "COUNCIL_TAX_EXEMPTION") ? " · council tax exempt" : ""}
-					</span>
+					</span>}
 				</Link>
 				)}
 			</div>
@@ -488,6 +489,7 @@ export default function StudentHome() {
 				<div className="flex min-w-0 flex-[1.4_1_480px] flex-col gap-4">
 					<Card title="Contract and documents">
 						{contractsQ.isLoading && <Loading label="Loading contract" />}
+						{contractsQ.isError && <ErrorState error={contractsQ.error} onRetry={() => contractsQ.refetch()} />}
 						{contracts.map((c) => (
 							<div key={c._id} className="flex items-center gap-3 border-b border-sk-hair pb-3">
 								<FileIcon />
@@ -526,7 +528,7 @@ export default function StudentHome() {
 								)}
 							</div>
 						))}
-						{!contractsQ.isLoading && contracts.length === 0 && !docs.length && (
+						{!contractsQ.isLoading && !contractsQ.isError && contracts.length === 0 && !docs.length && (
 							<span className="text-sm text-sk-text2">No documents yet. Anything your landlord sends by email is filed here once your email is connected.</span>
 						)}
 						<AdviceCard topic="contract" tenancyId={tid} />
@@ -550,7 +552,8 @@ export default function StudentHome() {
 							{!ended && isTenant && <button type="button" onClick={() => setReporting(true)} className="h-9 cursor-pointer rounded-[10px] border-none bg-sk-accent px-3 text-[13px] font-semibold text-sk-on-accent">Report a problem</button>}
 						</div>
 						{repairsQ.isLoading && <Loading label="Loading repairs" />}
-						{isTenant && !repairsQ.isLoading && repairs.length === 0 && <span className="text-sm text-sk-text2">Nothing reported. If something breaks, report it here and your landlord is told straight away.</span>}
+						{repairsQ.isError && <ErrorState error={repairsQ.error} onRetry={() => repairsQ.refetch()} />}
+						{isTenant && !repairsQ.isLoading && !repairsQ.isError && repairs.length === 0 && <span className="text-sm text-sk-text2">Nothing reported. If something breaks, report it here and your landlord is told straight away.</span>}
 						{repairs.map((r) => (
 							<div key={r._id} className="flex flex-col gap-1.5 text-sm">
 							<div className="flex justify-between gap-2.5">

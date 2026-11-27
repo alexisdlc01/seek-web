@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, ErrorState, Loading, Page, PageHeader, btnSmGhost, btnSmPrimary } from "../components/sk.jsx";
 import { AdviceCard, Notice } from "../components/StudentBits.jsx";
 import { api, errMessage, fmtDate, gbp, openFile } from "../lib/landlord.js";
-import { useMyTenancy } from "../lib/student.js";
+import { useMyTenancy, useTenancyQs } from "../lib/student.js";
 import UserContext from "../context/UserContext.jsx";
 
 const CATEGORY = {
@@ -114,6 +114,7 @@ export default function StudentBills() {
 	const qc = useQueryClient();
 	const { user } = useContext(UserContext);
 	const { tenancy, isLoading, isError, error, refetch } = useMyTenancy();
+	const tq = useTenancyQs();
 	const tid = tenancy?._id;
 	// An invited student is not a tenant yet: the bills route answers 403.
 	const pending = tenancy?.status === "PENDING_ACCEPTANCE";
@@ -134,7 +135,7 @@ export default function StudentBills() {
 	if (isError) return <Page><ErrorState error={error} onRetry={refetch} /></Page>;
 	if (billsQ.isError) return <Page><ErrorState error={billsQ.error} onRetry={() => billsQ.refetch()} /></Page>;
 
-	const back = <Link to="/student/home" className="text-sk-link no-underline">← My home</Link>;
+	const back = <Link to={`/student/home${tq}`} className="text-sk-link no-underline">← My home</Link>;
 	if (!tenancy || pending)
 		return (
 			<Page>

@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UserContext from "../context/UserContext.jsx";
 import { Card, ErrorState, Loading, Page, PageHeader } from "../components/sk.jsx";
 import { AdviceCard, Notice } from "../components/StudentBits.jsx";
 import { DEPOSIT_SCHEMES, api, depositRules, errMessage, fmtDate, gbp, openFile, safeUrl } from "../lib/landlord.js";
-import { idOf, useMyTenancy } from "../lib/student.js";
+import { idOf, useMyTenancy, useTenancyQs } from "../lib/student.js";
 import { tenanciesControllerAddDocumentMutation } from "../client/@tanstack/react-query.gen";
 
 const linkCls = "flex h-9 items-center rounded-[10px] border border-sk-border2 px-3 text-[13px] font-semibold text-sk-text no-underline";
@@ -74,10 +74,9 @@ function InventoryPhotos({ tenancyId, documents, stage, title }) {
 export default function StudentDeposit() {
 	const qc = useQueryClient();
 	const { user } = useContext(UserContext);
-	const { tenancy: picked, data: tenancies, isLoading, isError, error, refetch } = useMyTenancy();
-	// Deduction notifications link here with the tenancy the student may have left.
-	const wanted = useSearchParams()[0].get("tenancy");
-	const tenancy = tenancies?.find((t) => t._id === wanted) ?? picked;
+	// Deduction notifications link here with ?tenancy=, read by useMyTenancy.
+	const { tenancy, isLoading, isError, error, refetch } = useMyTenancy();
+	const tq = useTenancyQs();
 	const tid = tenancy?._id;
 	const [notice, setNotice] = useState(null);
 	const contractsQ = useQuery({ queryKey: ["contracts", tid], enabled: !!tid, queryFn: async () => (await api.get(`/contracts/tenancy/${tid}`)).data });
@@ -92,7 +91,7 @@ export default function StudentDeposit() {
 	if (isLoading) return <Page><Loading label="Loading your deposit" /></Page>;
 	if (isError) return <Page><ErrorState error={error} onRetry={refetch} /></Page>;
 
-	const back = <Link to="/student/home" className="text-sk-link no-underline">← My home</Link>;
+	const back = <Link to={`/student/home${tq}`} className="text-sk-link no-underline">← My home</Link>;
 	if (!tenancy)
 		return (
 			<Page>

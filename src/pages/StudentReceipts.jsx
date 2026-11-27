@@ -4,11 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, Chip, Empty, ErrorState, Loading, Page, PageHeader, btnGhost } from "../components/sk.jsx";
 import { Modal } from "../components/StudentBits.jsx";
 import { api, fmtDate, gbp } from "../lib/landlord.js";
+import { useTenancyQs } from "../lib/student.js";
 
 const KIND = { RENT: "Rent", HOLDING_DEPOSIT: "Holding deposit" };
 
 export default function StudentReceipts() {
 	const [receipt, setReceipt] = useState(null);
+	const tq = useTenancyQs();
 	// All tenancies on purpose, same as the mobile app: past homes keep their receipts.
 	const q = useQuery({ queryKey: ["my-payments"], queryFn: async () => (await api.get("/payments/mine")).data });
 	const paid = (q.data ?? [])
@@ -18,7 +20,7 @@ export default function StudentReceipts() {
 
 	return (
 		<Page className="!gap-[22px]">
-			<PageHeader eyebrow={<Link to="/student/home" className="text-sk-link no-underline">← My home</Link>} title="Receipts" />
+			<PageHeader eyebrow={<Link to={`/student/home${tq}`} className="text-sk-link no-underline">← My home</Link>} title="Receipts" />
 			{q.isLoading && <Loading label="Loading your receipts" />}
 			{q.isError && <ErrorState error={q.error} onRetry={() => q.refetch()} />}
 			{q.data && paid.length === 0 && <Empty title="No receipts yet">Paid rent and holding deposits will appear here.</Empty>}

@@ -2,6 +2,7 @@
 // Same pattern as the landlord pages: the axios instance from lib/landlord.js
 // plus react-query.
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import { api } from "./landlord.js";
 
 // Seek AI advice actions point at app routes written for the landlord app.
@@ -15,7 +16,9 @@ const STUDENT_ROUTES = {
 export const studentLink = (link = "") => STUDENT_ROUTES[link] ?? link;
 
 /** Active tenancy running now or starting next (earliest start not yet ended). */
-export const pickTenancy = (list = []) => {
+export const pickTenancy = (list = [], wantedId = null) => {
+	const wanted = wantedId && list.find((t) => t._id === wantedId);
+	if (wanted) return wanted;
 	const now = Date.now();
 	const active = list.filter((t) => t.status === "ACTIVE");
 	const current = active
@@ -25,13 +28,20 @@ export const pickTenancy = (list = []) => {
 	return current ?? list.find((t) => t.status === "PENDING_ACCEPTANCE") ?? active[0] ?? list[0] ?? null;
 };
 
-/** The student's current tenancy, or null when they have none. */
+/** "?tenancy=<id>" when the URL names a tenancy (e.g. next year's), else "". Append to /student/home links. */
+export const useTenancyQs = () => {
+	const wanted = useSearchParams()[0].get("tenancy");
+	return wanted ? `?tenancy=${encodeURIComponent(wanted)}` : "";
+};
+
+/** The student's current tenancy (or the one in ?tenancy=), or null when they have none. */
 export const useMyTenancy = () => {
+	const wanted = useSearchParams()[0].get("tenancy");
 	const q = useQuery({
 		queryKey: ["student-tenancies"],
 		queryFn: async () => (await api.get("/tenancies/mine")).data
 	});
-	return { ...q, tenancy: pickTenancy(q.data ?? []) };
+	return { ...q, tenancy: pickTenancy(q.data ?? [], wanted) };
 };
 
 /** Seek Passport: GET /users/me/passport (sections, completed/total, ready). */

@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, Chip, ErrorState, Loading, Page, PageHeader, btnGhost, btnPrimary } from "../components/sk.jsx";
 import { AdviceCard, Modal, Notice, PayNowButton } from "../components/StudentBits.jsx";
 import { api, errMessage, fmtDate, gbp } from "../lib/landlord.js";
-import { PLAN_LABEL, useMyTenancy } from "../lib/student.js";
+import { PLAN_LABEL, useMyTenancy, useTenancyQs } from "../lib/student.js";
 
 const OPTIONS = [
 	{ value: "MONTHLY", months: 1, hint: "Pay each month" },
@@ -28,6 +28,7 @@ const Toggle = ({ checked, onChange, children }) => (
 export default function StudentRentPlan() {
 	const qc = useQueryClient();
 	const { tenancy, isLoading, isError, error, refetch } = useMyTenancy();
+	const tq = useTenancyQs();
 	const tid = tenancy?._id;
 	const paidQ = useQuery({ queryKey: ["my-payments"], enabled: !!tid, queryFn: async () => (await api.get("/payments/mine")).data });
 	const planQ = useQuery({ queryKey: ["rent-plan", tid], enabled: !!tid, queryFn: async () => (await api.get(`/payments/plan/${tid}`)).data });
@@ -76,7 +77,7 @@ export default function StudentRentPlan() {
 
 	return (
 		<Page className="!gap-[22px]">
-			<PageHeader eyebrow={<Link to="/student/home" className="text-sk-link no-underline">← My home</Link>} title="Rent plan" />
+			<PageHeader eyebrow={<Link to={`/student/home${tq}`} className="text-sk-link no-underline">← My home</Link>} title="Rent plan" />
 			<Notice notice={notice} />
 
 			<div className="flex flex-wrap items-start gap-6">
@@ -181,7 +182,7 @@ export default function StudentRentPlan() {
 					</Card>
 					{history.length > 0 && (
 						<Card title="Payment history" className="!gap-3">
-							<Link to="/student/home/receipts" className="text-[13px] font-semibold text-sk-link">All receipts →</Link>
+							<Link to={`/student/home/receipts${tq}`} className="text-[13px] font-semibold text-sk-link">All receipts →</Link>
 							{history.map((p) => (
 								<div key={p._id} className="flex items-center justify-between gap-2 border-b border-sk-hair pb-3 text-sm last:border-none last:pb-0">
 									<span className="flex flex-col">

@@ -6,7 +6,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import DeclineDialog from "../components/DeclineDialog";
 import ListingsContext from "../context/ListingsContext.jsx";
 import UserContext from "../context/UserContext.jsx";
-import { Chip, Page, PageHeader, btnSmGhost, btnSmPrimary } from "../components/sk.jsx";
+import { Chip, ErrorState, Loading, Page, PageHeader, btnSmGhost, btnSmPrimary } from "../components/sk.jsx";
 import { VerifiedStudentBadge } from "../components/StudentVerification.jsx";
 import { API_BASE, fmtDate, gbp, timeAgo } from "../lib/landlord.js";
 
@@ -72,7 +72,7 @@ function columnOf(a: Application, signed: Set<string>): ColumnKey | null {
 export default function Applicants() {
 	const navigate = useNavigate();
 	const { listingId } = useParams<{ listingId: string }>();
-	const { listings } = useContext(ListingsContext)!;
+	const { listings, loaded, loadError: listingsError, reload } = useContext(ListingsContext)!;
 	const { user } = useContext(UserContext);
 	const canAct = !user?.teamOf || user.teamOf.scopes?.includes("APPLICATIONS");
 	const canSeeTenancies = !user?.teamOf || user.teamOf.scopes?.includes("TENANCIES");
@@ -393,7 +393,11 @@ export default function Applicants() {
 				)}
 			</section>
 
-			{isLoading ? (
+			{listingsError && !listingId ? (
+				<ErrorState error={listingsError} onRetry={reload} />
+			) : !loaded && !listingId ? (
+				<Loading label="Loading your listings" />
+			) : isLoading ? (
 				<p className="text-sm text-sk-muted">Loading applications...</p>
 			) : loadError ? (
 				<p className="text-sm text-sk-danger">{loadError}</p>

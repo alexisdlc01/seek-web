@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DeclineDialog from "../components/DeclineDialog";
 import ListingsContext from "../context/ListingsContext.jsx";
+import UserContext from "../context/UserContext.jsx";
 import { Chip, Page, PageHeader, btnSmGhost, btnSmPrimary } from "../components/sk.jsx";
 import { VerifiedStudentBadge } from "../components/StudentVerification.jsx";
 import { API_BASE, fmtDate, gbp, timeAgo } from "../lib/landlord.js";
@@ -72,6 +73,9 @@ export default function Applicants() {
 	const navigate = useNavigate();
 	const { listingId } = useParams<{ listingId: string }>();
 	const { listings } = useContext(ListingsContext)!;
+	const { user } = useContext(UserContext);
+	const canAct = !user?.teamOf || user.teamOf.scopes?.includes("APPLICATIONS");
+	const canSeeTenancies = !user?.teamOf || user.teamOf.scopes?.includes("TENANCIES");
 	const toast = useRef<Toast>(null);
 	const qc = useQueryClient();
 	const [decliningApp, setDecliningApp] = useState<Application | null>(null);
@@ -137,7 +141,7 @@ export default function Applicants() {
 			const all = perListing.flat();
 			setApplications(all);
 
-			if (all.some(a => a.stage === "ACCEPTED")) {
+			if (canSeeTenancies && all.some(a => a.stage === "ACCEPTED")) {
 				try {
 					const [tenancies, contracts] = await Promise.all([
 						axios.get<{ _id: string; application?: string | null }[]>(`${API_BASE}/tenancies/landlord`, { withCredentials: true }),
@@ -166,7 +170,7 @@ export default function Applicants() {
 		}
 		// targetIds captures which listings we're loading for.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [targetIds]);
+	}, [targetIds, canSeeTenancies]);
 
 	useEffect(() => {
 		loadApplications();
@@ -305,7 +309,7 @@ export default function Applicants() {
 					>
 						Chat
 					</button>
-					{["SENT", "VIEWED"].includes(application.stage) && (
+					{canAct && ["SENT", "VIEWED"].includes(application.stage) && (
 						<button
 							type="button"
 							className={`${btnSmPrimary} disabled:opacity-50`}
@@ -316,7 +320,7 @@ export default function Applicants() {
 							{busy ? "Working…" : "Make offer"}
 						</button>
 					)}
-					{["SENT", "VIEWED", "OFFERED"].includes(application.stage) && (
+					{canAct && ["SENT", "VIEWED", "OFFERED"].includes(application.stage) && (
 						<button
 							type="button"
 							className={`${btnSmGhost} !text-sk-danger disabled:opacity-50`}

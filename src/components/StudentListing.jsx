@@ -7,7 +7,7 @@ import { ErrorState, Loading, btnPrimary, btnGhost } from "./sk.jsx";
 import { api, errMessage, fmtDate } from "../lib/landlord.js";
 import { docLabel, idOf, perPerson, photoBackground, pounds, useMyApplications, usePassport } from "../lib/student.js";
 
-const COMPLIANCE_HINT = "The landlord has entered a registration number, EPC, gas and electrical safety certificates (and HMO licence where needed) that are in date. Seek does not inspect the documents.";
+const COMPLIANCE_HINT = "The landlord has entered a registration number and an in-date electrical safety certificate, and none of the certificates they added has expired. Seek does not inspect the documents.";
 const AMENITY = (a) => a.replace(/_/g, " ");
 
 const STAGE_TEXT = {

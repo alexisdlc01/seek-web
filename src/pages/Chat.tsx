@@ -107,7 +107,9 @@ export default function ChatPage() {
 				setSelectedId(prev =>
 					prev && databaseChats.some(chat => chat._id === prev)
 						? prev
-						: databaseChats[0]?._id
+						: window.matchMedia("(min-width: 768px)").matches
+							? databaseChats[0]?._id
+							: undefined
 				);
 			} catch (error) {
 				if (!isMounted) return;
@@ -502,7 +504,7 @@ export default function ChatPage() {
 			<Toast ref={toast} />
 			<div className="h-[calc(100dvh-3.5rem)] bg-sk-bg md:h-dvh">
 				<div className="flex h-full overflow-hidden">
-					<div className="w-1/3 bg-sk-bg border-r-1 border-sk-border flex flex-col min-h-0">
+					<div className={`w-full md:w-1/3 bg-sk-bg border-r-1 border-sk-border flex-col min-h-0 ${selectedChat ? "hidden md:flex" : "flex"}`}>
 						<div className="flex items-center gap-2 px-4 pt-6 pb-4">
 							<div className="relative flex-1">
 								<i className="pi pi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-sk-muted text-sm" />
@@ -542,12 +544,20 @@ export default function ChatPage() {
 					</div>
 
 					{/* Chat Panel */}
-					<div className="w-2/3 flex flex-col bg-sk-bg min-h-0">
+					<div className={`w-full md:w-2/3 flex-col bg-sk-bg min-h-0 ${selectedChat ? "flex" : "hidden md:flex"}`}>
 						{selectedChat ? (
 							<>
 								{/* Header */}
 								<div className="flex items-center justify-between px-6 py-4 border-b-1 border-sk-border">
 									<div className="flex items-center gap-3">
+										<button
+											type="button"
+											aria-label="Back to conversations"
+											className="md:hidden text-sk-text2"
+											onClick={() => setSelectedId(undefined)}
+										>
+											<i className="pi pi-arrow-left" />
+										</button>
 										<ConversationAvatar conversation={selectedChat} size={44} />
 										<div className="flex flex-col">
 											<h2 className="text-lg font-semibold text-sk-text">
@@ -1073,7 +1083,7 @@ type ChatMessageProp = {
 function ChatMessage({ data, isMe, showLabel }: ChatMessageProp) {
 	return (
 		<div className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-			<div className="max-w-[55%]">
+			<div className="max-w-[80%] md:max-w-[55%]">
 				{showLabel && (
 					<div className="text-xs mb-1 text-sk-text2">{data.sender.name}</div>
 				)}

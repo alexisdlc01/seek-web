@@ -37,17 +37,17 @@ function certChip(label, expiry) {
 
 // Everything a landlord wants to see on a property at a glance, from the
 // listing plus its applications, tenancies and this month's rent.
-function usePropertyFacts(prop, tenancies, payRows) {
+function usePropertyFacts(prop, tenancies, payRows, canSeeApplicants, tenanciesFailed, paymentsFailed) {
 	const live = !prop.isDraft && prop.isVerified;
 	const apps = useQuery({
 		queryKey: ["listing-applications", prop._id],
-		enabled: live,
+		enabled: live && canSeeApplicants,
 		queryFn: async () => (await api.get(`/application/listing/${prop._id}`)).data
 	});
 	const sent = (apps.data ?? []).filter(a => ["SENT", "VIEWED", "OFFERED"].includes(a.stage));
 	const qualified = sent.filter(a => a.qualified).length;
 	const rows = payRows.filter(r => r.property && (r.property === prop.propertyTitle || r.property === prop.streetAddress));
-	const paidPct = rows.length ? Math.round((rows.filter(r => r.status === "PAID").length / rows.length) * 100) : null;
+	const paidPct = rows.length && !paymentsFailed ? Math.round((rows.filter(r => r.status === "PAID").length / rows.length) * 100) : null;
 	const ends = tenancies
 		.filter(t => t.listing?._id === prop._id && t.status === "ACTIVE" && t.endDate)
 		.map(t => t.endDate)
@@ -57,12 +57,14 @@ function usePropertyFacts(prop, tenancies, payRows) {
 		.reduce((n, t) => n + (t.tenants?.length ?? 0), 0);
 	const isLet = live && prop.numOfPeople > 0 && letNow >= prop.numOfPeople;
 
-	return { isLet, letNow, applied: sent.length, qualified, paidPct, ends };
+	// A disabled (gated) query is not an error: isError stays false.
+	const failed = tenanciesFailed || apps.isError;
+	return { isLet, letNow, applied: sent.length, qualified, paidPct, ends, failed };
 }
 
 // One property card.
-function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navigate, canEdit }) {
-	const f = usePropertyFacts(prop, tenancies, payRows);
+function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navigate, canEdit, canSeeApplicants, tenanciesFailed, paymentsFailed }) {
+	const f = usePropertyFacts(prop, tenancies, payRows, canSeeApplicants, tenanciesFailed, paymentsFailed);
 	const perRoom = prop.monthlyRent && prop.numOfPeople ? Math.round(prop.monthlyRent / prop.numOfPeople) : null;
 	const place = [prop.cityTown, (prop.postcodeZIP || "").split(" ")[0]].filter(Boolean).join(" ");
 	const sub = [place, prop.bedroomsCount ? `${prop.bedroomsCount} bed` : null, NATION[prop.nation]].filter(Boolean).join(" · ");
@@ -135,18 +137,20 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 							{prop.nation === "WALES" && <Chip tone="muted">Rent Smart Wales</Chip>}
 							{plans.includes("SIX_MONTHS") && <Chip tone="accent">Half-year on</Chip>}
 						</div>
-						{f.isLet ? (
+						{f.failed ? (
+							<span className="text-[13px] text-sk-text2">Couldn't load status</span>
+						) : f.isLet ? (
 							<span className="text-[13px] text-sk-text2">
 								{f.ends ? `Contract ends ${fmtDate(f.ends)}` : "Periodic contract"}
 								{f.paidPct != null ? ` · Rent ${f.paidPct}% paid` : ""}
 							</span>
-						) : (
+						) : canSeeApplicants ? (
 							<span className="text-[13px] text-sk-text2">
 								{f.applied} {f.applied === 1 ? "household" : "households"} applied
 								{f.applied ? ` · ${f.qualified} qualified` : ""}
 								{prop.views ? ` · ${prop.views} views` : ""}
 							</span>
-						)}
+						) : null}
 					</>
 				)}
 				<div className="mt-auto flex gap-2 pt-2">
@@ -177,13 +181,13 @@ function PropertyCard({ prop, index, tenancies, payRows, onOpen, onDelete, navig
 						</button>
 					) : (
 						<>
-							<button
+							{(f.isLet || canSeeApplicants) && <button
 								type="button"
 								className={btnPrimary}
 								onClick={() => navigate(f.isLet ? "/contracts" : `/applicants/${prop._id}`)}
 							>
 								{f.isLet ? "Contract and deposit" : "View applicants"}
-							</button>
+							</button>}
 							{canEdit && <button type="button" className={btnGhost} onClick={edit}>Edit</button>}
 						</>
 					)}
@@ -200,6 +204,7 @@ export default function Listings() {
 	const { user } = useContext(UserContext);
 	const canEditListings = !user?.teamOf || user.teamOf.scopes?.includes("LISTINGS");
 	const canSeeTenancies = !user?.teamOf || user.teamOf.scopes?.includes("TENANCIES");
+	const canSeeApplicants = !user?.teamOf || user.teamOf.scopes?.some(s => s === "APPLICATIONS" || s === "VIEWINGS_INBOX");
 	const tenanciesQ = useQuery({
 		queryKey: ["landlord-tenancies"],
 		queryFn: async () => (await api.get("/tenancies/landlord")).data,
@@ -360,6 +365,9 @@ export default function Listings() {
 						onDelete={confirmDelete}
 						navigate={navigate}
 						canEdit={canEditListings}
+						canSeeApplicants={canSeeApplicants}
+						tenanciesFailed={tenanciesQ.isError}
+						paymentsFailed={paymentsQ.isError}
 					/>
 				))}
 				{canEditListings && <button

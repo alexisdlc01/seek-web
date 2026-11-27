@@ -164,7 +164,8 @@ export default function StudentProfile() {
 	});
 
 	const p = passportQ.data;
-	const shares = (sharesQ.data ?? []).filter((s) => s.active || s.revokedBy === "student");
+	// Live, stopped by the student, or expired after 14 days: the last two can be shared again.
+	const shares = (sharesQ.data ?? []).filter((s) => !s.revokedAt || s.revokedBy === "student");
 
 	return (
 		<Page className="!gap-[22px]">
@@ -272,9 +273,9 @@ export default function StudentProfile() {
 									{s.viewer?.name ?? s.viewer?.companyName ?? "Landlord"}
 									{s.listing?.propertyTitle ? ` · ${s.listing.propertyTitle}` : ""}
 								</span>
-								<span className="text-[13px] text-sk-muted">{s.revokedBy === "student" ? "Sharing stopped" : `until ${fmtDate(s.expiresAt)}`}</span>
+								<span className="text-[13px] text-sk-muted">{s.revokedBy === "student" ? "Sharing stopped" : s.active ? `until ${fmtDate(s.expiresAt)}` : `Expired ${fmtDate(s.expiresAt)}`}</span>
 							</span>
-							{s.revokedBy === "student" ? (
+							{!s.active ? (
 								<button
 									type="button"
 									onClick={() => reopen.mutate(s._id)}

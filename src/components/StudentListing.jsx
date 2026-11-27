@@ -40,11 +40,10 @@ export function ListingDetailModal({ id, saved, onToggleSave, onApply, onClose }
 			{q.isError && <ErrorState error={q.error} onRetry={() => q.refetch()} />}
 			{l && (
 				<>
-					<div className="grid gap-2" style={{ gridTemplateColumns: (l.photos?.length ?? 0) > 1 ? "2fr 1fr" : "1fr" }}>
-						<div className="h-[220px] rounded-xl" style={{ background: photoBackground(l.photos?.[0]) }} role="img" aria-label={`Photo of ${l.propertyTitle}`} />
-						{(l.photos?.length ?? 0) > 1 && (
-							<div className="h-[220px] rounded-xl" style={{ background: photoBackground(l.photos[1], 1) }} role="img" aria-label={`Second photo of ${l.propertyTitle}`} />
-						)}
+					<div className="flex snap-x snap-mandatory gap-2 overflow-x-auto">
+						{(l.photos?.length ? l.photos : [undefined]).map((p, i, all) => (
+							<div key={i} className={`h-[220px] snap-start rounded-xl ${all.length > 1 ? "w-[320px] shrink-0" : "w-full"}`} style={{ background: photoBackground(p, i) }} role="img" aria-label={all.length > 1 ? `Photo ${i + 1} of ${all.length}` : `Photo of ${l.propertyTitle}`} />
+						))}
 					</div>
 					<div className="flex flex-wrap items-end justify-between gap-3">
 						<div className="flex flex-col gap-0.5">

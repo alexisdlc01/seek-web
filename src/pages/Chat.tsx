@@ -26,7 +26,7 @@ type ChatUser = {
 	email?: string;
 	role?: string;
 	// Set for a team member: they act as the owner, so messages carry the owner's id.
-	teamOf?: { ownerId: string } | null;
+	teamOf?: { ownerId: string; scopes?: string[] } | null;
 };
 
 type MessageType = "Text" | "Image";
@@ -258,7 +258,8 @@ export default function ChatPage() {
 		!!currentUser &&
 		(application.owner === actingId ||
 			(application.landlord === actingId &&
-				application.stage !== "NOT_SENT"));
+				application.stage !== "NOT_SENT")) &&
+		(!currentUser.teamOf || !!currentUser.teamOf.scopes?.includes("APPLICATIONS"));
 
 	const createInvite = async () => {
 		if (!application) return;

@@ -393,6 +393,7 @@ export default function StudentHome() {
 	const plan = planQ.data;
 	const mine = (paymentsQ.data ?? []).filter((p) => idOf(p.tenancy) === tid);
 	const next = mine.find((p) => OPEN.includes(p.status)) ?? plan?.upcoming?.find((p) => OPEN.includes(p.status));
+	const paidUp = !next && (ended || (!billsPending && !!plan)); // nothing open and the plan is loaded
 	const lastPaid = [...mine].reverse().find((p) => p.status === "PAID");
 	const bills = billsQ.data ?? [];
 	const toPay = bills.filter((b) => !b.includedInRent && b.status !== "PAID" && !b.myPaid && b.myShare !== 0);
@@ -434,8 +435,8 @@ export default function StudentHome() {
 
 			<div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
 				<div className="flex flex-col gap-1.5 rounded-2xl bg-sk-card2 p-[18px]">
-					<span className="text-[13px] text-sk-muted">{ended && !next ? "Rent" : "Next rent"}{next ? ` · ${fmtDay(next.dueDate)}` : ""}</span>
-					{!(ended && !next) && <><span className="font-display text-[28px] font-semibold">{gbp(next?.amount ?? tenancy.monthlyRent)}</span>
+					<span className="text-[13px] text-sk-muted">{paidUp ? "Rent" : "Next rent"}{next ? ` · ${fmtDay(next.dueDate)}` : ""}</span>
+					{paidUp ? <span className="font-display text-[28px] font-semibold">All paid up</span> : <><span className="font-display text-[28px] font-semibold">{gbp(next?.amount ?? tenancy.monthlyRent)}</span>
 					<span className={`text-[12.5px] ${next?.status === "LATE" || next?.status === "FAILED" ? "text-sk-warn" : "text-sk-ok"}`}>
 						{plan?.plan ? `${PLAN_LABEL[plan.plan.frequency]} ${plan.plan.autopay ? (plan.autopayCardSaved ? "autopay on" : "· autopay starts after you pay once by card") : "· reminder before it's due"}` : "No rent plan yet"}
 						{lastPaid ? ` · ${new Date(lastPaid.dueDate).toLocaleDateString("en-GB", { month: "long" })} paid` : ""}
@@ -449,12 +450,12 @@ export default function StudentHome() {
 				</div>
 				<Link to="/student/home/deposit" className="flex flex-col gap-1.5 rounded-2xl border border-sk-border bg-sk-card p-[18px] text-inherit no-underline">
 					<span className="text-[13px] text-sk-muted">Deposit</span>
-					<span className="font-display text-[28px] font-semibold">{gbp(tenancy.depositAmount)}</span>
-					<span className={`text-[12.5px] ${tenancy.depositProtectedAt ? "text-sk-ok" : "text-sk-warn"}`}>
+					<span className="font-display text-[28px] font-semibold">{tenancy.depositAmount === 0 ? "No deposit" : gbp(tenancy.depositAmount)}</span>
+					{tenancy.depositAmount !== 0 && <span className={`text-[12.5px] ${tenancy.depositProtectedAt ? "text-sk-ok" : "text-sk-warn"}`}>
 						{tenancy.depositProtectedAt
 							? `Protected with ${DEPOSIT_SCHEMES.find((s) => s.value === tenancy.depositScheme)?.label ?? "a scheme"}${docs.some((d) => d.type === "DEPOSIT_CERTIFICATE") ? " · certificate saved" : ""}`
 							: "Not protected yet · see what to do"}
-					</span>
+					</span>}
 				</Link>
 				{billsPending ? (
 					<div className="flex flex-col gap-1.5 rounded-2xl border border-sk-border bg-sk-card p-[18px]">

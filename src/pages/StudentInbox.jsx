@@ -23,6 +23,7 @@ export default function StudentInbox() {
 
 	const threadsQ = useQuery({
 		queryKey: ["inbox-threads", category ?? "ALL"],
+		staleTime: 0, refetchOnMount: "always", refetchInterval: 15_000,
 		queryFn: async () => (await api.get("/inbox/threads", { params: category ? { category } : {} })).data
 	});
 	const threads = threadsQ.data ?? [];
@@ -34,6 +35,7 @@ export default function StudentInbox() {
 	const threadQ = useQuery({
 		queryKey: ["inbox-thread", sel],
 		enabled: !!sel,
+		staleTime: 0, refetchOnMount: "always", refetchInterval: 15_000,
 		queryFn: async () => (await api.get(`/inbox/threads/${sel}`)).data
 	});
 	const cur = threadQ.data;

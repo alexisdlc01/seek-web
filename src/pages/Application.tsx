@@ -27,7 +27,7 @@ import DeclineDialog from "../components/DeclineDialog";
 import { AdviceCard } from "../components/StudentBits.jsx";
 import { VerifiedStudentBadge } from "../components/StudentVerification.jsx";
 import axios from "axios";
-import { api, errMessage, fmtDate, fmtDateTime, londonToIso, openAttachment } from "../lib/landlord.js";
+import { api, depositRules, errMessage, fmtDate, fmtDateTime, londonToIso, openAttachment } from "../lib/landlord.js";
 
 type PassportItem = {
 	type: string;
@@ -226,6 +226,7 @@ export default function ApplicationPage() {
 				<ApplicationCard
 					data={application}
 					property={property}
+					nation={listing?.nation}
 					holdingDeposit={listing?.holdingDeposit}
 					accept={confirmOffer}
 					canOffer={canOffer}
@@ -269,6 +270,7 @@ const EmptyApplications: React.FC<{ text: string }> = ({ text }) => {
 interface ApplicationCardProps {
 	data: ApplicationData;
 	property: string;
+	nation?: string;
 	holdingDeposit?: number;
 	viewingSlots?: string[];
 	accept: MouseEventHandler<HTMLButtonElement>;
@@ -284,6 +286,7 @@ interface ApplicationCardProps {
 function ApplicationCard({
 	data,
 	property,
+	nation,
 	holdingDeposit,
 	viewingSlots,
 	accept,
@@ -523,7 +526,7 @@ function ApplicationCard({
 						<li>{data.offerExpiresAt ? `The household must accept by ${fmtDate(data.offerExpiresAt)}` : "Make the offer. The household must accept before it expires"}</li>
 						{holdingDeposit ? <li>Hold the deposit ({`£${holdingDeposit.toLocaleString("en-GB")}`} per room, one week's rent at most) to reserve the room</li> : null}
 						<li>Send the tenancy agreement for e-signature</li>
-						<li>Protect the deposit within 30 days</li>
+						<li>Protect the deposit within {nation ? depositRules(nation, 0).window : "30 days"}</li>
 					</ol>
 					{canAct && ["SENT", "VIEWED", "OFFERED"].includes(data.stage) && (
 						<button type="button" className={`${btnSmGhost} !border-sk-danger-border !text-sk-danger`} onClick={reject}>

@@ -5,7 +5,7 @@ import UserContext from "../context/UserContext.jsx";
 import { Card, Chip, ErrorState, Loading, Page, PageHeader, btnGhost, btnPrimary } from "../components/sk.jsx";
 import { MAX_REPAIR_PHOTOS, PHOTO_ACCEPT, RepairPhotoThumbs, uploadRepairPhoto } from "../components/RepairPhotos.jsx";
 import { AdviceCard, Modal, Notice, PayNowButton, useCheckoutReturn } from "../components/StudentBits.jsx";
-import { DEPOSIT_SCHEMES, api, errMessage, fmtDate, fmtDay, gbp, greeting, openFile } from "../lib/landlord.js";
+import { DEPOSIT_SCHEMES, api, errMessage, fmtDate, fmtDay, gbp, greeting, londonToIso, openFile } from "../lib/landlord.js";
 import { PLAN_LABEL, idOf, useMyApplications, useMyTenancy } from "../lib/student.js";
 
 const DOC_LABEL = {
@@ -116,6 +116,7 @@ function ApplicationRow({ a, holding, setNotice }) {
 	const qc = useQueryClient();
 	const { user } = useContext(UserContext);
 	const [picking, setPicking] = useState(false);
+	const [proposed, setProposed] = useState("");
 	const refresh = () => qc.invalidateQueries({ queryKey: ["my-applications"] });
 	const fail = (fallback) => (e) => setNotice({ tone: "warn", text: errMessage(e, fallback) });
 	const book = useMutation({
@@ -214,6 +215,15 @@ function ApplicationRow({ a, holding, setNotice }) {
 						</div>
 					)}
 				</>
+			)}
+			{["SENT", "VIEWED"].includes(a.stage) && slots.length === 0 && (
+				<div className="flex flex-wrap items-center gap-2">
+					<span className="text-[13px] font-semibold">{a.viewingAt ? "Propose another viewing time" : "Propose a viewing time"}</span>
+					<input type="datetime-local" value={proposed} onChange={(e) => setProposed(e.target.value)} className="h-9 rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] text-sk-text" />
+					<button type="button" disabled={book.isPending || !proposed || new Date(londonToIso(proposed)) <= new Date()} onClick={() => book.mutate(londonToIso(proposed))} className="h-9 cursor-pointer rounded-[10px] border border-sk-border2 bg-transparent px-3 text-[13px] font-semibold text-sk-text disabled:cursor-not-allowed disabled:opacity-60">
+						{book.isPending ? "Sending…" : "Send"}
+					</button>
+				</div>
 			)}
 			{a.stage === "OFFERED" && (
 				<div className="flex flex-col gap-1.5 rounded-xl bg-sk-card2 p-3">

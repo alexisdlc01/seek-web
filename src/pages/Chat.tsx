@@ -85,6 +85,12 @@ export default function ChatPage() {
 	const chatsRef = useRef(chats);
 	chatsRef.current = chats;
 
+	// /chat is not remounted when only ?conversation= changes (bell notification).
+	// A requested id missing from the loaded list triggers a refetch below.
+	useEffect(() => {
+		if (requestedId) setSelectedId(requestedId);
+	}, [requestedId]);
+
 	useEffect(() => {
 		let isMounted = true;
 
@@ -131,7 +137,7 @@ export default function ChatPage() {
 		return () => {
 			isMounted = false;
 		};
-	}, [currentUser]);
+	}, [currentUser, requestedId]);
 
 	// Live updates: one socket for the page, joined to every conversation's room
 	// so unread badges and open threads update as messages arrive.

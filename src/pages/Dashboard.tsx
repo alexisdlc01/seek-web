@@ -243,7 +243,7 @@ export default function Dashboard() {
 				eyebrow={today}
 				title={firstName ? `${greeting()}, ${firstName}` : greeting()}
 			>
-				<button type="button" className={btnGhost} onClick={exportCsv} disabled={!ov || payments.isLoading}>
+				<button type="button" className={btnGhost} onClick={exportCsv} disabled={!ov || !payments.data}>
 					Export
 				</button>
 				<button type="button" className={btnGhost} onClick={() => navigate("/inbox")}>

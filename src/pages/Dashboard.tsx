@@ -170,7 +170,7 @@ export default function Dashboard() {
 	const firstName = (user?.name ?? "").split(" ")[0];
 
 	const offers = (ov?.todo ?? []).filter((t: any) => t.kind === "MAKE_OFFER" && t.applicationId) as any[];
-	type Item = { id: string; dot: string; title: string; sub: string; cta: string; to: string; primary: boolean; onClick?: () => void; href?: string };
+	type Item = { id: string; dot: string; title: string; sub: string; cta: string; to: string; primary: boolean; onClick?: () => void; href?: string; description?: string; photoUrls?: string[] };
 	const needsYou: Item[] = ov
 		? [
 				...(offers.length > 0

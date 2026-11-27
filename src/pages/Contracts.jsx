@@ -365,7 +365,8 @@ function TenancyActions({ tenancy: t, contracts, templates }) {
 	);
 }
 
-function Templates({ templates }) {
+function Templates({ query }) {
+	const templates = query.data ?? [];
 	const qc = useQueryClient();
 	const del = useMutation({
 		mutationFn: (id) => api.delete(`/contracts/templates/${id}`),
@@ -373,7 +374,9 @@ function Templates({ templates }) {
 	});
 	return (
 		<Card title="Your contract templates">
-			{templates.length === 0 && <Empty title="No template yet">Upload your usual agreement once, then reuse it on any tenancy.</Empty>}
+			{query.isLoading && <Loading label="Loading templates" />}
+			{query.isError && <ErrorState error={query.error} onRetry={() => query.refetch()} />}
+			{query.data?.length === 0 && <Empty title="No template yet">Upload your usual agreement once, then reuse it on any tenancy.</Empty>}
 			{templates.map((tpl) => (
 				<div key={tpl._id} className="flex items-center justify-between gap-2 text-[13.5px]">
 					<span className="min-w-0 truncate">{tpl.title}</span>
@@ -610,7 +613,7 @@ export default function Contracts() {
 				</div>
 
 				<aside className="flex min-w-0 flex-[1_1_300px] flex-col gap-4">
-					<Templates templates={templates.data ?? []} />
+					<Templates query={templates} />
 					<Card title="Compliance calendar">
 						{overview.isLoading && <Loading />}
 						{overview.isError && <ErrorState error={overview.error} onRetry={() => overview.refetch()} />}

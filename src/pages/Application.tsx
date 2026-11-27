@@ -295,6 +295,8 @@ function ApplicationCard({
 	viewingBusy,
 	onReport
 }: ApplicationCardProps) {
+	const { user } = useContext(UserContext);
+	const canAct = !user?.teamOf || !!user.teamOf.scopes?.includes("APPLICATIONS");
 	const [visible, setVisible] = useState(false);
 	const [reportMsg, setReportMsg] = useState("");
 	const [viewingInput, setViewingInput] = useState("");
@@ -341,12 +343,12 @@ function ApplicationCard({
 					<button type="button" className={btnGhost} onClick={() => setVisible(true)}>
 						Report
 					</button>
-					{(!user?.teamOf || user.teamOf.scopes?.includes("APPLICATIONS")) && ["SENT", "VIEWED", "OFFERED"].includes(data.stage) && (
+					{canAct && ["SENT", "VIEWED", "OFFERED"].includes(data.stage) && (
 						<button type="button" className={`${btnGhost} !text-sk-danger`} disabled={busy} onClick={reject}>
 							Reject
 						</button>
 					)}
-					{(!user?.teamOf || user.teamOf.scopes?.includes("APPLICATIONS")) && ["SENT", "VIEWED"].includes(data.stage) && (
+					{canAct && ["SENT", "VIEWED"].includes(data.stage) && (
 						<button
 							type="button"
 							className={`${btnPrimary} disabled:opacity-50`}
@@ -523,7 +525,7 @@ function ApplicationCard({
 						<li>Send the tenancy agreement for e-signature</li>
 						<li>Protect the deposit within 30 days</li>
 					</ol>
-					{["SENT", "VIEWED", "OFFERED"].includes(data.stage) && (
+					{canAct && ["SENT", "VIEWED", "OFFERED"].includes(data.stage) && (
 						<button type="button" className={`${btnSmGhost} !border-sk-danger-border !text-sk-danger`} onClick={reject}>
 							Decline
 						</button>

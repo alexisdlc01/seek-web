@@ -386,7 +386,7 @@ export default function Applicants() {
 						</span>
 					))}
 				</div>
-				{listing && (
+				{listing && (!user?.teamOf || user.teamOf.scopes?.includes("LISTINGS")) && (
 					<Link to={`/add-listing/${listing._id}`} className={btnSmGhost}>
 						Edit criteria
 					</Link>

@@ -32,7 +32,7 @@ export default function Rent() {
 	const [month, setMonth] = useState(currentMonth());
 	const [reminding, setReminding] = useState(false);
 	const toast = useRef(null);
-	const { listings } = useContext(ListingsContext);
+	const { listings, loaded, loadError, reload } = useContext(ListingsContext);
 	// Tenancies tell us the nation of each home: England is monthly only.
 	const tenancies = useQuery({
 		queryKey: ["landlord-tenancies"],
@@ -199,8 +199,8 @@ export default function Rent() {
 
 					<div className="flex flex-wrap items-start gap-6">
 						<Card title="Plans you offer" className="min-w-0 flex-[1_1_360px]">
-							{nations.length === 0 && <Empty title="No live properties">Plans show once a property is listed.</Empty>}
-							{nations.map((n) => {
+							{loadError ? <ErrorState error={loadError} onRetry={reload} /> : !loaded ? <Loading label="Loading your properties" /> : nations.length === 0 && <Empty title="No live properties">Plans show once a property is listed.</Empty>}
+							{!loadError && nations.map((n) => {
 								const monthlyOnly = n !== "SCOTLAND";
 								const homes = listings.filter((l) => !l.isDraft && (l.nation || "ENGLAND") === n);
 								const offered = new Set(homes.flatMap((l) => l.paymentPlans ?? []));

@@ -38,6 +38,7 @@ export default function Inbox() {
 
 	const threads = useQuery({
 		queryKey: ["inbox-threads", serverCategory ?? "ALL"],
+		staleTime: 0, refetchOnMount: "always", refetchInterval: 15_000,
 		queryFn: async () =>
 			(await api.get("/inbox/threads", { params: serverCategory ? { category: serverCategory } : {} })).data
 	});
@@ -71,6 +72,7 @@ export default function Inbox() {
 	const thread = useQuery({
 		queryKey: ["inbox-thread", selectedId],
 		enabled: !!selectedId,
+		staleTime: 0, refetchOnMount: "always", refetchInterval: 15_000,
 		queryFn: async () => (await api.get(`/inbox/threads/${selectedId}`)).data
 	});
 	const t = thread.data;

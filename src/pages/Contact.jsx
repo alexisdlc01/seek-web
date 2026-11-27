@@ -45,7 +45,7 @@ export default function ContactPage() {
 			setMessage("");
 		} catch {
 			setError(
-				"Something went wrong. Please try again or email kshitijverma197@gmail.com"
+				"Something went wrong. Please try again or email adelachapelle@seekapp.uk"
 			);
 		} finally {
 			setSubmitting(false);
@@ -127,12 +127,12 @@ export default function ContactPage() {
 									</span>
 								</a>
 								<a
-									href="mailto:⁠vtrinel@seekapp.uk"
+									href="mailto:vtrinel@seekapp.uk"
 									className="flex items-center justify-center sm:justify-start gap-2 hover:text-[var(--accent-color)] transition"
 								>
 									<i className="pi pi-envelope text-blue-400 text-lg"></i>
 									<span className="font-medium">
-										⁠vtrinel@seekapp.uk
+										vtrinel@seekapp.uk
 									</span>
 								</a>
 							</div>
